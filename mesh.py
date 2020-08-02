@@ -9,29 +9,29 @@ def getVcolLayers():
     return
 
 
-def createVcolLayer(C, name: str):
+def createVcolLayer(C, vcolname: str):
     """Create a Vertex Color Layer"""
     if name and C.object:
-        C.object.data.vertex_colors.new(name=name)
+        C.object.data.vertex_colors.new(name=vcolname)
+        # vcols=C.object.data.vertex_colors.keys()
 
-    # vcols=C.object.data.vertex_colors.keys()
 
     return
 
 
-def removeVcolLayer(C, vcol=None):
+def removeVcolLayer(C, vcolname: str):
     """Remove the given Vertex Color Layer """
 
     if vcol and C.object:
-        C.object.data.vertex_colors.remove(C.object.data.vertex_colors[vcol])
+        C.object.data.vertex_colors.remove(C.object.data.vertex_colors[vcolname])
 
 
-def fillVcolLayer(obj, vcol: str, color_rgba):
+def fillVcolLayer(obj, vcolname: str, color_rgba: tuple):
     """Fill the given Vertex Color Layer with the Color parameter values"""
 
     mesh = obj.data
 
-    vcollayer = mesh.vertex_colors[vcol]
+    vcollayer = mesh.vertex_colors[vcolname]
 
     i = 0
     for poly in mesh.polygons:
@@ -40,7 +40,7 @@ def fillVcolLayer(obj, vcol: str, color_rgba):
             i += 1
 
 
-def fillVcolLayerVmesh(obj, vcol: str, color_rgba):
+def fillVcolLayerVmesh(obj, vcolname: str, color_rgba: tuple):
     """Fill the given Vertex Color Layer with the Color parameter values using Bmesh"""
     
     #BMESH
@@ -51,15 +51,13 @@ def fillVcolLayerVmesh(obj, vcol: str, color_rgba):
     bm = bmesh.new()
     bm.from_mesh(mesh)
 
-    color_layer = bm.loops.layers.color[vcol]
+    color_layer = bm.loops.layers.color[vcolname]
     # make a random color dict for each vert
     # vert_color = random_color_table[vert]
 
     def random_color(alpha=1):
         return [uniform(0, 1) for c in "rgb"] + [alpha]
     
-    random_color_table = {v : random_color() for v in bm.verts}
-
     for face in bm.faces:
         for loop in face.loops:
             loop[color_layer] = color_rgba
@@ -68,6 +66,6 @@ def fillVcolLayerVmesh(obj, vcol: str, color_rgba):
         
     
 
-def applyVcolLayer(name: str):
+def applyVcolLayer(vcolname: str):
 
     return
