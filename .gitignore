@@ -133,3 +133,4 @@ dmypy.json
 *.blend3
 .nonrepo/*
 bookmarks.txt
+.idea/*

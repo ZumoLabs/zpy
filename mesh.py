@@ -31,25 +31,13 @@ def fillVcolLayer(obj, vcol: str, color_rgba):
 
     mesh = obj.data
 
-    # if not mesh.vertex_colors:
-    #     mesh.vertex_colors.new()
-
     vcollayer = mesh.vertex_colors[vcol]
-
-    # or you could avoid using the color_layer name
-    # color_layer = mesh.vertex_colors.active
 
     i = 0
     for poly in mesh.polygons:
         for idx in poly.loop_indices:
-            # r, g, b = [random.random() for i in range(3)]
-            # r,g,b=[1,1,1]
-            # vcol.data[i].color = (r, g, b, 1.0)
             vcollayer.data[i].color = color_rgba
             i += 1
-
-    # set to vertex paint mode to see the result
-
 
 
 def fillVcolLayerVmesh(obj, vcol: str, color_rgba):
