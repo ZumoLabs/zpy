@@ -19,16 +19,18 @@ def createVcolLayer(obj, vcolname: str):
     # C.object.data.vertex_colors.new(name=vcolname)
         # vcols=C.object.data.vertex_colors.keys()
 
+    obj.data.vertex_colors.new(name=vcolname)
 
     return
 
 
-def removeVcolLayer(C, vcolname: str):
+def removeVcolLayer(obj, vcolname: str):
     """Remove the given Vertex Color Layer """
 
-    if vcolname and C.object:
+    if vcolname and obj:
         print("debug print removeVcolLayer")
-        C.object.data.vertex_colors.remove(C.object.data.vertex_colors[vcolname])
+        # C.object.data.vertex_colors.remove(C.object.data.vertex_colors[vcolname])
+        obj.data.vertex_colors.remove(obj.data.vertex_colors[vcolname])
 
 
 def fillVcolLayer(obj, vcolname: str, color_rgba: tuple):
