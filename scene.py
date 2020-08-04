@@ -55,11 +55,11 @@ def deselectAll():
     
     bpy.ops.object.select_all(action='DESELECT')
     
-def setSelectActive(obj):
+def setSelectActive(context,obj):
 
     deselectAll()
     selectObject(obj)
-    setActiveObject(obj)
+    setActiveObject(context, obj)
 
 
 def getSelectedMeshObjects(context=bpy.context):
