@@ -3,6 +3,10 @@
 import bpy
 
 
+
+#TODO: Vcol operators should work on the given object not the active one
+
+
 def getVcolLayers():
     """List Vertex Color Layers"""
 
