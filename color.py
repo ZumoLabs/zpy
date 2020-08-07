@@ -14,12 +14,17 @@ log = logging.getLogger(__name__)
 # Random colors are loaded on module import
 RANDOM_COLOR_IDX = 1
 COLORS = None
-loadColors()
+reset()
 
-def loadColors():
-    """ Load colors from file. """
-    global COLORS
-    COLORS = file.read_json(Path(__file__).parent / 'colors.json')
+
+def reset():
+    """ Load colors from file and reset random idx. """
+    global COLORS, RANDOM_COLOR_IDX
+    _path = Path(__file__).parent / 'colors.json'
+    file.verify_path(_path)
+    COLORS = file.read_json(_path)
+    RANDOM_COLOR_IDX = 1
+
 
 def hex_to_irgb(hex_value: str) -> Tuple[int]:
     """ Convert hex value to integer rgb (0 to 255). """
@@ -73,13 +78,15 @@ def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], st
 
     """
     global RANDOM_COLOR_IDX, COLORS
+    if COLORS is None:
+        reset()
     _name = COLORS[RANDOM_COLOR_IDX]['name']
     _hex = COLORS[RANDOM_COLOR_IDX]['hex']
     # Update global color idx
     RANDOM_COLOR_IDX += 1
     if RANDOM_COLOR_IDX > len(COLORS):
         log.error(f'Ran out of unique colors!')
-    log.debug(f'Random color chosen is {_name}')
+    log.debug(f'Random color chosen is {_name} - {_hex} - {hex_to_frgb(_hex)}')
     if output_style == 'frgb':
         return hex_to_frgb(_hex)
     if output_style == 'frgba':
@@ -94,49 +101,6 @@ def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], st
         return _name, hex_to_frgb(_hex)
     elif output_style == 'name_frgba':
         return _name, frgb_to_frgba(hex_to_frgb(_hex))
-    else:
-        raise ValueError('Color must be frgb, irgb, or hex.')
-
-
-def random_color_line(output_style: str = 'frgb', line_number: int = 0) -> Union[Tuple[float, int, str], str]:
-    """ Random color in frgb, irgb, or hex.
-
-    This will go through a pre-baked list every time, 
-    to prevent different random seeds from changing the
-    color for a category.
-
-    """
-    # global RANDOM_COLOR_IDX, COLORS
-    # Update global color idx
-
-    colors=loadColors()
-    random_color_idx = line_number
-            
-    if line_number==0:
-        random_color_idx=random.randint(1,len(colors))
-    # RANDOM_COLOR_IDX += 1
-    
-    
-    
-    _name = colors[random_color_idx]['name']
-    _hex = colors[random_color_idx]['hex']
-    
-    if random_color_idx > len(colors):
-        log.error(f'Ran out of unique colors!')
-    log.debug(f'Random color chosen is {_name}')
-
-    print("color: {} hex: {} rgb: {} ".format(_name, _hex, hex_to_frgb(_hex) ) )
-    
-    if output_style == 'frgb':
-        return hex_to_frgb(_hex)
-    elif output_style == 'irgb':
-        return hex_to_irgb(_hex)
-    elif output_style == 'hex':
-        return _hex
-    elif output_style == 'name_irgb':
-        return _name, hex_to_irgb(_hex)
-    elif output_style == 'name_frgb':
-        return _name, hex_to_frgb(_hex)
     else:
         raise ValueError('Color must be frgb, irgb, or hex.')
 
