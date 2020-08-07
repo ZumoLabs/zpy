@@ -14,7 +14,6 @@ log = logging.getLogger(__name__)
 # Random colors are loaded on module import
 RANDOM_COLOR_IDX = 1
 COLORS = None
-reset()
 
 
 def reset():
@@ -69,8 +68,40 @@ def frgb_to_hex(frgb: Tuple[float]) -> str:
     return irgb_to_hex(frgb_to_irgb(frgb))
 
 
+def _output_style(name: str, hex: str, output_style: str) -> Union[Tuple[float, int, str], str]:
+    """ Convert hex to an output style. """
+    if output_style == 'frgb':
+        return hex_to_frgb(hex)
+    if output_style == 'frgba':
+        return frgb_to_frgba(hex_to_frgb(hex))
+    elif output_style == 'irgb':
+        return hex_to_irgb(hex)
+    elif output_style == 'hex':
+        return hex
+    elif output_style == 'name_irgb':
+        return name, hex_to_irgb(hex)
+    elif output_style == 'name_frgb':
+        return name, hex_to_frgb(hex)
+    elif output_style == 'name_frgba':
+        return name, frgb_to_frgba(hex_to_frgb(hex))
+    else:
+        raise ValueError('Color must be frgb, irgb, or hex.')
+
+
+def default_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], str]:
+    """ Default color. """
+    global COLORS
+    if COLORS is None:
+        reset()
+    _name = COLORS[0]['name']
+    _hex = COLORS[0]['hex']
+    log.debug(
+        f'Default color chosen is {_name} - {_hex} - {hex_to_frgb(_hex)}')
+    return _output_style(_name, _hex, output_style=output_style)
+
+
 def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], str]:
-    """ Random color in frgb, irgb, or hex.
+    """ Random color.
 
     This will go through a pre-baked list every time, 
     to prevent different random seeds from changing the
@@ -87,22 +118,7 @@ def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], st
     if RANDOM_COLOR_IDX > len(COLORS):
         log.error(f'Ran out of unique colors!')
     log.debug(f'Random color chosen is {_name} - {_hex} - {hex_to_frgb(_hex)}')
-    if output_style == 'frgb':
-        return hex_to_frgb(_hex)
-    if output_style == 'frgba':
-        return frgb_to_frgba(hex_to_frgb(_hex))
-    elif output_style == 'irgb':
-        return hex_to_irgb(_hex)
-    elif output_style == 'hex':
-        return _hex
-    elif output_style == 'name_irgb':
-        return _name, hex_to_irgb(_hex)
-    elif output_style == 'name_frgb':
-        return _name, hex_to_frgb(_hex)
-    elif output_style == 'name_frgba':
-        return _name, frgb_to_frgba(hex_to_frgb(_hex))
-    else:
-        raise ValueError('Color must be frgb, irgb, or hex.')
+    return _output_style(_name, _hex, output_style=output_style)
 
 
 def closest_color(color: Tuple[float],
