@@ -13,11 +13,13 @@ log = logging.getLogger(__name__)
 
 # Random colors are loaded on module import
 RANDOM_COLOR_IDX = 1
-COLORS = file.read_json(Path(__file__).parent / 'colors.json')
+COLORS = None
+loadColors()
 
 def loadColors():
-    
-    return file.read_json(Path(__file__).parent / 'colors.json')
+    """ Load colors from file. """
+    global COLORS
+    COLORS = file.read_json(Path(__file__).parent / 'colors.json')
 
 def hex_to_irgb(hex_value: str) -> Tuple[int]:
     """ Convert hex value to integer rgb (0 to 255). """
@@ -27,10 +29,12 @@ def hex_to_irgb(hex_value: str) -> Tuple[int]:
     r = ((hex_value >> 16) & 0xFF)
     return r, g, b
 
-def rgb_to_rgba(rgb: Tuple[float], a = 1.0) -> Tuple[float]:
+
+def frgb_to_frgba(rgb: Tuple[float], a=1.0) -> Tuple[float]:
     """ Convert 3-channel RGB to 4-channel RGBA. """
     _val = *rgb, a
     return _val
+
 
 def hex_to_frgb(hex_value: str) -> Tuple[float]:
     """ Convert hex value to float rgb (0 to 1). """
@@ -60,8 +64,6 @@ def frgb_to_hex(frgb: Tuple[float]) -> str:
     return irgb_to_hex(frgb_to_irgb(frgb))
 
 
-
-
 def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], str]:
     """ Random color in frgb, irgb, or hex.
 
@@ -80,6 +82,8 @@ def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], st
     log.debug(f'Random color chosen is {_name}')
     if output_style == 'frgb':
         return hex_to_frgb(_hex)
+    if output_style == 'frgba':
+        return frgb_to_frgba(hex_to_frgb(_hex))
     elif output_style == 'irgb':
         return hex_to_irgb(_hex)
     elif output_style == 'hex':
@@ -88,6 +92,8 @@ def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], st
         return _name, hex_to_irgb(_hex)
     elif output_style == 'name_frgb':
         return _name, hex_to_frgb(_hex)
+    elif output_style == 'name_frgba':
+        return _name, frgb_to_frgba(hex_to_frgb(_hex))
     else:
         raise ValueError('Color must be frgb, irgb, or hex.')
 
@@ -157,14 +163,3 @@ def closest_color(color: Tuple[float],
             f'No color close enough w/ maxmimum cube distance of {max_cube_dist}')
         return None
     return colors[nearest_idx]
-
-
-def reset_rgb():
-    """ return default rgb """
-
-    return 1.0, 1.0, 1.0
-
-def reset_rgba():
-    """ return default rgba """
-
-    return 1.0, 1.0, 1.0, 1.0
