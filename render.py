@@ -1,6 +1,7 @@
 """
     Utilities for Rendering in Blender.
 """
+import os
 import logging
 import time
 from pathlib import Path
@@ -9,7 +10,7 @@ from typing import Union
 import bpy
 import gin
 
-import bender.utils.blender as utils_blender
+from . import blender as utils_blender
 
 log = logging.getLogger(__name__)
 
@@ -47,10 +48,15 @@ def render_aov(
     scene.render.resolution_y = height
     scene.render.threads = threads
     scene.render.image_settings.file_format = 'PNG'
-    
+    # HACK: Prevents adding frame number to filename
+    scene.frame_end = scene.frame_current
+    scene.frame_start = scene.frame_current
+    scene.render.use_file_extension = False
+    scene.render.use_stamp_frame = False
+
     if engine == 'use scene':
         log.debug('Using whatever render setting are set in the scene.')
-        
+
     elif engine == 'cycles':
         log.debug('Using Cycles render settings.')
         scene.render.engine = "CYCLES"
@@ -106,43 +112,55 @@ def render_aov(
         scene.eevee.shadow_cascade_size = '1024'
     else:
         raise ValueError('Invalid render engine.')
-    
+
+    output_node = bpy.data.scenes["Scene"].node_tree.nodes["RGB Output"]
+    if output_node is not None:
+        if rgb_path is not None:
+            output_node.mute = False
+            output_node.file_slots[0].path = str(rgb_path)
+        else:
+            output_node.mute = True
+
+    output_node = bpy.data.scenes["Scene"].node_tree.nodes["ISEG Output"]
+    if output_node is not None:
+        if iseg_path is not None:
+            output_node.mute = False
+            output_node.file_slots[0].path = str(iseg_path)
+        else:
+            output_node.mute = True
+
+    output_node = bpy.data.scenes["Scene"].node_tree.nodes["CSEG Output"]
+    if output_node is not None:
+        if cseg_path is not None:
+            output_node.mute = False
+            output_node.file_slots[0].path = str(cseg_path)
+        else:
+            output_node.mute = True
+
+    start_time = time.time()
+    bpy.ops.render.render(write_still=True)
+
+    # HACK: Rename image outputs due to stupid Blender reasons
     if rgb_path is not None:
-        start_time = time.time()
-        scene.render.filepath = str(rgb_path)
-        bpy.context.view_layer.update()
-        bpy.ops.render.render(
-            write_still=True,
-            layer='Combined',
-        )
-        duration = time.time() - start_time
-        log.info(f'Rendering {rgb_path.name} took {duration}s to complete.')
-        if log.getEffectiveLevel() == logging.DEBUG:
-            _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
-            _path = rgb_path.parent / _filename
-            utils_blender.output_intermediate_scene(_path)
-            
-    if iseg_path is not None:
-        start_time = time.time()
-        scene.render.filepath = str(iseg_path)
-        bpy.context.view_layer.update()
-        bpy.ops.render.render(
-            write_still=True,
-            layer='INSTANCE',
-        )
-        duration = time.time() - start_time
-        log.info(f'Rendering {iseg_path.name} took {duration}s to complete.')
-        
+        _bad_name = str(rgb_path) + '%04d' % scene.frame_current
+        os.rename(_bad_name, str(rgb_path))
+        log.info(f'Rendering saved to {str(rgb_path)}')
     if cseg_path is not None:
-        start_time = time.time()
-        scene.render.filepath = str(cseg_path)
-        bpy.context.view_layer.update()
-        bpy.ops.render.render(
-            write_still=True,
-            layer='CATEGORY',
-        )
-        duration = time.time() - start_time
-        log.info(f'Rendering {cseg_path.name} took {duration}s to complete.')
+        _bad_name = str(cseg_path) + '%04d' % scene.frame_current
+        os.rename(_bad_name, str(cseg_path))
+        log.info(f'Rendering saved to {str(cseg_path)}')
+    if iseg_path is not None:
+        _bad_name = str(iseg_path) + '%04d' % scene.frame_current
+        os.rename(_bad_name, str(iseg_path))
+        log.info(f'Rendering saved to {str(iseg_path)}')
+
+    duration = time.time() - start_time
+    log.info(f'Rendering took {duration}s to complete.')
+    if log.getEffectiveLevel() == logging.DEBUG:
+        _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
+        _path = rgb_path.parent / _filename
+        utils_blender.output_intermediate_scene(_path)
+
 
 @gin.configurable
 def render_image(output_path: Union[str, Path],
