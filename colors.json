@@ -1,5 +1,9 @@
 [
     {
+        "name":"Default",
+        "hex" : "#ffffff"
+    },
+    {
         "name": "20000 Leagues Under the Sea",
         "hex": "#191970"
     },
