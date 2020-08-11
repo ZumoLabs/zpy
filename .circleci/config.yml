@@ -2,7 +2,31 @@ version: 2.1
 
 jobs:
   build:
-  publish:
+    working_directory: ~/repo
+    docker:
+      - image: python:3.6
+    steps:
+      - checkout
+      - run:
+          name: Build the package
+          command: python setup.py sdist
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  deploy:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/ruby:2.3-jessie
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Install packagecloud CLI
+          command: gem install package_cloud
+      - run:
+          name: push python package
+          # hack for the push prompts
+          command: echo -e "0\n0\ny" | package_cloud push zumolabs/pypi dist/zpy-zumo-*.tar.gz
 
 workflows:
   version: 2
