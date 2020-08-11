@@ -13,7 +13,7 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
-  deploy:
+  publish:
     working_directory: ~/repo
     docker:
       - image: circleci/ruby:2.3-jessie
