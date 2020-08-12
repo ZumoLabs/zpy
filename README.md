@@ -1,6 +1,6 @@
 # zpy
 
-Utility bundle for use with bpy.
+Utility bundle for use with bpy. TESTING EXPERIMENTAL.
 
 ## Cutting a Release
 
