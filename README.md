@@ -21,22 +21,14 @@ export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
 export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
 ```
 
-Symlink (or copy) this folder to the python libraries folder in your blender installation.
+Export packagecloud pypi as external index url.
 
 ```
-ln -s ~/zumolabs/zpy $BLENDER_LIB_PY/zpy
+export PIP_EXTRA_INDEX_URL="https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae3552aee:@packagecloud.io/zumolabs/pypi/pypi/simple"
 ```
 
-You will also need to install some additional pip modules into Blender. First install and upgrade pip itself:
+Then install the pip module
 
 ```
-$BLENDER_BIN_PY -m ensurepip
-$BLENDER_BIN_PIP install --upgrade pip
-```
-
-Then install the needed pip modules
-
-```
-$BLENDER_BIN_PIP install numpy
-$BLENDER_BIN_PIP install gin-config
+$BLENDER_BIN_PIP install zpy-zumo
 ```
