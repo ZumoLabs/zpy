@@ -11,7 +11,7 @@ git fetch --tag
 git tag
 ```
 
-Cut a release candidate (ex. v1.0.0-rc0) or release (ex. v1.0.0)
+Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`)
 
 ```
 git tag <version>
@@ -41,14 +41,15 @@ export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
 export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
 ```
 
-Export packagecloud pypi as external index url.
+Then install the pip module
+
+```
+$BLENDER_BIN_PIP install --extra-index-url=https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae3552aee:@packagecloud.io/zumolabs/pypi/pypi/simple zpy-zumo
+```
+
+OPTIONAL: Export packagecloud pypi as external index url.
 
 ```
 export PIP_EXTRA_INDEX_URL="https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae3552aee:@packagecloud.io/zumolabs/pypi/pypi/simple"
 ```
 
-Then install the pip module
-
-```
-$BLENDER_BIN_PIP install zpy-zumo
-```
