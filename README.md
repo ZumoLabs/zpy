@@ -2,6 +2,26 @@
 
 Utility bundle for use with bpy.
 
+## Cutting a Release
+
+Fetch and list existing tags
+
+```
+git fetch --tag
+git tag
+```
+
+Cut a release candidate (ex. v1.0.0-rc0) or release (ex. v1.0.0)
+
+```
+git tag <version>
+git push origin <version>
+```
+
+Check progress on [CI](https://app.circleci.com/pipelines/github/ZumoLabs/zpy)
+
+Check progress on [packagecloud](https://packagecloud.io/zumolabs/pypi)
+
 ## Install
 
 Download the latest Blender [here](https://www.blender.org/download/). This code has been tested using Blender version:
