@@ -18,6 +18,62 @@ from . import file as utils_file
 
 log = logging.getLogger(__name__)
 
+def use_gpu() -> None:
+    """ Use GPU for rendering. """
+    devices = list(bpy.context.preferences.addons['cycles'].preferences.devices)
+    log.debug(f'Devices available {devices}')
+    prefs = bpy.context.preferences.addons['cycles'].preferences
+    prefs.compute_device_type = 'CUDA'
+    devices = prefs.get_devices()
+    for device in devices[0]:
+        device.use = True
+    log.debug(f'Devices available {devices}')
+
+
+@gin.configurable
+def set_seed(seed: int = 0) -> None:
+    """ Set the random seed. """
+    log.info(f'Setting random seed to {seed}')
+    if log.getEffectiveLevel() == logging.DEBUG:
+        # When debugging you want to run into errors related
+        # to specific permutations of the random variables, so
+        # you need to vary the seed to run into them.
+        seed = random.randint(1, 100)
+        log.debug(f'Choosing a random random seed of {seed}')
+    random.seed(seed)
+    np.random.seed(seed)
+
+
+@gin.configurable
+def step(num_steps: int = 16,
+         framerate: int = 0,
+         start_frame: int = 1,
+         ) -> int:
+    """ Step logic helper for the scene. """
+    assert num_steps is not None, 'Invalid num_steps'
+    assert num_steps > 0, 'Invalid num_steps'
+    step_idx = 0
+    if framerate > 0:
+        start = bpy.context.scene.frame_start
+        stop = bpy.context.scene.frame_end
+        log.info(f'Animation enabled. Min frames: {start}. Max frames: {stop}')
+    while step_idx < num_steps:
+        log.info(f'-----------------------------------------')
+        log.info(f'                   STEP                  ')
+        log.info(f'-----------------------------------------')
+        log.info(f'Simulation step {step_idx} of {num_steps}.')
+        start_time = time.time()
+        if framerate > 0:
+            current_frame = start_frame + step_idx * framerate
+            bpy.context.scene.frame_set(current_frame)
+            log.info(f'Animation frame {bpy.context.scene.frame_current}')
+        # # Update the step_idx for all RandomEvent and Animator instances
+        # RandomEvent.step_idx = step_idx
+        yield step_idx
+        step_idx += 1
+        duration = time.time() - start_time
+        log.info(f'Simulation step took {duration}s to complete.')
+        
 def connect_debugger_vscode(timeout: int = 3) -> None:
     """ Connects to a VSCode debugger.
 
