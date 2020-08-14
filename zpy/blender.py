@@ -2,25 +2,27 @@
     Utilities for Blender Python.
 """
 import logging
+import math
+import random
+import time
 from pathlib import Path
-from typing import Dict, Union, Tuple, List
+from typing import Dict, List, Tuple, Union
+
+import numpy as np
+import zpy
+
 import bpy
 import bpy_extras
 import gin
-import math
 import mathutils
-import numpy as np
-import random
-import time
-
-from . import color as utils_color
-from . import file as utils_file
 
 log = logging.getLogger(__name__)
 
+
 def use_gpu() -> None:
     """ Use GPU for rendering. """
-    devices = list(bpy.context.preferences.addons['cycles'].preferences.devices)
+    devices = list(
+        bpy.context.preferences.addons['cycles'].preferences.devices)
     log.debug(f'Devices available {devices}')
     prefs = bpy.context.preferences.addons['cycles'].preferences
     prefs.compute_device_type = 'CUDA'
@@ -73,7 +75,8 @@ def step(num_steps: int = 16,
         step_idx += 1
         duration = time.time() - start_time
         log.info(f'Simulation step took {duration}s to complete.')
-        
+
+
 def connect_debugger_vscode(timeout: int = 3) -> None:
     """ Connects to a VSCode debugger.
 
@@ -85,7 +88,7 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
     if log.getEffectiveLevel() == logging.DEBUG:
         log.debug('Starting VSCode debugger in Blender.')
         path = '$BLENDERADDONS/blender-debugger-for-vscode/__init__.py'
-        path = utils_file.verify_path(path, make=False)
+        path = zpy.file.verify_path(path, make=False)
         bpy.ops.preferences.addon_install(filepath=str(path))
         bpy.ops.preferences.addon_enable(module='blender-debugger-for-vscode')
         bpy.ops.debug.connect_debugger_vscode()
@@ -94,18 +97,18 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
             time.sleep(1)
 
 
-def connect_addon(name : str = 'prometheus') -> None:
+def connect_addon(name: str = 'prometheus') -> None:
     """ Connects a Blender AddOn. """
     log.debug(f'Connecting Addon {name}.')
     path = f'$BLENDERADDONS/{name}/__init__.py'
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     bpy.ops.preferences.addon_install(filepath=str(path))
     bpy.ops.preferences.addon_enable(module=name)
 
 
 def output_intermediate_scene(path: Union[str, Path] = '/tmp/blender-debug-scene-tmp.blend') -> None:
     """ Output intermediate saved scene. """
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     log.debug(f'Saving intermediate scene to {path}')
     bpy.ops.wm.save_as_mainfile(filepath=str(path))
 
@@ -124,7 +127,7 @@ def load_blend_obj(name: str,
                    path: Union[str, Path],
                    link: bool = False) -> bpy.types.Object:
     """ Load object from blend file. """
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     with bpy.data.libraries.load(str(path), link=link) as (data_from, data_to):
         for from_obj in data_from.objects:
             if from_obj.startswith(name):
@@ -141,7 +144,7 @@ def load_scene(path: Union[str, Path]) -> None:
     """ Load a scene from a *.blend file. """
     # HACK: Clear out scene of cameras and lights
     clear_scene(['CAMERA', 'LIGHT'])
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     log.debug(f'Loading scene from {str(path)}.')
     with bpy.data.libraries.load(str(path)) as (data_from, data_to):
         for attr in dir(data_to):
@@ -195,7 +198,7 @@ def load_hdri(
 
     """
     log.info(f'Loading HDRI at {path}')
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     world = bpy.context.scene.world
     world.use_nodes = True
     out_node = world.node_tree.nodes.get('World Output')
