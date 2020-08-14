@@ -1,15 +1,16 @@
 """
     Utilities for Rendering in Blender.
 """
-import os
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Union
 
+import zpy
+
 import bpy
 import gin
-import zpy
 
 log = logging.getLogger(__name__)
 
@@ -112,7 +113,7 @@ def render_aov(
     else:
         raise ValueError('Invalid render engine.')
 
-    output_node = bpy.data.scenes["Scene"].node_tree.nodes["RGB Output"]
+    output_node = bpy.context.scene.node_tree.nodes["RGB Output"]
     if output_node is not None:
         if rgb_path is not None:
             output_node.mute = False
@@ -120,7 +121,7 @@ def render_aov(
         else:
             output_node.mute = True
 
-    output_node = bpy.data.scenes["Scene"].node_tree.nodes["ISEG Output"]
+    output_node = bpy.context.scene.node_tree.nodes["ISEG Output"]
     if output_node is not None:
         if iseg_path is not None:
             output_node.mute = False
@@ -128,7 +129,7 @@ def render_aov(
         else:
             output_node.mute = True
 
-    output_node = bpy.data.scenes["Scene"].node_tree.nodes["CSEG Output"]
+    output_node = bpy.context.scene.node_tree.nodes["CSEG Output"]
     if output_node is not None:
         if cseg_path is not None:
             output_node.mute = False
@@ -158,7 +159,7 @@ def render_aov(
     if log.getEffectiveLevel() == logging.DEBUG:
         _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
         _path = rgb_path.parent / _filename
-        utils_blender.output_intermediate_scene(_path)
+        zpy.blender.output_intermediate_scene(_path)
 
 
 @gin.configurable
@@ -288,4 +289,4 @@ def render_image(output_path: Union[str, Path],
     if log.getEffectiveLevel() == logging.DEBUG:
         _filename = f'blender-debug-scene-post-{output_path.stem}.blend'
         _path = output_path.parent / _filename
-        utils_blender.output_intermediate_scene(_path)
+        zpy.blender.output_intermediate_scene(_path)
