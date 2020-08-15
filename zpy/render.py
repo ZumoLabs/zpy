@@ -30,19 +30,30 @@ def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
     for child in obj.children:
         toggle_hidden(child, hidden)
 
+
+@gin.configurable
+def _make_aov_pass(
+    style: str = 'default',
+):
+    """ Make AOV pass in Cycles. """
+    assert bpy.context.scene.render.engine == "CYCLES", \
+        'Render engine must be set to CYCLES when using AOV'
+    bpy.ops.cycles.add_aov()
+
+
 @gin.configurable
 def _make_aov_output_node(
     output_path: Union[str, Path] = None,
     style: str = 'default',
 ):
-    """ . """
-    # Render layer node
-    # bpy.types.CompositorNodeRLayers
+    """ Make AOV Output nodes in Composition Graph. """
+    valid_styles = ['rgb', 'depth', 'instance', 'category']
+    assert style in valid_styles, \
+        f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
+    # Render layer node (bpy.types.CompositorNodeRLayers)
     rl_node = bpy.context.scene.node_tree.nodes['Render Layers']
-    assert style in ['rgb', 'depth', 'instance', 'category']    
-    # rl_node.outputs['CATEGORY']
-    # rl_node.outputs['INSTANCE']
-    # rl_node.outputs['Depth']
+    assert rl_node.outputs.get(style, None) is not None, \
+        f'Render Layer output {style} does not exist.'
     _tree = bpy.context.scene.node_tree
     # Visualize node shows image in workspace
     view_node = _tree.nodes.new('CompositorNodeViewer')
@@ -55,31 +66,7 @@ def _make_aov_output_node(
     fileout_node.mute = False
     fileout_node.base_path = output_path.parent
     fileout_node.file_slots[0].path = output_path.name
-    
 
-def render_settings(
-    style = '',
-):
-        log.debug('Using Cycles render settings.')
-    scene.render.engine = "CYCLES"
-    scene.render.dither_intensity = 1.0
-    scene.render.filter_size = 1.5
-    scene.render.use_compositing = False
-
-    scene.cycles.samples = 128
-    scene.cycles.diffuse_bounces = 4
-    scene.cycles.diffuse_samples = 12
-    scene.cycles.max_bounces = 4
-    scene.cycles.bake_type = 'COMBINED'
-    scene.cycles.use_adaptive_sampling = True
-
-    scene.view_settings.view_transform = 'Filmic'
-
-    scene.display.render_aa = '8'
-    scene.display.viewport_aa = 'FXAA'
-    scene.display.shading.color_type = 'TEXTURE'
-    scene.display.shading.light = 'STUDIO'
-    scene.display.shading.show_specular_highlight = True
 
 @gin.configurable
 def render_aov(
@@ -90,7 +77,7 @@ def render_aov(
     width: int = 480,
     height: int = 640,
     threads: int = 4,
-    render_settings: str = 'use scene',
+    render_settings: str = 'scene',
 ):
     """ Render images using AOV nodes. """
     start_time = time.time()
@@ -104,14 +91,14 @@ def render_aov(
     scene.frame_start = scene.frame_current
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
-    
+
     if output_path is not None:
         scene.render.filepath = str(output_path)
 
-    if render_settings == 'use scene':
+    if render_settings == 'scene':
         log.debug('Using whatever render setting are set in the scene.')
 
-    elif render_settings == 'tuned cycles':
+    elif render_settings == 'cycles':
         log.debug('Using Cycles render settings.')
         scene.render.engine = "CYCLES"
         scene.render.dither_intensity = 1.0
@@ -134,9 +121,8 @@ def render_aov(
         scene.display.shading.show_specular_highlight = True
     else:
         raise ValueError(f'Invalid render settings {render_settings}.')
-    
+
     output_node = bpy.context.scene.node_tree.nodes["RGB Output"]
-    import pdb; pdb.set_trace()
     if output_node is not None:
         if rgb_path is not None:
             output_node.mute = False
