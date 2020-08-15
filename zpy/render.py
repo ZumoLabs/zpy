@@ -30,16 +30,67 @@ def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
     for child in obj.children:
         toggle_hidden(child, hidden)
 
+@gin.configurable
+def _make_aov_output_node(
+    output_path: Union[str, Path] = None,
+    style: str = 'default',
+):
+    """ . """
+    # Render layer node
+    # bpy.types.CompositorNodeRLayers
+    rl_node = bpy.context.scene.node_tree.nodes['Render Layers']
+    assert style in ['rgb', 'depth', 'instance', 'category']    
+    # rl_node.outputs['CATEGORY']
+    # rl_node.outputs['INSTANCE']
+    # rl_node.outputs['Depth']
+    _tree = bpy.context.scene.node_tree
+    # Visualize node shows image in workspace
+    view_node = _tree.nodes.new('CompositorNodeViewer')
+    view_node.inputs['Image'] = rl_node.outputs[style]
+    view_node.name = f'{style} viewer'
+    # File output node renders out image
+    fileout_node = _tree.nodes.new('CompositorNodeOutputFile')
+    fileout_node.inputs['Image'] = rl_node.outputs[style]
+    fileout_node.name = f'{style} output'
+    fileout_node.mute = False
+    fileout_node.base_path = output_path.parent
+    fileout_node.file_slots[0].path = output_path.name
+    
+
+def render_settings(
+    style = '',
+):
+        log.debug('Using Cycles render settings.')
+    scene.render.engine = "CYCLES"
+    scene.render.dither_intensity = 1.0
+    scene.render.filter_size = 1.5
+    scene.render.use_compositing = False
+
+    scene.cycles.samples = 128
+    scene.cycles.diffuse_bounces = 4
+    scene.cycles.diffuse_samples = 12
+    scene.cycles.max_bounces = 4
+    scene.cycles.bake_type = 'COMBINED'
+    scene.cycles.use_adaptive_sampling = True
+
+    scene.view_settings.view_transform = 'Filmic'
+
+    scene.display.render_aa = '8'
+    scene.display.viewport_aa = 'FXAA'
+    scene.display.shading.color_type = 'TEXTURE'
+    scene.display.shading.light = 'STUDIO'
+    scene.display.shading.show_specular_highlight = True
 
 @gin.configurable
 def render_aov(
+    output_path: Union[str, Path] = None,
     rgb_path: Union[str, Path] = None,
     iseg_path: Union[str, Path] = None,
     cseg_path: Union[str, Path] = None,
     width: int = 480,
     height: int = 640,
     threads: int = 4,
-    engine: str = 'use scene',
+    render_settings: str = 'use scene',
 ):
     """ Render images using AOV nodes. """
     start_time = time.time()
@@ -53,11 +104,14 @@ def render_aov(
     scene.frame_start = scene.frame_current
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
+    
+    if output_path is not None:
+        scene.render.filepath = str(output_path)
 
-    if engine == 'use scene':
+    if render_settings == 'use scene':
         log.debug('Using whatever render setting are set in the scene.')
 
-    elif engine == 'cycles':
+    elif render_settings == 'tuned cycles':
         log.debug('Using Cycles render settings.')
         scene.render.engine = "CYCLES"
         scene.render.dither_intensity = 1.0
@@ -78,45 +132,15 @@ def render_aov(
         scene.display.shading.color_type = 'TEXTURE'
         scene.display.shading.light = 'STUDIO'
         scene.display.shading.show_specular_highlight = True
-
-    elif engine == 'eevee':
-        log.debug('Using Eevee render settings.')
-        scene.render.engine = "BLENDER_EEVEE"
-        scene.render.dither_intensity = 1.0
-        scene.render.filter_size = 1.5
-        scene.render.use_compositing = False
-
-        scene.view_settings.view_transform = 'Filmic'
-
-        scene.display.render_aa = '8'
-        scene.display.viewport_aa = 'FXAA'
-        scene.display.shading.color_type = 'TEXTURE'
-        scene.display.shading.light = 'STUDIO'
-        scene.display.shading.show_specular_highlight = True
-
-        scene.eevee.taa_render_samples = 64
-        scene.eevee.taa_samples = 16
-        scene.eevee.use_soft_shadows = True
-
-        scene.eevee.use_ssr = True
-        scene.eevee.use_ssr_halfres = True
-        scene.eevee.ssr_quality = 0.25
-        scene.eevee.ssr_thickness = 0.2
-        scene.eevee.ssr_max_roughness = 0.5
-
-        scene.eevee.use_shadow_high_bitdepth = True
-        scene.eevee.use_soft_shadows = True
-
-        scene.eevee.use_gtao = True
-        scene.eevee.shadow_cube_size = '1024'
-        scene.eevee.shadow_cascade_size = '1024'
     else:
-        raise ValueError('Invalid render engine.')
-
+        raise ValueError(f'Invalid render settings {render_settings}.')
+    
     output_node = bpy.context.scene.node_tree.nodes["RGB Output"]
+    import pdb; pdb.set_trace()
     if output_node is not None:
         if rgb_path is not None:
             output_node.mute = False
+            output_node.base_path = ''
             output_node.file_slots[0].path = str(rgb_path)
         else:
             output_node.mute = True
@@ -125,6 +149,7 @@ def render_aov(
     if output_node is not None:
         if iseg_path is not None:
             output_node.mute = False
+            output_node.base_path = ''
             output_node.file_slots[0].path = str(iseg_path)
         else:
             output_node.mute = True
@@ -133,6 +158,7 @@ def render_aov(
     if output_node is not None:
         if cseg_path is not None:
             output_node.mute = False
+            output_node.base_path = ''
             output_node.file_slots[0].path = str(cseg_path)
         else:
             output_node.mute = True
