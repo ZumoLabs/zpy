@@ -33,12 +33,24 @@ def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
 
 @gin.configurable
 def _make_aov_pass(
-    style: str = 'default',
+    style: str = 'instance',
 ):
     """ Make AOV pass in Cycles. """
     assert bpy.context.scene.render.engine == "CYCLES", \
         'Render engine must be set to CYCLES when using AOV'
+
+    # Only certain styles are available
+    valid_styles = ['instance', 'category']
+    assert style in valid_styles, \
+        f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
+
+    # Go through existing passes and make sure it doesn't exist before creating
+    for aov in bpy.context.view_layer['cycles']['aovs']:
+        if aov['name'] == style:
+            log.debug(f'AOV pass for {style} already exists.')
+            return
     bpy.ops.cycles.add_aov()
+    bpy.context.view_layer['cycles']['aovs'][-1]['name'] = style
 
 
 @gin.configurable
@@ -47,6 +59,8 @@ def _make_aov_output_node(
     style: str = 'default',
 ) -> bpy.types.CompositorNodeOutputFile:
     """ Make AOV Output nodes in Composition Graph. """
+    
+    # Only certain styles are available
     valid_styles = ['rgb', 'depth', 'instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
@@ -80,47 +94,25 @@ def render_aov(
     width: int = 480,
     height: int = 640,
     threads: int = 4,
-    render_settings: str = 'scene',
 ):
     """ Render images using AOV nodes. """
     start_time = time.time()
     scene = bpy.context.scene
     scene.render.resolution_x = width
     scene.render.resolution_y = height
+    
+    # Adjust some render settings
     scene.render.threads = threads
     scene.render.image_settings.file_format = 'PNG'
+    scene.view_settings.view_transform = 'Raw'
+    scene.render.dither_intensity = 0.
+    scene.render.film_transparent = True
+    
     # HACK: Prevents adding frame number to filename
     scene.frame_end = scene.frame_current
     scene.frame_start = scene.frame_current
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
-
-    if render_settings == 'scene':
-        log.debug('Using whatever render setting are set in the scene.')
-
-    elif render_settings == 'cycles':
-        log.debug('Using Cycles render settings.')
-        scene.render.engine = "CYCLES"
-        scene.render.dither_intensity = 1.0
-        scene.render.filter_size = 1.5
-        scene.render.use_compositing = False
-
-        scene.cycles.samples = 128
-        scene.cycles.diffuse_bounces = 4
-        scene.cycles.diffuse_samples = 12
-        scene.cycles.max_bounces = 4
-        scene.cycles.bake_type = 'COMBINED'
-        scene.cycles.use_adaptive_sampling = True
-
-        scene.view_settings.view_transform = 'Filmic'
-
-        scene.display.render_aa = '8'
-        scene.display.viewport_aa = 'FXAA'
-        scene.display.shading.color_type = 'TEXTURE'
-        scene.display.shading.light = 'STUDIO'
-        scene.display.shading.show_specular_highlight = True
-    else:
-        raise ValueError(f'Invalid render settings {render_settings}.')
 
     # Create AOV output nodes
     render_outputs = {
@@ -137,16 +129,9 @@ def render_aov(
             log.debug(f'here 2 {style}')
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
+            # output_node.format.file_format = 'OPEN_EXR'
             log.debug(f'Output node for {style} image pointing to {str(output_path)}')
-            # # HACK: Why does this need to be here?
-            # scene.render.filepath = str(output_path)
 
-    # Save intermediate scene
-    if log.getEffectiveLevel() == logging.DEBUG:
-        _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
-        _path = rgb_path.parent / _filename
-        zpy.blender.output_intermediate_scene(_path)
-        
     # Printout render time
     start_time = time.time()
     bpy.ops.render.render(write_still=True)
@@ -160,11 +145,11 @@ def render_aov(
             os.rename(_bad_name, str(output_path))
             log.info(f'Rendered {style} image saved to {str(output_path)}')
 
-    # # Save intermediate scene
-    # if log.getEffectiveLevel() == logging.DEBUG:
-    #     _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
-    #     _path = rgb_path.parent / _filename
-    #     zpy.blender.output_intermediate_scene(_path)
+    # Save intermediate scene
+    if log.getEffectiveLevel() == logging.DEBUG:
+        _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
+        _path = rgb_path.parent / _filename
+        zpy.blender.output_intermediate_scene(_path)
 
 
 @gin.configurable
