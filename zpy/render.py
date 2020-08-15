@@ -121,7 +121,7 @@ def render_aov(
         scene.display.shading.show_specular_highlight = True
     else:
         raise ValueError(f'Invalid render settings {render_settings}.')
-    
+
     # Create AOV output nodes
     render_outputs = {
         'rgb' : rgb_path,
@@ -129,15 +129,24 @@ def render_aov(
         'category' : cseg_path,
     }
     for style, output_path in render_outputs.items():
-        if rgb_path is not None:
+        log.debug(f'here {style}')
+        if output_path is not None:
             output_node = bpy.context.scene.node_tree.nodes.get(f'{style} output', None)
             if output_node is None:
                 output_node = _make_aov_output_node(style=style)
+            log.debug(f'here 2 {style}')
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
-            # HACK: Why does this need to be here?
-            scene.render.filepath = str(output_path)
+            log.debug(f'Output node for {style} image pointing to {str(output_path)}')
+            # # HACK: Why does this need to be here?
+            # scene.render.filepath = str(output_path)
 
+    # Save intermediate scene
+    if log.getEffectiveLevel() == logging.DEBUG:
+        _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
+        _path = rgb_path.parent / _filename
+        zpy.blender.output_intermediate_scene(_path)
+        
     # Printout render time
     start_time = time.time()
     bpy.ops.render.render(write_still=True)
@@ -151,11 +160,11 @@ def render_aov(
             os.rename(_bad_name, str(output_path))
             log.info(f'Rendered {style} image saved to {str(output_path)}')
 
-    # Save intermediate scene
-    if log.getEffectiveLevel() == logging.DEBUG:
-        _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
-        _path = rgb_path.parent / _filename
-        zpy.blender.output_intermediate_scene(_path)
+    # # Save intermediate scene
+    # if log.getEffectiveLevel() == logging.DEBUG:
+    #     _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
+    #     _path = rgb_path.parent / _filename
+    #     zpy.blender.output_intermediate_scene(_path)
 
 
 @gin.configurable
