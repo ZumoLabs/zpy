@@ -45,32 +45,35 @@ def _make_aov_pass(
 def _make_aov_output_node(
     output_path: Union[str, Path] = None,
     style: str = 'default',
-):
+) -> bpy.types.CompositorNodeOutputFile:
     """ Make AOV Output nodes in Composition Graph. """
     valid_styles = ['rgb', 'depth', 'instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
+    
     # Render layer node (bpy.types.CompositorNodeRLayers)
     rl_node = bpy.context.scene.node_tree.nodes['Render Layers']
     assert rl_node.outputs.get(style, None) is not None, \
         f'Render Layer output {style} does not exist.'
     _tree = bpy.context.scene.node_tree
+    
     # Visualize node shows image in workspace
-    view_node = _tree.nodes.new('CompositorNodeViewer')
-    view_node.inputs['Image'] = rl_node.outputs[style]
-    view_node.name = f'{style} viewer'
+    if log.getEffectiveLevel() == logging.DEBUG:
+        view_node = _tree.nodes.new('CompositorNodeViewer')
+        view_node.inputs['Image'] = rl_node.outputs[style]
+        view_node.name = f'{style} viewer'
+    
     # File output node renders out image
+    log.debug(f'Making AOV output node for {style}')
     fileout_node = _tree.nodes.new('CompositorNodeOutputFile')
     fileout_node.inputs['Image'] = rl_node.outputs[style]
     fileout_node.name = f'{style} output'
     fileout_node.mute = False
-    fileout_node.base_path = output_path.parent
-    fileout_node.file_slots[0].path = output_path.name
+    return fileout_node
 
 
 @gin.configurable
 def render_aov(
-    output_path: Union[str, Path] = None,
     rgb_path: Union[str, Path] = None,
     iseg_path: Union[str, Path] = None,
     cseg_path: Union[str, Path] = None,
@@ -91,9 +94,6 @@ def render_aov(
     scene.frame_start = scene.frame_current
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
-
-    if output_path is not None:
-        scene.render.filepath = str(output_path)
 
     if render_settings == 'scene':
         log.debug('Using whatever render setting are set in the scene.')
@@ -121,53 +121,37 @@ def render_aov(
         scene.display.shading.show_specular_highlight = True
     else:
         raise ValueError(f'Invalid render settings {render_settings}.')
-
-    output_node = bpy.context.scene.node_tree.nodes["RGB Output"]
-    if output_node is not None:
+    
+    # Create AOV output nodes
+    render_outputs = {
+        'rgb' : rgb_path,
+        'instance' : iseg_path,
+        'category' : cseg_path,
+    }
+    for style, output_path in render_outputs.items():
         if rgb_path is not None:
-            output_node.mute = False
-            output_node.base_path = ''
-            output_node.file_slots[0].path = str(rgb_path)
-        else:
-            output_node.mute = True
+            output_node = bpy.context.scene.node_tree.nodes.get(f'{style} output', None)
+            if output_node is None:
+                output_node = _make_aov_output_node(style=style)
+            output_node.base_path = str(output_path.parent)
+            output_node.file_slots[0].path = str(output_path.name)
+            # HACK: Why does this need to be here?
+            scene.render.filepath = str(output_path)
 
-    output_node = bpy.context.scene.node_tree.nodes["ISEG Output"]
-    if output_node is not None:
-        if iseg_path is not None:
-            output_node.mute = False
-            output_node.base_path = ''
-            output_node.file_slots[0].path = str(iseg_path)
-        else:
-            output_node.mute = True
-
-    output_node = bpy.context.scene.node_tree.nodes["CSEG Output"]
-    if output_node is not None:
-        if cseg_path is not None:
-            output_node.mute = False
-            output_node.base_path = ''
-            output_node.file_slots[0].path = str(cseg_path)
-        else:
-            output_node.mute = True
-
+    # Printout render time
     start_time = time.time()
     bpy.ops.render.render(write_still=True)
-
-    # HACK: Rename image outputs due to stupid Blender reasons
-    if rgb_path is not None:
-        _bad_name = str(rgb_path) + '%04d' % scene.frame_current
-        os.rename(_bad_name, str(rgb_path))
-        log.info(f'Rendering saved to {str(rgb_path)}')
-    if cseg_path is not None:
-        _bad_name = str(cseg_path) + '%04d' % scene.frame_current
-        os.rename(_bad_name, str(cseg_path))
-        log.info(f'Rendering saved to {str(cseg_path)}')
-    if iseg_path is not None:
-        _bad_name = str(iseg_path) + '%04d' % scene.frame_current
-        os.rename(_bad_name, str(iseg_path))
-        log.info(f'Rendering saved to {str(iseg_path)}')
-
     duration = time.time() - start_time
     log.info(f'Rendering took {duration}s to complete.')
+
+    # HACK: Rename image outputs due to stupid Blender reasons
+    for style, output_path in render_outputs.items():
+        if output_path is not None:
+            _bad_name = str(output_path) + '%04d' % scene.frame_current
+            os.rename(_bad_name, str(output_path))
+            log.info(f'Rendered {style} image saved to {str(output_path)}')
+
+    # Save intermediate scene
     if log.getEffectiveLevel() == logging.DEBUG:
         _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
         _path = rgb_path.parent / _filename
