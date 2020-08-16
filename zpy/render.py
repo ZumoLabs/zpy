@@ -106,7 +106,7 @@ def render_aov(
     scene.render.image_settings.file_format = 'PNG'
     scene.view_settings.view_transform = 'Raw'
     scene.render.dither_intensity = 0.
-    scene.render.film_transparent = True
+    scene.render.film_transparent = False
     
     # HACK: Prevents adding frame number to filename
     scene.frame_end = scene.frame_current
@@ -114,6 +114,14 @@ def render_aov(
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
 
+    # scene.cycles.samples = 1
+    # scene.cycles.diffuse_bounces = 0
+    # scene.cycles.diffuse_samples = 0
+    # scene.cycles.max_bounces = 0
+    # scene.cycles.bake_type = 'EMIT'
+    # scene.cycles.use_adaptive_sampling = False
+    # scene.cycles.use_denoising = False
+        
     # Create AOV output nodes
     render_outputs = {
         'rgb' : rgb_path,
@@ -129,7 +137,11 @@ def render_aov(
             log.debug(f'here 2 {style}')
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
-            # output_node.format.file_format = 'OPEN_EXR'
+            output_node.format.color_mode = 'RGB'
+            # output_node.format.color_depth = '32'
+            output_node.format.file_format = 'PNG'
+            # output_node.format.use_zbuffer=True,
+            output_node.format.view_settings.view_transform = 'Raw'
             log.debug(f'Output node for {style} image pointing to {str(output_path)}')
 
     # Printout render time
