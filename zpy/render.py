@@ -114,13 +114,13 @@ def render_aov(
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
 
-    # scene.cycles.samples = 1
-    # scene.cycles.diffuse_bounces = 0
-    # scene.cycles.diffuse_samples = 0
-    # scene.cycles.max_bounces = 0
-    # scene.cycles.bake_type = 'EMIT'
-    # scene.cycles.use_adaptive_sampling = False
-    # scene.cycles.use_denoising = False
+    scene.cycles.samples = 1
+    scene.cycles.diffuse_bounces = 0
+    scene.cycles.diffuse_samples = 0
+    scene.cycles.max_bounces = 0
+    scene.cycles.bake_type = 'EMIT'
+    scene.cycles.use_adaptive_sampling = False
+    scene.cycles.use_denoising = False
         
     # Create AOV output nodes
     render_outputs = {
@@ -138,7 +138,7 @@ def render_aov(
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
             output_node.format.color_mode = 'RGB'
-            # output_node.format.color_depth = '32'
+            output_node.format.color_depth = '16'
             output_node.format.file_format = 'PNG'
             # output_node.format.use_zbuffer=True,
             output_node.format.view_settings.view_transform = 'Raw'
