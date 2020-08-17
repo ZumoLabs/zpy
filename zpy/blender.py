@@ -2,21 +2,80 @@
     Utilities for Blender Python.
 """
 import logging
+import math
+import random
+import time
 from pathlib import Path
-from typing import Dict, Union, Tuple, List
+from typing import Dict, List, Tuple, Union
+
+import numpy as np
+import zpy
+
 import bpy
 import bpy_extras
 import gin
-import math
 import mathutils
-import numpy as np
-import random
-import time
-
-from . import color as utils_color
-from . import file as utils_file
 
 log = logging.getLogger(__name__)
+
+
+def use_gpu() -> None:
+    """ Use GPU for rendering. """
+    devices = list(
+        bpy.context.preferences.addons['cycles'].preferences.devices)
+    log.debug(f'Devices available {devices}')
+    prefs = bpy.context.preferences.addons['cycles'].preferences
+    prefs.compute_device_type = 'CUDA'
+    devices = prefs.get_devices()
+    for device in devices[0]:
+        device.use = True
+    log.debug(f'Devices available {devices}')
+
+
+@gin.configurable
+def set_seed(seed: int = 0) -> None:
+    """ Set the random seed. """
+    log.info(f'Setting random seed to {seed}')
+    if log.getEffectiveLevel() == logging.DEBUG:
+        # When debugging you want to run into errors related
+        # to specific permutations of the random variables, so
+        # you need to vary the seed to run into them.
+        seed = random.randint(1, 100)
+        log.debug(f'Choosing a random random seed of {seed}')
+    random.seed(seed)
+    np.random.seed(seed)
+
+
+@gin.configurable
+def step(num_steps: int = 16,
+         framerate: int = 0,
+         start_frame: int = 1,
+         ) -> int:
+    """ Step logic helper for the scene. """
+    assert num_steps is not None, 'Invalid num_steps'
+    assert num_steps > 0, 'Invalid num_steps'
+    step_idx = 0
+    if framerate > 0:
+        start = bpy.context.scene.frame_start
+        stop = bpy.context.scene.frame_end
+        log.info(f'Animation enabled. Min frames: {start}. Max frames: {stop}')
+    while step_idx < num_steps:
+        log.info(f'-----------------------------------------')
+        log.info(f'                   STEP                  ')
+        log.info(f'-----------------------------------------')
+        log.info(f'Simulation step {step_idx} of {num_steps}.')
+        start_time = time.time()
+        if framerate > 0:
+            current_frame = start_frame + step_idx * framerate
+            bpy.context.scene.frame_set(current_frame)
+            log.info(f'Animation frame {bpy.context.scene.frame_current}')
+        # # Update the step_idx for all RandomEvent and Animator instances
+        # RandomEvent.step_idx = step_idx
+        yield step_idx
+        step_idx += 1
+        duration = time.time() - start_time
+        log.info(f'Simulation step took {duration}s to complete.')
+
 
 def connect_debugger_vscode(timeout: int = 3) -> None:
     """ Connects to a VSCode debugger.
@@ -29,7 +88,7 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
     if log.getEffectiveLevel() == logging.DEBUG:
         log.debug('Starting VSCode debugger in Blender.')
         path = '$BLENDERADDONS/blender-debugger-for-vscode/__init__.py'
-        path = utils_file.verify_path(path, make=False)
+        path = zpy.file.verify_path(path, make=False)
         bpy.ops.preferences.addon_install(filepath=str(path))
         bpy.ops.preferences.addon_enable(module='blender-debugger-for-vscode')
         bpy.ops.debug.connect_debugger_vscode()
@@ -38,18 +97,18 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
             time.sleep(1)
 
 
-def connect_addon(name : str = 'prometheus') -> None:
+def connect_addon(name: str = 'prometheus') -> None:
     """ Connects a Blender AddOn. """
     log.debug(f'Connecting Addon {name}.')
     path = f'$BLENDERADDONS/{name}/__init__.py'
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     bpy.ops.preferences.addon_install(filepath=str(path))
     bpy.ops.preferences.addon_enable(module=name)
 
 
 def output_intermediate_scene(path: Union[str, Path] = '/tmp/blender-debug-scene-tmp.blend') -> None:
     """ Output intermediate saved scene. """
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     log.debug(f'Saving intermediate scene to {path}')
     bpy.ops.wm.save_as_mainfile(filepath=str(path))
 
@@ -68,7 +127,7 @@ def load_blend_obj(name: str,
                    path: Union[str, Path],
                    link: bool = False) -> bpy.types.Object:
     """ Load object from blend file. """
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     with bpy.data.libraries.load(str(path), link=link) as (data_from, data_to):
         for from_obj in data_from.objects:
             if from_obj.startswith(name):
@@ -85,7 +144,7 @@ def load_scene(path: Union[str, Path]) -> None:
     """ Load a scene from a *.blend file. """
     # HACK: Clear out scene of cameras and lights
     clear_scene(['CAMERA', 'LIGHT'])
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     log.debug(f'Loading scene from {str(path)}.')
     with bpy.data.libraries.load(str(path)) as (data_from, data_to):
         for attr in dir(data_to):
@@ -139,7 +198,7 @@ def load_hdri(
 
     """
     log.info(f'Loading HDRI at {path}')
-    path = utils_file.verify_path(path, make=False)
+    path = zpy.file.verify_path(path, make=False)
     world = bpy.context.scene.world
     world.use_nodes = True
     out_node = world.node_tree.nodes.get('World Output')

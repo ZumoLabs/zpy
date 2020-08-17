@@ -9,8 +9,7 @@ from typing import Union
 
 import bpy
 import gin
-
-from . import blender as utils_blender
+import zpy
 
 log = logging.getLogger(__name__)
 

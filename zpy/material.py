@@ -5,12 +5,10 @@ import logging
 from pathlib import Path
 from typing import Union, Tuple
 
+import zpy
 import bpy
 import gin
 import numpy as np
-
-from . import color as utils_color
-from . import file as utils_file
 
 log = logging.getLogger(__name__)
 
@@ -28,7 +26,7 @@ def make_mat(name: str = None,
         log.debug(f'Material {name} already exists')
         return mat
     if isinstance(color, str):
-        color = utils_color.hex_to_frgb(color)
+        color = zpy.color.hex_to_frgb(color)
     mat = bpy.data.materials.new(name=name)
     if style == 'segmentation' and (engine == 'eevee'):
         # Segmentation uses the workbench render engine
@@ -59,7 +57,7 @@ def make_mat(name: str = None,
             tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
             tex_node.name = 'ImageTexture'
             coord_node = mat.node_tree.nodes.new('ShaderNodeTexCoord')
-            texture_path = utils_file.verify_path(texture_path, make=False)
+            texture_path = zpy.file.verify_path(texture_path, make=False)
             bpy.ops.image.open(filepath=str(texture_path))
             tex_node.image = bpy.data.images[texture_path.name]
             tex_node.image.colorspace_settings.name = 'Filmic Log'
