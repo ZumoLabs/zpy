@@ -14,6 +14,32 @@ log = logging.getLogger(__name__)
 
 
 @gin.configurable
+def add_vertex_color_aov_output_nodes(
+    mat: bpy.types.Material,
+    style: str = 'default',
+) -> None:
+    """ Add vertex color nodes to an object. """
+    bsdf_node = mat.node_tree.nodes['Principled BSDF']
+    vertexcolor_node = mat.node_tree.nodes.new('ShaderNodeVertexColor')
+    vertexcolor_node.layer_name = style
+    aovoutput_node = mat.node_tree.nodes.new('ShaderNodeOutputAOV')
+    aovoutput_node.name = style
+    aovoutput_node.inputs['Color'] = vertexcolor_node.outputs['Color']
+
+
+@gin.configurable
+def add_vertex_colors(
+    obj: bpy.types.Object,
+    style: str = 'category',
+):
+    if obj.type == 'MESH':
+        zpy.mesh.createVcolLayer(obj, style)
+    # Recursively add vertex colors on all children of object
+    for child in obj.children:
+        add_vertex_colors(child)
+
+
+@gin.configurable
 def make_mat(name: str = None,
              style: str = 'segmentation',
              color: Union[Tuple[float], str] = None,

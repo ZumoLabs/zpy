@@ -1,3 +1,5 @@
 numpy
 gin-config
 versioneer
+scikit-image
+shapely
