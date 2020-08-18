@@ -59,24 +59,24 @@ def _make_aov_output_node(
     style: str = 'default',
 ) -> bpy.types.CompositorNodeOutputFile:
     """ Make AOV Output nodes in Composition Graph. """
-    
+
     # Only certain styles are available
     valid_styles = ['rgb', 'depth', 'instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
-    
+
     # Render layer node (bpy.types.CompositorNodeRLayers)
     rl_node = bpy.context.scene.node_tree.nodes['Render Layers']
     assert rl_node.outputs.get(style, None) is not None, \
         f'Render Layer output {style} does not exist.'
     _tree = bpy.context.scene.node_tree
-    
+
     # Visualize node shows image in workspace
     if log.getEffectiveLevel() == logging.DEBUG:
         view_node = _tree.nodes.new('CompositorNodeViewer')
         view_node.inputs['Image'] = rl_node.outputs[style]
         view_node.name = f'{style} viewer'
-    
+
     # File output node renders out image
     log.debug(f'Making AOV output node for {style}')
     fileout_node = _tree.nodes.new('CompositorNodeOutputFile')
@@ -100,49 +100,51 @@ def render_aov(
     scene = bpy.context.scene
     scene.render.resolution_x = width
     scene.render.resolution_y = height
-    
+
     # Adjust some render settings
     scene.render.threads = threads
     scene.render.image_settings.file_format = 'PNG'
-    scene.view_settings.view_transform = 'Raw'
+    # scene.view_settings.view_transform = 'Raw'
     scene.render.dither_intensity = 0.
     scene.render.film_transparent = False
-    
+
     # HACK: Prevents adding frame number to filename
     scene.frame_end = scene.frame_current
     scene.frame_start = scene.frame_current
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
 
-    scene.cycles.samples = 1
-    scene.cycles.diffuse_bounces = 0
-    scene.cycles.diffuse_samples = 0
-    scene.cycles.max_bounces = 0
-    scene.cycles.bake_type = 'EMIT'
-    scene.cycles.use_adaptive_sampling = False
-    scene.cycles.use_denoising = False
-        
+    # scene.cycles.samples = 1
+    # scene.cycles.diffuse_bounces = 0
+    # scene.cycles.diffuse_samples = 0
+    # scene.cycles.max_bounces = 0
+    # scene.cycles.bake_type = 'EMIT'
+    # scene.cycles.use_adaptive_sampling = False
+    # scene.cycles.use_denoising = False
+
     # Create AOV output nodes
     render_outputs = {
-        'rgb' : rgb_path,
-        'instance' : iseg_path,
-        'category' : cseg_path,
+        'rgb': rgb_path,
+        'instance': iseg_path,
+        'category': cseg_path,
     }
     for style, output_path in render_outputs.items():
         log.debug(f'here {style}')
         if output_path is not None:
-            output_node = bpy.context.scene.node_tree.nodes.get(f'{style} output', None)
+            output_node = bpy.context.scene.node_tree.nodes.get(
+                f'{style} output', None)
             if output_node is None:
                 output_node = _make_aov_output_node(style=style)
             log.debug(f'here 2 {style}')
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
             output_node.format.color_mode = 'RGB'
-            output_node.format.color_depth = '16'
+            output_node.format.color_depth = '8'
             output_node.format.file_format = 'PNG'
-            # output_node.format.use_zbuffer=True,
+            output_node.format.use_zbuffer = True
             output_node.format.view_settings.view_transform = 'Raw'
-            log.debug(f'Output node for {style} image pointing to {str(output_path)}')
+            log.debug(
+                f'Output node for {style} image pointing to {str(output_path)}')
 
     # Printout render time
     start_time = time.time()
