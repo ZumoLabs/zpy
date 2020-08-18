@@ -5,7 +5,7 @@ import logging
 import os
 import time
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 
 import zpy
 
@@ -29,6 +29,23 @@ def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
         return
     for child in obj.children:
         toggle_hidden(child, hidden)
+
+
+def prepare_aov_scene(
+    styles: List[str],
+):
+    """ Prepare scene for output using AOV nodes. """
+
+    for style in styles:
+
+        # Make AOV Pass
+        _make_aov_pass()
+
+        # Add AOV node to every material in the scene
+        for obj in bpy.data.objects:
+            pass
+
+        # Add Output nodes to the scene composition
 
 
 @gin.configurable
@@ -55,8 +72,8 @@ def _make_aov_pass(
 
 @gin.configurable
 def _make_aov_output_node(
-    output_path: Union[str, Path] = None,
     style: str = 'default',
+    output_path: Union[str, Path] = None,
 ) -> bpy.types.CompositorNodeOutputFile:
     """ Make AOV Output nodes in Composition Graph. """
 
@@ -64,6 +81,12 @@ def _make_aov_output_node(
     valid_styles = ['rgb', 'depth', 'instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
+
+    # HACK: Some styles have specific output node names
+    if style == 'rgb':
+        style = 'Image'
+    if style == 'depth':
+        style = 'Depth'
 
     # Render layer node (bpy.types.CompositorNodeRLayers)
     rl_node = bpy.context.scene.node_tree.nodes['Render Layers']
