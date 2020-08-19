@@ -68,6 +68,11 @@ def frgb_to_hex(frgb: Tuple[float]) -> str:
     return irgb_to_hex(frgb_to_irgb(frgb))
 
 
+def frgb_to_srgba(frgb: Tuple[float], a=1.0) -> Tuple[float]:
+    """ Convert float rgb (0 to 1) to the gamma-corrected sRGBA float (0 to 1). """
+    return frgb[0]**(1/2.2), frgb[1]**(1/2.2), frgb[2]**(1/2.2), a
+
+
 def _output_style(name: str, hex: str, output_style: str) -> Union[Tuple[float, int, str], str]:
     """ Convert hex to an output style. """
     if output_style == 'frgb':
