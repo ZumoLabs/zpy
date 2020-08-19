@@ -151,13 +151,12 @@ def make_aov_file_output_node(
         f'Render Layer output {style} does not exist.'
 
     # Visualize node shows image in workspace
-    if log.getEffectiveLevel() == logging.DEBUG:
-        _name = f'{style} viewer'
-        view_node = _tree.nodes.get(_name)
-        if view_node is None:
-            view_node = _tree.nodes.new('CompositorNodeViewer')
-        view_node.name = _name
-        _tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
+    _name = f'{style} viewer'
+    view_node = _tree.nodes.get(_name)
+    if view_node is None:
+        view_node = _tree.nodes.new('CompositorNodeViewer')
+    view_node.name = _name
+    _tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
 
     # File output node renders out image
     _name = f'{style} output'
@@ -188,7 +187,7 @@ def render_aov(
     # Adjust some render settings
     scene.render.threads = threads
     scene.render.image_settings.file_format = 'PNG'
-    # scene.view_settings.view_transform = 'Raw'
+    scene.view_settings.view_transform = 'Raw'
     scene.render.dither_intensity = 0.
     scene.render.film_transparent = False
 
@@ -225,7 +224,7 @@ def render_aov(
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
             output_node.format.color_mode = 'RGB'
-            output_node.format.color_depth = '8'
+            output_node.format.color_depth = '16'
             output_node.format.file_format = 'PNG'
             output_node.format.use_zbuffer = True
             output_node.format.view_settings.view_transform = 'Raw'
