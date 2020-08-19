@@ -35,47 +35,96 @@ def prepare_aov_scene(
     styles: List[str],
 ):
     """ Prepare scene for output using AOV nodes. """
-
     for style in styles:
-
         # Make AOV Pass
-        _make_aov_pass()
-
+        make_aov_pass(style)
         # Add AOV node to every material in the scene
         for obj in bpy.data.objects:
-            pass
-
-        # Add Output nodes to the scene composition
+            make_aov_material_output_node(obj, style=style)
 
 
 @gin.configurable
-def _make_aov_pass(
+def make_aov_pass(
     style: str = 'instance',
 ):
     """ Make AOV pass in Cycles. """
-    assert bpy.context.scene.render.engine == "CYCLES", \
-        'Render engine must be set to CYCLES when using AOV'
-
+    # Make sure engine is set to Cycles
+    if not (bpy.context.scene.render.engine == "CYCLES"):
+        log.warning(' Setting render engine to CYCLES to use AOV')
+        bpy.context.scene.render.engine == "CYCLES"
     # Only certain styles are available
     valid_styles = ['instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
-
     # Go through existing passes and make sure it doesn't exist before creating
-    for aov in bpy.context.view_layer['cycles']['aovs']:
-        if aov['name'] == style:
-            log.debug(f'AOV pass for {style} already exists.')
-            return
+    if bpy.context.view_layer['cycles'].get('aov', None) is not None:
+        for aov in bpy.context.view_layer['cycles']['aovs']:
+            if aov['name'] == style:
+                log.debug(f'AOV pass for {style} already exists.')
+                return
     bpy.ops.cycles.add_aov()
     bpy.context.view_layer['cycles']['aovs'][-1]['name'] = style
 
 
 @gin.configurable
-def _make_aov_output_node(
-    style: str = 'default',
-    output_path: Union[str, Path] = None,
+def make_aov_material_output_node(
+    obj: bpy.types.Object,
+    style: str = 'instance',
+) -> None:
+    """ Make AOV Output nodes in Composition Graph. """
+    # Make sure engine is set to Cycles
+    if not (bpy.context.scene.render.engine == "CYCLES"):
+        log.warning(' Setting render engine to CYCLES to use AOV')
+        bpy.context.scene.render.engine == "CYCLES"
+    # Only certain styles are available
+    valid_styles = ['instance', 'category']
+    assert style in valid_styles, \
+        f'Invalid style {style} for AOV material output node, must be in {valid_styles}.'
+
+    # Make sure object has an active material
+    if obj.active_material is None:
+        log.debug(f'No active material found for {obj.name}')
+        return
+    _tree = obj.active_material.node_tree
+
+    # Vertex Color Node
+    _name = f'{style} Vertex Color'
+    vertexcolor_node = _tree.nodes.get(_name)
+    if vertexcolor_node is None:
+        vertexcolor_node = _tree.nodes.new('ShaderNodeVertexColor')
+    vertexcolor_node.layer_name = style
+    vertexcolor_node.name = _name
+
+    # Gamma Correction Node
+    _name = f'{style} Gamma'
+    gamma_node = _tree.nodes.get(_name)
+    if gamma_node is None:
+        gamma_node = _tree.nodes.new('ShaderNodeGamma')
+    gamma_node.inputs['Gamma'].default_value = (1/2.2)
+    gamma_node.name = _name
+    _tree.links.new(
+        vertexcolor_node.outputs['Color'], gamma_node.inputs['Color'])
+
+    # AOV Output Node
+    _name = style
+    # HACK: property "name" of ShaderNodeOutputAOV behaves strangely with .get()
+    aovoutput_node = None
+    for _node in _tree.nodes:
+        if _node.name == _name:
+            aovoutput_node = _node
+    if aovoutput_node is None:
+        aovoutput_node = _tree.nodes.new('ShaderNodeOutputAOV')
+    aovoutput_node.name = style
+    _tree.links.new(gamma_node.outputs['Color'],
+                    aovoutput_node.inputs['Color'])
+
+
+@gin.configurable
+def make_aov_file_output_node(
+    style: str = 'rgb',
 ) -> bpy.types.CompositorNodeOutputFile:
     """ Make AOV Output nodes in Composition Graph. """
+    log.debug(f'Making AOV output node for {style}')
 
     # Only certain styles are available
     valid_styles = ['rgb', 'depth', 'instance', 'category']
@@ -88,24 +137,36 @@ def _make_aov_output_node(
     if style == 'depth':
         style = 'Depth'
 
-    # Render layer node (bpy.types.CompositorNodeRLayers)
-    rl_node = bpy.context.scene.node_tree.nodes['Render Layers']
+    # Make sure scene composition is using nodes
+    if not bpy.context.scene.use_nodes:
+        bpy.context.scene.use_nodes = True
+    _tree = bpy.context.scene.node_tree
+
+    # Get or create render layer node
+    if _tree.nodes.get('Render Layers', None) is None:
+        rl_node = _tree.nodes.new('CompositorNodeRLayers')
+    else:
+        rl_node = _tree.nodes['Render Layers']
     assert rl_node.outputs.get(style, None) is not None, \
         f'Render Layer output {style} does not exist.'
-    _tree = bpy.context.scene.node_tree
 
     # Visualize node shows image in workspace
     if log.getEffectiveLevel() == logging.DEBUG:
-        view_node = _tree.nodes.new('CompositorNodeViewer')
-        view_node.inputs['Image'] = rl_node.outputs[style]
-        view_node.name = f'{style} viewer'
+        _name = f'{style} viewer'
+        view_node = _tree.nodes.get(_name)
+        if view_node is None:
+            view_node = _tree.nodes.new('CompositorNodeViewer')
+        view_node.name = _name
+        _tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
 
     # File output node renders out image
-    log.debug(f'Making AOV output node for {style}')
-    fileout_node = _tree.nodes.new('CompositorNodeOutputFile')
-    fileout_node.inputs['Image'] = rl_node.outputs[style]
-    fileout_node.name = f'{style} output'
+    _name = f'{style} output'
+    fileout_node = _tree.nodes.get(_name)
+    if fileout_node is None:
+        fileout_node = _tree.nodes.new('CompositorNodeOutputFile')
+    fileout_node.name = _name
     fileout_node.mute = False
+    _tree.links.new(rl_node.outputs[style], fileout_node.inputs['Image'])
     return fileout_node
 
 
@@ -154,10 +215,12 @@ def render_aov(
     for style, output_path in render_outputs.items():
         log.debug(f'here {style}')
         if output_path is not None:
+            if not bpy.context.scene.use_nodes:
+                bpy.context.scene.use_nodes = True
             output_node = bpy.context.scene.node_tree.nodes.get(
                 f'{style} output', None)
             if output_node is None:
-                output_node = _make_aov_output_node(style=style)
+                output_node = make_aov_file_output_node(style=style)
             log.debug(f'here 2 {style}')
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
