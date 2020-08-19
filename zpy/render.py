@@ -149,6 +149,11 @@ def make_aov_file_output_node(
         rl_node = _tree.nodes['Render Layers']
     assert rl_node.outputs.get(style, None) is not None, \
         f'Render Layer output {style} does not exist.'
+        
+    # Remove Composite Node if it exists
+    composite_node = _tree.nodes.get('Composite')
+    if composite_node is not None:
+        _tree.nodes.remove(composite_node)
 
     # Visualize node shows image in workspace
     _name = f'{style} viewer'
