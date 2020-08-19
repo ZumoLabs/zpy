@@ -116,6 +116,7 @@ def make_aov_material_output_node(
         aovoutput_node = _tree.nodes.new('ShaderNodeOutputAOV')
     aovoutput_node.name = style
     _tree.links.new(gamma_node.outputs['Color'],
+    # _tree.links.new(vertexcolor_node.outputs['Color'],
                     aovoutput_node.inputs['Color'])
 
 
@@ -149,7 +150,7 @@ def make_aov_file_output_node(
         rl_node = _tree.nodes['Render Layers']
     assert rl_node.outputs.get(style, None) is not None, \
         f'Render Layer output {style} does not exist.'
-        
+
     # Remove Composite Node if it exists
     composite_node = _tree.nodes.get('Composite')
     if composite_node is not None:
