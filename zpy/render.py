@@ -95,15 +95,15 @@ def make_aov_material_output_node(
     vertexcolor_node.layer_name = style
     vertexcolor_node.name = _name
 
-    # Gamma Correction Node
-    _name = f'{style} Gamma'
-    gamma_node = _tree.nodes.get(_name)
-    if gamma_node is None:
-        gamma_node = _tree.nodes.new('ShaderNodeGamma')
-    gamma_node.inputs['Gamma'].default_value = (1/2.2)
-    gamma_node.name = _name
-    _tree.links.new(
-        vertexcolor_node.outputs['Color'], gamma_node.inputs['Color'])
+    # # Gamma Correction Node
+    # _name = f'{style} Gamma'
+    # gamma_node = _tree.nodes.get(_name)
+    # if gamma_node is None:
+    #     gamma_node = _tree.nodes.new('ShaderNodeGamma')
+    # gamma_node.inputs['Gamma'].default_value = (1/2.2)
+    # gamma_node.name = _name
+    # _tree.links.new(
+    #     vertexcolor_node.outputs['Color'], gamma_node.inputs['Color'])
 
     # AOV Output Node
     _name = style
@@ -115,8 +115,8 @@ def make_aov_material_output_node(
     if aovoutput_node is None:
         aovoutput_node = _tree.nodes.new('ShaderNodeOutputAOV')
     aovoutput_node.name = style
-    _tree.links.new(gamma_node.outputs['Color'],
-    # _tree.links.new(vertexcolor_node.outputs['Color'],
+    # _tree.links.new(gamma_node.outputs['Color'],
+    _tree.links.new(vertexcolor_node.outputs['Color'],
                     aovoutput_node.inputs['Color'])
 
 
@@ -192,8 +192,8 @@ def render_aov(
 
     # Adjust some render settings
     scene.render.threads = threads
-    scene.render.image_settings.file_format = 'PNG'
-    scene.view_settings.view_transform = 'Raw'
+    #scene.render.image_settings.file_format = 'PNG'
+    #scene.view_settings.view_transform = 'Raw'
     scene.render.dither_intensity = 0.
     scene.render.film_transparent = False
 
@@ -229,10 +229,11 @@ def render_aov(
             log.debug(f'here 2 {style}')
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
-            output_node.format.color_mode = 'RGB'
-            output_node.format.color_depth = '16'
+            # output_node.format.color_mode = 'RGB'
+            # output_node.format.color_depth = '8'
             output_node.format.file_format = 'PNG'
             output_node.format.use_zbuffer = True
+            # output_node.format.use_alpha = False
             output_node.format.view_settings.view_transform = 'Raw'
             log.debug(
                 f'Output node for {style} image pointing to {str(output_path)}')

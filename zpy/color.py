@@ -133,7 +133,7 @@ def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], st
 
 def closest_color(color: Tuple[float],
                   colors: List[Tuple[float]],
-                  max_cube_dist: float = 10,
+                  max_cube_dist: float = 1000,
                   ) -> Union[None, Tuple[float]]:
     """ Get the index of the closest color in a list to the input color. """
     color = frgb_to_hex(color)
