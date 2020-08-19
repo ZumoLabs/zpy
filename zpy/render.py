@@ -40,7 +40,7 @@ def prepare_aov_scene(
         make_aov_pass(style)
         # Add AOV node to every material in the scene
         for obj in bpy.data.objects:
-            make_aov_material_output_node(obj, style=style)
+            zpy.material.make_aov_material_output_node(obj, style=style)
 
 
 @gin.configurable
@@ -64,60 +64,6 @@ def make_aov_pass(
                 return
     bpy.ops.cycles.add_aov()
     bpy.context.view_layer['cycles']['aovs'][-1]['name'] = style
-
-
-@gin.configurable
-def make_aov_material_output_node(
-    obj: bpy.types.Object,
-    style: str = 'instance',
-) -> None:
-    """ Make AOV Output nodes in Composition Graph. """
-    # Make sure engine is set to Cycles
-    if not (bpy.context.scene.render.engine == "CYCLES"):
-        log.warning(' Setting render engine to CYCLES to use AOV')
-        bpy.context.scene.render.engine == "CYCLES"
-    # Only certain styles are available
-    valid_styles = ['instance', 'category']
-    assert style in valid_styles, \
-        f'Invalid style {style} for AOV material output node, must be in {valid_styles}.'
-
-    # Make sure object has an active material
-    if obj.active_material is None:
-        log.debug(f'No active material found for {obj.name}')
-        return
-    _tree = obj.active_material.node_tree
-
-    # Vertex Color Node
-    _name = f'{style} Vertex Color'
-    vertexcolor_node = _tree.nodes.get(_name)
-    if vertexcolor_node is None:
-        vertexcolor_node = _tree.nodes.new('ShaderNodeVertexColor')
-    vertexcolor_node.layer_name = style
-    vertexcolor_node.name = _name
-
-    # # Gamma Correction Node
-    # _name = f'{style} Gamma'
-    # gamma_node = _tree.nodes.get(_name)
-    # if gamma_node is None:
-    #     gamma_node = _tree.nodes.new('ShaderNodeGamma')
-    # gamma_node.inputs['Gamma'].default_value = (1/2.2)
-    # gamma_node.name = _name
-    # _tree.links.new(
-    #     vertexcolor_node.outputs['Color'], gamma_node.inputs['Color'])
-
-    # AOV Output Node
-    _name = style
-    # HACK: property "name" of ShaderNodeOutputAOV behaves strangely with .get()
-    aovoutput_node = None
-    for _node in _tree.nodes:
-        if _node.name == _name:
-            aovoutput_node = _node
-    if aovoutput_node is None:
-        aovoutput_node = _tree.nodes.new('ShaderNodeOutputAOV')
-    aovoutput_node.name = style
-    # _tree.links.new(gamma_node.outputs['Color'],
-    _tree.links.new(vertexcolor_node.outputs['Color'],
-                    aovoutput_node.inputs['Color'])
 
 
 @gin.configurable
