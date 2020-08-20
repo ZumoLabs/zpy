@@ -35,6 +35,10 @@ def make_aov_material_output_node(
             log.debug(f'No active material found for {obj.name}')
             return
         mat = obj.active_material
+        
+    # Make sure material is using nodes
+    if not mat.use_nodes:
+        mat.use_nodes = True
     _tree = mat.node_tree
 
     # Vertex Color Node
