@@ -176,6 +176,8 @@ def render_aov(
     scene.render.use_stamp_frame = False
 
     # HACK: This causes edges of segmentation to be weird
+    # scene.cycles.pixel_filter_type = 'BLACKMAN_HARRIS'
+    # scene.cycles.filter_width = 0.01
     scene.cycles.samples = 1
 
     # Create AOV output nodes
