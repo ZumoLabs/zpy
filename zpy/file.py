@@ -162,7 +162,7 @@ def verify_path(path: Union[str, Path],
     return path
 
 
-def write_json(path: Union[str, Path], data: Dict) -> None:
+def write_json(path: Union[str, Path], data: Union[Dict, List]) -> None:
     """ Save data to path """
     path = to_pathlib_path(path)
     log.info(f'Writing JSON to file {path}')
@@ -170,7 +170,7 @@ def write_json(path: Union[str, Path], data: Dict) -> None:
         json.dump(data, f, indent=4)
 
 
-def read_json(path: Union[str, Path]) -> Dict:
+def read_json(path: Union[str, Path]) -> Union[Dict, List]:
     """ Read data from path """
     path = to_pathlib_path(path)
     log.info(f'Reading JSON file at {path}')
