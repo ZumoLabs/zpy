@@ -13,13 +13,14 @@ log = logging.getLogger(__name__)
 
 # Random colors are loaded on module import
 RANDOM_COLOR_IDX = 1
+COLORS_FILE = 'colors_discrete.json'
 COLORS = None
 
 
 def reset():
     """ Load colors from file and reset random idx. """
     global COLORS, RANDOM_COLOR_IDX
-    _path = Path(__file__).parent / 'colors.json'
+    _path = Path(__file__).parent / COLORS_FILE
     file.verify_path(_path)
     COLORS = file.read_json(_path)
     RANDOM_COLOR_IDX = 1
