@@ -15,7 +15,8 @@ log = logging.getLogger(__name__)
 
 @gin.configurable
 def make_aov_material_output_node(
-    obj: bpy.types.Object,
+    mat: bpy.types.Material = None,
+    obj: bpy.types.Object = None,
     style: str = 'instance',
 ) -> None:
     """ Make AOV Output nodes in Composition Graph. """
@@ -28,11 +29,13 @@ def make_aov_material_output_node(
     assert style in valid_styles, \
         f'Invalid style {style} for AOV material output node, must be in {valid_styles}.'
 
-    # Make sure object has an active material
-    if obj.active_material is None:
-        log.debug(f'No active material found for {obj.name}')
-        return
-    _tree = obj.active_material.node_tree
+    # Use material or get it from object
+    if (mat is None) and (obj is not None):
+        if obj.active_material is None:
+            log.debug(f'No active material found for {obj.name}')
+            return
+        mat = obj.active_material
+    _tree = mat.node_tree
 
     # Vertex Color Node
     _name = f'{style} Vertex Color'

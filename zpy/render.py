@@ -40,7 +40,7 @@ def prepare_aov_scene(
         make_aov_pass(style)
         # Add AOV node to every material in the scene
         for obj in bpy.data.objects:
-            zpy.material.make_aov_material_output_node(obj, style=style)
+            zpy.material.make_aov_material_output_node(obj=obj, style=style)
 
 
 @gin.configurable
@@ -124,6 +124,7 @@ def make_aov_file_output_node(
 @gin.configurable
 def render_aov(
     rgb_path: Union[str, Path] = None,
+    depth_path: Union[str, Path] = None,
     iseg_path: Union[str, Path] = None,
     cseg_path: Union[str, Path] = None,
     width: int = 480,
@@ -138,8 +139,8 @@ def render_aov(
 
     # Adjust some render settings
     scene.render.threads = threads
-    #scene.render.image_settings.file_format = 'PNG'
-    #scene.view_settings.view_transform = 'Raw'
+    # scene.render.image_settings.file_format = 'PNG'
+    # scene.view_settings.view_transform = 'Raw'
     scene.render.dither_intensity = 0.
     scene.render.film_transparent = False
 
@@ -149,22 +150,17 @@ def render_aov(
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
 
-    # scene.cycles.samples = 1
-    # scene.cycles.diffuse_bounces = 0
-    # scene.cycles.diffuse_samples = 0
-    # scene.cycles.max_bounces = 0
-    # scene.cycles.bake_type = 'EMIT'
-    # scene.cycles.use_adaptive_sampling = False
-    # scene.cycles.use_denoising = False
+    # HACK: This causes edges of segmentation to be weird
+    scene.cycles.samples = 1
 
     # Create AOV output nodes
     render_outputs = {
         'rgb': rgb_path,
+        'depth': depth_path,
         'instance': iseg_path,
         'category': cseg_path,
     }
     for style, output_path in render_outputs.items():
-        log.debug(f'here {style}')
         if output_path is not None:
             if not bpy.context.scene.use_nodes:
                 bpy.context.scene.use_nodes = True
@@ -172,21 +168,22 @@ def render_aov(
                 f'{style} output', None)
             if output_node is None:
                 output_node = make_aov_file_output_node(style=style)
-            log.debug(f'here 2 {style}')
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
             # output_node.format.color_mode = 'RGB'
             # output_node.format.color_depth = '8'
-            output_node.format.file_format = 'PNG'
             output_node.format.use_zbuffer = True
-            # output_node.format.use_alpha = False
-            output_node.format.view_settings.view_transform = 'Raw'
+            output_node.format.file_format = 'PNG'
+            # output_node.format.view_settings.view_transform = 'Raw'
             log.debug(
                 f'Output node for {style} image pointing to {str(output_path)}')
 
     # Printout render time
     start_time = time.time()
-    bpy.ops.render.render(write_still=True)
+    try:
+        bpy.ops.render.render(write_still=True)
+    except Exception as e:
+        log.warning(f'Render raised exception {e}')
     duration = time.time() - start_time
     log.info(f'Rendering took {duration}s to complete.')
 
