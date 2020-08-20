@@ -19,4 +19,5 @@ setup(
       author_email='infra@zumolabs.ai',
       packages=find_packages(),
       install_requires=get_requirements_from_file('requirements.txt'),
+      include_package_data=True,
 )
