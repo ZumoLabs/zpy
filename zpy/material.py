@@ -14,29 +14,53 @@ log = logging.getLogger(__name__)
 
 
 @gin.configurable
-def add_vertex_color_aov_output_nodes(
-    mat: bpy.types.Material,
-    style: str = 'default',
+def make_aov_material_output_node(
+    mat: bpy.types.Material = None,
+    obj: bpy.types.Object = None,
+    style: str = 'instance',
 ) -> None:
-    """ Add vertex color nodes to an object. """
-    bsdf_node = mat.node_tree.nodes['Principled BSDF']
-    vertexcolor_node = mat.node_tree.nodes.new('ShaderNodeVertexColor')
+    """ Make AOV Output nodes in Composition Graph. """
+    # Make sure engine is set to Cycles
+    if not (bpy.context.scene.render.engine == "CYCLES"):
+        log.warning(' Setting render engine to CYCLES to use AOV')
+        bpy.context.scene.render.engine == "CYCLES"
+    # Only certain styles are available
+    valid_styles = ['instance', 'category']
+    assert style in valid_styles, \
+        f'Invalid style {style} for AOV material output node, must be in {valid_styles}.'
+
+    # Use material or get it from object
+    if (mat is None) and (obj is not None):
+        if obj.active_material is None:
+            log.debug(f'No active material found for {obj.name}')
+            return
+        mat = obj.active_material
+        
+    # Make sure material is using nodes
+    if not mat.use_nodes:
+        mat.use_nodes = True
+    _tree = mat.node_tree
+
+    # Vertex Color Node
+    _name = f'{style} Vertex Color'
+    vertexcolor_node = _tree.nodes.get(_name)
+    if vertexcolor_node is None:
+        vertexcolor_node = _tree.nodes.new('ShaderNodeVertexColor')
     vertexcolor_node.layer_name = style
-    aovoutput_node = mat.node_tree.nodes.new('ShaderNodeOutputAOV')
+    vertexcolor_node.name = _name
+
+    # AOV Output Node
+    _name = style
+    # HACK: property "name" of ShaderNodeOutputAOV behaves strangely with .get()
+    aovoutput_node = None
+    for _node in _tree.nodes:
+        if _node.name == _name:
+            aovoutput_node = _node
+    if aovoutput_node is None:
+        aovoutput_node = _tree.nodes.new('ShaderNodeOutputAOV')
     aovoutput_node.name = style
-    aovoutput_node.inputs['Color'] = vertexcolor_node.outputs['Color']
-
-
-@gin.configurable
-def add_vertex_colors(
-    obj: bpy.types.Object,
-    style: str = 'category',
-):
-    if obj.type == 'MESH':
-        zpy.mesh.createVcolLayer(obj, style)
-    # Recursively add vertex colors on all children of object
-    for child in obj.children:
-        add_vertex_colors(child)
+    _tree.links.new(vertexcolor_node.outputs['Color'],
+                    aovoutput_node.inputs['Color'])
 
 
 @gin.configurable

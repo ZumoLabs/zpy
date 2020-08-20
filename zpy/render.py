@@ -5,7 +5,7 @@ import logging
 import os
 import time
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 
 import zpy
 
@@ -31,64 +31,125 @@ def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
         toggle_hidden(child, hidden)
 
 
+def prepare_aov_scene(
+    styles: List[str],
+):
+    """ Prepare scene for output using AOV nodes. """
+    for style in styles:
+        # Make AOV Pass
+        make_aov_pass(style)
+        # Add AOV node to every material in the scene
+        for obj in bpy.data.objects:
+            zpy.material.make_aov_material_output_node(obj=obj, style=style)
+
+
 @gin.configurable
-def _make_aov_pass(
+def make_aov_pass(
     style: str = 'instance',
 ):
     """ Make AOV pass in Cycles. """
-    assert bpy.context.scene.render.engine == "CYCLES", \
-        'Render engine must be set to CYCLES when using AOV'
-
+    # Make sure engine is set to Cycles
+    if not (bpy.context.scene.render.engine == "CYCLES"):
+        log.warning(' Setting render engine to CYCLES to use AOV')
+        bpy.context.scene.render.engine == "CYCLES"
     # Only certain styles are available
     valid_styles = ['instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
-
     # Go through existing passes and make sure it doesn't exist before creating
-    for aov in bpy.context.view_layer['cycles']['aovs']:
-        if aov['name'] == style:
-            log.debug(f'AOV pass for {style} already exists.')
-            return
+    if bpy.context.view_layer['cycles'].get('aov', None) is not None:
+        for aov in bpy.context.view_layer['cycles']['aovs']:
+            if aov['name'] == style:
+                log.debug(f'AOV pass for {style} already exists.')
+                return
     bpy.ops.cycles.add_aov()
     bpy.context.view_layer['cycles']['aovs'][-1]['name'] = style
 
 
 @gin.configurable
-def _make_aov_output_node(
-    output_path: Union[str, Path] = None,
-    style: str = 'default',
+def make_aov_file_output_node(
+    style: str = 'rgb',
 ) -> bpy.types.CompositorNodeOutputFile:
     """ Make AOV Output nodes in Composition Graph. """
-    
+    log.debug(f'Making AOV output node for {style}')
+
     # Only certain styles are available
     valid_styles = ['rgb', 'depth', 'instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
-    
-    # Render layer node (bpy.types.CompositorNodeRLayers)
-    rl_node = bpy.context.scene.node_tree.nodes['Render Layers']
+
+    # HACK: Some styles have specific output node names
+    if style == 'rgb':
+        style = 'Image'
+    if style == 'depth':
+        style = 'Depth'
+
+    # Make sure scene composition is using nodes
+    if not bpy.context.scene.use_nodes:
+        bpy.context.scene.use_nodes = True
+    _tree = bpy.context.scene.node_tree
+
+    # Get or create render layer node
+    if _tree.nodes.get('Render Layers', None) is None:
+        rl_node = _tree.nodes.new('CompositorNodeRLayers')
+    else:
+        rl_node = _tree.nodes['Render Layers']
     assert rl_node.outputs.get(style, None) is not None, \
         f'Render Layer output {style} does not exist.'
-    _tree = bpy.context.scene.node_tree
-    
+
+    # Remove Composite Node if it exists
+    composite_node = _tree.nodes.get('Composite')
+    if composite_node is not None:
+        _tree.nodes.remove(composite_node)
+
     # Visualize node shows image in workspace
-    if log.getEffectiveLevel() == logging.DEBUG:
+    _name = f'{style} viewer'
+    view_node = _tree.nodes.get(_name)
+    if view_node is None:
         view_node = _tree.nodes.new('CompositorNodeViewer')
-        view_node.inputs['Image'] = rl_node.outputs[style]
-        view_node.name = f'{style} viewer'
-    
+    view_node.name = _name
+
     # File output node renders out image
-    log.debug(f'Making AOV output node for {style}')
-    fileout_node = _tree.nodes.new('CompositorNodeOutputFile')
-    fileout_node.inputs['Image'] = rl_node.outputs[style]
-    fileout_node.name = f'{style} output'
+    _name = f'{style} output'
+    fileout_node = _tree.nodes.get(_name)
+    if fileout_node is None:
+        fileout_node = _tree.nodes.new('CompositorNodeOutputFile')
+    fileout_node.name = _name
     fileout_node.mute = False
+
+    # HACK: Depth requires normalization node between layer and output
+    if style in ['Depth', 'depth']:
+        # Normalization node for viewer
+        _name_viewer = f'{style} normalize viewer'
+        norm_node_viewer = _tree.nodes.get(_name_viewer)
+        if norm_node_viewer is None:
+            norm_node_viewer = _tree.nodes.new('CompositorNodeNormalize')
+        norm_node_viewer.name = _name_viewer
+        
+        # Normalization node for fileout
+        _name_fileout = f'{style} normalize fileout'
+        norm_node_fileout = _tree.nodes.get(_name_fileout)
+        if norm_node_fileout is None:
+            norm_node_fileout = _tree.nodes.new('CompositorNodeNormalize')
+        norm_node_fileout.name = _name_fileout
+
+        # Link up the nodes
+        _tree.links.new(rl_node.outputs[style], norm_node_viewer.inputs[0])
+        _tree.links.new(rl_node.outputs[style], norm_node_fileout.inputs[0])
+        _tree.links.new(norm_node_viewer.outputs[0], view_node.inputs['Image'])
+        _tree.links.new(
+            norm_node_fileout.outputs[0], fileout_node.inputs['Image'])
+    else:
+        _tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
+        _tree.links.new(rl_node.outputs[style], fileout_node.inputs['Image'])
+
     return fileout_node
 
 
 @gin.configurable
 def render_aov(
     rgb_path: Union[str, Path] = None,
+    depth_path: Union[str, Path] = None,
     iseg_path: Union[str, Path] = None,
     cseg_path: Union[str, Path] = None,
     width: int = 480,
@@ -100,53 +161,56 @@ def render_aov(
     scene = bpy.context.scene
     scene.render.resolution_x = width
     scene.render.resolution_y = height
-    
+
     # Adjust some render settings
     scene.render.threads = threads
-    scene.render.image_settings.file_format = 'PNG'
-    scene.view_settings.view_transform = 'Raw'
+    # scene.render.image_settings.file_format = 'PNG'
+    # scene.view_settings.view_transform = 'Raw'
     scene.render.dither_intensity = 0.
     scene.render.film_transparent = False
-    
+
     # HACK: Prevents adding frame number to filename
     scene.frame_end = scene.frame_current
     scene.frame_start = scene.frame_current
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
 
+    # HACK: This causes edges of segmentation to be weird
+    # scene.cycles.pixel_filter_type = 'BLACKMAN_HARRIS'
+    # scene.cycles.filter_width = 0.01
     scene.cycles.samples = 1
-    scene.cycles.diffuse_bounces = 0
-    scene.cycles.diffuse_samples = 0
-    scene.cycles.max_bounces = 0
-    scene.cycles.bake_type = 'EMIT'
-    scene.cycles.use_adaptive_sampling = False
-    scene.cycles.use_denoising = False
-        
+
     # Create AOV output nodes
     render_outputs = {
-        'rgb' : rgb_path,
-        'instance' : iseg_path,
-        'category' : cseg_path,
+        'rgb': rgb_path,
+        'depth': depth_path,
+        'instance': iseg_path,
+        'category': cseg_path,
     }
     for style, output_path in render_outputs.items():
-        log.debug(f'here {style}')
         if output_path is not None:
-            output_node = bpy.context.scene.node_tree.nodes.get(f'{style} output', None)
+            if not bpy.context.scene.use_nodes:
+                bpy.context.scene.use_nodes = True
+            output_node = bpy.context.scene.node_tree.nodes.get(
+                f'{style} output', None)
             if output_node is None:
-                output_node = _make_aov_output_node(style=style)
-            log.debug(f'here 2 {style}')
+                output_node = make_aov_file_output_node(style=style)
             output_node.base_path = str(output_path.parent)
             output_node.file_slots[0].path = str(output_path.name)
-            output_node.format.color_mode = 'RGB'
-            output_node.format.color_depth = '16'
+            # output_node.format.color_mode = 'RGB'
+            # output_node.format.color_depth = '8'
+            output_node.format.use_zbuffer = True
             output_node.format.file_format = 'PNG'
-            # output_node.format.use_zbuffer=True,
-            output_node.format.view_settings.view_transform = 'Raw'
-            log.debug(f'Output node for {style} image pointing to {str(output_path)}')
+            # output_node.format.view_settings.view_transform = 'Raw'
+            log.debug(
+                f'Output node for {style} image pointing to {str(output_path)}')
 
     # Printout render time
     start_time = time.time()
-    bpy.ops.render.render(write_still=True)
+    try:
+        bpy.ops.render.render(write_still=True)
+    except Exception as e:
+        log.warning(f'Render raised exception {e}')
     duration = time.time() - start_time
     log.info(f'Rendering took {duration}s to complete.')
 

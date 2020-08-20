@@ -13,13 +13,14 @@ log = logging.getLogger(__name__)
 
 # Random colors are loaded on module import
 RANDOM_COLOR_IDX = 1
+COLORS_FILE = 'colors_discrete.json'
 COLORS = None
 
 
 def reset():
     """ Load colors from file and reset random idx. """
     global COLORS, RANDOM_COLOR_IDX
-    _path = Path(__file__).parent / 'colors.json'
+    _path = Path(__file__).parent / COLORS_FILE
     file.verify_path(_path)
     COLORS = file.read_json(_path)
     RANDOM_COLOR_IDX = 1
@@ -66,6 +67,16 @@ def frgb_to_irgb(frgb: Tuple[float]) -> Tuple[int]:
 def frgb_to_hex(frgb: Tuple[float]) -> str:
     """ Convert float rgb (0 to 1) to hex. """
     return irgb_to_hex(frgb_to_irgb(frgb))
+
+
+def frgb_to_srgba(frgb: Tuple[float], a=1.0) -> Tuple[float]:
+    """ Convert float rgb (0 to 1) to the gamma-corrected sRGBA float (0 to 1). """
+    return frgb[0]**(1/2.2), frgb[1]**(1/2.2), frgb[2]**(1/2.2), a
+
+
+def frgb_to_srgb(frgb: Tuple[float]) -> Tuple[float]:
+    """ Convert float rgb (0 to 1) to the gamma-corrected sRGB float (0 to 1). """
+    return frgb[0]**(1/2.2), frgb[1]**(1/2.2), frgb[2]**(1/2.2)
 
 
 def _output_style(name: str, hex: str, output_style: str) -> Union[Tuple[float, int, str], str]:
@@ -123,7 +134,28 @@ def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], st
 
 def closest_color(color: Tuple[float],
                   colors: List[Tuple[float]],
-                  max_cube_dist: float = 10,
+                  max_dist: float = 2.0,
+                  ) -> Union[None, Tuple[float]]:
+    """ Get the index of the closest color in a list to the input color. """
+    min_dist = 3.0
+    nearest_idx = 0
+    for i, _color in enumerate(colors):
+        dist = (color[0] - _color[0])**2 + \
+            (color[1] - _color[1])**2 + \
+            (color[2] - _color[2])**2
+        if dist < min_dist:
+            min_dist = dist
+            nearest_idx = i
+    if min_dist > max_dist:
+        log.debug(
+            f'No color close enough w/ maxmimum distance of {max_dist}')
+        return None
+    return colors[nearest_idx]
+
+
+def closest_color_hex(color: Tuple[float],
+                  colors: List[Tuple[float]],
+                  max_cube_dist: float = 100000,
                   ) -> Union[None, Tuple[float]]:
     """ Get the index of the closest color in a list to the input color. """
     color = frgb_to_hex(color)
