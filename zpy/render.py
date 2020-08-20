@@ -118,7 +118,7 @@ def make_aov_file_output_node(
     fileout_node.mute = False
 
     # HACK: Depth requires normalization node between layer and output
-    if style == 'depth':
+    if style in ['Depth', 'depth']:
         # Normalization node for viewer
         _name_viewer = f'{style} normalize viewer'
         norm_node_viewer = _tree.nodes.get(_name_viewer)
