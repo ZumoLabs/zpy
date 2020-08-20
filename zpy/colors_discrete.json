@@ -1,2918 +1,2918 @@
 [
     {
         "name": "aardvark",
-        "hex": "#191919"
-    },
-    {
-        "name": "archenemy",
-        "hex": "#191933"
-    },
-    {
-        "name": "bistable",
-        "hex": "#19194c"
-    },
-    {
-        "name": "catapult",
-        "hex": "#191966"
-    },
-    {
-        "name": "confess",
-        "hex": "#19197f"
-    },
-    {
-        "name": "decomposition",
-        "hex": "#191999"
-    },
-    {
-        "name": "eastbound",
-        "hex": "#1919b2"
-    },
-    {
-        "name": "feint",
-        "hex": "#1919cc"
-    },
-    {
-        "name": "gizmo",
-        "hex": "#1919e5"
-    },
-    {
-        "name": "acacia",
-        "hex": "#193319"
-    },
-    {
-        "name": "article",
-        "hex": "#193333"
-    },
-    {
-        "name": "bloodstain",
-        "hex": "#19334c"
-    },
-    {
-        "name": "centrifugal",
-        "hex": "#193366"
-    },
-    {
-        "name": "consignee",
-        "hex": "#19337f"
-    },
-    {
-        "name": "delicatessen",
-        "hex": "#193399"
-    },
-    {
-        "name": "eigenvalue",
-        "hex": "#1933b2"
-    },
-    {
-        "name": "fifteenth",
-        "hex": "#1933cc"
-    },
-    {
-        "name": "goal",
-        "hex": "#1933e5"
-    },
-    {
-        "name": "acrylic",
-        "hex": "#194c19"
-    },
-    {
-        "name": "astigmatic",
-        "hex": "#194c33"
-    },
-    {
-        "name": "bondage",
-        "hex": "#194c4c"
-    },
-    {
-        "name": "charity",
-        "hex": "#194c66"
-    },
-    {
-        "name": "contravariant",
-        "hex": "#194c7f"
-    },
-    {
-        "name": "departure",
-        "hex": "#194c99"
-    },
-    {
-        "name": "embargo",
-        "hex": "#194cb2"
-    },
-    {
-        "name": "fixate",
-        "hex": "#194ccc"
-    },
-    {
-        "name": "grandnephew",
-        "hex": "#194ce5"
-    },
-    {
-        "name": "adulterous",
-        "hex": "#196619"
-    },
-    {
-        "name": "auntie",
-        "hex": "#196633"
-    },
-    {
-        "name": "bourn",
-        "hex": "#19664c"
-    },
-    {
-        "name": "chimney",
-        "hex": "#196666"
-    },
-    {
-        "name": "coriander",
-        "hex": "#19667f"
-    },
-    {
-        "name": "destructor",
-        "hex": "#196699"
-    },
-    {
-        "name": "endometrial",
-        "hex": "#1966b2"
-    },
-    {
-        "name": "floppy",
-        "hex": "#1966cc"
-    },
-    {
-        "name": "gritty",
-        "hex": "#1966e5"
-    },
-    {
-        "name": "aghast",
-        "hex": "#197f19"
-    },
-    {
-        "name": "axle",
-        "hex": "#197f33"
-    },
-    {
-        "name": "brew",
-        "hex": "#197f4c"
-    },
-    {
-        "name": "chunky",
-        "hex": "#197f66"
-    },
-    {
-        "name": "coulomb",
-        "hex": "#197f7f"
-    },
-    {
-        "name": "diatonic",
-        "hex": "#197f99"
-    },
-    {
-        "name": "episodic",
-        "hex": "#197fb2"
-    },
-    {
-        "name": "footage",
-        "hex": "#197fcc"
-    },
-    {
-        "name": "gunman",
-        "hex": "#197fe5"
-    },
-    {
-        "name": "algorithm",
-        "hex": "#199919"
-    },
-    {
-        "name": "balmy",
-        "hex": "#199933"
-    },
-    {
-        "name": "bryophyta",
-        "hex": "#19994c"
-    },
-    {
-        "name": "classroom",
-        "hex": "#199966"
-    },
-    {
-        "name": "coxcomb",
-        "hex": "#19997f"
-    },
-    {
-        "name": "dinosaur",
-        "hex": "#199999"
-    },
-    {
-        "name": "establish",
-        "hex": "#1999b2"
-    },
-    {
-        "name": "forum",
-        "hex": "#1999cc"
-    },
-    {
-        "name": "hammerhead",
-        "hex": "#1999e5"
-    },
-    {
-        "name": "alumnus",
-        "hex": "#19b219"
-    },
-    {
-        "name": "baseman",
-        "hex": "#19b233"
-    },
-    {
-        "name": "burglarproof",
-        "hex": "#19b24c"
-    },
-    {
-        "name": "clutch",
-        "hex": "#19b266"
-    },
-    {
-        "name": "crinkle",
-        "hex": "#19b27f"
-    },
-    {
-        "name": "distaff",
-        "hex": "#19b299"
-    },
-    {
-        "name": "ex",
-        "hex": "#19b2b2"
-    },
-    {
-        "name": "fricative",
-        "hex": "#19b2cc"
-    },
-    {
-        "name": "harry",
-        "hex": "#19b2e5"
-    },
-    {
-        "name": "anaerobic",
-        "hex": "#19cc19"
-    },
-    {
-        "name": "become",
-        "hex": "#19cc33"
-    },
-    {
-        "name": "caching",
-        "hex": "#19cc4c"
-    },
-    {
-        "name": "cohosh",
-        "hex": "#19cc66"
-    },
-    {
-        "name": "csnet",
-        "hex": "#19cc7f"
-    },
-    {
-        "name": "dolphin",
-        "hex": "#19cc99"
-    },
-    {
-        "name": "exorcise",
-        "hex": "#19ccb2"
-    },
-    {
-        "name": "furnace",
-        "hex": "#19cccc"
-    },
-    {
-        "name": "heathenish",
-        "hex": "#19cce5"
-    },
-    {
-        "name": "anomaly",
-        "hex": "#19e519"
-    },
-    {
-        "name": "belt",
-        "hex": "#19e533"
-    },
-    {
-        "name": "candela",
-        "hex": "#19e54c"
-    },
-    {
-        "name": "commendation",
-        "hex": "#19e566"
-    },
-    {
-        "name": "cuttlefish",
-        "hex": "#19e57f"
-    },
-    {
-        "name": "dragonhead",
-        "hex": "#19e599"
-    },
-    {
-        "name": "extolling",
-        "hex": "#19e5b2"
-    },
-    {
-        "name": "gar",
-        "hex": "#19e5cc"
-    },
-    {
-        "name": "hermaphroditic",
-        "hex": "#19e5e5"
-    },
-    {
-        "name": "abacus",
-        "hex": "#331919"
-    },
-    {
-        "name": "archetypical",
-        "hex": "#331933"
-    },
-    {
-        "name": "bitch",
-        "hex": "#33194c"
-    },
-    {
-        "name": "catastrophic",
-        "hex": "#331966"
-    },
-    {
-        "name": "confidant",
-        "hex": "#33197f"
-    },
-    {
-        "name": "decontrol",
-        "hex": "#331999"
-    },
-    {
-        "name": "eastward",
-        "hex": "#3319b2"
-    },
-    {
-        "name": "felicitous",
-        "hex": "#3319cc"
-    },
-    {
-        "name": "glacial",
-        "hex": "#3319e5"
-    },
-    {
-        "name": "academician",
-        "hex": "#333319"
-    },
-    {
-        "name": "artifact",
-        "hex": "#333333"
-    },
-    {
-        "name": "bloody",
-        "hex": "#33334c"
-    },
-    {
-        "name": "centripetal",
-        "hex": "#333366"
-    },
-    {
-        "name": "consistent",
-        "hex": "#33337f"
-    },
-    {
-        "name": "delight",
-        "hex": "#333399"
-    },
-    {
-        "name": "eighteen",
-        "hex": "#3333b2"
-    },
-    {
-        "name": "fifty",
-        "hex": "#3333cc"
-    },
-    {
-        "name": "gobble",
-        "hex": "#3333e5"
-    },
-    {
-        "name": "actinide",
-        "hex": "#334c19"
-    },
-    {
-        "name": "astraddle",
-        "hex": "#334c33"
-    },
-    {
-        "name": "bone",
-        "hex": "#334c4c"
-    },
-    {
-        "name": "chartreuse",
-        "hex": "#334c66"
-    },
-    {
-        "name": "contretemps",
-        "hex": "#334c7f"
-    },
-    {
-        "name": "depict",
-        "hex": "#334c99"
-    },
-    {
-        "name": "embarrass",
-        "hex": "#334cb2"
-    },
-    {
-        "name": "fjord",
-        "hex": "#334ccc"
-    },
-    {
-        "name": "grandparent",
-        "hex": "#334ce5"
-    },
-    {
-        "name": "advantage",
-        "hex": "#336619"
-    },
-    {
-        "name": "aureomycin",
-        "hex": "#336633"
-    },
-    {
-        "name": "boutique",
-        "hex": "#33664c"
-    },
-    {
-        "name": "china",
-        "hex": "#336666"
-    },
-    {
-        "name": "cormorant",
-        "hex": "#33667f"
-    },
-    {
-        "name": "detach",
-        "hex": "#336699"
-    },
-    {
-        "name": "endorse",
-        "hex": "#3366b2"
-    },
-    {
-        "name": "florican",
-        "hex": "#3366cc"
-    },
-    {
-        "name": "groan",
-        "hex": "#3366e5"
-    },
-    {
-        "name": "agleam",
-        "hex": "#337f19"
-    },
-    {
-        "name": "aye",
-        "hex": "#337f33"
-    },
-    {
-        "name": "bribe",
-        "hex": "#337f4c"
-    },
-    {
-        "name": "churchgoing",
-        "hex": "#337f66"
-    },
-    {
-        "name": "councilmen",
-        "hex": "#337f7f"
-    },
-    {
-        "name": "dice",
-        "hex": "#337f99"
-    },
-    {
-        "name": "epistolatory",
-        "hex": "#337fb2"
-    },
-    {
-        "name": "footfall",
-        "hex": "#337fcc"
-    },
-    {
-        "name": "gunny",
-        "hex": "#337fe5"
-    },
-    {
-        "name": "alias",
-        "hex": "#339919"
-    },
-    {
-        "name": "balustrade",
-        "hex": "#339933"
-    },
-    {
-        "name": "b's",
-        "hex": "#33994c"
-    },
-    {
-        "name": "clattery",
-        "hex": "#339966"
-    },
-    {
-        "name": "coyote",
-        "hex": "#33997f"
-    },
-    {
-        "name": "diocese",
-        "hex": "#339999"
-    },
-    {
-        "name": "ester",
-        "hex": "#3399b2"
-    },
-    {
-        "name": "fossil",
-        "hex": "#3399cc"
-    },
-    {
-        "name": "hamster",
-        "hex": "#3399e5"
-    },
-    {
-        "name": "alveoli",
-        "hex": "#33b219"
-    },
-    {
-        "name": "basepoint",
-        "hex": "#33b233"
-    },
-    {
-        "name": "burl",
-        "hex": "#33b24c"
-    },
-    {
-        "name": "coach",
-        "hex": "#33b266"
-    },
-    {
-        "name": "crises",
-        "hex": "#33b27f"
-    },
-    {
-        "name": "distillate",
-        "hex": "#33b299"
-    },
-    {
-        "name": "exactitude",
-        "hex": "#33b2b2"
-    },
-    {
-        "name": "friend",
-        "hex": "#33b2cc"
-    },
-    {
-        "name": "hart",
-        "hex": "#33b2e5"
-    },
-    {
-        "name": "analeptic",
-        "hex": "#33cc19"
-    },
-    {
-        "name": "bedbug",
-        "hex": "#33cc33"
-    },
-    {
-        "name": "cacophonous",
-        "hex": "#33cc4c"
-    },
-    {
-        "name": "coin",
-        "hex": "#33cc66"
-    },
-    {
-        "name": "cubbyhole",
-        "hex": "#33cc7f"
-    },
-    {
-        "name": "domain",
-        "hex": "#33cc99"
-    },
-    {
-        "name": "exoskeleta",
-        "hex": "#33ccb2"
-    },
-    {
-        "name": "furrier",
-        "hex": "#33cccc"
-    },
-    {
-        "name": "heavenward",
-        "hex": "#33cce5"
-    },
-    {
-        "name": "anonymous",
-        "hex": "#33e519"
-    },
-    {
-        "name": "bemadden",
-        "hex": "#33e533"
-    },
-    {
-        "name": "candidacy",
-        "hex": "#33e54c"
-    },
-    {
-        "name": "commensurable",
-        "hex": "#33e566"
-    },
-    {
-        "name": "cyanic",
-        "hex": "#33e57f"
-    },
-    {
-        "name": "drainage",
-        "hex": "#33e599"
-    },
-    {
-        "name": "extracellular",
-        "hex": "#33e5b2"
-    },
-    {
-        "name": "garbage",
-        "hex": "#33e5cc"
-    },
-    {
-        "name": "hermit",
-        "hex": "#33e5e5"
-    },
-    {
-        "name": "abase",
-        "hex": "#4c1919"
-    },
-    {
-        "name": "architect",
-        "hex": "#4c1933"
-    },
-    {
-        "name": "bitt",
-        "hex": "#4c194c"
-    },
-    {
-        "name": "catawba",
-        "hex": "#4c1966"
-    },
-    {
-        "name": "confident",
-        "hex": "#4c197f"
-    },
-    {
-        "name": "deconvolution",
-        "hex": "#4c1999"
-    },
-    {
-        "name": "eat",
-        "hex": "#4c19b2"
-    },
-    {
-        "name": "fell",
-        "hex": "#4c19cc"
-    },
-    {
-        "name": "glacis",
-        "hex": "#4c19e5"
-    },
-    {
-        "name": "accede",
-        "hex": "#4c3319"
-    },
-    {
-        "name": "artillery",
-        "hex": "#4c3333"
-    },
-    {
-        "name": "blossom",
-        "hex": "#4c334c"
-    },
-    {
-        "name": "centum",
-        "hex": "#4c3366"
-    },
-    {
-        "name": "consolidate",
-        "hex": "#4c337f"
-    },
-    {
-        "name": "delimitation",
-        "hex": "#4c3399"
-    },
-    {
-        "name": "eighth",
-        "hex": "#4c33b2"
-    },
-    {
-        "name": "figaro",
-        "hex": "#4c33cc"
-    },
-    {
-        "name": "god",
-        "hex": "#4c33e5"
-    },
-    {
-        "name": "actinometer",
-        "hex": "#4c4c19"
-    },
-    {
-        "name": "astride",
-        "hex": "#4c4c33"
-    },
-    {
-        "name": "bongo",
-        "hex": "#4c4c4c"
-    },
-    {
-        "name": "chasm",
-        "hex": "#4c4c66"
-    },
-    {
-        "name": "contributor",
-        "hex": "#4c4c7f"
-    },
-    {
-        "name": "depletion",
-        "hex": "#4c4c99"
-    },
-    {
-        "name": "embed",
-        "hex": "#4c4cb2"
-    },
-    {
-        "name": "flag",
-        "hex": "#4c4ccc"
-    },
-    {
-        "name": "granite",
-        "hex": "#4c4ce5"
-    },
-    {
-        "name": "adventitious",
-        "hex": "#4c6619"
-    },
-    {
-        "name": "aurora",
-        "hex": "#4c6633"
-    },
-    {
-        "name": "bowel",
-        "hex": "#4c664c"
-    },
-    {
-        "name": "chine",
-        "hex": "#4c6666"
-    },
-    {
-        "name": "cornea",
-        "hex": "#4c667f"
-    },
-    {
-        "name": "d'etat",
-        "hex": "#4c6699"
-    },
-    {
-        "name": "endothermic",
-        "hex": "#4c66b2"
-    },
-    {
-        "name": "florist",
-        "hex": "#4c66cc"
-    },
-    {
-        "name": "grocery",
-        "hex": "#4c66e5"
-    },
-    {
-        "name": "ago",
-        "hex": "#4c7f19"
-    },
-    {
-        "name": "azimuthal",
-        "hex": "#4c7f33"
-    },
-    {
-        "name": "brickbat",
-        "hex": "#4c7f4c"
-    },
-    {
-        "name": "churchwoman",
-        "hex": "#4c7f66"
-    },
-    {
-        "name": "counsel",
-        "hex": "#4c7f7f"
-    },
-    {
-        "name": "dichotomy",
-        "hex": "#4c7f99"
-    },
-    {
-        "name": "epitaxy",
-        "hex": "#4c7fb2"
-    },
-    {
-        "name": "footman",
-        "hex": "#4c7fcc"
-    },
-    {
-        "name": "gunpowder",
-        "hex": "#4c7fe5"
-    },
-    {
-        "name": "alienate",
-        "hex": "#4c9919"
-    },
-    {
-        "name": "ban",
-        "hex": "#4c9933"
-    },
-    {
-        "name": "bubonic",
-        "hex": "#4c994c"
-    },
-    {
-        "name": "claustrophobic",
-        "hex": "#4c9966"
-    },
-    {
-        "name": "cozy",
-        "hex": "#4c997f"
-    },
-    {
-        "name": "diorama",
-        "hex": "#4c9999"
-    },
-    {
-        "name": "estop",
-        "hex": "#4c99b2"
-    },
-    {
-        "name": "fosterite",
-        "hex": "#4c99cc"
-    },
-    {
-        "name": "handbag",
-        "hex": "#4c99e5"
-    },
-    {
-        "name": "alyssum",
-        "hex": "#4cb219"
-    },
-    {
-        "name": "bashful",
-        "hex": "#4cb233"
-    },
-    {
-        "name": "burley",
-        "hex": "#4cb24c"
-    },
-    {
-        "name": "coachwork",
-        "hex": "#4cb266"
-    },
-    {
-        "name": "criss",
-        "hex": "#4cb27f"
-    },
-    {
-        "name": "distinguish",
-        "hex": "#4cb299"
-    },
-    {
-        "name": "exaltation",
-        "hex": "#4cb2b2"
-    },
-    {
-        "name": "fright",
-        "hex": "#4cb2cc"
-    },
-    {
-        "name": "has",
-        "hex": "#4cb2e5"
-    },
-    {
-        "name": "analogue",
-        "hex": "#4ccc19"
-    },
-    {
-        "name": "bedfellow",
-        "hex": "#4ccc33"
-    },
-    {
-        "name": "cactus",
-        "hex": "#4ccc4c"
-    },
-    {
-        "name": "coincident",
-        "hex": "#4ccc66"
-    },
-    {
-        "name": "cubicle",
-        "hex": "#4ccc7f"
-    },
-    {
-        "name": "domesticate",
-        "hex": "#4ccc99"
-    },
-    {
-        "name": "exotic",
-        "hex": "#4cccb2"
-    },
-    {
-        "name": "further",
-        "hex": "#4ccccc"
-    },
-    {
-        "name": "heavyweight",
-        "hex": "#4ccce5"
-    },
-    {
-        "name": "anorthite",
-        "hex": "#4ce519"
-    },
-    {
-        "name": "bemuse",
-        "hex": "#4ce533"
-    },
-    {
-        "name": "candlelight",
-        "hex": "#4ce54c"
-    },
-    {
-        "name": "commentary",
-        "hex": "#4ce566"
-    },
-    {
-        "name": "cycad",
-        "hex": "#4ce57f"
-    },
-    {
-        "name": "drama",
-        "hex": "#4ce599"
-    },
-    {
-        "name": "extracurricular",
-        "hex": "#4ce5b2"
-    },
-    {
-        "name": "gardenia",
-        "hex": "#4ce5cc"
-    },
-    {
-        "name": "hernia",
-        "hex": "#4ce5e5"
-    },
-    {
-        "name": "abbas",
-        "hex": "#661919"
-    },
-    {
-        "name": "architecture",
-        "hex": "#661933"
-    },
-    {
-        "name": "bitternut",
-        "hex": "#66194c"
-    },
-    {
-        "name": "catchup",
-        "hex": "#661966"
-    },
-    {
-        "name": "configure",
-        "hex": "#66197f"
-    },
-    {
-        "name": "decorate",
-        "hex": "#661999"
-    },
-    {
-        "name": "eave",
-        "hex": "#6619b2"
-    },
-    {
-        "name": "felonious",
-        "hex": "#6619cc"
-    },
-    {
-        "name": "gladdy",
-        "hex": "#6619e5"
-    },
-    {
-        "name": "accent",
-        "hex": "#663319"
-    },
-    {
-        "name": "artwork",
-        "hex": "#663333"
-    },
-    {
-        "name": "blouse",
-        "hex": "#66334c"
-    },
-    {
-        "name": "ceramium",
-        "hex": "#663366"
-    },
-    {
-        "name": "consort",
-        "hex": "#66337f"
-    },
-    {
-        "name": "delinquent",
-        "hex": "#663399"
-    },
-    {
-        "name": "eightyfold",
-        "hex": "#6633b2"
-    },
-    {
-        "name": "figurate",
-        "hex": "#6633cc"
-    },
-    {
-        "name": "godhead",
-        "hex": "#6633e5"
-    },
-    {
-        "name": "actress",
-        "hex": "#664c19"
-    },
-    {
-        "name": "astrology",
-        "hex": "#664c33"
-    },
-    {
-        "name": "bonus",
-        "hex": "#664c4c"
-    },
-    {
-        "name": "chastise",
-        "hex": "#664c66"
-    },
-    {
-        "name": "contrition",
-        "hex": "#664c7f"
-    },
-    {
-        "name": "deport",
-        "hex": "#664c99"
-    },
-    {
-        "name": "embedder",
-        "hex": "#664cb2"
-    },
-    {
-        "name": "flagging",
-        "hex": "#664ccc"
-    },
-    {
-        "name": "granola",
-        "hex": "#664ce5"
-    },
-    {
-        "name": "adverb",
-        "hex": "#666619"
-    },
-    {
-        "name": "auspicious",
-        "hex": "#666633"
-    },
-    {
-        "name": "bowie",
-        "hex": "#66664c"
-    },
-    {
-        "name": "chintz",
-        "hex": "#666666"
-    },
-    {
-        "name": "cornfield",
-        "hex": "#66667f"
-    },
-    {
-        "name": "detent",
-        "hex": "#666699"
-    },
-    {
-        "name": "endure",
-        "hex": "#6666b2"
-    },
-    {
-        "name": "flotilla",
-        "hex": "#6666cc"
-    },
-    {
-        "name": "grommet",
-        "hex": "#6666e5"
-    },
-    {
-        "name": "agony",
-        "hex": "#667f19"
-    },
-    {
-        "name": "babbitt",
-        "hex": "#667f33"
-    },
-    {
-        "name": "bridal",
-        "hex": "#667f4c"
-    },
-    {
-        "name": "churn",
-        "hex": "#667f66"
-    },
-    {
-        "name": "countdown",
-        "hex": "#667f7f"
-    },
-    {
-        "name": "dickens",
-        "hex": "#667f99"
-    },
-    {
-        "name": "epithet",
-        "hex": "#667fb2"
-    },
-    {
-        "name": "footpad",
-        "hex": "#667fcc"
-    },
-    {
-        "name": "gurgle",
-        "hex": "#667fe5"
-    },
-    {
-        "name": "alike",
-        "hex": "#669919"
-    },
-    {
-        "name": "band",
-        "hex": "#669933"
-    },
-    {
-        "name": "buckaroo",
-        "hex": "#66994c"
-    },
-    {
-        "name": "clay",
-        "hex": "#669966"
-    },
-    {
-        "name": "crabapple",
-        "hex": "#66997f"
-    },
-    {
-        "name": "dip",
-        "hex": "#669999"
-    },
-    {
-        "name": "estrogen",
-        "hex": "#6699b2"
-    },
-    {
-        "name": "foulmouth",
-        "hex": "#6699cc"
-    },
-    {
-        "name": "handcuff",
-        "hex": "#6699e5"
-    },
-    {
-        "name": "amalgamate",
-        "hex": "#66b219"
-    },
-    {
-        "name": "basil",
-        "hex": "#66b233"
-    },
-    {
-        "name": "burnish",
-        "hex": "#66b24c"
-    },
-    {
-        "name": "coagulate",
-        "hex": "#66b266"
-    },
-    {
-        "name": "criterion",
-        "hex": "#66b27f"
-    },
-    {
-        "name": "distribution",
-        "hex": "#66b299"
-    },
-    {
-        "name": "examine",
-        "hex": "#66b2b2"
-    },
-    {
-        "name": "frigid",
-        "hex": "#66b2cc"
-    },
-    {
-        "name": "hasn't",
-        "hex": "#66b2e5"
-    },
-    {
-        "name": "analysis",
-        "hex": "#66cc19"
-    },
-    {
-        "name": "bedimming",
-        "hex": "#66cc33"
-    },
-    {
-        "name": "caddis",
-        "hex": "#66cc4c"
-    },
-    {
-        "name": "col",
-        "hex": "#66cc66"
-    },
-    {
-        "name": "cucumber",
-        "hex": "#66cc7f"
-    },
-    {
-        "name": "dominate",
-        "hex": "#66cc99"
-    },
-    {
-        "name": "expanse",
-        "hex": "#66ccb2"
-    },
-    {
-        "name": "furthest",
-        "hex": "#66cccc"
-    },
-    {
-        "name": "heck",
-        "hex": "#66cce5"
-    },
-    {
-        "name": "answer",
-        "hex": "#66e519"
-    },
-    {
-        "name": "bend",
-        "hex": "#66e533"
-    },
-    {
-        "name": "candy",
-        "hex": "#66e54c"
-    },
-    {
-        "name": "commercial",
-        "hex": "#66e566"
-    },
-    {
-        "name": "cyclist",
-        "hex": "#66e57f"
-    },
-    {
-        "name": "dramaturgy",
-        "hex": "#66e599"
-    },
-    {
-        "name": "extralegal",
-        "hex": "#66e5b2"
-    },
-    {
-        "name": "garish",
-        "hex": "#66e5cc"
-    },
-    {
-        "name": "heroic",
-        "hex": "#66e5e5"
-    },
-    {
-        "name": "abbot",
-        "hex": "#7f1919"
-    },
-    {
-        "name": "arcing",
-        "hex": "#7f1933"
-    },
-    {
-        "name": "bitumen",
-        "hex": "#7f194c"
-    },
-    {
-        "name": "catechism",
-        "hex": "#7f1966"
-    },
-    {
-        "name": "confirmation",
-        "hex": "#7f197f"
-    },
-    {
-        "name": "decorum",
-        "hex": "#7f1999"
-    },
-    {
-        "name": "ebb",
-        "hex": "#7f19b2"
-    },
-    {
-        "name": "felt",
-        "hex": "#7f19cc"
-    },
-    {
-        "name": "gladiolus",
-        "hex": "#7f19e5"
-    },
-    {
-        "name": "accept",
-        "hex": "#7f3319"
-    },
-    {
-        "name": "aryl",
-        "hex": "#7f3333"
-    },
-    {
-        "name": "blown",
-        "hex": "#7f334c"
-    },
-    {
-        "name": "cerebral",
-        "hex": "#7f3366"
-    },
-    {
-        "name": "conspicuous",
-        "hex": "#7f337f"
-    },
-    {
-        "name": "delirious",
-        "hex": "#7f3399"
-    },
-    {
-        "name": "ejaculate",
-        "hex": "#7f33b2"
-    },
-    {
-        "name": "filament",
-        "hex": "#7f33cc"
-    },
-    {
-        "name": "godparent",
-        "hex": "#7f33e5"
-    },
-    {
-        "name": "actuate",
-        "hex": "#7f4c19"
-    },
-    {
-        "name": "astronomer",
-        "hex": "#7f4c33"
-    },
-    {
-        "name": "boo",
-        "hex": "#7f4c4c"
-    },
-    {
-        "name": "chateau",
-        "hex": "#7f4c66"
-    },
-    {
-        "name": "control",
-        "hex": "#7f4c7f"
-    },
-    {
-        "name": "depose",
-        "hex": "#7f4c99"
-    },
-    {
-        "name": "ember",
-        "hex": "#7f4cb2"
-    },
-    {
-        "name": "flagstone",
-        "hex": "#7f4ccc"
-    },
-    {
-        "name": "grantor",
-        "hex": "#7f4ce5"
-    },
-    {
-        "name": "adverse",
-        "hex": "#7f6619"
-    },
-    {
-        "name": "austral",
-        "hex": "#7f6633"
-    },
-    {
-        "name": "bowman",
-        "hex": "#7f664c"
-    },
-    {
-        "name": "chipboard",
-        "hex": "#7f6666"
-    },
-    {
-        "name": "cornmeal",
-        "hex": "#7f667f"
-    },
-    {
-        "name": "deter",
-        "hex": "#7f6699"
-    },
-    {
-        "name": "energy",
-        "hex": "#7f66b2"
-    },
-    {
-        "name": "flour",
-        "hex": "#7f66cc"
-    },
-    {
-        "name": "grope",
-        "hex": "#7f66e5"
-    },
-    {
-        "name": "agree",
-        "hex": "#7f7f19"
-    },
-    {
-        "name": "baboon",
-        "hex": "#7f7f33"
-    },
-    {
-        "name": "bridesmaid",
-        "hex": "#7f7f4c"
-    },
-    {
-        "name": "cicada",
-        "hex": "#7f7f66"
-    },
-    {
-        "name": "counterargument",
-        "hex": "#7f7f7f"
-    },
-    {
-        "name": "dicta",
-        "hex": "#7f7f99"
-    },
-    {
-        "name": "epochal",
-        "hex": "#7f7fb2"
-    },
-    {
-        "name": "footstep",
-        "hex": "#7f7fcc"
-    },
-    {
-        "name": "gusset",
-        "hex": "#7f7fe5"
-    },
-    {
-        "name": "aliphatic",
-        "hex": "#7f9919"
-    },
-    {
-        "name": "bandit",
-        "hex": "#7f9933"
-    },
-    {
-        "name": "bucketful",
-        "hex": "#7f994c"
-    },
-    {
-        "name": "cleanup",
-        "hex": "#7f9966"
-    },
-    {
-        "name": "crackpot",
-        "hex": "#7f997f"
-    },
-    {
-        "name": "diploid",
-        "hex": "#7f9999"
-    },
-    {
-        "name": "estuarine",
-        "hex": "#7f99b2"
-    },
-    {
-        "name": "foundling",
-        "hex": "#7f99cc"
-    },
-    {
-        "name": "handhold",
-        "hex": "#7f99e5"
-    },
-    {
-        "name": "amaranth",
-        "hex": "#7fb219"
-    },
-    {
-        "name": "basilisk",
-        "hex": "#7fb233"
-    },
-    {
-        "name": "burp",
-        "hex": "#7fb24c"
-    },
-    {
-        "name": "coalescent",
-        "hex": "#7fb266"
-    },
-    {
-        "name": "critter",
-        "hex": "#7fb27f"
-    },
-    {
-        "name": "district",
-        "hex": "#7fb299"
-    },
-    {
-        "name": "exasperater",
-        "hex": "#7fb2b2"
-    },
-    {
-        "name": "fringe",
-        "hex": "#7fb2cc"
-    },
-    {
-        "name": "hast",
-        "hex": "#7fb2e5"
-    },
-    {
-        "name": "anamorphic",
-        "hex": "#7fcc19"
-    },
-    {
-        "name": "bedraggle",
-        "hex": "#7fcc33"
-    },
-    {
-        "name": "cadenza",
-        "hex": "#7fcc4c"
-    },
-    {
-        "name": "colatitude",
-        "hex": "#7fcc66"
-    },
-    {
-        "name": "cuddly",
-        "hex": "#7fcc7f"
-    },
-    {
-        "name": "domino",
-        "hex": "#7fcc99"
-    },
-    {
-        "name": "expansive",
-        "hex": "#7fccb2"
-    },
-    {
-        "name": "furze",
-        "hex": "#7fcccc"
-    },
-    {
-        "name": "hector",
-        "hex": "#7fcce5"
-    },
-    {
-        "name": "antagonism",
-        "hex": "#7fe519"
-    },
-    {
-        "name": "benefactor",
-        "hex": "#7fe533"
-    },
-    {
-        "name": "canister",
-        "hex": "#7fe54c"
-    },
-    {
-        "name": "commissariat",
-        "hex": "#7fe566"
-    },
-    {
-        "name": "cyclorama",
-        "hex": "#7fe57f"
-    },
-    {
-        "name": "drapery",
-        "hex": "#7fe599"
-    },
-    {
-        "name": "extraneous",
-        "hex": "#7fe5b2"
-    },
-    {
-        "name": "garner",
-        "hex": "#7fe5cc"
-    },
-    {
-        "name": "heroism",
-        "hex": "#7fe5e5"
-    },
-    {
-        "name": "abdicate",
-        "hex": "#991919"
-    },
-    {
-        "name": "arcsine",
-        "hex": "#991933"
-    },
-    {
-        "name": "bivalve",
-        "hex": "#99194c"
-    },
-    {
-        "name": "catenate",
-        "hex": "#991966"
-    },
-    {
-        "name": "confiscate",
-        "hex": "#99197f"
-    },
-    {
-        "name": "decrease",
-        "hex": "#991999"
-    },
-    {
-        "name": "eccentric",
-        "hex": "#9919b2"
-    },
-    {
-        "name": "feminism",
-        "hex": "#9919cc"
-    },
-    {
-        "name": "glamour",
-        "hex": "#9919e5"
-    },
-    {
-        "name": "access",
-        "hex": "#993319"
-    },
-    {
-        "name": "asbestos",
-        "hex": "#993333"
-    },
-    {
-        "name": "bludgeon",
-        "hex": "#99334c"
-    },
-    {
-        "name": "ceremonious",
-        "hex": "#993366"
-    },
-    {
-        "name": "conspiratorial",
-        "hex": "#99337f"
-    },
-    {
-        "name": "deliverance",
-        "hex": "#993399"
-    },
-    {
-        "name": "eke",
-        "hex": "#9933b2"
-    },
-    {
-        "name": "filbert",
-        "hex": "#9933cc"
-    },
-    {
-        "name": "godwit",
-        "hex": "#9933e5"
-    },
-    {
-        "name": "acupuncture",
-        "hex": "#994c19"
-    },
-    {
-        "name": "astrophysical",
-        "hex": "#994c33"
-    },
-    {
-        "name": "book",
-        "hex": "#994c4c"
-    },
-    {
-        "name": "chatty",
-        "hex": "#994c66"
-    },
-    {
-        "name": "controller",
-        "hex": "#994c7f"
-    },
-    {
-        "name": "deposition",
-        "hex": "#994c99"
-    },
-    {
-        "name": "emblazon",
-        "hex": "#994cb2"
-    },
-    {
-        "name": "flak",
-        "hex": "#994ccc"
-    },
-    {
-        "name": "granule",
-        "hex": "#994ce5"
-    },
-    {
-        "name": "advice",
-        "hex": "#996619"
-    },
-    {
-        "name": "authenticate",
-        "hex": "#996633"
-    },
-    {
-        "name": "box",
-        "hex": "#99664c"
-    },
-    {
-        "name": "chirp",
-        "hex": "#996666"
-    },
-    {
-        "name": "corny",
-        "hex": "#99667f"
-    },
-    {
-        "name": "determinacy",
-        "hex": "#996699"
-    },
-    {
-        "name": "enforceable",
-        "hex": "#9966b2"
-    },
-    {
-        "name": "flout",
-        "hex": "#9966cc"
-    },
-    {
-        "name": "grotesque",
-        "hex": "#9966e5"
-    },
-    {
-        "name": "agribusiness",
-        "hex": "#997f19"
-    },
-    {
-        "name": "babysit",
-        "hex": "#997f33"
-    },
-    {
-        "name": "bridgehead",
-        "hex": "#997f4c"
-    },
-    {
-        "name": "cigarette",
-        "hex": "#997f66"
-    },
-    {
-        "name": "counterclockwise",
-        "hex": "#997f7f"
-    },
-    {
-        "name": "diction",
-        "hex": "#997f99"
-    },
-    {
-        "name": "epsilon",
-        "hex": "#997fb2"
-    },
-    {
-        "name": "footwork",
-        "hex": "#997fcc"
-    },
-    {
-        "name": "gusty",
-        "hex": "#997fe5"
-    },
-    {
-        "name": "alizarin",
-        "hex": "#999919"
-    },
-    {
-        "name": "bandstop",
-        "hex": "#999933"
-    },
-    {
-        "name": "buckle",
-        "hex": "#99994c"
-    },
-    {
-        "name": "clearheaded",
-        "hex": "#999966"
-    },
-    {
-        "name": "craftsman",
-        "hex": "#99997f"
-    },
-    {
-        "name": "diplomacy",
-        "hex": "#999999"
-    },
-    {
-        "name": "eta",
-        "hex": "#9999b2"
-    },
-    {
-        "name": "fountain",
-        "hex": "#9999cc"
-    },
-    {
-        "name": "handicapper",
-        "hex": "#9999e5"
-    },
-    {
-        "name": "amateurish",
-        "hex": "#99b219"
-    },
-    {
-        "name": "bask",
-        "hex": "#99b233"
-    },
-    {
-        "name": "bursitis",
-        "hex": "#99b24c"
-    },
-    {
-        "name": "coarsen",
-        "hex": "#99b266"
-    },
-    {
-        "name": "crock",
-        "hex": "#99b27f"
-    },
-    {
-        "name": "disulfide",
-        "hex": "#99b299"
-    },
-    {
-        "name": "excel",
-        "hex": "#99b2b2"
-    },
-    {
-        "name": "fritter",
-        "hex": "#99b2cc"
-    },
-    {
-        "name": "hasty",
-        "hex": "#99b2e5"
-    },
-    {
-        "name": "anaplasmosis",
-        "hex": "#99cc19"
-    },
-    {
-        "name": "bedroom",
-        "hex": "#99cc33"
-    },
-    {
-        "name": "cadre",
-        "hex": "#99cc4c"
-    },
-    {
-        "name": "coleus",
-        "hex": "#99cc66"
-    },
-    {
-        "name": "cuff",
-        "hex": "#99cc7f"
-    },
-    {
-        "name": "done",
-        "hex": "#99cc99"
-    },
-    {
-        "name": "expect",
-        "hex": "#99ccb2"
-    },
-    {
-        "name": "fusible",
-        "hex": "#99cccc"
-    },
-    {
-        "name": "hedgehog",
-        "hex": "#99cce5"
-    },
-    {
-        "name": "ante",
-        "hex": "#99e519"
-    },
-    {
-        "name": "beneficial",
-        "hex": "#99e533"
-    },
-    {
-        "name": "canna",
-        "hex": "#99e54c"
-    },
-    {
-        "name": "commit",
-        "hex": "#99e566"
-    },
-    {
-        "name": "cygnet",
-        "hex": "#99e57f"
-    },
-    {
-        "name": "draw",
-        "hex": "#99e599"
-    },
-    {
-        "name": "extraterrestrial",
-        "hex": "#99e5b2"
-    },
-    {
-        "name": "garrison",
-        "hex": "#99e5cc"
-    },
-    {
-        "name": "herpetology",
-        "hex": "#99e5e5"
-    },
-    {
-        "name": "abduct",
-        "hex": "#b21919"
-    },
-    {
-        "name": "arctic",
-        "hex": "#b21933"
-    },
-    {
-        "name": "biz",
-        "hex": "#b2194c"
-    },
-    {
-        "name": "catfish",
-        "hex": "#b21966"
-    },
-    {
-        "name": "conflict",
-        "hex": "#b2197f"
-    },
-    {
-        "name": "decrement",
-        "hex": "#b21999"
-    },
-    {
-        "name": "echidna",
-        "hex": "#b219b2"
-    },
-    {
-        "name": "femur",
-        "hex": "#b219cc"
-    },
-    {
-        "name": "glandular",
-        "hex": "#b219e5"
-    },
-    {
-        "name": "accessory",
-        "hex": "#b23319"
-    },
-    {
-        "name": "ascension",
-        "hex": "#b23333"
-    },
-    {
-        "name": "blueberry",
-        "hex": "#b2334c"
-    },
-    {
-        "name": "cerise",
-        "hex": "#b23366"
-    },
-    {
-        "name": "constellate",
-        "hex": "#b2337f"
-    },
-    {
-        "name": "deliverymen",
-        "hex": "#b23399"
-    },
-    {
-        "name": "elan",
-        "hex": "#b233b2"
-    },
-    {
-        "name": "filet",
-        "hex": "#b233cc"
-    },
-    {
-        "name": "goggle",
-        "hex": "#b233e5"
-    },
-    {
-        "name": "ad",
-        "hex": "#b24c19"
-    },
-    {
-        "name": "astute",
-        "hex": "#b24c33"
-    },
-    {
-        "name": "bookend",
-        "hex": "#b24c4c"
-    },
-    {
-        "name": "chauvinist",
-        "hex": "#b24c66"
-    },
-    {
-        "name": "controversy",
-        "hex": "#b24c7f"
-    },
-    {
-        "name": "depot",
-        "hex": "#b24c99"
-    },
-    {
-        "name": "embodiment",
-        "hex": "#b24cb2"
-    },
-    {
-        "name": "flam",
-        "hex": "#b24ccc"
-    },
-    {
-        "name": "grapevine",
-        "hex": "#b24ce5"
-    },
-    {
-        "name": "advisee",
-        "hex": "#b26619"
-    },
-    {
-        "name": "authoritative",
-        "hex": "#b26633"
-    },
-    {
-        "name": "boxy",
-        "hex": "#b2664c"
-    },
-    {
-        "name": "chitin",
-        "hex": "#b26666"
-    },
-    {
-        "name": "corona",
-        "hex": "#b2667f"
-    },
-    {
-        "name": "determine",
-        "hex": "#b26699"
-    },
-    {
-        "name": "engine",
-        "hex": "#b266b2"
-    },
-    {
-        "name": "flowerpot",
-        "hex": "#b266cc"
-    },
-    {
-        "name": "grouch",
-        "hex": "#b266e5"
-    },
-    {
-        "name": "agrimony",
-        "hex": "#b27f19"
-    },
-    {
-        "name": "baccarat",
-        "hex": "#b27f33"
-    },
-    {
-        "name": "brief",
-        "hex": "#b27f4c"
-    },
-    {
-        "name": "cinch",
-        "hex": "#b27f66"
-    },
-    {
-        "name": "counterflow",
-        "hex": "#b27f7f"
-    },
-    {
-        "name": "did",
-        "hex": "#b27f99"
-    },
-    {
-        "name": "equanimity",
-        "hex": "#b27fb2"
-    },
-    {
-        "name": "for",
-        "hex": "#b27fcc"
-    },
-    {
-        "name": "guttural",
-        "hex": "#b27fe5"
-    },
-    {
-        "name": "alkaloid",
-        "hex": "#b29919"
-    },
-    {
-        "name": "bandy",
-        "hex": "#b29933"
-    },
-    {
-        "name": "buckthorn",
-        "hex": "#b2994c"
-    },
-    {
-        "name": "cleave",
-        "hex": "#b29966"
-    },
-    {
-        "name": "craftsperson",
-        "hex": "#b2997f"
-    },
-    {
-        "name": "dipole",
-        "hex": "#b29999"
-    },
-    {
-        "name": "eternal",
-        "hex": "#b299b2"
-    },
-    {
-        "name": "fourfold",
-        "hex": "#b299cc"
-    },
-    {
-        "name": "handicraftsman",
-        "hex": "#b299e5"
-    },
-    {
-        "name": "ambassador",
-        "hex": "#b2b219"
-    },
-    {
-        "name": "basketry",
-        "hex": "#b2b233"
-    },
-    {
-        "name": "bury",
-        "hex": "#b2b24c"
-    },
-    {
-        "name": "coastline",
-        "hex": "#b2b266"
-    },
-    {
-        "name": "crocodilian",
-        "hex": "#b2b27f"
-    },
-    {
-        "name": "dither",
-        "hex": "#b2b299"
-    },
-    {
-        "name": "excelling",
-        "hex": "#b2b2b2"
-    },
-    {
-        "name": "frizzle",
-        "hex": "#b2b2cc"
-    },
-    {
-        "name": "hatchery",
-        "hex": "#b2b2e5"
-    },
-    {
-        "name": "anarchy",
-        "hex": "#b2cc19"
-    },
-    {
-        "name": "bedspring",
-        "hex": "#b2cc33"
-    },
-    {
-        "name": "cage",
-        "hex": "#b2cc4c"
-    },
-    {
-        "name": "coliform",
-        "hex": "#b2cc66"
-    },
-    {
-        "name": "culinary",
-        "hex": "#b2cc7f"
-    },
-    {
-        "name": "donor",
-        "hex": "#b2cc99"
-    },
-    {
-        "name": "expectorant",
-        "hex": "#b2ccb2"
-    },
-    {
-        "name": "fusion",
-        "hex": "#b2cccc"
-    },
-    {
-        "name": "heed",
-        "hex": "#b2cce5"
-    },
-    {
-        "name": "antecedent",
-        "hex": "#b2e519"
-    },
-    {
-        "name": "benevolent",
-        "hex": "#b2e533"
-    },
-    {
-        "name": "cannery",
-        "hex": "#b2e54c"
-    },
-    {
-        "name": "committed",
-        "hex": "#b2e566"
-    },
-    {
-        "name": "cymbal",
-        "hex": "#b2e57f"
-    },
-    {
-        "name": "drawl",
-        "hex": "#b2e599"
-    },
-    {
-        "name": "extravaganza",
-        "hex": "#b2e5b2"
-    },
-    {
-        "name": "gas",
-        "hex": "#b2e5cc"
-    },
-    {
-        "name": "hertz",
-        "hex": "#b2e5e5"
-    },
-    {
-        "name": "aberrate",
-        "hex": "#cc1919"
-    },
-    {
-        "name": "are",
-        "hex": "#cc1933"
-    },
-    {
-        "name": "black",
-        "hex": "#cc194c"
-    },
-    {
-        "name": "catheter",
-        "hex": "#cc1966"
-    },
-    {
-        "name": "conform",
-        "hex": "#cc197f"
-    },
-    {
-        "name": "decryption",
-        "hex": "#cc1999"
-    },
-    {
-        "name": "echoes",
-        "hex": "#cc19b2"
-    },
-    {
-        "name": "fend",
-        "hex": "#cc19cc"
-    },
-    {
-        "name": "glass",
-        "hex": "#cc19e5"
-    },
-    {
-        "name": "accipiter",
-        "hex": "#cc3319"
-    },
-    {
-        "name": "ascetic",
-        "hex": "#cc3333"
-    },
-    {
-        "name": "bluebonnet",
-        "hex": "#cc334c"
-    },
-    {
-        "name": "certainty",
-        "hex": "#cc3366"
-    },
-    {
-        "name": "constituent",
-        "hex": "#cc337f"
-    },
-    {
-        "name": "delphine",
-        "hex": "#cc3399"
-    },
-    {
-        "name": "elastomer",
-        "hex": "#cc33b2"
-    },
-    {
-        "name": "filigree",
-        "hex": "#cc33cc"
-    },
-    {
-        "name": "golden",
-        "hex": "#cc33e5"
-    },
-    {
-        "name": "adamant",
-        "hex": "#cc4c19"
-    },
-    {
-        "name": "asymmetry",
-        "hex": "#cc4c33"
-    },
-    {
-        "name": "bookkeep",
-        "hex": "#cc4c4c"
-    },
-    {
-        "name": "cheat",
-        "hex": "#cc4c66"
-    },
-    {
-        "name": "contusion",
-        "hex": "#cc4c7f"
-    },
-    {
-        "name": "deprecatory",
-        "hex": "#cc4c99"
-    },
-    {
-        "name": "emboss",
-        "hex": "#cc4cb2"
-    },
-    {
-        "name": "flamingo",
-        "hex": "#cc4ccc"
-    },
-    {
-        "name": "graphic",
-        "hex": "#cc4ce5"
-    },
-    {
-        "name": "advocacy",
         "hex": "#cc6619"
     },
     {
-        "name": "auto",
-        "hex": "#cc6633"
-    },
-    {
-        "name": "boycott",
-        "hex": "#cc664c"
-    },
-    {
-        "name": "chivalrous",
-        "hex": "#cc6666"
-    },
-    {
-        "name": "coroner",
-        "hex": "#cc667f"
-    },
-    {
-        "name": "deterring",
-        "hex": "#cc6699"
-    },
-    {
-        "name": "enigma",
+        "name": "archenemy",
         "hex": "#cc66b2"
     },
     {
-        "name": "flu",
-        "hex": "#cc66cc"
+        "name": "bistable",
+        "hex": "#cc664c"
     },
     {
-        "name": "groundhog",
+        "name": "catapult",
+        "hex": "#cc6699"
+    },
+    {
+        "name": "confess",
+        "hex": "#cc667f"
+    },
+    {
+        "name": "decomposition",
+        "hex": "#cc6633"
+    },
+    {
+        "name": "eastbound",
         "hex": "#cc66e5"
     },
     {
-        "name": "ague",
-        "hex": "#cc7f19"
+        "name": "feint",
+        "hex": "#cc6666"
     },
     {
-        "name": "bacilli",
-        "hex": "#cc7f33"
+        "name": "gizmo",
+        "hex": "#cc66cc"
     },
     {
-        "name": "brigade",
-        "hex": "#cc7f4c"
-    },
-    {
-        "name": "cinematic",
-        "hex": "#cc7f66"
-    },
-    {
-        "name": "countermand",
-        "hex": "#cc7f7f"
-    },
-    {
-        "name": "didn't",
-        "hex": "#cc7f99"
-    },
-    {
-        "name": "equestrian",
-        "hex": "#cc7fb2"
-    },
-    {
-        "name": "foray",
-        "hex": "#cc7fcc"
-    },
-    {
-        "name": "gym",
-        "hex": "#cc7fe5"
-    },
-    {
-        "name": "allegate",
-        "hex": "#cc9919"
-    },
-    {
-        "name": "baneful",
-        "hex": "#cc9933"
-    },
-    {
-        "name": "bud",
-        "hex": "#cc994c"
-    },
-    {
-        "name": "clement",
-        "hex": "#cc9966"
-    },
-    {
-        "name": "craggy",
-        "hex": "#cc997f"
-    },
-    {
-        "name": "director",
-        "hex": "#cc9999"
-    },
-    {
-        "name": "ethanol",
-        "hex": "#cc99b2"
-    },
-    {
-        "name": "fourteen",
-        "hex": "#cc99cc"
-    },
-    {
-        "name": "handkerchief",
-        "hex": "#cc99e5"
-    },
-    {
-        "name": "ambidextrous",
+        "name": "acacia",
         "hex": "#ccb219"
     },
     {
-        "name": "bassi",
-        "hex": "#ccb233"
-    },
-    {
-        "name": "bush",
-        "hex": "#ccb24c"
-    },
-    {
-        "name": "coauthor",
-        "hex": "#ccb266"
-    },
-    {
-        "name": "crone",
-        "hex": "#ccb27f"
-    },
-    {
-        "name": "diurnal",
-        "hex": "#ccb299"
-    },
-    {
-        "name": "exception",
+        "name": "article",
         "hex": "#ccb2b2"
     },
     {
-        "name": "frock",
-        "hex": "#ccb2cc"
+        "name": "bloodstain",
+        "hex": "#ccb24c"
     },
     {
-        "name": "hate",
+        "name": "centrifugal",
+        "hex": "#ccb299"
+    },
+    {
+        "name": "consignee",
+        "hex": "#ccb27f"
+    },
+    {
+        "name": "delicatessen",
+        "hex": "#ccb233"
+    },
+    {
+        "name": "eigenvalue",
         "hex": "#ccb2e5"
     },
     {
-        "name": "anastomosis",
-        "hex": "#cccc19"
+        "name": "fifteenth",
+        "hex": "#ccb266"
     },
     {
-        "name": "bee",
-        "hex": "#cccc33"
+        "name": "goal",
+        "hex": "#ccb2cc"
     },
     {
-        "name": "caiman",
-        "hex": "#cccc4c"
+        "name": "acrylic",
+        "hex": "#cc9919"
     },
     {
-        "name": "collage",
-        "hex": "#cccc66"
+        "name": "astigmatic",
+        "hex": "#cc99b2"
     },
     {
-        "name": "culpa",
-        "hex": "#cccc7f"
+        "name": "bondage",
+        "hex": "#cc994c"
     },
     {
-        "name": "doom",
-        "hex": "#cccc99"
+        "name": "charity",
+        "hex": "#cc9999"
     },
     {
-        "name": "expedite",
-        "hex": "#ccccb2"
+        "name": "contravariant",
+        "hex": "#cc997f"
     },
     {
-        "name": "fusty",
-        "hex": "#cccccc"
+        "name": "departure",
+        "hex": "#cc9933"
     },
     {
-        "name": "hefty",
-        "hex": "#cccce5"
+        "name": "embargo",
+        "hex": "#cc99e5"
     },
     {
-        "name": "antenna",
+        "name": "fixate",
+        "hex": "#cc9966"
+    },
+    {
+        "name": "grandnephew",
+        "hex": "#cc99cc"
+    },
+    {
+        "name": "adulterous",
         "hex": "#cce519"
     },
     {
-        "name": "bent",
-        "hex": "#cce533"
-    },
-    {
-        "name": "cannon",
-        "hex": "#cce54c"
-    },
-    {
-        "name": "committeemen",
-        "hex": "#cce566"
-    },
-    {
-        "name": "cyst",
-        "hex": "#cce57f"
-    },
-    {
-        "name": "drayman",
-        "hex": "#cce599"
-    },
-    {
-        "name": "extreme",
+        "name": "auntie",
         "hex": "#cce5b2"
     },
     {
-        "name": "gash",
-        "hex": "#cce5cc"
+        "name": "bourn",
+        "hex": "#cce54c"
     },
     {
-        "name": "hesitater",
+        "name": "chimney",
+        "hex": "#cce599"
+    },
+    {
+        "name": "coriander",
+        "hex": "#cce57f"
+    },
+    {
+        "name": "destructor",
+        "hex": "#cce533"
+    },
+    {
+        "name": "endometrial",
         "hex": "#cce5e5"
     },
     {
-        "name": "abetting",
-        "hex": "#e51919"
+        "name": "floppy",
+        "hex": "#cce566"
     },
     {
-        "name": "areawide",
-        "hex": "#e51933"
+        "name": "gritty",
+        "hex": "#cce5cc"
     },
     {
-        "name": "blackbird",
-        "hex": "#e5194c"
+        "name": "aghast",
+        "hex": "#cccc19"
     },
     {
-        "name": "catholic",
-        "hex": "#e51966"
+        "name": "axle",
+        "hex": "#ccccb2"
     },
     {
-        "name": "conformation",
-        "hex": "#e5197f"
+        "name": "brew",
+        "hex": "#cccc4c"
     },
     {
-        "name": "deducible",
-        "hex": "#e51999"
+        "name": "chunky",
+        "hex": "#cccc99"
     },
     {
-        "name": "eclectic",
-        "hex": "#e519b2"
+        "name": "coulomb",
+        "hex": "#cccc7f"
     },
     {
-        "name": "fenugreek",
-        "hex": "#e519cc"
+        "name": "diatonic",
+        "hex": "#cccc33"
     },
     {
-        "name": "glasswort",
-        "hex": "#e519e5"
+        "name": "episodic",
+        "hex": "#cccce5"
     },
     {
-        "name": "acclimate",
-        "hex": "#e53319"
+        "name": "footage",
+        "hex": "#cccc66"
     },
     {
-        "name": "ascribe",
-        "hex": "#e53333"
+        "name": "gunman",
+        "hex": "#cccccc"
     },
     {
-        "name": "bluefish",
-        "hex": "#e5334c"
+        "name": "algorithm",
+        "hex": "#cc1919"
     },
     {
-        "name": "certiorari",
-        "hex": "#e53366"
+        "name": "balmy",
+        "hex": "#cc19b2"
     },
     {
-        "name": "constitutive",
-        "hex": "#e5337f"
+        "name": "bryophyta",
+        "hex": "#cc194c"
     },
     {
-        "name": "deltoid",
-        "hex": "#e53399"
+        "name": "classroom",
+        "hex": "#cc1999"
     },
     {
-        "name": "elder",
-        "hex": "#e533b2"
+        "name": "coxcomb",
+        "hex": "#cc197f"
     },
     {
-        "name": "fillip",
-        "hex": "#e533cc"
+        "name": "dinosaur",
+        "hex": "#cc1933"
     },
     {
-        "name": "goldenseal",
-        "hex": "#e533e5"
+        "name": "establish",
+        "hex": "#cc19e5"
     },
     {
-        "name": "adaptive",
-        "hex": "#e54c19"
+        "name": "forum",
+        "hex": "#cc1966"
     },
     {
-        "name": "asymptotic",
-        "hex": "#e54c33"
+        "name": "hammerhead",
+        "hex": "#cc19cc"
     },
     {
-        "name": "bookplate",
-        "hex": "#e54c4c"
+        "name": "alumnus",
+        "hex": "#cc7f19"
     },
     {
-        "name": "checkbook",
-        "hex": "#e54c66"
+        "name": "baseman",
+        "hex": "#cc7fb2"
     },
     {
-        "name": "convalescent",
-        "hex": "#e54c7f"
+        "name": "burglarproof",
+        "hex": "#cc7f4c"
     },
     {
-        "name": "depredation",
-        "hex": "#e54c99"
+        "name": "clutch",
+        "hex": "#cc7f99"
     },
     {
-        "name": "embrace",
-        "hex": "#e54cb2"
+        "name": "crinkle",
+        "hex": "#cc7f7f"
     },
     {
-        "name": "flange",
-        "hex": "#e54ccc"
+        "name": "distaff",
+        "hex": "#cc7f33"
     },
     {
-        "name": "grasp",
-        "hex": "#e54ce5"
+        "name": "ex",
+        "hex": "#cc7fe5"
     },
     {
-        "name": "aeolian",
+        "name": "fricative",
+        "hex": "#cc7f66"
+    },
+    {
+        "name": "harry",
+        "hex": "#cc7fcc"
+    },
+    {
+        "name": "anaerobic",
+        "hex": "#cc3319"
+    },
+    {
+        "name": "become",
+        "hex": "#cc33b2"
+    },
+    {
+        "name": "caching",
+        "hex": "#cc334c"
+    },
+    {
+        "name": "cohosh",
+        "hex": "#cc3399"
+    },
+    {
+        "name": "csnet",
+        "hex": "#cc337f"
+    },
+    {
+        "name": "dolphin",
+        "hex": "#cc3333"
+    },
+    {
+        "name": "exorcise",
+        "hex": "#cc33e5"
+    },
+    {
+        "name": "furnace",
+        "hex": "#cc3366"
+    },
+    {
+        "name": "heathenish",
+        "hex": "#cc33cc"
+    },
+    {
+        "name": "anomaly",
+        "hex": "#cc4c19"
+    },
+    {
+        "name": "belt",
+        "hex": "#cc4cb2"
+    },
+    {
+        "name": "candela",
+        "hex": "#cc4c4c"
+    },
+    {
+        "name": "commendation",
+        "hex": "#cc4c99"
+    },
+    {
+        "name": "cuttlefish",
+        "hex": "#cc4c7f"
+    },
+    {
+        "name": "dragonhead",
+        "hex": "#cc4c33"
+    },
+    {
+        "name": "extolling",
+        "hex": "#cc4ce5"
+    },
+    {
+        "name": "gar",
+        "hex": "#cc4c66"
+    },
+    {
+        "name": "hermaphroditic",
+        "hex": "#cc4ccc"
+    },
+    {
+        "name": "abacus",
+        "hex": "#4c6619"
+    },
+    {
+        "name": "archetypical",
+        "hex": "#4c66b2"
+    },
+    {
+        "name": "bitch",
+        "hex": "#4c664c"
+    },
+    {
+        "name": "catastrophic",
+        "hex": "#4c6699"
+    },
+    {
+        "name": "confidant",
+        "hex": "#4c667f"
+    },
+    {
+        "name": "decontrol",
+        "hex": "#4c6633"
+    },
+    {
+        "name": "eastward",
+        "hex": "#4c66e5"
+    },
+    {
+        "name": "felicitous",
+        "hex": "#4c6666"
+    },
+    {
+        "name": "glacial",
+        "hex": "#4c66cc"
+    },
+    {
+        "name": "academician",
+        "hex": "#4cb219"
+    },
+    {
+        "name": "artifact",
+        "hex": "#4cb2b2"
+    },
+    {
+        "name": "bloody",
+        "hex": "#4cb24c"
+    },
+    {
+        "name": "centripetal",
+        "hex": "#4cb299"
+    },
+    {
+        "name": "consistent",
+        "hex": "#4cb27f"
+    },
+    {
+        "name": "delight",
+        "hex": "#4cb233"
+    },
+    {
+        "name": "eighteen",
+        "hex": "#4cb2e5"
+    },
+    {
+        "name": "fifty",
+        "hex": "#4cb266"
+    },
+    {
+        "name": "gobble",
+        "hex": "#4cb2cc"
+    },
+    {
+        "name": "actinide",
+        "hex": "#4c9919"
+    },
+    {
+        "name": "astraddle",
+        "hex": "#4c99b2"
+    },
+    {
+        "name": "bone",
+        "hex": "#4c994c"
+    },
+    {
+        "name": "chartreuse",
+        "hex": "#4c9999"
+    },
+    {
+        "name": "contretemps",
+        "hex": "#4c997f"
+    },
+    {
+        "name": "depict",
+        "hex": "#4c9933"
+    },
+    {
+        "name": "embarrass",
+        "hex": "#4c99e5"
+    },
+    {
+        "name": "fjord",
+        "hex": "#4c9966"
+    },
+    {
+        "name": "grandparent",
+        "hex": "#4c99cc"
+    },
+    {
+        "name": "advantage",
+        "hex": "#4ce519"
+    },
+    {
+        "name": "aureomycin",
+        "hex": "#4ce5b2"
+    },
+    {
+        "name": "boutique",
+        "hex": "#4ce54c"
+    },
+    {
+        "name": "china",
+        "hex": "#4ce599"
+    },
+    {
+        "name": "cormorant",
+        "hex": "#4ce57f"
+    },
+    {
+        "name": "detach",
+        "hex": "#4ce533"
+    },
+    {
+        "name": "endorse",
+        "hex": "#4ce5e5"
+    },
+    {
+        "name": "florican",
+        "hex": "#4ce566"
+    },
+    {
+        "name": "groan",
+        "hex": "#4ce5cc"
+    },
+    {
+        "name": "agleam",
+        "hex": "#4ccc19"
+    },
+    {
+        "name": "aye",
+        "hex": "#4cccb2"
+    },
+    {
+        "name": "bribe",
+        "hex": "#4ccc4c"
+    },
+    {
+        "name": "churchgoing",
+        "hex": "#4ccc99"
+    },
+    {
+        "name": "councilmen",
+        "hex": "#4ccc7f"
+    },
+    {
+        "name": "dice",
+        "hex": "#4ccc33"
+    },
+    {
+        "name": "epistolatory",
+        "hex": "#4ccce5"
+    },
+    {
+        "name": "footfall",
+        "hex": "#4ccc66"
+    },
+    {
+        "name": "gunny",
+        "hex": "#4ccccc"
+    },
+    {
+        "name": "alias",
+        "hex": "#4c1919"
+    },
+    {
+        "name": "balustrade",
+        "hex": "#4c19b2"
+    },
+    {
+        "name": "b's",
+        "hex": "#4c194c"
+    },
+    {
+        "name": "clattery",
+        "hex": "#4c1999"
+    },
+    {
+        "name": "coyote",
+        "hex": "#4c197f"
+    },
+    {
+        "name": "diocese",
+        "hex": "#4c1933"
+    },
+    {
+        "name": "ester",
+        "hex": "#4c19e5"
+    },
+    {
+        "name": "fossil",
+        "hex": "#4c1966"
+    },
+    {
+        "name": "hamster",
+        "hex": "#4c19cc"
+    },
+    {
+        "name": "alveoli",
+        "hex": "#4c7f19"
+    },
+    {
+        "name": "basepoint",
+        "hex": "#4c7fb2"
+    },
+    {
+        "name": "burl",
+        "hex": "#4c7f4c"
+    },
+    {
+        "name": "coach",
+        "hex": "#4c7f99"
+    },
+    {
+        "name": "crises",
+        "hex": "#4c7f7f"
+    },
+    {
+        "name": "distillate",
+        "hex": "#4c7f33"
+    },
+    {
+        "name": "exactitude",
+        "hex": "#4c7fe5"
+    },
+    {
+        "name": "friend",
+        "hex": "#4c7f66"
+    },
+    {
+        "name": "hart",
+        "hex": "#4c7fcc"
+    },
+    {
+        "name": "analeptic",
+        "hex": "#4c3319"
+    },
+    {
+        "name": "bedbug",
+        "hex": "#4c33b2"
+    },
+    {
+        "name": "cacophonous",
+        "hex": "#4c334c"
+    },
+    {
+        "name": "coin",
+        "hex": "#4c3399"
+    },
+    {
+        "name": "cubbyhole",
+        "hex": "#4c337f"
+    },
+    {
+        "name": "domain",
+        "hex": "#4c3333"
+    },
+    {
+        "name": "exoskeleta",
+        "hex": "#4c33e5"
+    },
+    {
+        "name": "furrier",
+        "hex": "#4c3366"
+    },
+    {
+        "name": "heavenward",
+        "hex": "#4c33cc"
+    },
+    {
+        "name": "anonymous",
+        "hex": "#4c4c19"
+    },
+    {
+        "name": "bemadden",
+        "hex": "#4c4cb2"
+    },
+    {
+        "name": "candidacy",
+        "hex": "#4c4c4c"
+    },
+    {
+        "name": "commensurable",
+        "hex": "#4c4c99"
+    },
+    {
+        "name": "cyanic",
+        "hex": "#4c4c7f"
+    },
+    {
+        "name": "drainage",
+        "hex": "#4c4c33"
+    },
+    {
+        "name": "extracellular",
+        "hex": "#4c4ce5"
+    },
+    {
+        "name": "garbage",
+        "hex": "#4c4c66"
+    },
+    {
+        "name": "hermit",
+        "hex": "#4c4ccc"
+    },
+    {
+        "name": "abase",
+        "hex": "#996619"
+    },
+    {
+        "name": "architect",
+        "hex": "#9966b2"
+    },
+    {
+        "name": "bitt",
+        "hex": "#99664c"
+    },
+    {
+        "name": "catawba",
+        "hex": "#996699"
+    },
+    {
+        "name": "confident",
+        "hex": "#99667f"
+    },
+    {
+        "name": "deconvolution",
+        "hex": "#996633"
+    },
+    {
+        "name": "eat",
+        "hex": "#9966e5"
+    },
+    {
+        "name": "fell",
+        "hex": "#996666"
+    },
+    {
+        "name": "glacis",
+        "hex": "#9966cc"
+    },
+    {
+        "name": "accede",
+        "hex": "#99b219"
+    },
+    {
+        "name": "artillery",
+        "hex": "#99b2b2"
+    },
+    {
+        "name": "blossom",
+        "hex": "#99b24c"
+    },
+    {
+        "name": "centum",
+        "hex": "#99b299"
+    },
+    {
+        "name": "consolidate",
+        "hex": "#99b27f"
+    },
+    {
+        "name": "delimitation",
+        "hex": "#99b233"
+    },
+    {
+        "name": "eighth",
+        "hex": "#99b2e5"
+    },
+    {
+        "name": "figaro",
+        "hex": "#99b266"
+    },
+    {
+        "name": "god",
+        "hex": "#99b2cc"
+    },
+    {
+        "name": "actinometer",
+        "hex": "#999919"
+    },
+    {
+        "name": "astride",
+        "hex": "#9999b2"
+    },
+    {
+        "name": "bongo",
+        "hex": "#99994c"
+    },
+    {
+        "name": "chasm",
+        "hex": "#999999"
+    },
+    {
+        "name": "contributor",
+        "hex": "#99997f"
+    },
+    {
+        "name": "depletion",
+        "hex": "#999933"
+    },
+    {
+        "name": "embed",
+        "hex": "#9999e5"
+    },
+    {
+        "name": "flag",
+        "hex": "#999966"
+    },
+    {
+        "name": "granite",
+        "hex": "#9999cc"
+    },
+    {
+        "name": "adventitious",
+        "hex": "#99e519"
+    },
+    {
+        "name": "aurora",
+        "hex": "#99e5b2"
+    },
+    {
+        "name": "bowel",
+        "hex": "#99e54c"
+    },
+    {
+        "name": "chine",
+        "hex": "#99e599"
+    },
+    {
+        "name": "cornea",
+        "hex": "#99e57f"
+    },
+    {
+        "name": "d'etat",
+        "hex": "#99e533"
+    },
+    {
+        "name": "endothermic",
+        "hex": "#99e5e5"
+    },
+    {
+        "name": "florist",
+        "hex": "#99e566"
+    },
+    {
+        "name": "grocery",
+        "hex": "#99e5cc"
+    },
+    {
+        "name": "ago",
+        "hex": "#99cc19"
+    },
+    {
+        "name": "azimuthal",
+        "hex": "#99ccb2"
+    },
+    {
+        "name": "brickbat",
+        "hex": "#99cc4c"
+    },
+    {
+        "name": "churchwoman",
+        "hex": "#99cc99"
+    },
+    {
+        "name": "counsel",
+        "hex": "#99cc7f"
+    },
+    {
+        "name": "dichotomy",
+        "hex": "#99cc33"
+    },
+    {
+        "name": "epitaxy",
+        "hex": "#99cce5"
+    },
+    {
+        "name": "footman",
+        "hex": "#99cc66"
+    },
+    {
+        "name": "gunpowder",
+        "hex": "#99cccc"
+    },
+    {
+        "name": "alienate",
+        "hex": "#991919"
+    },
+    {
+        "name": "ban",
+        "hex": "#9919b2"
+    },
+    {
+        "name": "bubonic",
+        "hex": "#99194c"
+    },
+    {
+        "name": "claustrophobic",
+        "hex": "#991999"
+    },
+    {
+        "name": "cozy",
+        "hex": "#99197f"
+    },
+    {
+        "name": "diorama",
+        "hex": "#991933"
+    },
+    {
+        "name": "estop",
+        "hex": "#9919e5"
+    },
+    {
+        "name": "fosterite",
+        "hex": "#991966"
+    },
+    {
+        "name": "handbag",
+        "hex": "#9919cc"
+    },
+    {
+        "name": "alyssum",
+        "hex": "#997f19"
+    },
+    {
+        "name": "bashful",
+        "hex": "#997fb2"
+    },
+    {
+        "name": "burley",
+        "hex": "#997f4c"
+    },
+    {
+        "name": "coachwork",
+        "hex": "#997f99"
+    },
+    {
+        "name": "criss",
+        "hex": "#997f7f"
+    },
+    {
+        "name": "distinguish",
+        "hex": "#997f33"
+    },
+    {
+        "name": "exaltation",
+        "hex": "#997fe5"
+    },
+    {
+        "name": "fright",
+        "hex": "#997f66"
+    },
+    {
+        "name": "has",
+        "hex": "#997fcc"
+    },
+    {
+        "name": "analogue",
+        "hex": "#993319"
+    },
+    {
+        "name": "bedfellow",
+        "hex": "#9933b2"
+    },
+    {
+        "name": "cactus",
+        "hex": "#99334c"
+    },
+    {
+        "name": "coincident",
+        "hex": "#993399"
+    },
+    {
+        "name": "cubicle",
+        "hex": "#99337f"
+    },
+    {
+        "name": "domesticate",
+        "hex": "#993333"
+    },
+    {
+        "name": "exotic",
+        "hex": "#9933e5"
+    },
+    {
+        "name": "further",
+        "hex": "#993366"
+    },
+    {
+        "name": "heavyweight",
+        "hex": "#9933cc"
+    },
+    {
+        "name": "anorthite",
+        "hex": "#994c19"
+    },
+    {
+        "name": "bemuse",
+        "hex": "#994cb2"
+    },
+    {
+        "name": "candlelight",
+        "hex": "#994c4c"
+    },
+    {
+        "name": "commentary",
+        "hex": "#994c99"
+    },
+    {
+        "name": "cycad",
+        "hex": "#994c7f"
+    },
+    {
+        "name": "drama",
+        "hex": "#994c33"
+    },
+    {
+        "name": "extracurricular",
+        "hex": "#994ce5"
+    },
+    {
+        "name": "gardenia",
+        "hex": "#994c66"
+    },
+    {
+        "name": "hernia",
+        "hex": "#994ccc"
+    },
+    {
+        "name": "abbas",
+        "hex": "#666619"
+    },
+    {
+        "name": "architecture",
+        "hex": "#6666b2"
+    },
+    {
+        "name": "bitternut",
+        "hex": "#66664c"
+    },
+    {
+        "name": "catchup",
+        "hex": "#666699"
+    },
+    {
+        "name": "configure",
+        "hex": "#66667f"
+    },
+    {
+        "name": "decorate",
+        "hex": "#666633"
+    },
+    {
+        "name": "eave",
+        "hex": "#6666e5"
+    },
+    {
+        "name": "felonious",
+        "hex": "#666666"
+    },
+    {
+        "name": "gladdy",
+        "hex": "#6666cc"
+    },
+    {
+        "name": "accent",
+        "hex": "#66b219"
+    },
+    {
+        "name": "artwork",
+        "hex": "#66b2b2"
+    },
+    {
+        "name": "blouse",
+        "hex": "#66b24c"
+    },
+    {
+        "name": "ceramium",
+        "hex": "#66b299"
+    },
+    {
+        "name": "consort",
+        "hex": "#66b27f"
+    },
+    {
+        "name": "delinquent",
+        "hex": "#66b233"
+    },
+    {
+        "name": "eightyfold",
+        "hex": "#66b2e5"
+    },
+    {
+        "name": "figurate",
+        "hex": "#66b266"
+    },
+    {
+        "name": "godhead",
+        "hex": "#66b2cc"
+    },
+    {
+        "name": "actress",
+        "hex": "#669919"
+    },
+    {
+        "name": "astrology",
+        "hex": "#6699b2"
+    },
+    {
+        "name": "bonus",
+        "hex": "#66994c"
+    },
+    {
+        "name": "chastise",
+        "hex": "#669999"
+    },
+    {
+        "name": "contrition",
+        "hex": "#66997f"
+    },
+    {
+        "name": "deport",
+        "hex": "#669933"
+    },
+    {
+        "name": "embedder",
+        "hex": "#6699e5"
+    },
+    {
+        "name": "flagging",
+        "hex": "#669966"
+    },
+    {
+        "name": "granola",
+        "hex": "#6699cc"
+    },
+    {
+        "name": "adverb",
+        "hex": "#66e519"
+    },
+    {
+        "name": "auspicious",
+        "hex": "#66e5b2"
+    },
+    {
+        "name": "bowie",
+        "hex": "#66e54c"
+    },
+    {
+        "name": "chintz",
+        "hex": "#66e599"
+    },
+    {
+        "name": "cornfield",
+        "hex": "#66e57f"
+    },
+    {
+        "name": "detent",
+        "hex": "#66e533"
+    },
+    {
+        "name": "endure",
+        "hex": "#66e5e5"
+    },
+    {
+        "name": "flotilla",
+        "hex": "#66e566"
+    },
+    {
+        "name": "grommet",
+        "hex": "#66e5cc"
+    },
+    {
+        "name": "agony",
+        "hex": "#66cc19"
+    },
+    {
+        "name": "babbitt",
+        "hex": "#66ccb2"
+    },
+    {
+        "name": "bridal",
+        "hex": "#66cc4c"
+    },
+    {
+        "name": "churn",
+        "hex": "#66cc99"
+    },
+    {
+        "name": "countdown",
+        "hex": "#66cc7f"
+    },
+    {
+        "name": "dickens",
+        "hex": "#66cc33"
+    },
+    {
+        "name": "epithet",
+        "hex": "#66cce5"
+    },
+    {
+        "name": "footpad",
+        "hex": "#66cc66"
+    },
+    {
+        "name": "gurgle",
+        "hex": "#66cccc"
+    },
+    {
+        "name": "alike",
+        "hex": "#661919"
+    },
+    {
+        "name": "band",
+        "hex": "#6619b2"
+    },
+    {
+        "name": "buckaroo",
+        "hex": "#66194c"
+    },
+    {
+        "name": "clay",
+        "hex": "#661999"
+    },
+    {
+        "name": "crabapple",
+        "hex": "#66197f"
+    },
+    {
+        "name": "dip",
+        "hex": "#661933"
+    },
+    {
+        "name": "estrogen",
+        "hex": "#6619e5"
+    },
+    {
+        "name": "foulmouth",
+        "hex": "#661966"
+    },
+    {
+        "name": "handcuff",
+        "hex": "#6619cc"
+    },
+    {
+        "name": "amalgamate",
+        "hex": "#667f19"
+    },
+    {
+        "name": "basil",
+        "hex": "#667fb2"
+    },
+    {
+        "name": "burnish",
+        "hex": "#667f4c"
+    },
+    {
+        "name": "coagulate",
+        "hex": "#667f99"
+    },
+    {
+        "name": "criterion",
+        "hex": "#667f7f"
+    },
+    {
+        "name": "distribution",
+        "hex": "#667f33"
+    },
+    {
+        "name": "examine",
+        "hex": "#667fe5"
+    },
+    {
+        "name": "frigid",
+        "hex": "#667f66"
+    },
+    {
+        "name": "hasn't",
+        "hex": "#667fcc"
+    },
+    {
+        "name": "analysis",
+        "hex": "#663319"
+    },
+    {
+        "name": "bedimming",
+        "hex": "#6633b2"
+    },
+    {
+        "name": "caddis",
+        "hex": "#66334c"
+    },
+    {
+        "name": "col",
+        "hex": "#663399"
+    },
+    {
+        "name": "cucumber",
+        "hex": "#66337f"
+    },
+    {
+        "name": "dominate",
+        "hex": "#663333"
+    },
+    {
+        "name": "expanse",
+        "hex": "#6633e5"
+    },
+    {
+        "name": "furthest",
+        "hex": "#663366"
+    },
+    {
+        "name": "heck",
+        "hex": "#6633cc"
+    },
+    {
+        "name": "answer",
+        "hex": "#664c19"
+    },
+    {
+        "name": "bend",
+        "hex": "#664cb2"
+    },
+    {
+        "name": "candy",
+        "hex": "#664c4c"
+    },
+    {
+        "name": "commercial",
+        "hex": "#664c99"
+    },
+    {
+        "name": "cyclist",
+        "hex": "#664c7f"
+    },
+    {
+        "name": "dramaturgy",
+        "hex": "#664c33"
+    },
+    {
+        "name": "extralegal",
+        "hex": "#664ce5"
+    },
+    {
+        "name": "garish",
+        "hex": "#664c66"
+    },
+    {
+        "name": "heroic",
+        "hex": "#664ccc"
+    },
+    {
+        "name": "abbot",
         "hex": "#e56619"
     },
     {
-        "name": "autoclave",
-        "hex": "#e56633"
-    },
-    {
-        "name": "bracelet",
-        "hex": "#e5664c"
-    },
-    {
-        "name": "chlorate",
-        "hex": "#e56666"
-    },
-    {
-        "name": "corpora",
-        "hex": "#e5667f"
-    },
-    {
-        "name": "detonable",
-        "hex": "#e56699"
-    },
-    {
-        "name": "enlargeable",
+        "name": "arcing",
         "hex": "#e566b2"
     },
     {
-        "name": "flue",
-        "hex": "#e566cc"
+        "name": "bitumen",
+        "hex": "#e5664c"
     },
     {
-        "name": "groundwork",
+        "name": "catechism",
+        "hex": "#e56699"
+    },
+    {
+        "name": "confirmation",
+        "hex": "#e5667f"
+    },
+    {
+        "name": "decorum",
+        "hex": "#e56633"
+    },
+    {
+        "name": "ebb",
         "hex": "#e566e5"
     },
     {
-        "name": "ahem",
-        "hex": "#e57f19"
+        "name": "felt",
+        "hex": "#e56666"
     },
     {
-        "name": "backboard",
-        "hex": "#e57f33"
+        "name": "gladiolus",
+        "hex": "#e566cc"
     },
     {
-        "name": "brigantine",
-        "hex": "#e57f4c"
-    },
-    {
-        "name": "cinquefoil",
-        "hex": "#e57f66"
-    },
-    {
-        "name": "counterpart",
-        "hex": "#e57f7f"
-    },
-    {
-        "name": "dieldrin",
-        "hex": "#e57f99"
-    },
-    {
-        "name": "equilibrate",
-        "hex": "#e57fb2"
-    },
-    {
-        "name": "forbearance",
-        "hex": "#e57fcc"
-    },
-    {
-        "name": "gymnastic",
-        "hex": "#e57fe5"
-    },
-    {
-        "name": "allegoric",
-        "hex": "#e59919"
-    },
-    {
-        "name": "bangle",
-        "hex": "#e59933"
-    },
-    {
-        "name": "budget",
-        "hex": "#e5994c"
-    },
-    {
-        "name": "clergyman",
-        "hex": "#e59966"
-    },
-    {
-        "name": "crampon",
-        "hex": "#e5997f"
-    },
-    {
-        "name": "directrices",
-        "hex": "#e59999"
-    },
-    {
-        "name": "ethernet",
-        "hex": "#e599b2"
-    },
-    {
-        "name": "fovea",
-        "hex": "#e599cc"
-    },
-    {
-        "name": "handlebar",
-        "hex": "#e599e5"
-    },
-    {
-        "name": "ambiguous",
+        "name": "accept",
         "hex": "#e5b219"
     },
     {
-        "name": "bassoon",
-        "hex": "#e5b233"
-    },
-    {
-        "name": "bushmaster",
-        "hex": "#e5b24c"
-    },
-    {
-        "name": "cob",
-        "hex": "#e5b266"
-    },
-    {
-        "name": "croon",
-        "hex": "#e5b27f"
-    },
-    {
-        "name": "divan",
-        "hex": "#e5b299"
-    },
-    {
-        "name": "excessive",
+        "name": "aryl",
         "hex": "#e5b2b2"
     },
     {
-        "name": "frolicked",
-        "hex": "#e5b2cc"
+        "name": "blown",
+        "hex": "#e5b24c"
     },
     {
-        "name": "hath",
+        "name": "cerebral",
+        "hex": "#e5b299"
+    },
+    {
+        "name": "conspicuous",
+        "hex": "#e5b27f"
+    },
+    {
+        "name": "delirious",
+        "hex": "#e5b233"
+    },
+    {
+        "name": "ejaculate",
         "hex": "#e5b2e5"
     },
     {
-        "name": "anatomic",
-        "hex": "#e5cc19"
+        "name": "filament",
+        "hex": "#e5b266"
     },
     {
-        "name": "beechwood",
-        "hex": "#e5cc33"
+        "name": "godparent",
+        "hex": "#e5b2cc"
     },
     {
-        "name": "cake",
-        "hex": "#e5cc4c"
+        "name": "actuate",
+        "hex": "#e59919"
     },
     {
-        "name": "collapsible",
-        "hex": "#e5cc66"
+        "name": "astronomer",
+        "hex": "#e599b2"
     },
     {
-        "name": "cult",
-        "hex": "#e5cc7f"
+        "name": "boo",
+        "hex": "#e5994c"
     },
     {
-        "name": "doorbell",
-        "hex": "#e5cc99"
+        "name": "chateau",
+        "hex": "#e59999"
     },
     {
-        "name": "expel",
-        "hex": "#e5ccb2"
+        "name": "control",
+        "hex": "#e5997f"
     },
     {
-        "name": "fuzz",
-        "hex": "#e5cccc"
+        "name": "depose",
+        "hex": "#e59933"
     },
     {
-        "name": "heigh",
-        "hex": "#e5cce5"
+        "name": "ember",
+        "hex": "#e599e5"
     },
     {
-        "name": "anthem",
+        "name": "flagstone",
+        "hex": "#e59966"
+    },
+    {
+        "name": "grantor",
+        "hex": "#e599cc"
+    },
+    {
+        "name": "adverse",
         "hex": "#e5e519"
     },
     {
-        "name": "beplaster",
-        "hex": "#e5e533"
-    },
-    {
-        "name": "canny",
-        "hex": "#e5e54c"
-    },
-    {
-        "name": "committing",
-        "hex": "#e5e566"
-    },
-    {
-        "name": "cytolysis",
-        "hex": "#e5e57f"
-    },
-    {
-        "name": "dreadnought",
-        "hex": "#e5e599"
-    },
-    {
-        "name": "extricate",
+        "name": "austral",
         "hex": "#e5e5b2"
     },
     {
-        "name": "gaslight",
+        "name": "bowman",
+        "hex": "#e5e54c"
+    },
+    {
+        "name": "chipboard",
+        "hex": "#e5e599"
+    },
+    {
+        "name": "cornmeal",
+        "hex": "#e5e57f"
+    },
+    {
+        "name": "deter",
+        "hex": "#e5e533"
+    },
+    {
+        "name": "energy",
+        "hex": "#e5e5e5"
+    },
+    {
+        "name": "flour",
+        "hex": "#e5e566"
+    },
+    {
+        "name": "grope",
         "hex": "#e5e5cc"
     },
     {
+        "name": "agree",
+        "hex": "#e5cc19"
+    },
+    {
+        "name": "baboon",
+        "hex": "#e5ccb2"
+    },
+    {
+        "name": "bridesmaid",
+        "hex": "#e5cc4c"
+    },
+    {
+        "name": "cicada",
+        "hex": "#e5cc99"
+    },
+    {
+        "name": "counterargument",
+        "hex": "#e5cc7f"
+    },
+    {
+        "name": "dicta",
+        "hex": "#e5cc33"
+    },
+    {
+        "name": "epochal",
+        "hex": "#e5cce5"
+    },
+    {
+        "name": "footstep",
+        "hex": "#e5cc66"
+    },
+    {
+        "name": "gusset",
+        "hex": "#e5cccc"
+    },
+    {
+        "name": "aliphatic",
+        "hex": "#e51919"
+    },
+    {
+        "name": "bandit",
+        "hex": "#e519b2"
+    },
+    {
+        "name": "bucketful",
+        "hex": "#e5194c"
+    },
+    {
+        "name": "cleanup",
+        "hex": "#e51999"
+    },
+    {
+        "name": "crackpot",
+        "hex": "#e5197f"
+    },
+    {
+        "name": "diploid",
+        "hex": "#e51933"
+    },
+    {
+        "name": "estuarine",
+        "hex": "#e519e5"
+    },
+    {
+        "name": "foundling",
+        "hex": "#e51966"
+    },
+    {
+        "name": "handhold",
+        "hex": "#e519cc"
+    },
+    {
+        "name": "amaranth",
+        "hex": "#e57f19"
+    },
+    {
+        "name": "basilisk",
+        "hex": "#e57fb2"
+    },
+    {
+        "name": "burp",
+        "hex": "#e57f4c"
+    },
+    {
+        "name": "coalescent",
+        "hex": "#e57f99"
+    },
+    {
+        "name": "critter",
+        "hex": "#e57f7f"
+    },
+    {
+        "name": "district",
+        "hex": "#e57f33"
+    },
+    {
+        "name": "exasperater",
+        "hex": "#e57fe5"
+    },
+    {
+        "name": "fringe",
+        "hex": "#e57f66"
+    },
+    {
+        "name": "hast",
+        "hex": "#e57fcc"
+    },
+    {
+        "name": "anamorphic",
+        "hex": "#e53319"
+    },
+    {
+        "name": "bedraggle",
+        "hex": "#e533b2"
+    },
+    {
+        "name": "cadenza",
+        "hex": "#e5334c"
+    },
+    {
+        "name": "colatitude",
+        "hex": "#e53399"
+    },
+    {
+        "name": "cuddly",
+        "hex": "#e5337f"
+    },
+    {
+        "name": "domino",
+        "hex": "#e53333"
+    },
+    {
+        "name": "expansive",
+        "hex": "#e533e5"
+    },
+    {
+        "name": "furze",
+        "hex": "#e53366"
+    },
+    {
+        "name": "hector",
+        "hex": "#e533cc"
+    },
+    {
+        "name": "antagonism",
+        "hex": "#e54c19"
+    },
+    {
+        "name": "benefactor",
+        "hex": "#e54cb2"
+    },
+    {
+        "name": "canister",
+        "hex": "#e54c4c"
+    },
+    {
+        "name": "commissariat",
+        "hex": "#e54c99"
+    },
+    {
+        "name": "cyclorama",
+        "hex": "#e54c7f"
+    },
+    {
+        "name": "drapery",
+        "hex": "#e54c33"
+    },
+    {
+        "name": "extraneous",
+        "hex": "#e54ce5"
+    },
+    {
+        "name": "garner",
+        "hex": "#e54c66"
+    },
+    {
+        "name": "heroism",
+        "hex": "#e54ccc"
+    },
+    {
+        "name": "abdicate",
+        "hex": "#196619"
+    },
+    {
+        "name": "arcsine",
+        "hex": "#1966b2"
+    },
+    {
+        "name": "bivalve",
+        "hex": "#19664c"
+    },
+    {
+        "name": "catenate",
+        "hex": "#196699"
+    },
+    {
+        "name": "confiscate",
+        "hex": "#19667f"
+    },
+    {
+        "name": "decrease",
+        "hex": "#196633"
+    },
+    {
+        "name": "eccentric",
+        "hex": "#1966e5"
+    },
+    {
+        "name": "feminism",
+        "hex": "#196666"
+    },
+    {
+        "name": "glamour",
+        "hex": "#1966cc"
+    },
+    {
+        "name": "access",
+        "hex": "#19b219"
+    },
+    {
+        "name": "asbestos",
+        "hex": "#19b2b2"
+    },
+    {
+        "name": "bludgeon",
+        "hex": "#19b24c"
+    },
+    {
+        "name": "ceremonious",
+        "hex": "#19b299"
+    },
+    {
+        "name": "conspiratorial",
+        "hex": "#19b27f"
+    },
+    {
+        "name": "deliverance",
+        "hex": "#19b233"
+    },
+    {
+        "name": "eke",
+        "hex": "#19b2e5"
+    },
+    {
+        "name": "filbert",
+        "hex": "#19b266"
+    },
+    {
+        "name": "godwit",
+        "hex": "#19b2cc"
+    },
+    {
+        "name": "acupuncture",
+        "hex": "#199919"
+    },
+    {
+        "name": "astrophysical",
+        "hex": "#1999b2"
+    },
+    {
+        "name": "book",
+        "hex": "#19994c"
+    },
+    {
+        "name": "chatty",
+        "hex": "#199999"
+    },
+    {
+        "name": "controller",
+        "hex": "#19997f"
+    },
+    {
+        "name": "deposition",
+        "hex": "#199933"
+    },
+    {
+        "name": "emblazon",
+        "hex": "#1999e5"
+    },
+    {
+        "name": "flak",
+        "hex": "#199966"
+    },
+    {
+        "name": "granule",
+        "hex": "#1999cc"
+    },
+    {
+        "name": "advice",
+        "hex": "#19e519"
+    },
+    {
+        "name": "authenticate",
+        "hex": "#19e5b2"
+    },
+    {
+        "name": "box",
+        "hex": "#19e54c"
+    },
+    {
+        "name": "chirp",
+        "hex": "#19e599"
+    },
+    {
+        "name": "corny",
+        "hex": "#19e57f"
+    },
+    {
+        "name": "determinacy",
+        "hex": "#19e533"
+    },
+    {
+        "name": "enforceable",
+        "hex": "#19e5e5"
+    },
+    {
+        "name": "flout",
+        "hex": "#19e566"
+    },
+    {
+        "name": "grotesque",
+        "hex": "#19e5cc"
+    },
+    {
+        "name": "agribusiness",
+        "hex": "#19cc19"
+    },
+    {
+        "name": "babysit",
+        "hex": "#19ccb2"
+    },
+    {
+        "name": "bridgehead",
+        "hex": "#19cc4c"
+    },
+    {
+        "name": "cigarette",
+        "hex": "#19cc99"
+    },
+    {
+        "name": "counterclockwise",
+        "hex": "#19cc7f"
+    },
+    {
+        "name": "diction",
+        "hex": "#19cc33"
+    },
+    {
+        "name": "epsilon",
+        "hex": "#19cce5"
+    },
+    {
+        "name": "footwork",
+        "hex": "#19cc66"
+    },
+    {
+        "name": "gusty",
+        "hex": "#19cccc"
+    },
+    {
+        "name": "alizarin",
+        "hex": "#191919"
+    },
+    {
+        "name": "bandstop",
+        "hex": "#1919b2"
+    },
+    {
+        "name": "buckle",
+        "hex": "#19194c"
+    },
+    {
+        "name": "clearheaded",
+        "hex": "#191999"
+    },
+    {
+        "name": "craftsman",
+        "hex": "#19197f"
+    },
+    {
+        "name": "diplomacy",
+        "hex": "#191933"
+    },
+    {
+        "name": "eta",
+        "hex": "#1919e5"
+    },
+    {
+        "name": "fountain",
+        "hex": "#191966"
+    },
+    {
+        "name": "handicapper",
+        "hex": "#1919cc"
+    },
+    {
+        "name": "amateurish",
+        "hex": "#197f19"
+    },
+    {
+        "name": "bask",
+        "hex": "#197fb2"
+    },
+    {
+        "name": "bursitis",
+        "hex": "#197f4c"
+    },
+    {
+        "name": "coarsen",
+        "hex": "#197f99"
+    },
+    {
+        "name": "crock",
+        "hex": "#197f7f"
+    },
+    {
+        "name": "disulfide",
+        "hex": "#197f33"
+    },
+    {
+        "name": "excel",
+        "hex": "#197fe5"
+    },
+    {
+        "name": "fritter",
+        "hex": "#197f66"
+    },
+    {
+        "name": "hasty",
+        "hex": "#197fcc"
+    },
+    {
+        "name": "anaplasmosis",
+        "hex": "#193319"
+    },
+    {
+        "name": "bedroom",
+        "hex": "#1933b2"
+    },
+    {
+        "name": "cadre",
+        "hex": "#19334c"
+    },
+    {
+        "name": "coleus",
+        "hex": "#193399"
+    },
+    {
+        "name": "cuff",
+        "hex": "#19337f"
+    },
+    {
+        "name": "done",
+        "hex": "#193333"
+    },
+    {
+        "name": "expect",
+        "hex": "#1933e5"
+    },
+    {
+        "name": "fusible",
+        "hex": "#193366"
+    },
+    {
+        "name": "hedgehog",
+        "hex": "#1933cc"
+    },
+    {
+        "name": "ante",
+        "hex": "#194c19"
+    },
+    {
+        "name": "beneficial",
+        "hex": "#194cb2"
+    },
+    {
+        "name": "canna",
+        "hex": "#194c4c"
+    },
+    {
+        "name": "commit",
+        "hex": "#194c99"
+    },
+    {
+        "name": "cygnet",
+        "hex": "#194c7f"
+    },
+    {
+        "name": "draw",
+        "hex": "#194c33"
+    },
+    {
+        "name": "extraterrestrial",
+        "hex": "#194ce5"
+    },
+    {
+        "name": "garrison",
+        "hex": "#194c66"
+    },
+    {
+        "name": "herpetology",
+        "hex": "#194ccc"
+    },
+    {
+        "name": "abduct",
+        "hex": "#b26619"
+    },
+    {
+        "name": "arctic",
+        "hex": "#b266b2"
+    },
+    {
+        "name": "biz",
+        "hex": "#b2664c"
+    },
+    {
+        "name": "catfish",
+        "hex": "#b26699"
+    },
+    {
+        "name": "conflict",
+        "hex": "#b2667f"
+    },
+    {
+        "name": "decrement",
+        "hex": "#b26633"
+    },
+    {
+        "name": "echidna",
+        "hex": "#b266e5"
+    },
+    {
+        "name": "femur",
+        "hex": "#b26666"
+    },
+    {
+        "name": "glandular",
+        "hex": "#b266cc"
+    },
+    {
+        "name": "accessory",
+        "hex": "#b2b219"
+    },
+    {
+        "name": "ascension",
+        "hex": "#b2b2b2"
+    },
+    {
+        "name": "blueberry",
+        "hex": "#b2b24c"
+    },
+    {
+        "name": "cerise",
+        "hex": "#b2b299"
+    },
+    {
+        "name": "constellate",
+        "hex": "#b2b27f"
+    },
+    {
+        "name": "deliverymen",
+        "hex": "#b2b233"
+    },
+    {
+        "name": "elan",
+        "hex": "#b2b2e5"
+    },
+    {
+        "name": "filet",
+        "hex": "#b2b266"
+    },
+    {
+        "name": "goggle",
+        "hex": "#b2b2cc"
+    },
+    {
+        "name": "ad",
+        "hex": "#b29919"
+    },
+    {
+        "name": "astute",
+        "hex": "#b299b2"
+    },
+    {
+        "name": "bookend",
+        "hex": "#b2994c"
+    },
+    {
+        "name": "chauvinist",
+        "hex": "#b29999"
+    },
+    {
+        "name": "controversy",
+        "hex": "#b2997f"
+    },
+    {
+        "name": "depot",
+        "hex": "#b29933"
+    },
+    {
+        "name": "embodiment",
+        "hex": "#b299e5"
+    },
+    {
+        "name": "flam",
+        "hex": "#b29966"
+    },
+    {
+        "name": "grapevine",
+        "hex": "#b299cc"
+    },
+    {
+        "name": "advisee",
+        "hex": "#b2e519"
+    },
+    {
+        "name": "authoritative",
+        "hex": "#b2e5b2"
+    },
+    {
+        "name": "boxy",
+        "hex": "#b2e54c"
+    },
+    {
+        "name": "chitin",
+        "hex": "#b2e599"
+    },
+    {
+        "name": "corona",
+        "hex": "#b2e57f"
+    },
+    {
+        "name": "determine",
+        "hex": "#b2e533"
+    },
+    {
+        "name": "engine",
+        "hex": "#b2e5e5"
+    },
+    {
+        "name": "flowerpot",
+        "hex": "#b2e566"
+    },
+    {
+        "name": "grouch",
+        "hex": "#b2e5cc"
+    },
+    {
+        "name": "agrimony",
+        "hex": "#b2cc19"
+    },
+    {
+        "name": "baccarat",
+        "hex": "#b2ccb2"
+    },
+    {
+        "name": "brief",
+        "hex": "#b2cc4c"
+    },
+    {
+        "name": "cinch",
+        "hex": "#b2cc99"
+    },
+    {
+        "name": "counterflow",
+        "hex": "#b2cc7f"
+    },
+    {
+        "name": "did",
+        "hex": "#b2cc33"
+    },
+    {
+        "name": "equanimity",
+        "hex": "#b2cce5"
+    },
+    {
+        "name": "for",
+        "hex": "#b2cc66"
+    },
+    {
+        "name": "guttural",
+        "hex": "#b2cccc"
+    },
+    {
+        "name": "alkaloid",
+        "hex": "#b21919"
+    },
+    {
+        "name": "bandy",
+        "hex": "#b219b2"
+    },
+    {
+        "name": "buckthorn",
+        "hex": "#b2194c"
+    },
+    {
+        "name": "cleave",
+        "hex": "#b21999"
+    },
+    {
+        "name": "craftsperson",
+        "hex": "#b2197f"
+    },
+    {
+        "name": "dipole",
+        "hex": "#b21933"
+    },
+    {
+        "name": "eternal",
+        "hex": "#b219e5"
+    },
+    {
+        "name": "fourfold",
+        "hex": "#b21966"
+    },
+    {
+        "name": "handicraftsman",
+        "hex": "#b219cc"
+    },
+    {
+        "name": "ambassador",
+        "hex": "#b27f19"
+    },
+    {
+        "name": "basketry",
+        "hex": "#b27fb2"
+    },
+    {
+        "name": "bury",
+        "hex": "#b27f4c"
+    },
+    {
+        "name": "coastline",
+        "hex": "#b27f99"
+    },
+    {
+        "name": "crocodilian",
+        "hex": "#b27f7f"
+    },
+    {
+        "name": "dither",
+        "hex": "#b27f33"
+    },
+    {
+        "name": "excelling",
+        "hex": "#b27fe5"
+    },
+    {
+        "name": "frizzle",
+        "hex": "#b27f66"
+    },
+    {
+        "name": "hatchery",
+        "hex": "#b27fcc"
+    },
+    {
+        "name": "anarchy",
+        "hex": "#b23319"
+    },
+    {
+        "name": "bedspring",
+        "hex": "#b233b2"
+    },
+    {
+        "name": "cage",
+        "hex": "#b2334c"
+    },
+    {
+        "name": "coliform",
+        "hex": "#b23399"
+    },
+    {
+        "name": "culinary",
+        "hex": "#b2337f"
+    },
+    {
+        "name": "donor",
+        "hex": "#b23333"
+    },
+    {
+        "name": "expectorant",
+        "hex": "#b233e5"
+    },
+    {
+        "name": "fusion",
+        "hex": "#b23366"
+    },
+    {
+        "name": "heed",
+        "hex": "#b233cc"
+    },
+    {
+        "name": "antecedent",
+        "hex": "#b24c19"
+    },
+    {
+        "name": "benevolent",
+        "hex": "#b24cb2"
+    },
+    {
+        "name": "cannery",
+        "hex": "#b24c4c"
+    },
+    {
+        "name": "committed",
+        "hex": "#b24c99"
+    },
+    {
+        "name": "cymbal",
+        "hex": "#b24c7f"
+    },
+    {
+        "name": "drawl",
+        "hex": "#b24c33"
+    },
+    {
+        "name": "extravaganza",
+        "hex": "#b24ce5"
+    },
+    {
+        "name": "gas",
+        "hex": "#b24c66"
+    },
+    {
+        "name": "hertz",
+        "hex": "#b24ccc"
+    },
+    {
+        "name": "aberrate",
+        "hex": "#336619"
+    },
+    {
+        "name": "are",
+        "hex": "#3366b2"
+    },
+    {
+        "name": "black",
+        "hex": "#33664c"
+    },
+    {
+        "name": "catheter",
+        "hex": "#336699"
+    },
+    {
+        "name": "conform",
+        "hex": "#33667f"
+    },
+    {
+        "name": "decryption",
+        "hex": "#336633"
+    },
+    {
+        "name": "echoes",
+        "hex": "#3366e5"
+    },
+    {
+        "name": "fend",
+        "hex": "#336666"
+    },
+    {
+        "name": "glass",
+        "hex": "#3366cc"
+    },
+    {
+        "name": "accipiter",
+        "hex": "#33b219"
+    },
+    {
+        "name": "ascetic",
+        "hex": "#33b2b2"
+    },
+    {
+        "name": "bluebonnet",
+        "hex": "#33b24c"
+    },
+    {
+        "name": "certainty",
+        "hex": "#33b299"
+    },
+    {
+        "name": "constituent",
+        "hex": "#33b27f"
+    },
+    {
+        "name": "delphine",
+        "hex": "#33b233"
+    },
+    {
+        "name": "elastomer",
+        "hex": "#33b2e5"
+    },
+    {
+        "name": "filigree",
+        "hex": "#33b266"
+    },
+    {
+        "name": "golden",
+        "hex": "#33b2cc"
+    },
+    {
+        "name": "adamant",
+        "hex": "#339919"
+    },
+    {
+        "name": "asymmetry",
+        "hex": "#3399b2"
+    },
+    {
+        "name": "bookkeep",
+        "hex": "#33994c"
+    },
+    {
+        "name": "cheat",
+        "hex": "#339999"
+    },
+    {
+        "name": "contusion",
+        "hex": "#33997f"
+    },
+    {
+        "name": "deprecatory",
+        "hex": "#339933"
+    },
+    {
+        "name": "emboss",
+        "hex": "#3399e5"
+    },
+    {
+        "name": "flamingo",
+        "hex": "#339966"
+    },
+    {
+        "name": "graphic",
+        "hex": "#3399cc"
+    },
+    {
+        "name": "advocacy",
+        "hex": "#33e519"
+    },
+    {
+        "name": "auto",
+        "hex": "#33e5b2"
+    },
+    {
+        "name": "boycott",
+        "hex": "#33e54c"
+    },
+    {
+        "name": "chivalrous",
+        "hex": "#33e599"
+    },
+    {
+        "name": "coroner",
+        "hex": "#33e57f"
+    },
+    {
+        "name": "deterring",
+        "hex": "#33e533"
+    },
+    {
+        "name": "enigma",
+        "hex": "#33e5e5"
+    },
+    {
+        "name": "flu",
+        "hex": "#33e566"
+    },
+    {
+        "name": "groundhog",
+        "hex": "#33e5cc"
+    },
+    {
+        "name": "ague",
+        "hex": "#33cc19"
+    },
+    {
+        "name": "bacilli",
+        "hex": "#33ccb2"
+    },
+    {
+        "name": "brigade",
+        "hex": "#33cc4c"
+    },
+    {
+        "name": "cinematic",
+        "hex": "#33cc99"
+    },
+    {
+        "name": "countermand",
+        "hex": "#33cc7f"
+    },
+    {
+        "name": "didn't",
+        "hex": "#33cc33"
+    },
+    {
+        "name": "equestrian",
+        "hex": "#33cce5"
+    },
+    {
+        "name": "foray",
+        "hex": "#33cc66"
+    },
+    {
+        "name": "gym",
+        "hex": "#33cccc"
+    },
+    {
+        "name": "allegate",
+        "hex": "#331919"
+    },
+    {
+        "name": "baneful",
+        "hex": "#3319b2"
+    },
+    {
+        "name": "bud",
+        "hex": "#33194c"
+    },
+    {
+        "name": "clement",
+        "hex": "#331999"
+    },
+    {
+        "name": "craggy",
+        "hex": "#33197f"
+    },
+    {
+        "name": "director",
+        "hex": "#331933"
+    },
+    {
+        "name": "ethanol",
+        "hex": "#3319e5"
+    },
+    {
+        "name": "fourteen",
+        "hex": "#331966"
+    },
+    {
+        "name": "handkerchief",
+        "hex": "#3319cc"
+    },
+    {
+        "name": "ambidextrous",
+        "hex": "#337f19"
+    },
+    {
+        "name": "bassi",
+        "hex": "#337fb2"
+    },
+    {
+        "name": "bush",
+        "hex": "#337f4c"
+    },
+    {
+        "name": "coauthor",
+        "hex": "#337f99"
+    },
+    {
+        "name": "crone",
+        "hex": "#337f7f"
+    },
+    {
+        "name": "diurnal",
+        "hex": "#337f33"
+    },
+    {
+        "name": "exception",
+        "hex": "#337fe5"
+    },
+    {
+        "name": "frock",
+        "hex": "#337f66"
+    },
+    {
+        "name": "hate",
+        "hex": "#337fcc"
+    },
+    {
+        "name": "anastomosis",
+        "hex": "#333319"
+    },
+    {
+        "name": "bee",
+        "hex": "#3333b2"
+    },
+    {
+        "name": "caiman",
+        "hex": "#33334c"
+    },
+    {
+        "name": "collage",
+        "hex": "#333399"
+    },
+    {
+        "name": "culpa",
+        "hex": "#33337f"
+    },
+    {
+        "name": "doom",
+        "hex": "#333333"
+    },
+    {
+        "name": "expedite",
+        "hex": "#3333e5"
+    },
+    {
+        "name": "fusty",
+        "hex": "#333366"
+    },
+    {
+        "name": "hefty",
+        "hex": "#3333cc"
+    },
+    {
+        "name": "antenna",
+        "hex": "#334c19"
+    },
+    {
+        "name": "bent",
+        "hex": "#334cb2"
+    },
+    {
+        "name": "cannon",
+        "hex": "#334c4c"
+    },
+    {
+        "name": "committeemen",
+        "hex": "#334c99"
+    },
+    {
+        "name": "cyst",
+        "hex": "#334c7f"
+    },
+    {
+        "name": "drayman",
+        "hex": "#334c33"
+    },
+    {
+        "name": "extreme",
+        "hex": "#334ce5"
+    },
+    {
+        "name": "gash",
+        "hex": "#334c66"
+    },
+    {
+        "name": "hesitater",
+        "hex": "#334ccc"
+    },
+    {
+        "name": "abetting",
+        "hex": "#7f6619"
+    },
+    {
+        "name": "areawide",
+        "hex": "#7f66b2"
+    },
+    {
+        "name": "blackbird",
+        "hex": "#7f664c"
+    },
+    {
+        "name": "catholic",
+        "hex": "#7f6699"
+    },
+    {
+        "name": "conformation",
+        "hex": "#7f667f"
+    },
+    {
+        "name": "deducible",
+        "hex": "#7f6633"
+    },
+    {
+        "name": "eclectic",
+        "hex": "#7f66e5"
+    },
+    {
+        "name": "fenugreek",
+        "hex": "#7f6666"
+    },
+    {
+        "name": "glasswort",
+        "hex": "#7f66cc"
+    },
+    {
+        "name": "acclimate",
+        "hex": "#7fb219"
+    },
+    {
+        "name": "ascribe",
+        "hex": "#7fb2b2"
+    },
+    {
+        "name": "bluefish",
+        "hex": "#7fb24c"
+    },
+    {
+        "name": "certiorari",
+        "hex": "#7fb299"
+    },
+    {
+        "name": "constitutive",
+        "hex": "#7fb27f"
+    },
+    {
+        "name": "deltoid",
+        "hex": "#7fb233"
+    },
+    {
+        "name": "elder",
+        "hex": "#7fb2e5"
+    },
+    {
+        "name": "fillip",
+        "hex": "#7fb266"
+    },
+    {
+        "name": "goldenseal",
+        "hex": "#7fb2cc"
+    },
+    {
+        "name": "adaptive",
+        "hex": "#7f9919"
+    },
+    {
+        "name": "asymptotic",
+        "hex": "#7f99b2"
+    },
+    {
+        "name": "bookplate",
+        "hex": "#7f994c"
+    },
+    {
+        "name": "checkbook",
+        "hex": "#7f9999"
+    },
+    {
+        "name": "convalescent",
+        "hex": "#7f997f"
+    },
+    {
+        "name": "depredation",
+        "hex": "#7f9933"
+    },
+    {
+        "name": "embrace",
+        "hex": "#7f99e5"
+    },
+    {
+        "name": "flange",
+        "hex": "#7f9966"
+    },
+    {
+        "name": "grasp",
+        "hex": "#7f99cc"
+    },
+    {
+        "name": "aeolian",
+        "hex": "#7fe519"
+    },
+    {
+        "name": "autoclave",
+        "hex": "#7fe5b2"
+    },
+    {
+        "name": "bracelet",
+        "hex": "#7fe54c"
+    },
+    {
+        "name": "chlorate",
+        "hex": "#7fe599"
+    },
+    {
+        "name": "corpora",
+        "hex": "#7fe57f"
+    },
+    {
+        "name": "detonable",
+        "hex": "#7fe533"
+    },
+    {
+        "name": "enlargeable",
+        "hex": "#7fe5e5"
+    },
+    {
+        "name": "flue",
+        "hex": "#7fe566"
+    },
+    {
+        "name": "groundwork",
+        "hex": "#7fe5cc"
+    },
+    {
+        "name": "ahem",
+        "hex": "#7fcc19"
+    },
+    {
+        "name": "backboard",
+        "hex": "#7fccb2"
+    },
+    {
+        "name": "brigantine",
+        "hex": "#7fcc4c"
+    },
+    {
+        "name": "cinquefoil",
+        "hex": "#7fcc99"
+    },
+    {
+        "name": "counterpart",
+        "hex": "#7fcc7f"
+    },
+    {
+        "name": "dieldrin",
+        "hex": "#7fcc33"
+    },
+    {
+        "name": "equilibrate",
+        "hex": "#7fcce5"
+    },
+    {
+        "name": "forbearance",
+        "hex": "#7fcc66"
+    },
+    {
+        "name": "gymnastic",
+        "hex": "#7fcccc"
+    },
+    {
+        "name": "allegoric",
+        "hex": "#7f1919"
+    },
+    {
+        "name": "bangle",
+        "hex": "#7f19b2"
+    },
+    {
+        "name": "budget",
+        "hex": "#7f194c"
+    },
+    {
+        "name": "clergyman",
+        "hex": "#7f1999"
+    },
+    {
+        "name": "crampon",
+        "hex": "#7f197f"
+    },
+    {
+        "name": "directrices",
+        "hex": "#7f1933"
+    },
+    {
+        "name": "ethernet",
+        "hex": "#7f19e5"
+    },
+    {
+        "name": "fovea",
+        "hex": "#7f1966"
+    },
+    {
+        "name": "handlebar",
+        "hex": "#7f19cc"
+    },
+    {
+        "name": "ambiguous",
+        "hex": "#7f7f19"
+    },
+    {
+        "name": "bassoon",
+        "hex": "#7f7fb2"
+    },
+    {
+        "name": "bushmaster",
+        "hex": "#7f7f4c"
+    },
+    {
+        "name": "cob",
+        "hex": "#7f7f99"
+    },
+    {
+        "name": "croon",
+        "hex": "#7f7f7f"
+    },
+    {
+        "name": "divan",
+        "hex": "#7f7f33"
+    },
+    {
+        "name": "excessive",
+        "hex": "#7f7fe5"
+    },
+    {
+        "name": "frolicked",
+        "hex": "#7f7f66"
+    },
+    {
+        "name": "hath",
+        "hex": "#7f7fcc"
+    },
+    {
+        "name": "anatomic",
+        "hex": "#7f3319"
+    },
+    {
+        "name": "beechwood",
+        "hex": "#7f33b2"
+    },
+    {
+        "name": "cake",
+        "hex": "#7f334c"
+    },
+    {
+        "name": "collapsible",
+        "hex": "#7f3399"
+    },
+    {
+        "name": "cult",
+        "hex": "#7f337f"
+    },
+    {
+        "name": "doorbell",
+        "hex": "#7f3333"
+    },
+    {
+        "name": "expel",
+        "hex": "#7f33e5"
+    },
+    {
+        "name": "fuzz",
+        "hex": "#7f3366"
+    },
+    {
+        "name": "heigh",
+        "hex": "#7f33cc"
+    },
+    {
+        "name": "anthem",
+        "hex": "#7f4c19"
+    },
+    {
+        "name": "beplaster",
+        "hex": "#7f4cb2"
+    },
+    {
+        "name": "canny",
+        "hex": "#7f4c4c"
+    },
+    {
+        "name": "committing",
+        "hex": "#7f4c99"
+    },
+    {
+        "name": "cytolysis",
+        "hex": "#7f4c7f"
+    },
+    {
+        "name": "dreadnought",
+        "hex": "#7f4c33"
+    },
+    {
+        "name": "extricate",
+        "hex": "#7f4ce5"
+    },
+    {
+        "name": "gaslight",
+        "hex": "#7f4c66"
+    },
+    {
         "name": "heterogamous",
-        "hex": "#e5e5e5"
+        "hex": "#7f4ccc"
     }
 ]
