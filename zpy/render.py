@@ -108,7 +108,6 @@ def make_aov_file_output_node(
     if view_node is None:
         view_node = _tree.nodes.new('CompositorNodeViewer')
     view_node.name = _name
-    _tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
 
     # File output node renders out image
     _name = f'{style} output'
@@ -117,7 +116,33 @@ def make_aov_file_output_node(
         fileout_node = _tree.nodes.new('CompositorNodeOutputFile')
     fileout_node.name = _name
     fileout_node.mute = False
-    _tree.links.new(rl_node.outputs[style], fileout_node.inputs['Image'])
+
+    # HACK: Depth requires normalization node between layer and output
+    if style == 'depth':
+        # Normalization node for viewer
+        _name_viewer = f'{style} normalize viewer'
+        norm_node_viewer = _tree.nodes.get(_name_viewer)
+        if norm_node_viewer is None:
+            norm_node_viewer = _tree.nodes.new('CompositorNodeNormalize')
+        norm_node_viewer.name = _name_viewer
+        
+        # Normalization node for fileout
+        _name_fileout = f'{style} normalize fileout'
+        norm_node_fileout = _tree.nodes.get(_name_fileout)
+        if norm_node_fileout is None:
+            norm_node_fileout = _tree.nodes.new('CompositorNodeNormalize')
+        norm_node_fileout.name = _name_fileout
+
+        # Link up the nodes
+        _tree.links.new(rl_node.outputs[style], norm_node_viewer.inputs[0])
+        _tree.links.new(rl_node.outputs[style], norm_node_fileout.inputs[0])
+        _tree.links.new(norm_node_viewer.outputs[0], view_node.inputs['Image'])
+        _tree.links.new(
+            norm_node_fileout.outputs[0], fileout_node.inputs['Image'])
+    else:
+        _tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
+        _tree.links.new(rl_node.outputs[style], fileout_node.inputs['Image'])
+
     return fileout_node
 
 
