@@ -111,26 +111,25 @@ def make_aov_file_output_node(
 
     # HACK: Depth requires normalization node between layer and output
     if style == 'depth':
-        # Normalization node for viewer
-        _name_viewer = f'{style} normalize viewer'
-        norm_node_viewer = _tree.nodes.get(_name_viewer)
-        if norm_node_viewer is None:
-            norm_node_viewer = _tree.nodes.new('CompositorNodeNormalize')
-        norm_node_viewer.name = _name_viewer
+        # Normalization node
+        _name = f'{style} normalize'
+        norm_node = _tree.nodes.get(_name)
+        if norm_node is None:
+            norm_node = _tree.nodes.new('CompositorNodeNormalize')
+        norm_node.name = _name
 
-        # Normalization node for fileout
-        _name_fileout = f'{style} normalize fileout'
-        norm_node_fileout = _tree.nodes.get(_name_fileout)
-        if norm_node_fileout is None:
-            norm_node_fileout = _tree.nodes.new('CompositorNodeNormalize')
-        norm_node_fileout.name = _name_fileout
+        # Negative inversion
+        _name = f'{style} negate'
+        invert_node = _tree.nodes.get(_name)
+        if invert_node is None:
+            invert_node = _tree.nodes.new('CompositorNodeInvert')
+        invert_node.name = _name
 
         # Link up the nodes
-        _tree.links.new(rl_node.outputs['Depth'], norm_node_viewer.inputs[0])
-        _tree.links.new(rl_node.outputs['Depth'], norm_node_fileout.inputs[0])
-        _tree.links.new(norm_node_viewer.outputs[0], view_node.inputs['Image'])
-        _tree.links.new(
-            norm_node_fileout.outputs[0], fileout_node.inputs['Image'])
+        _tree.links.new(rl_node.outputs['Depth'], norm_node.inputs[0])
+        _tree.links.new(norm_node.outputs[0], invert_node.inputs['Color'])
+        _tree.links.new(invert_node.outputs[0], view_node.inputs['Image'])
+        _tree.links.new(invert_node.outputs[0], fileout_node.inputs['Image'])
     else:
         # HACK: Some styles have specific output node names
         if style == 'rgb':
@@ -205,16 +204,27 @@ def render_aov(
         _rgb_render_settings()
         _render()
 
-    if (render_outputs.get('category', None) is not None) or \
-        (render_outputs.get('instance', None) is not None) or \
-            (render_outputs.get('depth', None) is not None):
+    cseg_is_on = (render_outputs.get('category', None) is not None)
+    iseg_is_on = (render_outputs.get('instance', None) is not None)
+    depth_is_on = (render_outputs.get('depth', None) is not None)
+    if cseg_is_on or iseg_is_on or depth_is_on:
         # Un-mute segmentation and depth output nodes
-        _mute_aov_file_output_node('category', mute=False)
-        _mute_aov_file_output_node('instance', mute=False)
-        _mute_aov_file_output_node('depth', mute=False)
+        _mute_aov_file_output_node('category', mute=(not cseg_is_on))
+        _mute_aov_file_output_node('instance', mute=(not iseg_is_on))
+        _mute_aov_file_output_node('depth', mute=(not depth_is_on))
         _mute_aov_file_output_node('rgb', mute=True)
         _seg_render_settings()
         _render()
+
+    # Save intermediate scene
+    if log.getEffectiveLevel() == logging.DEBUG:
+        # HACK: Use whatever output path is not None
+        for style, output_path in render_outputs.items():
+            if output_path is not None:
+                break
+        _filename = f'blender-debug-scene-post-aov-{output_path.stem}.blend'
+        _path = output_path.parent / _filename
+        zpy.blender.output_intermediate_scene(_path)
 
     # HACK: Rename image outputs due to stupid Blender reasons
     for style, output_path in render_outputs.items():
@@ -222,12 +232,6 @@ def render_aov(
             _bad_name = str(output_path) + '%04d' % scene.frame_current
             os.rename(_bad_name, str(output_path))
             log.info(f'Rendered {style} image saved to {str(output_path)}')
-
-    # Save intermediate scene
-    if log.getEffectiveLevel() == logging.DEBUG:
-        _filename = f'blender-debug-scene-post-{rgb_path.stem}.blend'
-        _path = rgb_path.parent / _filename
-        zpy.blender.output_intermediate_scene(_path)
 
 
 def _mute_aov_file_output_node(style: str, mute: bool = True):
