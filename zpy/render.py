@@ -151,14 +151,13 @@ def render_aov(
     cseg_path: Union[str, Path] = None,
     width: int = 480,
     height: int = 640,
-    
 ):
     """ Render images using AOV nodes. """
     scene = bpy.context.scene
     scene.render.resolution_x = width
-    scene.render.resolution_y = height    
+    scene.render.resolution_y = height
     scene.render.image_settings.file_format = 'PNG'
-    
+
     # HACK: Prevents adding frame number to filename
     scene.frame_end = scene.frame_current
     scene.frame_start = scene.frame_current
@@ -198,24 +197,22 @@ def render_aov(
                 f'Output node for {style} image pointing to {str(output_path)}')
 
     if render_outputs.get('rgb', None) is not None:
-        # Speedup: Mute segmentation and depth output nodes
-        for style in ['category', 'instance', 'depth']:
-            output_node = scene.node_tree.nodes.get(f'{style} output', None)
-            if output_node is not None:
-                output_node.mute = True
-        scene.render.filepath = str(render_outputs['rgb'].parent)
+        # Mute segmentation and depth output nodes
+        _mute_aov_file_output_node('category', mute=True)
+        _mute_aov_file_output_node('instance', mute=True)
+        _mute_aov_file_output_node('depth', mute=True)
+        _mute_aov_file_output_node('rgb', mute=False)
         _rgb_render_settings()
         _render()
 
     if (render_outputs.get('category', None) is not None) or \
         (render_outputs.get('instance', None) is not None) or \
             (render_outputs.get('depth', None) is not None):
-        # Speedup: Un-mute segmentation and depth output nodes
-        for style in ['category', 'instance', 'depth']:
-            output_node = scene.node_tree.nodes.get(f'{style} output', None)
-            if output_node is not None:
-                output_node.mute = False
-        scene.render.filepath = str(render_outputs['instance'].parent)
+        # Un-mute segmentation and depth output nodes
+        _mute_aov_file_output_node('category', mute=False)
+        _mute_aov_file_output_node('instance', mute=False)
+        _mute_aov_file_output_node('depth', mute=False)
+        _mute_aov_file_output_node('rgb', mute=True)
         _seg_render_settings()
         _render()
 
@@ -233,6 +230,15 @@ def render_aov(
         zpy.blender.output_intermediate_scene(_path)
 
 
+def _mute_aov_file_output_node(style: str, mute: bool = True):
+    """ Mute (or un-mute) an AOV output node for a style. """
+    log.debug(f'Muting AOV node for {style}')
+    scene = bpy.context.scene
+    _output_node = scene.node_tree.nodes.get(f'{style} output', None)
+    if _output_node is not None:
+        _output_node.mute = mute
+
+
 def _rgb_render_settings():
     """ Render settings for normal color images. """
     scene = bpy.context.scene
@@ -240,7 +246,7 @@ def _rgb_render_settings():
     scene.render.film_transparent = False
     scene.render.dither_intensity = 1.0
     scene.render.filter_size = 1.5
-    scene.render.use_compositing = False
+    scene.render.use_compositing = True
 
     scene.cycles.samples = 128
     scene.cycles.diffuse_bounces = 4
@@ -265,7 +271,7 @@ def _seg_render_settings():
     scene.render.film_transparent = True
     scene.render.dither_intensity = 0.
     scene.render.filter_size = 0.
-    scene.render.use_compositing = False
+    scene.render.use_compositing = True
 
     scene.cycles.samples = 1
     scene.cycles.diffuse_bounces = 0
