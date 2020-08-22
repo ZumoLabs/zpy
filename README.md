@@ -5,7 +5,7 @@ Utility bundle for use with bpy. TESTING EXPERIMENTAL.
 The current version of zpy is:
 
 ```
-export ZPY_VERSION="1.0.8"
+export ZPY_VERSION="v1.0.8"
 ```
 
 ## Cutting a Release
