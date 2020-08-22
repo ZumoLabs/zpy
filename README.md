@@ -2,6 +2,12 @@
 
 Utility bundle for use with bpy. TESTING EXPERIMENTAL.
 
+The current version of zpy is:
+
+```
+export ZPY_VERSION = "1.0.7"
+```
+
 ## Cutting a Release
 
 Fetch and list existing tags
