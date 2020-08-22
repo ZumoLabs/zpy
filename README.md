@@ -5,7 +5,7 @@ Utility bundle for use with bpy. TESTING EXPERIMENTAL.
 The current version of zpy is:
 
 ```
-export ZPY_VERSION = "1.0.7"
+export ZPY_VERSION="1.0.8"
 ```
 
 ## Cutting a Release
@@ -20,8 +20,8 @@ git tag
 Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`)
 
 ```
-git tag <version>
-git push origin <version>
+git tag ${ZPY_VERSION}
+git push origin ${ZPY_VERSION}
 ```
 
 Check progress on [CI](https://app.circleci.com/pipelines/github/ZumoLabs/zpy)
