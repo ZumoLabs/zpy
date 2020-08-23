@@ -35,7 +35,7 @@ def make_aov_material_output_node(
             log.debug(f'No active material found for {obj.name}')
             return
         mat = obj.active_material
-        
+
     # Make sure material is using nodes
     if not mat.use_nodes:
         mat.use_nodes = True
@@ -130,7 +130,9 @@ def make_mat(name: str = None,
 
 
 def set_mat(obj: Union[str, bpy.types.Object] = None,
-            mat: Union[str, bpy.types.Material] = None):
+            mat: Union[str, bpy.types.Material] = None,
+            recursive: bool = True,
+            ):
     """ Sets object material. Allows strings. """
     if obj is None:
         log.warning('Empty object.')
@@ -155,5 +157,6 @@ def set_mat(obj: Union[str, bpy.types.Object] = None,
         log.warning('Object does not have material property')
         return
     # Recursively change material on all children of object
-    for child in obj.children:
-        set_mat(child, mat)
+    if recursive:
+        for child in obj.children:
+            set_mat(child, mat)
