@@ -121,7 +121,7 @@ class OutputCOCO(Output):
 
     @gin.configurable
     def coco_annotations(self,
-                         keys_to_add: List[str] = ['bbox', 'segmentation'],
+                         keys_to_add: List[str] = ['bbox', 'area', 'segmentation'],
                          clipped: bool = False,
                          only_default_images: bool = True,
                          ):
@@ -197,7 +197,7 @@ class OutputCOCO(Output):
     @gin.configurable
     def coco_split_segmentation_annotations(self,
                                             keys_to_add: List[str] = [
-                                                'bbox', 'segmentation'],
+                                                'bbox', 'area', 'segmentation'],
                                             clipped: bool = False,
                                             only_default_images: bool = True,
                                             ):
