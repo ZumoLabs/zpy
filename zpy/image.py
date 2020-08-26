@@ -9,6 +9,7 @@ from typing import Dict, List, Union
 
 import numpy as np
 import zpy
+import zpy.file
 
 # import OpenEXR
 
@@ -332,10 +333,14 @@ def histogram_matching_image(
     target_image_path = zpy.file.verify_path(target_image_path, make=False)
     reference_image_path = zpy.file.verify_path(
         reference_image_path, make=False)
-    target_image = open_image(target_image_path)
-    reference_image = open_image(reference_image_path)
-    matched_image = match_histograms(
-        target_image, reference_image, multichannel=True)
+    try:
+        target_image = open_image(target_image_path)
+        reference_image = open_image(reference_image_path)
+        matched_image = match_histograms(
+            target_image, reference_image, multichannel=True)
+    except Exception as e:
+        log.warning(f'Error when matching histograms, skipping: {e}')
+        return
     log.debug(f'Over-writing matched image to file: {target_image_path}')
     if remove_alpha:
         matched_image = matched_image[:, :, :3]
