@@ -33,7 +33,7 @@ Check progress on [packagecloud](https://packagecloud.io/zumolabs/pypi)
 Download the latest Blender [here](https://www.blender.org/download/). This code has been tested using Blender version:
 
 ```
-export BLENDER_VERSION = "2.83"
+export BLENDER_VERSION = "2.90"
 ```
 
 Set this environment variable to the path of your Blender install. An example command:
@@ -41,7 +41,7 @@ Set this environment variable to the path of your Blender install. An example co
 **You will have to change these paths depending on your system.**
 
 ```
-export BLENDER_PATH="/home/ook/Downloads/blender-2.83.3-linux64/2.83"
+export BLENDER_PATH="/home/ook/Downloads/blender-2.90.0-linux64/2.90"
 export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
 export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
 export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"

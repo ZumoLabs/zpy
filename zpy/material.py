@@ -29,38 +29,48 @@ def make_aov_material_output_node(
     assert style in valid_styles, \
         f'Invalid style {style} for AOV material output node, must be in {valid_styles}.'
 
+    # HACK: multiple material slots
+    all_obj_mats = []
+    
     # Use material or get it from object
     if (mat is None) and (obj is not None):
         if obj.active_material is None:
             log.debug(f'No active material found for {obj.name}')
             return
-        mat = obj.active_material
+        if len(obj.material_slots) > 1:
+            for mat in obj.material_slots:
+                all_obj_mats.append(mat.material)
+        else:
+            all_obj_mats.append(obj.active_material)
+    
+    # HACK: multiple material slots
+    for mat in all_obj_mats:
 
-    # Make sure material is using nodes
-    if not mat.use_nodes:
-        mat.use_nodes = True
-    _tree = mat.node_tree
+        # Make sure material is using nodes
+        if not mat.use_nodes:
+            mat.use_nodes = True
+        _tree = mat.node_tree
 
-    # Vertex Color Node
-    _name = f'{style} Vertex Color'
-    vertexcolor_node = _tree.nodes.get(_name)
-    if vertexcolor_node is None:
-        vertexcolor_node = _tree.nodes.new('ShaderNodeVertexColor')
-    vertexcolor_node.layer_name = style
-    vertexcolor_node.name = _name
+        # Vertex Color Node
+        _name = f'{style} Vertex Color'
+        vertexcolor_node = _tree.nodes.get(_name)
+        if vertexcolor_node is None:
+            vertexcolor_node = _tree.nodes.new('ShaderNodeVertexColor')
+        vertexcolor_node.layer_name = style
+        vertexcolor_node.name = _name
 
-    # AOV Output Node
-    _name = style
-    # HACK: property "name" of ShaderNodeOutputAOV behaves strangely with .get()
-    aovoutput_node = None
-    for _node in _tree.nodes:
-        if _node.name == _name:
-            aovoutput_node = _node
-    if aovoutput_node is None:
-        aovoutput_node = _tree.nodes.new('ShaderNodeOutputAOV')
-    aovoutput_node.name = style
-    _tree.links.new(vertexcolor_node.outputs['Color'],
-                    aovoutput_node.inputs['Color'])
+        # AOV Output Node
+        _name = style
+        # HACK: property "name" of ShaderNodeOutputAOV behaves strangely with .get()
+        aovoutput_node = None
+        for _node in _tree.nodes:
+            if _node.name == _name:
+                aovoutput_node = _node
+        if aovoutput_node is None:
+            aovoutput_node = _tree.nodes.new('ShaderNodeOutputAOV')
+        aovoutput_node.name = style
+        _tree.links.new(vertexcolor_node.outputs['Color'],
+                        aovoutput_node.inputs['Color'])
 
 
 @gin.configurable

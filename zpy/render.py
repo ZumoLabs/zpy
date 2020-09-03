@@ -136,6 +136,7 @@ def make_aov_file_output_node(
             style = 'Image'
         assert rl_node.outputs.get(style, None) is not None, \
             f'Render Layer output {style} does not exist.'
+        # TODO: Denoise node (bpy.types.CompositorNodeDenoise)
         _tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
         _tree.links.new(rl_node.outputs[style], fileout_node.inputs['Image'])
 
