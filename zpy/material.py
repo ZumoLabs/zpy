@@ -30,21 +30,26 @@ def make_aov_material_output_node(
         f'Invalid style {style} for AOV material output node, must be in {valid_styles}.'
 
     # HACK: multiple material slots
-    all_obj_mats = []
+    all_mats = []
     
-    # Use material or get it from object
-    if (mat is None) and (obj is not None):
+    # Use material
+    if mat is not None:
+        all_mats = [mat]    
+    # Get material from object
+    elif obj is not None:
         if obj.active_material is None:
             log.debug(f'No active material found for {obj.name}')
             return
         if len(obj.material_slots) > 1:
             for mat in obj.material_slots:
-                all_obj_mats.append(mat.material)
+                all_mats.append(mat.material)
         else:
-            all_obj_mats.append(obj.active_material)
+            all_mats.append(obj.active_material)
+    else:
+        raise ValueError('Must pass in an Object or Material')
     
     # HACK: multiple material slots
-    for mat in all_obj_mats:
+    for mat in all_mats:
 
         # Make sure material is using nodes
         if not mat.use_nodes:
