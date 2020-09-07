@@ -3,25 +3,24 @@
     
     TODO: Match style of the data portal.
 """
-from matplotlib.collections import PatchCollection
-from matplotlib.patches import Arrow, Circle, Polygon, Rectangle
-from matplotlib.ticker import MaxNLocator
+import logging
+import os
+import random
+import time
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
-import logging
+
 import matplotlib
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d as plt3d
 import numpy as np
-import os
-import random
-import time
-
 import zpy
+import zpy.color
 import zpy.file
 import zpy.image
-import zpy.color
-
+from matplotlib.collections import PatchCollection
+from matplotlib.patches import Arrow, Circle, Polygon, Rectangle
+from matplotlib.ticker import MaxNLocator
 
 log = logging.getLogger(__name__)
 
@@ -99,10 +98,6 @@ def image_shape_plot(
     # Pixel ticks should be integers
     ax.yaxis.set_major_locator(MaxNLocator(nbins=5, integer=True))
     ax.xaxis.set_major_locator(MaxNLocator(nbins=5, integer=True))
-    # locs, labels = plt.xticks()
-    # plt.xticks(locs, [l.astype(int) for l in labels])
-    # locs, labels = plt.yticks()
-    # plt.yticks(locs, [l.astype(int) for l in labels])
     return 'image_shape_plot', fig
 
 
@@ -453,38 +448,3 @@ def draw_keypoints3D(
                 color=color,
                 alpha=alpha)
             ax.add_line(line)
-
-
-def threeD_plot() -> matplotlib.axes.Axes:
-    """ Axes object for 3D matplotlib plot.
-
-    TODO: UNUSED & DEPRECATED
-
-    """
-    fig = plt.figure()
-    fig.set_size_inches(10, 10)
-    ax = fig.add_subplot(111, projection='3d')
-    ax.view_init(azim=120)
-    return ax
-
-
-def generate_video(
-        path: Path,
-        image_glob: str = 'IMG_%08d.png',
-        output_file: str = 'out.mp4',
-        fps: int = 30,
-        overlay: Path = None) -> None:
-    """ Generate a video from sequence of frames
-
-    TODO: UNUSED & DEPRECATED
-
-    """
-    import ffmpeg
-    image_regex = os.path.join(str(path), image_glob)
-    cmd = ffmpeg.input(image_regex, framerate=fps)
-    if overlay is not None:
-        overlay_file = ffmpeg.input(overlay)
-        cmd = cmd.overlay(
-            overlay_file, x="(main_w-overlay_w-10)", y="(main_h-overlay_h-10)")
-    cmd = cmd.output(output_file, pix_fmt='yuv420p')
-    cmd.run()

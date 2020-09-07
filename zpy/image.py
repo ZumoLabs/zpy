@@ -11,8 +11,6 @@ import numpy as np
 import zpy
 import zpy.file
 
-# import OpenEXR
-
 import gin
 from scipy import ndimage as ndi
 from shapely.geometry import MultiPolygon, Polygon
@@ -44,22 +42,6 @@ def remove_alpha_channel(image_path: Union[str, Path]) -> None:
     """Remove the alpha channel in an image."""
     img = open_image(image_path)
     io.imsave(image_path, img)
-
-
-# def parse_exr(exr_path):
-#     """ . """
-#     _file = OpenEXR.InputFile(exr_path)
-#     header = _file.header()
-
-#     h, w = header["displayWindow"].max.y + 1, header["displayWindow"].max.x + 1
-#     exr = ExrDict()
-#     for key in header["channels"]:
-#         assert header["channels"][key].type.__str__() == "FLOAT"
-#         exr[key] = np.fromstring(_file.channel(
-#             key), dtype=np.float32).reshape(h, w)
-#     _file.close()
-
-#     return exr
 
 
 @gin.configurable

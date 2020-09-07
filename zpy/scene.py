@@ -1,5 +1,7 @@
 """
     Loose scene utilities for Blender.
+    
+    TODO: Document used functions, remove unused ones
 """
 
 import bpy

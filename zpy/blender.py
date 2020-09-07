@@ -176,15 +176,6 @@ def delete_obj(name=str) -> None:
         log.debug(f'Could not find obj: {name}')
 
 
-def find_child(obj: bpy.types.Object, name: str) -> bpy.types.Object:
-    """ Recursive function to find child object by name. """
-    for child in obj.children:
-        if child.name == name:
-            return child
-        find_child(child, name)
-    return None
-
-
 @gin.configurable
 def load_hdri(
     path: Union[str, Path],
