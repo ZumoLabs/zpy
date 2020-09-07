@@ -213,7 +213,8 @@ def draw_annotations(
         category_id = annotation['category_id']
         category_color = categories[category_id].get('color', None)
         if category_color is None:
-            log.debug('Could not find category color, using random color instead.')
+            log.debug(
+                'Could not find category color, using random color instead.')
             category_color = zpy.color.random_color()
         if 'num_keypoints' in annotation:
             skeleton = categories[category_id]['skeleton']
@@ -226,7 +227,10 @@ def draw_annotations(
         if 'segmentation' in annotation:
             draw_segmentation(ax, annotation['segmentation'], category_color)
         if 'bbox' in annotation:
-            draw_bbox(ax, annotation['bbox'], category_color)
+            draw_bbox(ax,
+                      annotation['bbox'],
+                      category_color,
+                      text=annotation.get('bbox_text', None))
     plt.axis('off')
     fig = plt.gcf()
     DPI = fig.get_dpi()
@@ -242,6 +246,7 @@ def draw_bbox(
         ax: matplotlib.axes.Axes,
         bbox: List,
         color: Tuple[int],
+        text: str = None,
         alpha: float = 0.2) -> None:
     """ Draw a bounding box on the matplotlib axes object. """
     # TODO: fix the bordering in matplotlib so that the pixels
@@ -253,7 +258,20 @@ def draw_bbox(
                   linewidth=3,
                   color=color,
                   edgecolor=color,
-                  alpha=alpha)
+                  alpha=alpha,
+                  )
+    # Add text above box
+    if text is not None:
+        ax.text(
+            x=bbox[0],
+            y=bbox[1],
+            s=text,
+            color=color,
+            weight='bold',
+            fontsize=6,
+            ha='left',
+            va='bottom',
+        )
     ax.add_patch(r)
 
 
