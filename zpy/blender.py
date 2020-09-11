@@ -16,6 +16,8 @@ import bpy_extras
 import gin
 import mathutils
 
+DEMO_STEP_MAX = 5
+
 log = logging.getLogger(__name__)
 
 
@@ -48,12 +50,15 @@ def set_seed(seed: int = 0) -> None:
 
 @gin.configurable
 def step(num_steps: int = 16,
+         demo: bool = False,
          framerate: int = 0,
          start_frame: int = 1,
          ) -> int:
     """ Step logic helper for the scene. """
     assert num_steps is not None, 'Invalid num_steps'
     assert num_steps > 0, 'Invalid num_steps'
+    if demo:
+        num_steps = min(num_steps, DEMO_STEP_MAX)
     step_idx = 0
     if framerate > 0:
         start = bpy.context.scene.frame_start
