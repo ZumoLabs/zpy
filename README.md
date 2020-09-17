@@ -5,7 +5,7 @@ Utility bundle for use with bpy. TESTING EXPERIMENTAL.
 The current version of zpy is:
 
 ```
-export ZPY_VERSION="v1.1.0"
+export ZPY_VERSION="v1.1.2"
 ```
 
 ## Cutting a Release
@@ -20,6 +20,10 @@ git tag
 Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`)
 
 ```
+cd ~/zumolabs/zpy
+git tag ${ZPY_VERSION}-rc0 && \
+git push origin ${ZPY_VERSION}-rc0 && \
+sleep 10m && \
 git tag ${ZPY_VERSION} && \
 git push origin ${ZPY_VERSION}
 ```
