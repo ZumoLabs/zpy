@@ -333,7 +333,26 @@ def render_image(output_path: Union[str, Path],
     # TODO: The properties do not lose state when switching
     #       style, thus requiring manual-resetting.
     if style == 'default' and engine == 'cycles':
-        _rgb_render_settings()
+        scene.render.engine = "CYCLES"
+        scene.render.film_transparent = empty_background
+        scene.render.dither_intensity = 1.0
+        scene.render.filter_size = 1.5
+        scene.render.use_compositing = False
+
+        scene.cycles.samples = 128
+        scene.cycles.diffuse_bounces = 4
+        scene.cycles.diffuse_samples = 12
+        scene.cycles.max_bounces = 4
+        scene.cycles.bake_type = 'COMBINED'
+        scene.cycles.use_adaptive_sampling = True
+
+        scene.view_settings.view_transform = 'Filmic'
+
+        scene.display.render_aa = '8'
+        scene.display.viewport_aa = 'FXAA'
+        scene.display.shading.color_type = 'TEXTURE'
+        scene.display.shading.light = 'STUDIO'
+        scene.display.shading.show_specular_highlight = True
 
     elif style == 'default' and engine == 'eevee':
         scene.render.engine = "BLENDER_EEVEE"
@@ -368,7 +387,21 @@ def render_image(output_path: Union[str, Path],
         scene.eevee.shadow_cascade_size = '1024'
 
     elif style == 'segmentation' and engine == 'cycles':
-        _seg_render_settings()
+        scene.render.engine = "CYCLES"
+        scene.render.film_transparent = True
+        scene.render.dither_intensity = 0.
+        scene.render.filter_size = 0.
+        scene.render.use_compositing = False
+
+        scene.cycles.samples = 1
+        scene.cycles.diffuse_bounces = 0
+        scene.cycles.diffuse_samples = 0
+        scene.cycles.max_bounces = 0
+        scene.cycles.bake_type = 'EMIT'
+        scene.cycles.use_adaptive_sampling = False
+        scene.cycles.use_denoising = False
+
+        scene.view_settings.view_transform = 'Raw'
 
     elif style == 'segmentation' and engine == 'eevee':
         scene.render.engine = "BLENDER_WORKBENCH"
@@ -384,15 +417,7 @@ def render_image(output_path: Union[str, Path],
         scene.display.shading.show_specular_highlight = False
 
         scene.view_settings.view_transform = 'Raw'
-
-    elif style == 'hd':
-        # TODO: High render settings mode.
-        pass
-
-    elif style == 'depth':
-        # TODO: Depth rendering mode
-        pass
-
+        
     else:
         raise ValueError('Unknown render style.')
     bpy.context.view_layer.update()

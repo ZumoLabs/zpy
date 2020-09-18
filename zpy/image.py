@@ -126,7 +126,7 @@ def seg_to_annotations(
         remove_salt: bool = True,
         rle_segmentations: bool = False,
         float_annotations: bool = False,
-        max_categories: int = 300):
+        max_categories: int = 1000):
     """ Convert a segmentation image and bounding box to polygon segmentations. """
     log.info(f'Extracting annotations from segmentation: {image_path}')
     image_path = zpy.file.verify_path(image_path, make=False)
