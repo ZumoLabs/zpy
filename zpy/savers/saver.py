@@ -291,6 +291,7 @@ class Saver:
         log.info(
             f'perform meta analysis image_sample_size:{image_sample_size}...')
 
+        import zpy.file
         image_paths = [i['output_path']
                        for i in self.images.values() if i['style'] == 'default']
         image_paths = zpy.file.sample(
