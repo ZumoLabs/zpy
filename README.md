@@ -23,7 +23,7 @@ Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`)
 cd ~/zumolabs/zpy
 git tag ${ZPY_VERSION}-rc0 && \
 git push origin ${ZPY_VERSION}-rc0 && \
-sleep 10m && \
+sleep 5m && \
 git tag ${ZPY_VERSION} && \
 git push origin ${ZPY_VERSION}
 ```
@@ -80,3 +80,10 @@ OPTIONAL: Export packagecloud pypi as external index url.
 export PIP_EXTRA_INDEX_URL="https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae3552aee:@packagecloud.io/zumolabs/pypi/pypi/simple"
 ```
 
+## Development
+
+If you are developing with zpy it will be easier to symlink the zpy module directly into the blender python library. This can be achieved with something like:
+
+```
+ln -s ~/zumolabs/zpy/zpy ${BLENDER_LIB_PY}/site-packages/
+```

@@ -102,7 +102,19 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
             time.sleep(1)
 
 
-def connect_addon(name: str = 'prometheus') -> None:
+def parse_config(config_name: str = 'config') -> None:
+    """ Load gin config for scene """
+    config_text = bpy.data.texts.get(config_name, None)
+    if config_text is None:
+        log.warning(f'Could not find config {config_name} in texts.')
+        return
+    log.info(f'Loading gin config {config_name}')
+    with gin.unlock_config():
+        gin.parse_config(config_text.as_string())
+        gin.finalize()
+
+
+def connect_addon(name: str = 'segmentium') -> None:
     """ Connects a Blender AddOn. """
     log.debug(f'Connecting Addon {name}.')
     path = f'$BLENDERADDONS/{name}/__init__.py'
