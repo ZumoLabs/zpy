@@ -185,7 +185,7 @@ def render_aov(
             output_node.format.file_format = 'PNG'
             output_node.format.color_mode = 'RGB'
             if style in ['rgb']:
-                output_node.format.color_depth = '16'
+                output_node.format.color_depth = '8'
                 output_node.format.view_settings.view_transform = 'Filmic'
             if style in ['depth']:
                 output_node.format.color_depth = '8'
