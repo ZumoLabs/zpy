@@ -1,7 +1,5 @@
 """
-    Common utilities for tesseract.
-
-    NOTE: Should only include default python modules.
+    File utilities.
 """
 import csv
 import json

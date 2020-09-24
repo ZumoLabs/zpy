@@ -261,6 +261,9 @@ def _rgb_render_settings():
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.use_denoising = True
     scene.cycles.denoising_radius = 8
+    
+    bpy.context.scene.cycles.use_denoising = True
+    bpy.context.scene.cycles.denoiser = 'OPENIMAGEDENOISE'
 
     scene.view_settings.view_transform = 'Filmic'
 
