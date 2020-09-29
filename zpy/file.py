@@ -8,6 +8,7 @@ import os
 import random
 import re
 import shutil
+import tempfile
 from pathlib import Path
 from pprint import pformat
 from typing import Any, Dict, List, Tuple, Union
@@ -112,8 +113,13 @@ def make_underscore_path(path: Union[str, Path], name: str) -> Path:
 def to_pathlib_path(path: Union[str, Path]) -> Path:
     """Convert string path to pathlib.Path if needed."""
     if not isinstance(path, Path):
-        path = Path(os.path.expandvars(path))
+        path = Path(os.path.expandvars(path)).resolve()
     return path
+
+
+def default_temp_path() -> Path:
+    """ Temporary directory agnostic to OS """
+    return Path(tempfile.gettempdir()) / 'output'
 
 
 def clean_dir(

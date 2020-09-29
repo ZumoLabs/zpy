@@ -36,6 +36,8 @@ class Saver:
                  clean_dir: bool = True,
                  ):
         # the output dir
+        if output_dir is None:
+            output_dir = zpy.file.default_temp_path()
         self.output_dir = zpy.file.verify_path(
             output_dir, make=True, check_dir=True)
         log.debug(f'Saver output directory at {output_dir}')
