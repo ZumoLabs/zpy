@@ -218,6 +218,10 @@ class Saver:
                 self.seg_annotations_color_to_id[seg_image] = {}
             self.seg_annotations_color_to_id[seg_image][seg_color] = annotation['id']
         self.annotations.append(annotation)
+        # This call creates correspondences between segmentation images
+        # and the annotations. It should be used after both the images
+        # and annotations have been added to the saver.
+        self.parse_annotations_from_seg_image(image_name=seg_image)
 
     def parse_annotations_from_seg_image(self,
                                          image_name: str,
@@ -282,9 +286,9 @@ class Saver:
                     annotations.append(annotation)
             if len(annotations) > 0:
                 zpy.viz.draw_annotations(image_path=Path(image["output_path"]),
-                                           annotations=annotations,
-                                           categories=self.categories,
-                                           output_path=output_path)
+                                         annotations=annotations,
+                                         categories=self.categories,
+                                         output_path=output_path)
 
     @gin.configurable
     def output_meta_analysis(self,

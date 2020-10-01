@@ -72,6 +72,7 @@ $BLENDER_BIN_PIP install versioneer
 $BLENDER_BIN_PIP install scikit-image
 $BLENDER_BIN_PIP install shapely
 $BLENDER_BIN_PIP install ptvsd
+$BLENDER_BIN_PIP install seaborn
 ```
 
 OPTIONAL: Export packagecloud pypi as external index url.

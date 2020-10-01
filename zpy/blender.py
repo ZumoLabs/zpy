@@ -53,6 +53,7 @@ def step(num_steps: int = 16,
          demo: bool = False,
          framerate: int = 0,
          start_frame: int = 1,
+         refresh_ui: bool = False,
          ) -> int:
     """ Step logic helper for the scene. """
     assert num_steps is not None, 'Invalid num_steps'
@@ -80,6 +81,9 @@ def step(num_steps: int = 16,
         step_idx += 1
         duration = time.time() - start_time
         log.info(f'Simulation step took {duration}s to complete.')
+        # TODO: This call is not needed in headless instances, makes loop faster
+        if refresh_ui:
+            refresh_blender_ui()
 
 
 def connect_debugger_vscode(timeout: int = 3) -> None:
@@ -130,12 +134,12 @@ def output_intermediate_scene(path: Union[str, Path] = '/tmp/blender-debug-scene
     bpy.ops.wm.save_as_mainfile(filepath=str(path))
 
 
-def show_blender_screen() -> None:
-    """ Show blender screen mid script run.
+def refresh_blender_ui() -> None:
+    """ Refresh blender in the middle of a script.
 
-    Make sure to remove the --background flag from the launcher command.
-
+    Does not work on headless instances.
     """
+    log.debug(f'Refreshing Blender UI.')
     bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
     bpy.context.view_layer.update()
 
@@ -402,3 +406,24 @@ def camera_xyv(
     x = int(x * image_width)
     y = int(y * image_height)
     return x, y, v
+
+
+def random_position_within_constraints(
+    obj: bpy.types.Object
+) -> None:
+    """ Randomize position of object within constraints. """
+    # Make sure object has constraints
+    _constraints = obj.constraints.get('Limit Location', None)
+    if _constraints is not None:
+        obj.location.x = random.uniform(
+            obj.constraints['Limit Location'].min_x,
+            obj.constraints['Limit Location'].max_x,
+        )
+        obj.location.y = random.uniform(
+            obj.constraints['Limit Location'].min_y,
+            obj.constraints['Limit Location'].max_y,
+        )
+        obj.location.z = random.uniform(
+            obj.constraints['Limit Location'].min_z,
+            obj.constraints['Limit Location'].max_z,
+        )
