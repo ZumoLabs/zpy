@@ -3,3 +3,4 @@ gin-config
 versioneer
 scikit-image
 shapely
+seaborn
