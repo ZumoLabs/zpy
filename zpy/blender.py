@@ -197,37 +197,6 @@ def delete_obj(name=str) -> None:
         log.debug(f'Could not find obj: {name}')
 
 
-@gin.configurable
-def load_hdri(
-    path: Union[str, Path],
-    scale: Tuple[float] = (1.0, 1.0, 1.0),
-):
-    """ Load an HDRI from path.
-
-    Great source of HDRIs:
-
-        https://hdrihaven.com/
-
-    """
-    log.info(f'Loading HDRI at {path}')
-    path = zpy.file.verify_path(path, make=False)
-    world = bpy.context.scene.world
-    world.use_nodes = True
-    out_node = world.node_tree.nodes.get('World Output')
-    bg_node = world.node_tree.nodes.get('Background')
-    env_node = world.node_tree.nodes.get('Environment Texture')
-    # tex_node = world.node_tree.nodes.new('ShaderNodeTexCoord')
-    if env_node is None:
-        env_node = world.node_tree.nodes.new('ShaderNodeTexEnvironment')
-    env_node.image = bpy.data.images.load(str(path))
-    env_node.texture_mapping.scale = mathutils.Vector(scale)
-    # env_node.texture_mapping.rotation = mathutils.Vector(
-    #     (0,-math.radians(90), math.radians(180)))
-    # world.node_tree.links.new(env_node.inputs[0], tex_node.outputs[4])
-    world.node_tree.links.new(bg_node.inputs[0], env_node.outputs[0])
-    world.node_tree.links.new(out_node.inputs[0], bg_node.outputs[0])
-
-
 def look_at(obj: bpy.types.Object,
             target: Union[Tuple[float], mathutils.Vector],
             roll: float = 0) -> None:
