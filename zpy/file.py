@@ -8,6 +8,8 @@ import os
 import random
 import re
 import shutil
+import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from pprint import pformat
@@ -237,3 +239,16 @@ def filecopy(src_dir: Union[str, Path] = None,
     dst = verify_path(dst)
     log.debug(f'Copying over file from {src} to {dst}')
     shutil.copy(src, dst)
+
+
+def openfolder(
+    path: Union[str, Path],
+):
+    """ Opens a directory in the fileexplorer of your OS. """
+    path = verify_path(path, check_dir=True)
+    if sys.platform.startswith('darwin'):
+        subprocess.call(('open', path))
+    elif os.name == 'nt':
+        os.startfile(path)
+    elif os.name == 'posix':
+        subprocess.call(('xdg-open', path))
