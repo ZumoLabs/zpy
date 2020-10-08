@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 from pprint import pformat
 from typing import Any, Dict, List, Tuple, Union
@@ -254,13 +255,53 @@ def open_folder_in_explorer(
         subprocess.call(('xdg-open', path))
 
 
-def remove_blender_backups(
+def remove_files_with_suffix(
     path: Union[str, Path],
-    exts: List[str] = [".blend1", ".blend2", ".blend3"]
+    exts: List[str],
 ):
-    """Remove any Blender backup files """
+    """Remove file in a path with certain extension """
     path = verify_path(path, check_dir=True)
     for _path in path.glob("*"):
         if path.suffix in exts:
-            log.warning(f'Removing backup file at {_path}')
+            log.warning(f'Removing file at {_path}')
             _path.unlink()
+
+
+def unzip_file(zip_path: Union[str, Path], out_path: Union[str, Path]) -> None:
+    """ Unzip a file at a local path. """
+    log.info(f'Unzipping {zip_path} to {out_path}...')
+    zip_path = verify_path(zip_path)
+    out_path = verify_path(out_path, check_dir=True)
+    if not zip_path.suffix == '.zip':
+        raise ValueError(f'{zip_path} is not a zip file')
+    
+    zf = zipfile.ZipFile(str(zip_path))
+    zipped_size_mb = round(
+        sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)
+    unzipped_size_mb = round(
+        sum([i.file_size for i in zf.infolist()]) / 1024 / 1024)
+    log.info(f'Compressed: {zipped_size_mb}MB, actual: {unzipped_size_mb}MB.')
+    zf.extractall(out_path)
+    log.info(f'Done extracting to {out_path}.')
+
+
+def zip_file(in_path: Union[str, Path], zip_path: Union[str, Path]) -> None:
+    """ Zip a file at a local path. """
+    log.info(f'Zipping {in_path} to {zip_path}...')
+    in_path = verify_path(in_path)
+    zip_path = verify_path(zip_path)
+    if not zip_path.suffix == '.zip':
+        raise ValueError(f'{zip_path} is not a zip file')
+    
+    shutil.make_archive(
+        base_name=zip_path.parent / zip_path.stem,
+        format='zip',
+        root_dir=in_path)
+    log.info(f'Done zipping to {zip_path}.')
+    
+    zf = zipfile.ZipFile(str(zip_path))
+    zipped_size_mb = round(
+        sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)
+    unzipped_size_mb = round(
+        sum([i.file_size for i in zf.infolist()]) / 1024 / 1024)
+    log.info(f'Compressed: {zipped_size_mb}MB, actual: {unzipped_size_mb}MB.')
