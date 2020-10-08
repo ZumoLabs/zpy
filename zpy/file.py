@@ -241,7 +241,7 @@ def filecopy(src_dir: Union[str, Path] = None,
     shutil.copy(src, dst)
 
 
-def openfolder(
+def open_folder_in_explorer(
     path: Union[str, Path],
 ):
     """ Opens a directory in the fileexplorer of your OS. """
@@ -252,3 +252,15 @@ def openfolder(
         os.startfile(path)
     elif os.name == 'posix':
         subprocess.call(('xdg-open', path))
+
+
+def remove_blender_backups(
+    path: Union[str, Path],
+    exts: List(str) = [".blend1", ".blend2", ".blend3"]
+):
+    """Remove any Blender backup files """
+    path = verify_path(path, check_dir=True)
+    for _path in path.glob("*"):
+        if path.suffix in exts:
+            log.warning(f'Removing backup file at {_path}')
+            _path.unlink()
