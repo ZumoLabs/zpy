@@ -256,7 +256,7 @@ def open_folder_in_explorer(
 
 def remove_blender_backups(
     path: Union[str, Path],
-    exts: List(str) = [".blend1", ".blend2", ".blend3"]
+    exts: List[str] = [".blend1", ".blend2", ".blend3"]
 ):
     """Remove any Blender backup files """
     path = verify_path(path, check_dir=True)
