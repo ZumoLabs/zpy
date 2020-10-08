@@ -12,6 +12,43 @@ import mathutils
 log = logging.getLogger(__name__)
 
 
+def rotate_object(
+    blender_object,
+    rotation_value: float = 0,
+    rotation_axis: str = 'Z'
+):
+    """ rotate an object """
+    bpy.ops.object.select_all(action='DESELECT')
+    blender_object.select_set(True)
+    bpy.context.view_layer.objects.active = blender_object
+    bpy.ops.transform.rotate(value=rotation_value, orient_axis=rotation_axis)
+
+
+def scale_object(
+    blender_object,
+    scale: Tuple[float] = (1.0, 1.0, 1.0)
+):
+    """ scale an object """
+    bpy.ops.object.select_all(action='DESELECT')
+    blender_object.select_set(True)
+    bpy.context.view_layer.objects.active = blender_object
+    bpy.ops.transform.resize(value=scale)
+
+
+def jitter_object(
+    blender_object,
+    max_scale: float = 1.2,
+    min_scale: float = 0.8,
+    min_rotate: float = 0.0,
+    max_rotate: float = 7.0
+):
+    """ apply random scale and rotation to object """
+    random_rotation = random.uniform(min_rotate, max_rotate)
+    rotate_object(blender_object, random_rotation)
+    random_scale = (random.uniform(min_scale, max_scale), random.uniform(min_scale, max_scale), 0)
+    scale_object(blender_object, random_scale)
+    
+
 @gin.configurable
 def load_hdri(
     path: Union[str, Path],
