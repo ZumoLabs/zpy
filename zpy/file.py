@@ -262,8 +262,8 @@ def remove_files_with_suffix(
     """Remove file in a path with certain extension """
     path = verify_path(path, check_dir=True)
     for _path in path.glob("*"):
-        if path.suffix in exts:
-            log.warning(f'Removing file at {_path}')
+        if _path.suffix in exts:
+            log.info(f'Removing file at {_path}')
             _path.unlink()
 
 
