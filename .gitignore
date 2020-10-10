@@ -1,3 +1,5 @@
+# TODO: This should be cleaned
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -54,6 +56,9 @@ coverage.xml
 # Translations
 *.mo
 *.pot
+
+# Zip files
+*.zip
 
 # Django stuff:
 *.log
