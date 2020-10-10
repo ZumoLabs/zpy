@@ -7,32 +7,8 @@ The current version of zpy is:
 ```
 export ZPY_VERSION="v1.1.6"
 ```
+## Install Blender
 
-## Cutting a Release
-
-Fetch and list existing tags
-
-```
-git fetch --tag
-git tag
-```
-
-Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`)
-
-```
-cd ~/zumolabs/zpy
-git tag ${ZPY_VERSION}-rc0 && \
-git push origin ${ZPY_VERSION}-rc0 && \
-sleep 5m && \
-git tag ${ZPY_VERSION} && \
-git push origin ${ZPY_VERSION}
-```
-
-Check progress on [CI](https://app.circleci.com/pipelines/github/ZumoLabs/zpy)
-
-Check progress on [packagecloud](https://packagecloud.io/zumolabs/pypi)
-
-## Install
 
 Download the latest Blender [here](https://www.blender.org/download/). This code has been tested using Blender version:
 
@@ -40,7 +16,9 @@ Download the latest Blender [here](https://www.blender.org/download/). This code
 export BLENDER_VERSION = "2.90"
 ```
 
-Set this environment variable to the path of your Blender install. An example command:
+## Install pip package
+
+These instructions install the pip package directly in your Blender folder:
 
 **You will have to change these paths depending on your system.**
 
@@ -81,10 +59,51 @@ OPTIONAL: Export packagecloud pypi as external index url.
 export PIP_EXTRA_INDEX_URL="https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae3552aee:@packagecloud.io/zumolabs/pypi/pypi/simple"
 ```
 
-## Development
+## Install Blender Addon
+
+Symlink (or copy) this folder to the addon folder under your OS's user config folder. For linux this is:
+
+```
+mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
+ln -s ~/zumolabs/segmentium ~/.config/blender/${BLENDER_VERSION}/scripts/addons/segmentium
+```
+
+Now start Blender and navigate to "Edit -> Preferences -> Add-ons". Search and enable "segmentium". Save your config.
+
+![Enabling the addon](./doc/addon_setup_location.png)
+
+The add-on will show up in the "N" panel. You can enable the N panel by just pressing "n" on your keyboard.
+
+![The N panel](./doc/addon_panel_location.png)
+
+## Developer Environment Setup
 
 If you are developing with zpy it will be easier to symlink the zpy module directly into the blender python library. This can be achieved with something like:
 
 ```
 ln -s ~/zumolabs/zpy/zpy ${BLENDER_LIB_PY}/site-packages/
 ```
+
+## Cutting a Release
+
+Fetch and list existing tags
+
+```
+git fetch --tag
+git tag
+```
+
+Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`)
+
+```
+cd ~/zumolabs/zpy
+git tag ${ZPY_VERSION}-rc0 && \
+git push origin ${ZPY_VERSION}-rc0 && \
+sleep 5m && \
+git tag ${ZPY_VERSION} && \
+git push origin ${ZPY_VERSION}
+```
+
+Check progress on [CI](https://app.circleci.com/pipelines/github/ZumoLabs/zpy)
+
+Check progress on [packagecloud](https://packagecloud.io/zumolabs/pypi)
