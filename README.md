@@ -7,6 +7,7 @@ The current version of zpy is:
 ```
 export ZPY_VERSION="v1.1.6"
 ```
+
 ## Install Blender
 
 
@@ -18,7 +19,7 @@ export BLENDER_VERSION = "2.90"
 
 ## Install pip package
 
-These instructions install the pip package directly in your Blender folder:
+These instructions install the pip package directly in your Blender folder. More information on how [Blender paths work](https://docs.blender.org/manual/en/latest/advanced/blender_directory_layout.html):
 
 **You will have to change these paths depending on your system.**
 
@@ -61,13 +62,6 @@ export PIP_EXTRA_INDEX_URL="https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae355
 
 ## Install Blender Addon
 
-Symlink (or copy) this folder to the addon folder under your OS's user config folder. For linux this is:
-
-```
-mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
-ln -s ~/zumolabs/segmentium ~/.config/blender/${BLENDER_VERSION}/scripts/addons/segmentium
-```
-
 Now start Blender and navigate to "Edit -> Preferences -> Add-ons". Search and enable "segmentium". Save your config.
 
 ![Enabling the addon](./doc/addon_setup_location.png)
@@ -78,10 +72,17 @@ The add-on will show up in the "N" panel. You can enable the N panel by just pre
 
 ## Developer Environment Setup
 
-If you are developing with zpy it will be easier to symlink the zpy module directly into the blender python library. This can be achieved with something like:
+If you are setting up a development environment it will be easier to symlink the zpy pip module directly into the Blender python library. This can be achieved with something like:
 
 ```
 ln -s ~/zumolabs/zpy/zpy ${BLENDER_LIB_PY}/site-packages/
+```
+
+You can also symlink the zpy addon in this way. For linux this is:
+
+```
+mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
+ln -s ~/zumolabs/zpy/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addons/zpy_addon
 ```
 
 ## Cutting a Release

@@ -1,5 +1,5 @@
 """
-    Blender Add-Ons require a special __init__ file.
+    Blender Addons require a special __init__ file.
 """
 
 import importlib
@@ -10,15 +10,15 @@ from pathlib import Path
 log = logging.getLogger('segmentium')
 
 bl_info = {
-    "name": "Segmentium",
-    "author": "ZumoLabs / Hugo Ponte / Kursad Karatas",
-    "version": (0, 1),
+    "name": "Zpy Addon",
+    "author": "Zumo Labs",
+    "version": (1, 0),
     # TODO: Must be kept up to date with $BLENDER_VERSION in README.
     "blender": (2, 90, 0),
-    "location": "View3D > Add > Mesh > Segmentium",
-    "description": "Segmentation helper for synthetic data.",
+    "location": "View3D > Add > Mesh > Segmentium", # TODO: 
+    "description": "Synthetic data creation tools for Blender.",
     "warning": "",
-    "doc_url": "",
+    "doc_url": "", # TODO: Link to Github README?
     "category": "Object",
 }
 
