@@ -118,7 +118,7 @@ def parse_config(config_name: str = 'config') -> None:
         gin.finalize()
 
 
-def connect_addon(name: str = 'segmentium') -> None:
+def connect_addon(name: str = 'zpy_addon') -> None:
     """ Connects a Blender AddOn. """
     log.debug(f'Connecting Addon {name}.')
     path = f'$BLENDERADDONS/{name}/__init__.py'

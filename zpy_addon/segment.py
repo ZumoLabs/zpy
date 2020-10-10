@@ -1,5 +1,5 @@
 """
-    Segment panel and functions. Segmentium Add-On for labelling synthetic data.
+    Segment panel and functions.
 """
 import hashlib
 import importlib
@@ -15,7 +15,7 @@ import mathutils
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 
-log = logging.getLogger('segmentium')
+log = logging.getLogger(__name__)
 
 if "bpy" in locals():
     import zpy
@@ -34,7 +34,7 @@ else:
 
 def registerObjectProperties():
     """ Properties applied to object."""
-    bpy.types.Object.segmentium = bpy.props.PointerProperty(
+    bpy.types.Object.seg = bpy.props.PointerProperty(
         type=SegmentableProperties)
 
 
@@ -87,8 +87,8 @@ def _category_update(self, context):
         # Use the value of the category enum dropdown
         category = context.scene.categories[int(context.scene.categories_enum)]
         for obj in _for_obj_in_selected_objs(context):
-            obj.segmentium.category_name = category.name
-            obj.segmentium.category_color = category.color
+            obj.seg.category_name = category.name
+            obj.seg.category_color = category.color
             obj.color = zpy.color.frgb_to_frgba(category.color)
             # Populate vertex colors
             populate_vertex_colors(context,
@@ -161,13 +161,13 @@ class SegmentableProperties(bpy.types.PropertyGroup):
     )
 
 
-class OBJECT_OT_SegmentiumSegmentInstanceMany(Operator):
+class SegmentInstanceMany(Operator):
     """ Segment the selected objects/parts.
 
     Each object will be segmented as a unique object.
 
     """
-    bl_idname = "object.segmentium_segment_instance_many"
+    bl_idname = "object.zpy_segment_instance_many"
     bl_label = "Segment Instance (Many)"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -182,8 +182,8 @@ class OBJECT_OT_SegmentiumSegmentInstanceMany(Operator):
             # Pick a random color for every sub-object
             _color = zpy.color.random_color(output_style='frgb')
             # Set properties for object
-            obj.segmentium.instance_name = obj.name
-            obj.segmentium.instance_color = _color
+            obj.seg.instance_name = obj.name
+            obj.seg.instance_color = _color
             obj.color = zpy.color.frgb_to_frgba(_color)
             # Populate vertex colors
             populate_vertex_colors(context,
@@ -198,13 +198,13 @@ class OBJECT_OT_SegmentiumSegmentInstanceMany(Operator):
         return {'FINISHED'}
 
 
-class OBJECT_OT_SegmentiumSegmentInstanceSingle(Operator):
+class SegmentInstanceSingle(Operator):
     """ Segment the selected objects/parts.
 
     All objects will be segmented as a single instance.
 
     """
-    bl_idname = "object.segmentium_segment_instance_single"
+    bl_idname = "object.zpy_segment_instance_single"
     bl_label = "Segment Instance (Single)"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -220,8 +220,8 @@ class OBJECT_OT_SegmentiumSegmentInstanceSingle(Operator):
         for obj in _for_obj_in_selected_objs(context):
             context.view_layer.objects.active = obj
             # Set properties for object
-            obj.segmentium.instance_name = _name
-            obj.segmentium.instance_color = _color
+            obj.seg.instance_name = _name
+            obj.seg.instance_color = _color
             obj.color = zpy.color.frgb_to_frgba(_color)
             # Populate vertex colors
             populate_vertex_colors(context,
@@ -236,9 +236,9 @@ class OBJECT_OT_SegmentiumSegmentInstanceSingle(Operator):
         return {'FINISHED'}
 
 
-class OBJECT_OT_SegmentiumVisualizeInstance(Operator):
+class VisualizeInstance(Operator):
     """ Visualize the instance colors on objects in scene. """
-    bl_idname = "object.segmentium_visualize_instance"
+    bl_idname = "object.zpy_visualize_instance"
     bl_label = "Visualize Instances"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -249,17 +249,17 @@ class OBJECT_OT_SegmentiumVisualizeInstance(Operator):
             if not obj.type == 'MESH':
                 continue
             context.view_layer.objects.active = obj
-            if obj.segmentium.instance_color is not None:
+            if obj.seg.instance_color is not None:
                 obj.color = zpy.color.frgb_to_frgba(
-                    obj.segmentium.instance_color)
+                    obj.seg.instance_color)
             else:
                 obj.color = zpy.color.default_color(output_style='frgba')
         return {'FINISHED'}
 
 
-class OBJECT_OT_SegmentiumVisualizeCategory(Operator):
+class VisualizeCategory(Operator):
     """ Visualize the category colors on objects in scene. """
-    bl_idname = "object.segmentium_visualize_category"
+    bl_idname = "object.zpy_visualize_category"
     bl_label = "Visualize Categories"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -270,17 +270,17 @@ class OBJECT_OT_SegmentiumVisualizeCategory(Operator):
             if not obj.type == 'MESH':
                 continue
             context.view_layer.objects.active = obj
-            if obj.segmentium.category_color is not None:
+            if obj.seg.category_color is not None:
                 obj.color = zpy.color.frgb_to_frgba(
-                    obj.segmentium.category_color)
+                    obj.seg.category_color)
             else:
                 obj.color = zpy.color.default_color()
         return {'FINISHED'}
 
 
-class OBJECT_OT_SegmentiumResetInstance(Operator):
+class ResetInstance(Operator):
     """ Reset the instance labels on the selected objects/parts. """
-    bl_idname = "object.segmentium_reset_instance"
+    bl_idname = "object.zpy_reset_instance"
     bl_label = "Reset Instance"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -294,16 +294,16 @@ class OBJECT_OT_SegmentiumResetInstance(Operator):
             # Only meshes or empty objects TODO: Why the empty objects
             if not (obj.type == 'MESH' or obj.type == 'EMPTY'):
                 continue
-            obj.segmentium.instance_name = ''
-            obj.segmentium.instance_color = zpy.color.default_color(
+            obj.seg.instance_name = ''
+            obj.seg.instance_color = zpy.color.default_color(
                 output_style='frgb')
             obj.color = zpy.color.default_color(output_style='frgba')
         return {'FINISHED'}
 
 
-class OBJECT_OT_SegmentiumResetCategory(Operator):
+class ResetCategory(Operator):
     """ Reset the category labels on the selected objects/parts. """
-    bl_idname = "object.segmentium_reset_category"
+    bl_idname = "object.zpy_reset_category"
     bl_label = "Reset Category"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -314,8 +314,8 @@ class OBJECT_OT_SegmentiumResetCategory(Operator):
     def execute(self, context):
         context.space_data.shading.color_type = 'OBJECT'
         for obj in _for_obj_in_selected_objs(context):
-            obj.segmentium.category_name = 'default'
-            obj.segmentium.category_color = zpy.color.default_color(
+            obj.seg.category_name = 'default'
+            obj.seg.category_color = zpy.color.default_color(
                 output_style='frgb')
             obj.color = zpy.color.default_color(output_style='frgba')
         return {'FINISHED'}
@@ -328,15 +328,15 @@ def _reset_categories(context):
         context.scene.categories.remove(0)
     # Reset all categories
     for obj in _for_obj_in_selected_objs(context):
-        obj.segmentium.category_name = 'default'
-        obj.segmentium.category_color = zpy.color.default_color(
+        obj.seg.category_name = 'default'
+        obj.seg.category_color = zpy.color.default_color(
             output_style='frgb')
         obj.color = zpy.color.default_color(output_style='frgba')
 
 
-class OBJECT_OT_SegmentiumCategoriesFromText(Operator):
+class CategoriesFromText(Operator):
     """ Populate categories from text block. """
-    bl_idname = "object.segmentium_categories_from_text"
+    bl_idname = "object.zpy_categories_from_text"
     bl_label = "Categories from Text"
 
     def execute(self, context):
@@ -375,9 +375,9 @@ class OBJECT_OT_SegmentiumCategoriesFromText(Operator):
         return {'FINISHED'}
 
 
-class OBJECT_OT_SegmentiumCategoriesFromZUMOJSON(Operator, ImportHelper):
+class CategoriesFromZUMOJSON(Operator, ImportHelper):
     """ Populate categories from Zumo JSON. """
-    bl_idname = "object.segmentium_categories_from_zumo"
+    bl_idname = "object.zpy_categories_from_zumo"
     bl_description = "Categories from Zumo JSON"
     bl_label = "Import"
 
@@ -398,7 +398,7 @@ class OBJECT_OT_SegmentiumCategoriesFromZUMOJSON(Operator, ImportHelper):
         return {'FINISHED'}
 
 
-class SEGMENTIUM_PT_SegmentiumPanel(bpy.types.Panel):
+class Panel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -412,24 +412,24 @@ class SEGMENTIUM_PT_SegmentiumPanel(bpy.types.Panel):
         row.label(text="Segment Instance")
         row = layout.row()
         row.operator(
-            'object.segmentium_segment_instance_single',
+            'object.zpy_segment_instance_single',
             text='Single',
             icon='USER',
         )
         row.operator(
-            'object.segmentium_segment_instance_many',
+            'object.zpy_segment_instance_many',
             text='Many',
             icon='COMMUNITY',
         )
         row = layout.row()
         row.operator(
-            'object.segmentium_visualize_instance',
+            'object.zpy_visualize_instance',
             text='Visualize Instances',
             icon='HIDE_OFF',
         )
         row = layout.row()
         row.operator(
-            'object.segmentium_reset_instance',
+            'object.zpy_reset_instance',
             text='Reset Instances',
             icon='FILE_REFRESH',
         )
@@ -440,13 +440,13 @@ class SEGMENTIUM_PT_SegmentiumPanel(bpy.types.Panel):
         row.prop(context.scene, "categories_enum")
         row = layout.row()
         row.operator(
-            'object.segmentium_visualize_category',
+            'object.zpy_visualize_category',
             text='Visualize Categories',
             icon='HIDE_OFF',
         )
         row = layout.row()
         row.operator(
-            'object.segmentium_reset_category',
+            'object.zpy_reset_category',
             text='Reset Categories',
             icon='FILE_REFRESH',
         )
@@ -454,12 +454,12 @@ class SEGMENTIUM_PT_SegmentiumPanel(bpy.types.Panel):
         row.label(text="Load Categories")
         row = layout.row()
         row.operator(
-            'object.segmentium_categories_from_text',
+            'object.zpy_categories_from_text',
             text='Text',
             icon='TEXT',
         )
         row.operator(
-            'object.segmentium_categories_from_zumo',
+            'object.zpy_categories_from_zumo',
             text='Json',
             icon='FILEBROWSER',
         )
@@ -467,11 +467,11 @@ class SEGMENTIUM_PT_SegmentiumPanel(bpy.types.Panel):
         row = layout.row()
         row.label(text="Properties")
         row = layout.row()
-        row.prop(context.object.segmentium, "instance_name")
+        row.prop(context.object.seg, "instance_name")
         row = layout.row()
-        row.prop(context.object.segmentium, "instance_color")
+        row.prop(context.object.seg, "instance_color")
         row = layout.row()
-        row.prop(context.object.segmentium, "category_name")
+        row.prop(context.object.seg, "category_name")
         row = layout.row()
-        row.prop(context.object.segmentium, "category_color")
+        row.prop(context.object.seg, "category_color")
         row = layout.row()

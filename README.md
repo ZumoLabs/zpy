@@ -62,7 +62,9 @@ export PIP_EXTRA_INDEX_URL="https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae355
 
 ## Install Blender Addon
 
-Now start Blender and navigate to "Edit -> Preferences -> Add-ons". Search and enable "segmentium". Save your config.
+Blender makes it easy to install Addons from a packaged zip file.
+
+Start Blender and navigate to "Edit -> Preferences -> Add-ons". Search and enable "zpy_addon". Save your config.
 
 ![Enabling the addon](./doc/addon_setup_location.png)
 

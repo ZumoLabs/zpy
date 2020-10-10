@@ -7,7 +7,7 @@ import logging
 import sys
 from pathlib import Path
 
-log = logging.getLogger('segmentium')
+log = logging.getLogger('zpy-addon')
 
 bl_info = {
     "name": "Zpy Addon",
@@ -50,15 +50,15 @@ classes = (
     segment.CategoryProperties,
     segment.SegmentableProperties,
     # Object operators
-    segment.OBJECT_OT_SegmentiumSegmentInstanceSingle,
-    segment.OBJECT_OT_SegmentiumSegmentInstanceMany,
-    segment.OBJECT_OT_SegmentiumResetCategory,
-    segment.OBJECT_OT_SegmentiumResetInstance,
+    segment.SegmentInstanceSingle,
+    segment.SegmentInstanceMany,
+    segment.ResetCategory,
+    segment.ResetInstance,
     # Scene operators
-    segment.OBJECT_OT_SegmentiumVisualizeInstance,
-    segment.OBJECT_OT_SegmentiumVisualizeCategory,
-    segment.OBJECT_OT_SegmentiumCategoriesFromText,
-    segment.OBJECT_OT_SegmentiumCategoriesFromZUMOJSON,
+    segment.VisualizeInstance,
+    segment.VisualizeCategory,
+    segment.CategoriesFromText,
+    segment.CategoriesFromZUMOJSON,
     render.StepOperator,
     render.OpenOutputDirOperator,
     render.CleanOutputDirOperator,
@@ -66,7 +66,7 @@ classes = (
     export.OpenExportDirOperator,
     export.CleanUpDirOperator,
     # Panels
-    segment.SEGMENTIUM_PT_SegmentiumPanel,
+    segment.Panel,
     render.RenderPanel,
     export.ExportPanel,
 )
