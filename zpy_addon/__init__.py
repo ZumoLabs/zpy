@@ -72,10 +72,10 @@ classes = (
     script.RunOperator,
     script.CommitOperator,
     # Panels
-    segment.Panel,
+    segment.SegmentPanel,
     render.RenderPanel,
-    export.ExportPanel,
     script.ScriptPanel,
+    export.ExportPanel,
 )
 
 

@@ -15,6 +15,7 @@ Download the latest Blender [here](https://www.blender.org/download/). This code
 
 ```
 export BLENDER_VERSION="2.90.1"
+export BLENDER_VERSION_SHORT="2.90"
 ```
 
 ## Install pip package
@@ -24,7 +25,7 @@ These instructions install the pip package directly in your Blender folder. More
 **You will have to change these paths depending on your system.**
 
 ```
-export BLENDER_PATH="/home/ook/Downloads/blender-${BLENDER_VERSION}-linux64/2.90"
+export BLENDER_PATH="/home/ook/Downloads/blender-${BLENDER_VERSION}-linux64/${BLENDER_VERSION_SHORT}"
 export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
 export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
 export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
@@ -83,8 +84,8 @@ ln -s ~/zumolabs/zpy/zpy ${BLENDER_LIB_PY}/site-packages/
 You can also symlink the zpy addon in this way. For linux this is:
 
 ```
-mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
-ln -s ~/zumolabs/zpy/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addons/zpy_addon
+mkdir -p ~/.config/blender/${BLENDER_VERSION_SHORT}/scripts/addons
+ln -s ~/zumolabs/zpy/zpy_addon ~/.config/blender/${BLENDER_VERSION_SHORT}/scripts/addons/zpy_addon
 ```
 
 ## Cutting a Release

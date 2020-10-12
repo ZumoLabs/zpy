@@ -200,6 +200,12 @@ class ExportPanel(bpy.types.Panel):
         row.prop(scene, "zpy_scene_version")
         row = layout.row()
         row.operator(
+            'scene.zpy_open_export_dir',
+            text='Open Export Dir',
+            icon='FILEBROWSER',
+        )
+        row = layout.row()
+        row.operator(
             'scene.zpy_cleanup_scene',
             text='Cleanup Scene',
             icon='PACKAGE',
@@ -210,9 +216,4 @@ class ExportPanel(bpy.types.Panel):
             text='Export Scene',
             icon='EXPORT',
         )
-        row = layout.row()
-        row.operator(
-            'scene.zpy_open_export_dir',
-            text='Open Export Dir',
-            icon='FILEBROWSER',
-        )
+
