@@ -68,6 +68,8 @@ class RunOperator(Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
+        zpy.blender.parse_config(LoadGinConfigOperator.DEFAULT_TEXT_NAME)
+        zpy.blender.run_text(LoadRunpyOperator.DEFAULT_TEXT_NAME)
         return {'FINISHED'}
 
 
@@ -79,9 +81,13 @@ class LoadGinConfigOperator(bpy.types.Operator):
     bl_category = "ZumoLabs"
     bl_options = {'REGISTER'}
 
+    # Default name of the texts in Blender when loading
+    DEFAULT_TEXT_NAME = 'config'
+
     def execute(self, context):
         zpy.blender.load_text_from_file(
-            context.scene.zpy_gin_config_path, 'config')
+            context.scene.zpy_gin_config_path,
+            self.DEFAULT_TEXT_NAME)
         return {'FINISHED'}
 
 
@@ -93,8 +99,13 @@ class LoadRunpyOperator(bpy.types.Operator):
     bl_category = "ZumoLabs"
     bl_options = {'REGISTER'}
 
+    # Default name of the texts in Blender when loading
+    DEFAULT_TEXT_NAME = 'run'
+
     def execute(self, context):
-        zpy.blender.load_text_from_file(context.scene.zpy_runpy_path, 'run')
+        zpy.blender.load_text_from_file(
+            context.scene.zpy_runpy_path,
+            self.DEFAULT_TEXT_NAME)
         return {'FINISHED'}
 
 
@@ -124,12 +135,6 @@ class ScriptPanel(bpy.types.Panel):
             'scene.zpy_load_runpy',
             text='Load Runpy',
             icon='FILEBROWSER',
-        )
-        row = layout.row()
-        row.operator(
-            'scene.zpy_commit',
-            text='Step',
-            icon='FILE_IMAGE',
         )
         row = layout.row()
         row.operator(

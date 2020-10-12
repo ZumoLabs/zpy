@@ -41,9 +41,9 @@ def registerSceneProperties():
     )
 
 
-class StepOperator(Operator):
+class RenderOperator(Operator):
     """ Render out single image (rgb, segmented, depth). """
-    bl_idname = "scene.zpy_step"
+    bl_idname = "scene.zpy_render"
     bl_label = "Render"
     bl_description = "Render out segmented images."
     bl_category = "ZumoLabs"
@@ -113,8 +113,8 @@ class RenderPanel(bpy.types.Panel):
 
         row = layout.row()
         row.operator(
-            'scene.zpy_step',
-            text='Step',
+            'scene.zpy_render',
+            text='Render',
             icon='FILE_IMAGE',
         )
         row = layout.row()

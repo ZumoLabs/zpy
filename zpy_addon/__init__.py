@@ -61,7 +61,7 @@ classes = (
     segment.VisualizeCategory,
     segment.CategoriesFromText,
     segment.CategoriesFromZUMOJSON,
-    render.StepOperator,
+    render.RenderOperator,
     render.OpenOutputDirOperator,
     render.CleanOutputDirOperator,
     export.ExportOperator,
