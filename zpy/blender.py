@@ -396,3 +396,15 @@ def random_position_within_constraints(
             obj.constraints['Limit Location'].min_z,
             obj.constraints['Limit Location'].max_z,
         )
+
+
+def load_text_from_file(
+    path: Union[str, Path],
+    text_name: str = '',
+) -> None:
+    """ Load a file into Blender's internal text UI. """
+    path = zpy.file.verify_path(path)
+    _text = bpy.data.texts.load(str(path), internal=True)
+    if bpy.data.texts.get(text_name, None) is None:
+        bpy.data.texts.new(text_name)
+    bpy.data.texts[''] = _text
