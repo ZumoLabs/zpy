@@ -398,7 +398,7 @@ class CategoriesFromZUMOJSON(Operator, ImportHelper):
         return {'FINISHED'}
 
 
-class Panel(bpy.types.Panel):
+class SegmentPanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"

@@ -26,6 +26,7 @@ if "bpy" in locals():
     from . import segment
     from . import render
     from . import export
+    from . import script
     import zpy
     importlib.reload(segment)
     importlib.reload(render)
@@ -44,6 +45,7 @@ else:
     from . import segment
     from . import render
     from . import export
+    from . import script
 
 classes = (
     # Properties
@@ -59,15 +61,20 @@ classes = (
     segment.VisualizeCategory,
     segment.CategoriesFromText,
     segment.CategoriesFromZUMOJSON,
-    render.StepOperator,
+    render.RenderOperator,
     render.OpenOutputDirOperator,
     render.CleanOutputDirOperator,
     export.ExportOperator,
     export.OpenExportDirOperator,
     export.CleanUpDirOperator,
+    script.LoadGinConfigOperator,
+    script.LoadRunpyOperator,
+    script.RunOperator,
+    script.CommitOperator,
     # Panels
-    segment.Panel,
+    segment.SegmentPanel,
     render.RenderPanel,
+    script.ScriptPanel,
     export.ExportPanel,
 )
 
@@ -83,6 +90,7 @@ def register():
     segment.registerSceneProperties()
     render.registerSceneProperties()
     export.registerSceneProperties()
+    script.registerSceneProperties()
 
 
 def unregister():

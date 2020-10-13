@@ -106,16 +106,27 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
             time.sleep(1)
 
 
-def parse_config(config_name: str = 'config') -> None:
+def parse_config(text_name: str = 'config') -> None:
     """ Load gin config for scene """
-    config_text = bpy.data.texts.get(config_name, None)
-    if config_text is None:
-        log.warning(f'Could not find config {config_name} in texts.')
+    _text = bpy.data.texts.get(text_name, None)
+    if _text is None:
+        log.warning(f'Could not find {text_name} in texts.')
         return
-    log.info(f'Loading gin config {config_name}')
+    log.info(f'Loading gin config {text_name}')
     with gin.unlock_config():
-        gin.parse_config(config_text.as_string())
+        gin.parse_config(_text.as_string())
         gin.finalize()
+
+
+def run_text(text_name: str = 'run') -> None:
+    """ Run a text script in Blender. """
+    _text = bpy.data.texts.get(text_name, None)
+    if _text is None:
+        log.warning(f'Could not find {text_name} in texts.')
+        return
+    _ctx = bpy.context.copy()
+    _ctx['edit_text'] = _text
+    bpy.ops.text.run_text(_ctx)
 
 
 def connect_addon(name: str = 'zpy_addon') -> None:
@@ -396,3 +407,15 @@ def random_position_within_constraints(
             obj.constraints['Limit Location'].min_z,
             obj.constraints['Limit Location'].max_z,
         )
+
+
+def load_text_from_file(
+    path: Union[str, Path],
+    text_name: str = '',
+) -> None:
+    """ Load a file into Blender's internal text UI. """
+    path = zpy.file.verify_path(path)
+    _text = bpy.data.texts.load(str(path), internal=True)
+    if bpy.data.texts.get(text_name, None) is None:
+        bpy.data.texts.new(text_name)
+    bpy.data.texts[''] = _text

@@ -70,7 +70,7 @@ def _update_scene_version(self, context) -> None:
         int(context.scene.zpy_scene_version)
     except ValueError:
         log.warning('Scene version must be a int')
-    context.scene.zpy_scene_version = abs(context.scene.zpy_scene_version)
+    context.scene.zpy_scene_version = str(abs(int(context.scene.zpy_scene_version)))
 
 
 class OpenExportDirOperator(bpy.types.Operator):
@@ -200,8 +200,14 @@ class ExportPanel(bpy.types.Panel):
         row.prop(scene, "zpy_scene_version")
         row = layout.row()
         row.operator(
+            'scene.zpy_open_export_dir',
+            text='Open Export Dir',
+            icon='FILEBROWSER',
+        )
+        row = layout.row()
+        row.operator(
             'scene.zpy_cleanup_scene',
-            text='Cleanup Scene',
+            text='Clean Export Dir',
             icon='PACKAGE',
         )
         row = layout.row()
@@ -210,9 +216,4 @@ class ExportPanel(bpy.types.Panel):
             text='Export Scene',
             icon='EXPORT',
         )
-        row = layout.row()
-        row.operator(
-            'scene.zpy_open_export_dir',
-            text='Open Export Dir',
-            icon='FILEBROWSER',
-        )
+

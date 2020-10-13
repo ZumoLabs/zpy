@@ -41,44 +41,11 @@ def registerSceneProperties():
     )
 
 
-class StepOperator(Operator):
+class RenderOperator(Operator):
     """ Render out single image (rgb, segmented, depth). """
-    bl_idname = "scene.zpy_step"
-    bl_label = "Step scene"
+    bl_idname = "scene.zpy_render"
+    bl_label = "Render"
     bl_description = "Render out segmented images."
-    bl_category = "ZumoLabs"
-    bl_options = {'REGISTER'}
-
-    def execute(self, context):
-        context.space_data.shading.color_type = 'OBJECT'
-
-        # Image names
-        rgb_image_name = zpy.file.make_rgb_image_name(0)
-        cseg_image_name = zpy.file.make_cseg_image_name(0)
-        iseg_image_name = zpy.file.make_iseg_image_name(0)
-        depth_image_name = zpy.file.make_depth_image_name(0)
-
-        # Output path
-        output_path = Path(context.scene.zpy_output_path)
-
-        # Save renders to file
-        zpy.render.render_aov(
-            rgb_path=output_path / rgb_image_name,
-            iseg_path=output_path / iseg_image_name,
-            cseg_path=output_path / cseg_image_name,
-            depth_path=output_path / depth_image_name,
-            width=640,
-            height=480,
-        )
-
-        return {'FINISHED'}
-
-
-class StepOperator(Operator):
-    """ Run the scene (use run script). """
-    bl_idname = "scene.zpy_run"
-    bl_label = "Run scene"
-    bl_description = "Run the scene (use run script)."
     bl_category = "ZumoLabs"
     bl_options = {'REGISTER'}
 
@@ -110,8 +77,8 @@ class StepOperator(Operator):
 class CleanOutputDirOperator(bpy.types.Operator):
     """ Clean up output dir. """
     bl_idname = "scene.zpy_cleanup_output_dir"
-    bl_label = "Clean Up Output Dir"
-    bl_description = "Clean up output dir."
+    bl_label = "Clean Output Dir"
+    bl_description = "Clean output dir."
     bl_category = "ZumoLabs"
     bl_options = {'REGISTER'}
 
@@ -146,14 +113,8 @@ class RenderPanel(bpy.types.Panel):
 
         row = layout.row()
         row.operator(
-            'scene.zpy_step',
-            text='Step',
-            icon='FILE_IMAGE',
-        )
-        row = layout.row()
-        row.operator(
-            'scene.zpy_run',
-            text='Run',
+            'scene.zpy_render',
+            text='Render',
             icon='FILE_IMAGE',
         )
         row = layout.row()
