@@ -17,7 +17,7 @@ from pathlib import Path
 
 import bpy
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('zpy')
 
 if "bpy" in locals():
     import zpy

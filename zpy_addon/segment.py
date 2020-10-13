@@ -15,7 +15,7 @@ import mathutils
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('zpy')
 
 if "bpy" in locals():
     import zpy
