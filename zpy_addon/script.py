@@ -98,7 +98,7 @@ class LoadGinConfigOperator(bpy.types.Operator):
 
     def execute(self, context):
         zpy.blender.load_text_from_file(
-            context.scene.zpy_gin_config_path,
+            bpy.path.abspath(context.scene.zpy_gin_config_path),
             self.DEFAULT_TEXT_NAME)
         return {'FINISHED'}
 
@@ -116,7 +116,7 @@ class LoadRunpyOperator(bpy.types.Operator):
 
     def execute(self, context):
         zpy.blender.load_text_from_file(
-            context.scene.zpy_runpy_path,
+            bpy.path.abspath(context.scene.zpy_runpy_path),
             self.DEFAULT_TEXT_NAME)
         return {'FINISHED'}
 
