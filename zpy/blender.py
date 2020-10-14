@@ -126,7 +126,7 @@ def run_text(text_name: str = 'run') -> None:
         return
     _ctx = bpy.context.copy()
     _ctx['edit_text'] = _text
-    bpy.ops.text.run_text(_ctx)
+    bpy.ops.text.run_script(_ctx)
 
 
 def connect_addon(name: str = 'zpy_addon') -> None:

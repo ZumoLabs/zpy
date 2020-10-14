@@ -149,8 +149,8 @@ def render_aov(
     depth_path: Union[str, Path] = None,
     iseg_path: Union[str, Path] = None,
     cseg_path: Union[str, Path] = None,
-    width: int = 480,
-    height: int = 640,
+    width: int = 640,
+    height: int = 480,
 ):
     """ Render images using AOV nodes. """
     scene = bpy.context.scene
@@ -314,8 +314,8 @@ def _render(threads: int = 4):
 
 @gin.configurable
 def render_image(output_path: Union[str, Path],
-                 width: int = 480,
-                 height: int = 640,
+                 width: int = 640,
+                 height: int = 480,
                  threads: int = 4,
                  style: str = 'default',
                  empty_background: bool = False,
