@@ -156,6 +156,9 @@ def render_aov(
     scene = bpy.context.scene
     scene.render.resolution_x = width
     scene.render.resolution_y = height
+    scene.cycles.resolution_x = width
+    scene.cycles.resolution_y = height
+    scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = 'PNG'
 
     # HACK: Prevents adding frame number to filename
