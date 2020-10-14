@@ -355,6 +355,24 @@ def is_inside(
 
 
 @gin.configurable
+def is_in_view(
+    loc: mathutils.Vector,
+    camera: bpy.types.Camera = None,
+    epsilon: float = 0.05,
+) -> bool:
+    """ Is a point visible to camera? Within some epsilon. """
+    x, y, z = camera_xyz(loc, camera=camera)
+    if z < 0:
+        return False
+    if x < (0-epsilon) or x > (1 + epsilon):
+        return False
+    if y < (0-epsilon) or y > (1 + epsilon):
+        return False
+    print("%.04f, %.04f, %.04f," % (x, y, z))
+    return True
+
+
+@gin.configurable
 def camera_xyv(
     loc: mathutils.Vector,
     obj: bpy.types.Object,

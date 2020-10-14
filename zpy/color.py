@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 # Random colors are loaded on module import
 RANDOM_COLOR_IDX = 1
-COLORS_FILE = 'colors_discrete.json'
+COLORS_FILE = 'colors.json'
 COLORS = None
 
 
@@ -134,7 +134,7 @@ def random_color(output_style: str = 'frgb') -> Union[Tuple[float, int, str], st
 
 def closest_color(color: Tuple[float],
                   colors: List[Tuple[float]],
-                  max_dist: float = 2.0,
+                  max_dist: float = 0.01,
                   ) -> Union[None, Tuple[float]]:
     """ Get the index of the closest color in a list to the input color. """
     min_dist = 3.0
