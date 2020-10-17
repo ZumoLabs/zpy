@@ -377,8 +377,8 @@ def camera_xyv(
     loc: mathutils.Vector,
     obj: bpy.types.Object,
     camera: bpy.types.Camera = None,
-    image_width: int = 480,
-    image_height: int = 640,
+    image_width: int = 640,
+    image_height: int = 480,
 ) -> Tuple[int]:
     """ Get camera image xyv coordinates of point in scene.
 

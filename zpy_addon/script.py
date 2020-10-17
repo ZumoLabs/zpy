@@ -34,14 +34,14 @@ else:
 def registerSceneProperties():
     """ Properties applied to scenes."""
     bpy.types.Scene.zpy_gin_config_path = bpy.props.StringProperty(
-        name='Load *.gin',
+        name='',
         description="Path to a gin config file.",
         default='',
         subtype='FILE_PATH',
         update=_load_gin_config,
     )
     bpy.types.Scene.zpy_runpy_path = bpy.props.StringProperty(
-        name='Load run.py',
+        name='',
         description="Path to run.py file",
         default='',
         subtype='FILE_PATH',
@@ -159,19 +159,10 @@ class ScriptPanel(bpy.types.Panel):
         scene = context.scene
 
         row = layout.row()
-        row.label(text="Config")
-        row = layout.row()
-        row.prop(scene, "zpy_gin_config_path")
-        row = layout.row()
         row.operator(
-            'scene.zpy_load_gin_config',
-            text='Pull',
-            icon='IMPORT',
-        )
-        row.operator(
-            'scene.zpy_push_gin_config',
-            text='Push',
-            icon='EXPORT',
+            'scene.zpy_run',
+            text='Run',
+            icon='TRIA_RIGHT',
         )
         row = layout.row()
         row.label(text="Runpy")
@@ -189,8 +180,17 @@ class ScriptPanel(bpy.types.Panel):
             icon='EXPORT',
         )
         row = layout.row()
+        row.label(text="Config")
+        row = layout.row()
+        row.prop(scene, "zpy_gin_config_path")
+        row = layout.row()
         row.operator(
-            'scene.zpy_run',
-            text='Run',
-            icon='TRIA_RIGHT',
+            'scene.zpy_load_gin_config',
+            text='Pull',
+            icon='IMPORT',
+        )
+        row.operator(
+            'scene.zpy_push_gin_config',
+            text='Push',
+            icon='EXPORT',
         )
