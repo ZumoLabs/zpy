@@ -94,14 +94,27 @@ class LoadGinConfigOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     # Default name of the texts in Blender when loading
-    DEFAULT_TEXT_NAME = 'config'
+    DEFAULT_TEXT_NAME = "config"
 
     def execute(self, context):
         zpy.blender.load_text_from_file(
             bpy.path.abspath(context.scene.zpy_gin_config_path),
-            self.DEFAULT_TEXT_NAME)
+            text_name=self.DEFAULT_TEXT_NAME)
         return {'FINISHED'}
 
+class PushGinConfigOperator(bpy.types.Operator):
+    """ Push gin config to file. """
+    bl_idname = "scene.zpy_push_gin_config"
+    bl_label = "Push gin config to file."
+    bl_description = "Push gin config to file."
+    bl_category = "ZumoLabs"
+    bl_options = {'REGISTER'}
+    
+    def execute(self, context):
+        _text = bpy.data.texts[LoadGinConfigOperator.DEFAULT_TEXT_NAME].as_string()
+        with open(bpy.path.abspath(context.scene.zpy_gin_config_path), 'w') as _file:
+            _file.write(_text)
+        return {'FINISHED'}
 
 class LoadRunpyOperator(bpy.types.Operator):
     """ Load run.py from file. """
@@ -112,14 +125,27 @@ class LoadRunpyOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     # Default name of the texts in Blender when loading
-    DEFAULT_TEXT_NAME = 'run'
+    DEFAULT_TEXT_NAME = "run"
 
     def execute(self, context):
         zpy.blender.load_text_from_file(
             bpy.path.abspath(context.scene.zpy_runpy_path),
-            self.DEFAULT_TEXT_NAME)
+            text_name=self.DEFAULT_TEXT_NAME)
         return {'FINISHED'}
 
+class PushRunpyOperator(bpy.types.Operator):
+    """ Push run.py to file. """
+    bl_idname = "scene.zpy_push_runpy"
+    bl_label = "Push run.py to file."
+    bl_description = "Push run.py to file."
+    bl_category = "ZumoLabs"
+    bl_options = {'REGISTER'}
+
+    def execute(self, context):
+        _text = bpy.data.texts[LoadRunpyOperator.DEFAULT_TEXT_NAME].as_string()
+        with open(bpy.path.abspath(context.scene.zpy_runpy_path), 'w') as _file:
+            _file.write(_text)
+        return {'FINISHED'}
 
 class ScriptPanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
@@ -133,20 +159,34 @@ class ScriptPanel(bpy.types.Panel):
         scene = context.scene
 
         row = layout.row()
+        row.label(text="Config")
+        row = layout.row()
         row.prop(scene, "zpy_gin_config_path")
         row = layout.row()
         row.operator(
             'scene.zpy_load_gin_config',
-            text='Load Config',
-            icon='TEXT',
+            text='Pull',
+            icon='IMPORT',
         )
+        row.operator(
+            'scene.zpy_push_gin_config',
+            text='Push',
+            icon='EXPORT',
+        )
+        row = layout.row()
+        row.label(text="Runpy")
         row = layout.row()
         row.prop(scene, "zpy_runpy_path")
         row = layout.row()
         row.operator(
             'scene.zpy_load_runpy',
-            text='Load Runpy',
-            icon='TEXT',
+            text='Pull',
+            icon='IMPORT',
+        )
+        row.operator(
+            'scene.zpy_push_runpy',
+            text='Push',
+            icon='EXPORT',
         )
         row = layout.row()
         row.operator(

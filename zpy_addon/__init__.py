@@ -68,7 +68,9 @@ classes = (
     export.OpenExportDirOperator,
     export.CleanUpDirOperator,
     script.LoadGinConfigOperator,
+    script.PushGinConfigOperator,
     script.LoadRunpyOperator,
+    script.PushRunpyOperator,
     script.RunOperator,
     script.CommitOperator,
     # Panels

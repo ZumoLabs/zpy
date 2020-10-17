@@ -433,7 +433,8 @@ def load_text_from_file(
 ) -> None:
     """ Load a file into Blender's internal text UI. """
     path = zpy.file.verify_path(path)
-    _text = bpy.data.texts.load(str(path), internal=True)
     if bpy.data.texts.get(text_name, None) is None:
-        bpy.data.texts.new(text_name)
-    bpy.data.texts[''] = _text
+        _text = bpy.data.texts.load(str(path), internal=True)
+        _text.name = text_name
+    else:
+        bpy.data.texts[text_name].from_string(path.read_text())
