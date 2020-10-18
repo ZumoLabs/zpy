@@ -113,6 +113,7 @@ def parse_config(text_name: str = 'config') -> None:
         log.warning(f'Could not find {text_name} in texts.')
         return
     log.info(f'Loading gin config {text_name}')
+    gin.enter_interactive_mode()
     with gin.unlock_config():
         gin.parse_config(_text.as_string())
         gin.finalize()
