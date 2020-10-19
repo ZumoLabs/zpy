@@ -165,7 +165,7 @@ class ScriptPanel(bpy.types.Panel):
             icon='TRIA_RIGHT',
         )
         row = layout.row()
-        row.label(text="Runpy")
+        row.label(text="Run.py Path")
         row = layout.row()
         row.prop(scene, "zpy_runpy_path")
         row = layout.row()
@@ -180,7 +180,7 @@ class ScriptPanel(bpy.types.Panel):
             icon='EXPORT',
         )
         row = layout.row()
-        row.label(text="Config")
+        row.label(text="Gin Config Path")
         row = layout.row()
         row.prop(scene, "zpy_gin_config_path")
         row = layout.row()

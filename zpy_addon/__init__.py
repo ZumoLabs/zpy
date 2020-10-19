@@ -54,8 +54,7 @@ classes = (
     # Object operators
     segment.SegmentInstanceSingle,
     segment.SegmentInstanceMany,
-    segment.ResetCategory,
-    segment.ResetInstance,
+    segment.ResetSegData,
     # Scene operators
     segment.VisualizeInstance,
     segment.VisualizeCategory,

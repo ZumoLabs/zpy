@@ -118,16 +118,17 @@ class RenderPanel(bpy.types.Panel):
             icon='FILE_IMAGE',
         )
         row = layout.row()
-        row.prop(scene, "zpy_output_path")
+        row.label(text="Output Directory")
+        row = layout.row()
+        row.prop(scene, "zpy_output_path", text="")
         row = layout.row()
         row.operator(
             'scene.zpy_open_output_dir',
-            text='Open Output Dir',
+            text='Open',
             icon='FILEBROWSER',
         )
-        row = layout.row()
         row.operator(
             'scene.zpy_cleanup_output_dir',
-            text='Clean Output Dir',
+            text='Clean',
             icon='PACKAGE',
         )

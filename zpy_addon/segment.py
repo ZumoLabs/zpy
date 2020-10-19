@@ -278,10 +278,10 @@ class VisualizeCategory(Operator):
         return {'FINISHED'}
 
 
-class ResetInstance(Operator):
-    """ Reset the instance labels on the selected objects/parts. """
-    bl_idname = "object.zpy_reset_instance"
-    bl_label = "Reset Instance"
+class ResetSegData(Operator):
+    """ Reset the segmentation data on the selected objects/parts. """
+    bl_idname = "object.zpy_reset_seg_data"
+    bl_label = "Reset Segmentation Data"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -297,23 +297,6 @@ class ResetInstance(Operator):
             obj.seg.instance_name = ''
             obj.seg.instance_color = zpy.color.default_color(
                 output_style='frgb')
-            obj.color = zpy.color.default_color(output_style='frgba')
-        return {'FINISHED'}
-
-
-class ResetCategory(Operator):
-    """ Reset the category labels on the selected objects/parts. """
-    bl_idname = "object.zpy_reset_category"
-    bl_label = "Reset Category"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        return len(context.selected_objects) > 0
-
-    def execute(self, context):
-        context.space_data.shading.color_type = 'OBJECT'
-        for obj in _for_obj_in_selected_objs(context):
             obj.seg.category_name = 'default'
             obj.seg.category_color = zpy.color.default_color(
                 output_style='frgb')
@@ -409,7 +392,7 @@ class SegmentPanel(bpy.types.Panel):
         layout = self.layout
 
         row = layout.row()
-        row.label(text="Segment Instance")
+        row.label(text="Segment Selected Objects")
         row = layout.row()
         row.operator(
             'object.zpy_segment_instance_single',
@@ -422,6 +405,10 @@ class SegmentPanel(bpy.types.Panel):
             icon='COMMUNITY',
         )
         row = layout.row()
+        row.prop(context.scene, "categories_enum", text="")
+        row = layout.row()
+        row.label(text="Visualize")
+        row = layout.row()
         row.operator(
             'object.zpy_visualize_instance',
             text='Visualize Instances',
@@ -429,27 +416,11 @@ class SegmentPanel(bpy.types.Panel):
         )
         row = layout.row()
         row.operator(
-            'object.zpy_reset_instance',
-            text='Reset Instances',
-            icon='FILE_REFRESH',
-        )
-
-        row = layout.row()
-        row.label(text="Segment Category")
-        row = layout.row()
-        row.prop(context.scene, "categories_enum")
-        row = layout.row()
-        row.operator(
             'object.zpy_visualize_category',
             text='Visualize Categories',
             icon='HIDE_OFF',
         )
-        row = layout.row()
-        row.operator(
-            'object.zpy_reset_category',
-            text='Reset Categories',
-            icon='FILE_REFRESH',
-        )
+
         row = layout.row()
         row.label(text="Load Categories")
         row = layout.row()
@@ -465,13 +436,21 @@ class SegmentPanel(bpy.types.Panel):
         )
 
         row = layout.row()
-        row.label(text="Properties")
+        row.label(text="Selected Object Data")
         row = layout.row()
-        row.prop(context.object.seg, "instance_name")
+        row.operator(
+            'object.zpy_reset_seg_data',
+            text='Reset Seg Data',
+            icon='FILE_REFRESH',
+        )
         row = layout.row()
-        row.prop(context.object.seg, "instance_color")
+        row.label(text="Instance")
         row = layout.row()
-        row.prop(context.object.seg, "category_name")
+        row.prop(context.object.seg, "instance_name", text="")
+        row.prop(context.object.seg, "instance_color", text="")
         row = layout.row()
-        row.prop(context.object.seg, "category_color")
+        row.label(text="Category")
+        row = layout.row()
+        row.prop(context.object.seg, "category_name", text="")
+        row.prop(context.object.seg, "category_color", text="")
         row = layout.row()
