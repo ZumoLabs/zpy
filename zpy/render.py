@@ -22,25 +22,13 @@ def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
         return
     if hasattr(obj, 'hide_render') and hasattr(obj, 'hide_viewport'):
         # log.debug(f'Hiding object {obj.name}')
-        obj.hide_render = hidden
-        obj.hide_viewport = hidden
+        bpy.data.objects[obj.name].hide_render = hidden
+        bpy.data.objects[obj.name].hide_viewport = hidden
     else:
         log.warning('Object does not have hide properties')
         return
     for child in obj.children:
         toggle_hidden(child, hidden)
-
-
-def prepare_aov_scene(
-    styles: List[str],
-):
-    """ Prepare scene for output using AOV nodes. """
-    for style in styles:
-        # Make AOV Pass
-        make_aov_pass(style)
-        # Add AOV node to every material in the scene
-        for obj in bpy.data.objects:
-            zpy.material.make_aov_material_output_node(obj=obj, style=style)
 
 
 @gin.configurable
@@ -326,7 +314,7 @@ def render_image(output_path: Union[str, Path],
                  ):
     """ Render an image. 
 
-    TODO: Tune and clean up these settings.
+    TODO: REMOVE
 
     """
     start_time = time.time()

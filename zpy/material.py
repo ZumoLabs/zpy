@@ -85,7 +85,11 @@ def make_mat(name: str = None,
              texture_path: Union[str, Path] = None,
              engine: str = 'cycles',
              ) -> bpy.types.Material:
-    """ Makes a material of a given style. """
+    """ Makes a material of a given style. 
+    
+    TODO: REMOVE
+    
+    """
     mat = bpy.data.materials.get(name)
     if mat is not None:
         log.debug(f'Material {name} already exists')

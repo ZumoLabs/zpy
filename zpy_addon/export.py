@@ -17,7 +17,7 @@ from pathlib import Path
 
 import bpy
 
-log = logging.getLogger('zpy')
+log = logging.getLogger(__name__)
 
 if "bpy" in locals():
     import zpy
@@ -70,7 +70,8 @@ def _update_scene_version(self, context) -> None:
         int(context.scene.zpy_scene_version)
     except ValueError:
         log.warning('Scene version must be a int')
-    context.scene.zpy_scene_version = str(abs(int(context.scene.zpy_scene_version)))
+    context.scene.zpy_scene_version = str(
+        abs(int(context.scene.zpy_scene_version)))
 
 
 class OpenExportDirOperator(bpy.types.Operator):
@@ -217,5 +218,3 @@ class ExportPanel(bpy.types.Panel):
             text='Clean',
             icon='PACKAGE',
         )
-
-

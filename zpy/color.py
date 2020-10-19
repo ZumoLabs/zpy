@@ -151,27 +151,3 @@ def closest_color(color: Tuple[float],
             f'No color close enough w/ maxmimum distance of {max_dist}')
         return None
     return colors[nearest_idx]
-
-
-def closest_color_hex(color: Tuple[float],
-                  colors: List[Tuple[float]],
-                  max_cube_dist: float = 100000,
-                  ) -> Union[None, Tuple[float]]:
-    """ Get the index of the closest color in a list to the input color. """
-    color = frgb_to_hex(color)
-    r, g, b = (int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16))
-    def cube(x): return x*x
-    def f(hex_val, ref): return cube(int(hex_val, 16) - ref)
-    min_cube_d = cube(0xFFFFFF)
-    nearest_idx = 0
-    for i, _color in enumerate(colors):
-        _color = frgb_to_hex(_color)
-        cube_d = f(_color[1:3], r) + f(_color[3:5], g) + f(_color[5:7], b)
-        if cube_d < min_cube_d:
-            min_cube_d = cube_d
-            nearest_idx = i
-    if min_cube_d > max_cube_dist:
-        log.debug(
-            f'No color close enough w/ maxmimum cube distance of {max_cube_dist}')
-        return None
-    return colors[nearest_idx]
