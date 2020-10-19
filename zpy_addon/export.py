@@ -52,6 +52,15 @@ def registerSceneProperties():
         # function must take 2 values (self, context) and return None.
         update=_update_scene_version,
     )
+    bpy.types.Scene.zpy_export_path = bpy.props.StringProperty(
+        name='Export Path',
+        description="Export path for packaged zumo scenes.",
+        default='',
+        subtype='DIR_PATH',
+        # Function to be called when this value is modified, This
+        # function must take 2 values (self, context) and return None.
+        update=_update_export_path,
+    )
 
 
 def _update_scene_name(self, context) -> None:
@@ -74,6 +83,19 @@ def _update_scene_version(self, context) -> None:
         abs(int(context.scene.zpy_scene_version)))
 
 
+def _update_export_path(self, context) -> None:
+    """ TODO: Is this design pattern required? """
+    verify_export_path(context)
+
+
+def verify_export_path(context) -> None:
+    """ Verify and update the export path. """
+    if not Path(context.scene.zpy_export_path).exists():
+        log.warning('Export path does not exist, using blendfile path.')
+        context.scene.zpy_export_path = str(
+            Path(context.blend_data.filepath).parent)
+
+
 class OpenExportDirOperator(bpy.types.Operator):
     """ Open file browser at export dir. """
     bl_idname = "scene.zpy_open_export_dir"
@@ -83,8 +105,8 @@ class OpenExportDirOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        zpy.file.open_folder_in_explorer(
-            Path(context.blend_data.filepath).parent)
+        verify_export_path(context)        
+        zpy.file.open_folder_in_explorer(context.scene.zpy_export_path)
         return {'FINISHED'}
 
 
@@ -97,22 +119,20 @@ class CleanUpDirOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-
+        # Make sure export path is valid
+        verify_export_path(context)
         # Remove any backup blender files
         zpy.file.remove_files_with_suffix(
-            path=Path(context.blend_data.filepath).parent,
+            path=context.scene.zpy_export_path,
             exts=['.blend1', '.blend2', '.blend3'],
         )
-
         # Remove any existing nfo files
         zpy.file.remove_files_with_suffix(
-            path=Path(context.blend_data.filepath).parent,
+            path=context.scene.zpy_export_path,
             exts=['.nfo'],
         )
-
         # TODO: Scene based clean up collections and objects listings (in the text editor)
         # TODO: Remove the custom scene scripts that are not needed for staging (keep run, config, categories for now)
-
         return {'FINISHED'}
 
 
@@ -128,10 +148,12 @@ class ExportOperator(bpy.types.Operator):
         # Clean scene before every export
         bpy.ops.scene.zpy_cleanup_scene()
 
+        # Make sure export path is valid
+        verify_export_path(context)
+        
         # Create export directory in the Blender filepath
-        export_dir_path = Path(context.blend_data.filepath).parent
         export_dir_name = f'{context.scene.zpy_scene_name}_v{context.scene.zpy_scene_version}'
-        export_path = export_dir_path / export_dir_name
+        export_path = Path(context.scene.zpy_export_path) / export_dir_name
         zpy.file.verify_path(export_path, make=True)
 
         # Keep track of original Blender filepath
@@ -145,7 +167,7 @@ class ExportOperator(bpy.types.Operator):
             bpy.ops.file.pack_all()
             bpy.ops.wm.save_as_mainfile(
                 filepath=str(export_path / 'main.blend'),
-                copy=False
+                copy=True
             )
             bpy.ops.file.unpack_all(method='WRITE_LOCAL')
         except Exception as e:
@@ -170,7 +192,7 @@ class ExportOperator(bpy.types.Operator):
         # Zip up the exported directory for easy upload
         zpy.file.zip_file(
             in_path=export_path,
-            zip_path=export_dir_path / f'{export_dir_name}.zip',
+            zip_path=Path(context.scene.zpy_export_path) / f'{export_dir_name}.zip',
         )
 
         # Re-save scene to original filepath
@@ -206,7 +228,9 @@ class ExportPanel(bpy.types.Panel):
         row = layout.row()
         row.prop(scene, "zpy_scene_version", text="Version")
         row = layout.row()
-        row.label(text="Export Directory")
+        row.label(text="Export Path")
+        row = layout.row()
+        row.prop(scene, "zpy_export_path", text="")
         row = layout.row()
         row.operator(
             'scene.zpy_open_export_dir',

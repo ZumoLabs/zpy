@@ -34,8 +34,8 @@ else:
 def registerSceneProperties():
     """ Properties applied to scenes."""
     bpy.types.Scene.zpy_output_path = bpy.props.StringProperty(
-        name='Output path',
-        description="Output path for zumoverse renders.",
+        name='Output Path',
+        description="Output path for rendered images, annotations, etc.",
         default=str(zpy.file.default_temp_path()),
         subtype='DIR_PATH',
     )
@@ -48,6 +48,11 @@ class RenderOperator(Operator):
     bl_description = "Render out segmented images."
     bl_category = "ZumoLabs"
     bl_options = {'REGISTER'}
+    
+    @classmethod
+    def poll(cls, context):
+        # TODO: Make sure scene is good to render?
+        return True
 
     def execute(self, context):
         context.space_data.shading.color_type = 'OBJECT'
@@ -118,7 +123,7 @@ class RenderPanel(bpy.types.Panel):
             icon='FILE_IMAGE',
         )
         row = layout.row()
-        row.label(text="Output Directory")
+        row.label(text="Output Path")
         row = layout.row()
         row.prop(scene, "zpy_output_path", text="")
         row = layout.row()
