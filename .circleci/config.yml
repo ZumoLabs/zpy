@@ -27,9 +27,9 @@ jobs:
           name: Push to Artifactory
           command: |
             ./jfrog rt config --url $ARTIFACTORY_URL --user $ARTIFACTORY_USER --apikey $ARTIFACTORY_APIKEY --interactive=false
-            ./jfrog rt u dist/zpy-zumo-*.tar.gz zpy --build-name=zpy-build --build-number=$CIRCLE_BUILD_NUM
-            ./jfrog rt bce zpy-build $CIRCLE_BUILD_NUM
-            ./jfrog rt bp zpy-build $CIRCLE_BUILD_NUM
+            #./jfrog rt u dist/zpy-zumo-*.tar.gz zpy --build-name=zpy-build --build-number=$CIRCLE_BUILD_NUM
+            #./jfrog rt bce zpy-build $CIRCLE_BUILD_NUM
+            #./jfrog rt bp zpy-build $CIRCLE_BUILD_NUM
 
 workflows:
   version: 2
