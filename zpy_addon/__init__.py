@@ -7,19 +7,19 @@ import logging
 import sys
 from pathlib import Path
 
-log = logging.getLogger('zpy-addon')
+log = logging.getLogger(__name__)
 
 bl_info = {
-    "name": "Zpy Addon",
+    "name": "zpy",
     "author": "Zumo Labs",
     "version": (1, 0),
     # TODO: Must be kept up to date with $BLENDER_VERSION in README.
     "blender": (2, 90, 0),
-    "location": "View3D > Add > Mesh > Segmentium", # TODO: 
+    "location": "View3D > Properties > zpy",
     "description": "Synthetic data creation tools for Blender.",
     "warning": "",
     "doc_url": "", # TODO: Link to Github README?
-    "category": "Object",
+    "category": "3D View",
 }
 
 if "bpy" in locals():
