@@ -1,10 +1,5 @@
 """
     Export panel and functions.
-    
-    TODO: Add addon preferences for setting custom permanent default path
-    TODO: Disable nodes option
-    TODO: Handle relative path of the blend internally
-    
 """
 
 import importlib

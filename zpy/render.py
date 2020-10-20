@@ -21,7 +21,8 @@ def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
         log.warning('Empty object given to toggle_hidden')
         return
     if hasattr(obj, 'hide_render') and hasattr(obj, 'hide_viewport'):
-        # log.debug(f'Hiding object {obj.name}')
+        log.debug(f'Hiding object {obj.name}')
+        bpy.data.objects[obj.name].select_set(True)
         bpy.data.objects[obj.name].hide_render = hidden
         bpy.data.objects[obj.name].hide_viewport = hidden
     else:

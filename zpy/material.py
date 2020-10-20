@@ -31,10 +31,10 @@ def make_aov_material_output_node(
 
     # HACK: multiple material slots
     all_mats = []
-    
+
     # Use material
     if mat is not None:
-        all_mats = [mat]    
+        all_mats = [mat]
     # Get material from object
     elif obj is not None:
         if obj.active_material is None:
@@ -47,7 +47,7 @@ def make_aov_material_output_node(
             all_mats.append(obj.active_material)
     else:
         raise ValueError('Must pass in an Object or Material')
-    
+
     # HACK: multiple material slots
     for mat in all_mats:
 
@@ -86,9 +86,9 @@ def make_mat(name: str = None,
              engine: str = 'cycles',
              ) -> bpy.types.Material:
     """ Makes a material of a given style. 
-    
+
     TODO: REMOVE
-    
+
     """
     mat = bpy.data.materials.get(name)
     if mat is not None:
@@ -152,7 +152,10 @@ def set_mat(obj: Union[str, bpy.types.Object] = None,
             mat: Union[str, bpy.types.Material] = None,
             recursive: bool = True,
             ):
-    """ Sets object material. Allows strings. """
+    """ Recursively sets object material.
+
+    Allows string material and object names as input.
+    """
     if obj is None:
         log.warning('Empty object.')
         return

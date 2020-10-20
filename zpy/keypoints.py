@@ -52,8 +52,8 @@ class Keypoints:
         "left_ankle": "LeftFoot",
         "right_ankle": "RightFoot",
     }
-    # TODO: Anima armature
     COCO_BONE_LOOKUP_ANIMA = {
+        # TODO: Anima armature does not have eyes, ears, nose
         "nose": "Head",
         "left_eye": "Head",
         "right_eye": "Head",
