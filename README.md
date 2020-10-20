@@ -88,6 +88,12 @@ mkdir -p ~/.config/blender/${BLENDER_VERSION_SHORT}/scripts/addons
 ln -s ~/zumolabs/zpy/zpy_addon ~/.config/blender/${BLENDER_VERSION_SHORT}/scripts/addons/zpy_addon
 ```
 
+Some scenes require the path to the asset library as an environment variable. Example:
+
+```
+export ASSETS="~/assets"
+```
+
 ## Cutting a Release
 
 Fetch and list existing tags
