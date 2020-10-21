@@ -454,11 +454,13 @@ def load_text_from_file(
         bpy.data.texts[text_name].from_string(path.read_text())
 
 
-def get_scene_information() -> List:
+def scene_information() -> Dict:
     """ Get the run() function kwargs. """
     run_script = bpy.data.texts.get('run', None)
     if run_script is None:
         raise ValueError('No run script found in scene.')
+    # HACK: Gin is confused by the as_module() call
+    gin.enter_interactive_mode()
     run_script_module = bpy.data.texts['run'].as_module()
     scene_doc = inspect.getdoc(run_script_module)
 
@@ -470,12 +472,12 @@ def get_scene_information() -> List:
         raise ValueError('No run() function found in run script.')
     if not inspect.isfunction(run_function):
         raise ValueError('run() is not a function in run script.')
-    
+
     run_kwargs = []
     for param in inspect.signature(run_function).parameters.values():
         _kwarg = {}
         _kwarg['name'] = param.name
-        _kwarg['type'] = param.annotation
+        _kwarg['type'] = str(param.annotation)
         _kwarg['default'] = param.default
         run_kwargs.append(_kwarg)
 
@@ -484,6 +486,9 @@ def get_scene_information() -> List:
         'version': bpy.context.scene.zpy_scene_version,
         'description': scene_doc,
         'run_kwargs': run_kwargs,
+        'export_date':  time.strftime("%m%d%Y_%H%M_%S"),
+        'zpy_version': zpy.__version__,
+        'zpy_path': zpy.__file__,
     }
 
 

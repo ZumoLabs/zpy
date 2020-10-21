@@ -151,19 +151,16 @@ class ExportOperator(bpy.types.Operator):
         export_path = Path(context.scene.zpy_export_path) / export_dir_name
         zpy.file.verify_path(export_path, make=True)
 
-        # Keep track of original Blender filepath
-        original_filepath = context.blend_data.filepath
-
         # Fix all the asset paths by packing them into the .blend
         # file and then un-packing them into a 'textures' folder.
         try:
+            bpy.ops.wm.save_as_mainfile(
+                filepath=str(export_path / 'main.blend'),
+            )
             bpy.ops.file.make_paths_absolute()
             bpy.ops.file.make_paths_relative()
             bpy.ops.file.pack_all()
-            bpy.ops.wm.save_as_mainfile(
-                filepath=str(export_path / 'main.blend'),
-                copy=True
-            )
+            bpy.ops.wm.save_as_mainfile(copy=True)
             bpy.ops.file.unpack_all(method='WRITE_LOCAL')
         except Exception as e:
             self.report({'ERROR'}, e)
@@ -174,26 +171,20 @@ class ExportOperator(bpy.types.Operator):
         save_time = time.strftime("%m%d%Y_%H%M_%S")
         nfo_file = export_path / \
             f'v{context.scene.zpy_scene_version}_{save_time}.nfo'
-        nfo_text = f'version: {context.scene.zpy_scene_version} \n'
-        nfo_text += f'version: {context.scene.zpy_scene_version} \n'
-        nfo_text += f'save_time: {save_time} \n'
-        nfo_text += f'zpy_version: {zpy.__version__} \n'
-        nfo_text += f'zpy_path: {zpy.__file__} \n'
-        nfo_text += f'zpy_addon_path: {__file__} \n'
-        nfo_file.write_text(nfo_text)
+        nfo_file.write_text('')
 
+        # Output scene information in ZUMO_META
+        zpy.file.write_json(
+            export_path / 'ZUMO_META.json',
+            zpy.blender.scene_information(),
+        )
+        
         # TODO: Export glTF into zip directory
 
         # Zip up the exported directory for easy upload
         zpy.file.zip_file(
             in_path=export_path,
             zip_path=Path(context.scene.zpy_export_path) / f'{export_dir_name}.zip',
-        )
-
-        # Re-save scene to original filepath
-        bpy.ops.wm.save_as_mainfile(
-            filepath=original_filepath,
-            copy=False
         )
 
         # Clean scene after every export
