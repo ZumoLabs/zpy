@@ -16,17 +16,20 @@ jobs:
   publish:
     working_directory: ~/repo
     docker:
-      - image: circleci/ruby:2.3-jessie
+      - image: circleci/openjdk:8-jdk
     steps:
       - attach_workspace:
           at: ~/repo
       - run:
-          name: Install packagecloud CLI
-          command: gem install package_cloud
+          name: Install jFrog CLI
+          command: curl -fL https://getcli.jfrog.io | sh
       - run:
-          name: push python package
-          # hack for the push prompts
-          command: echo -e "0\n0\ny" | package_cloud push zumolabs/pypi dist/zpy-zumo-*.tar.gz
+          name: Push to Artifactory
+          command: |
+            ./jfrog rt config --url $ARTIFACTORY_URL --user $ARTIFACTORY_USER --apikey $ARTIFACTORY_APIKEY --interactive=false
+            ./jfrog rt u dist/zpy-zumo-*.tar.gz zpy --build-name=zpy-build --build-number=$CIRCLE_BUILD_NUM
+            ./jfrog rt bce zpy-build $CIRCLE_BUILD_NUM
+            ./jfrog rt bp zpy-build $CIRCLE_BUILD_NUM
 
 workflows:
   version: 2
