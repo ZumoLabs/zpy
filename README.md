@@ -106,13 +106,11 @@ git tag
 Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`)
 
 ```
-cd ~/zumolabs/zpy
-git tag ${ZPY_VERSION}-rc0 && \
-git push origin ${ZPY_VERSION}-rc0 && \
-sleep 5m && \
-git tag ${ZPY_VERSION} && \
-git push origin ${ZPY_VERSION}
+git tag ${ZPY_VERSION}
 ```
+
+release Candidates are available to download through pip through explicit version or `pip install --pre zpy`
+
 
 Check progress on [CI](https://app.circleci.com/pipelines/github/ZumoLabs/zpy)
 
