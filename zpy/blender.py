@@ -48,6 +48,19 @@ def set_seed(seed: int = 0) -> None:
     np.random.seed(seed)
 
 
+def set_log_levels(level: str = 'debug') -> None:
+    """ Set logger levels for all zpy modules. """
+    if level == 'info':
+        log_level = logging.INFO
+    elif level == 'debug':
+        log_level = logging.DEBUG
+    else:
+        log.warning(f'Invalid log level {level}')
+        return
+    for logger_name in ['zpy', 'zpy_addon', 'zpy.savers']:
+        logging.getLogger(logger_name).setLevel(log_level)
+
+
 @gin.configurable
 def step(num_steps: int = 16,
          demo: bool = False,
@@ -256,7 +269,7 @@ def camera_xyz(
         camera = scene.camera
     point = bpy_extras.object_utils.world_to_camera_view(scene, camera, loc)
     if point[2] < 0:
-        log.warning('Point is behind camera')
+        log.debug('Point is behind camera')
 
     # Fix the point based on camera distortion
     if fisheye_lens:
@@ -369,7 +382,6 @@ def is_in_view(
         return False
     if y < (0-epsilon) or y > (1 + epsilon):
         return False
-    print("%.04f, %.04f, %.04f," % (x, y, z))
     return True
 
 
