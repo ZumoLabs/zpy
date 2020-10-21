@@ -1,6 +1,7 @@
 """
     Utilities for Blender Python.
 """
+import inspect
 import logging
 import math
 import random
@@ -8,13 +9,13 @@ import time
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
-import numpy as np
-import zpy
-
 import bpy
 import bpy_extras
 import gin
 import mathutils
+import numpy as np
+
+import zpy
 
 DEMO_STEP_MAX = 5
 
@@ -451,6 +452,39 @@ def load_text_from_file(
         _text.name = text_name
     else:
         bpy.data.texts[text_name].from_string(path.read_text())
+
+
+def get_scene_information() -> List:
+    """ Get the run() function kwargs. """
+    run_script = bpy.data.texts.get('run', None)
+    if run_script is None:
+        raise ValueError('No run script found in scene.')
+    run_script_module = bpy.data.texts['run'].as_module()
+    scene_doc = inspect.getdoc(run_script_module)
+
+    run_function = None
+    for name, value in inspect.getmembers(run_script_module):
+        if name == 'run':
+            run_function = value
+    if run_function is None:
+        raise ValueError('No run() function found in run script.')
+    if not inspect.isfunction(run_function):
+        raise ValueError('run() is not a function in run script.')
+    
+    run_kwargs = []
+    for param in inspect.signature(run_function).parameters.values():
+        _kwarg = {}
+        _kwarg['name'] = param.name
+        _kwarg['type'] = param.annotation
+        _kwarg['default'] = param.default
+        run_kwargs.append(_kwarg)
+
+    return {
+        'name': bpy.context.scene.zpy_scene_name,
+        'version': bpy.context.scene.zpy_scene_version,
+        'description': scene_doc,
+        'run_kwargs': run_kwargs,
+    }
 
 
 def rotate_object(
