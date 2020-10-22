@@ -35,60 +35,43 @@ def registerSceneProperties():
         name="Scene Name",
         description="Name of the scene, must match data portal.",
         default="default",
-        # Function to be called when this value is modified, This
-        # function must take 2 values (self, context) and return None.
-        update=_update_scene_name,
+        # set=set_scene_name,
     )
     bpy.types.Scene.zpy_scene_version = bpy.props.StringProperty(
         name="Scene Version",
         description="Version of the scene, must match data portal.",
         default="0",
-        # Function to be called when this value is modified, This
-        # function must take 2 values (self, context) and return None.
-        update=_update_scene_version,
+        # set=set_scene_version,
     )
     bpy.types.Scene.zpy_export_path = bpy.props.StringProperty(
         name='Export Path',
         description="Export path for packaged zumo scenes.",
         default='',
         subtype='DIR_PATH',
-        # Function to be called when this value is modified, This
-        # function must take 2 values (self, context) and return None.
-        update=_update_export_path,
+        # set=set_scene_export_path,
     )
 
 
-def _update_scene_name(self, context) -> None:
-    """ Verify and update the scene name. """
-    _scene_name = context.scene.zpy_scene_name
-    # All lowercase
-    _scene_name = _scene_name.lower()
-    # Maximum 10 letters
-    _scene_name = _scene_name[:10]
-    context.scene.zpy_scene_name = _scene_name
+def set_scene_name(self, value) -> None:
+    """ Fix the scene name: all lowercase maximum 10 letters """
+    self.zpy_scene_name = value.lower()[:10]
 
 
-def _update_scene_version(self, context) -> None:
-    """ Verify and update the scene version. """
+def set_scene_version(self, value) -> None:
+    """ Fix the scene version: integer > 0 """
     try:
-        int(context.scene.zpy_scene_version)
+        self['zpy_scene_version'] = abs(int(value))
     except ValueError:
         log.warning('Scene version must be a int')
-    context.scene.zpy_scene_version = str(
-        abs(int(context.scene.zpy_scene_version)))
+        self.zpy_scene_version = '0'
 
 
-def _update_export_path(self, context) -> None:
-    """ TODO: Is this design pattern required? """
-    verify_export_path(context)
-
-
-def verify_export_path(context) -> None:
+def set_scene_export_path(self, value) -> None:
     """ Verify and update the export path. """
-    if not Path(context.scene.zpy_export_path).exists():
+    if not Path(value).exists():
         log.warning('Export path does not exist, using blendfile path.')
-        context.scene.zpy_export_path = str(
-            Path(context.blend_data.filepath).parent)
+        self.zpy_export_path = str(
+            Path(bpy.context.blend_data.filepath).parent)
 
 
 class OpenExportDirOperator(bpy.types.Operator):
@@ -100,7 +83,7 @@ class OpenExportDirOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        verify_export_path(context)        
+        verify_export_path(context)
         zpy.file.open_folder_in_explorer(context.scene.zpy_export_path)
         return {'FINISHED'}
 
@@ -145,7 +128,7 @@ class ExportOperator(bpy.types.Operator):
 
         # Make sure export path is valid
         verify_export_path(context)
-        
+
         # Create export directory in the Blender filepath
         export_dir_name = f'{context.scene.zpy_scene_name}_v{context.scene.zpy_scene_version}'
         export_path = Path(context.scene.zpy_export_path) / export_dir_name
@@ -178,13 +161,14 @@ class ExportOperator(bpy.types.Operator):
             export_path / 'ZUMO_META.json',
             zpy.blender.scene_information(),
         )
-        
+
         # TODO: Export glTF into zip directory
 
         # Zip up the exported directory for easy upload
         zpy.file.zip_file(
             in_path=export_path,
-            zip_path=Path(context.scene.zpy_export_path) / f'{export_dir_name}.zip',
+            zip_path=Path(context.scene.zpy_export_path) /
+            f'{export_dir_name}.zip',
         )
 
         # Clean scene after every export
