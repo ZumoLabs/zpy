@@ -179,7 +179,7 @@ class Keypoints:
                 pos = self.root.matrix_world @ bone.head
             else:
                 pos = world_transform @ self.root.matrix_world @ bone.head
-            x, y, v = zpy.blender.camera_xyv(pos, obj=self.root)
+            x, y, v = zpy.camera.camera_xyv(pos, obj=self.root)
             self.keypoints_xyv += [x, y, v]
             self.keypoints_xyz += tuple(pos)
             self.num_keypoints += 1

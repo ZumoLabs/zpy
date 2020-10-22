@@ -83,7 +83,6 @@ class OpenExportDirOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        verify_export_path(context)
         zpy.file.open_folder_in_explorer(context.scene.zpy_export_path)
         return {'FINISHED'}
 
@@ -97,8 +96,6 @@ class CleanUpDirOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        # Make sure export path is valid
-        verify_export_path(context)
         # Remove any backup blender files
         zpy.file.remove_files_with_suffix(
             path=context.scene.zpy_export_path,
@@ -125,9 +122,6 @@ class ExportOperator(bpy.types.Operator):
     def execute(self, context):
         # Clean scene before every export
         bpy.ops.scene.zpy_cleanup_scene()
-
-        # Make sure export path is valid
-        verify_export_path(context)
 
         # Create export directory in the Blender filepath
         export_dir_name = f'{context.scene.zpy_scene_name}_v{context.scene.zpy_scene_version}'
