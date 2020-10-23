@@ -5,7 +5,7 @@ Utility bundle for use with bpy. TESTING EXPERIMENTAL.
 The current version of zpy is:
 
 ```
-export ZPY_VERSION="v1.1.11"
+export ZPY_VERSION="v1.1.13"
 ```
 
 ## Install Blender
