@@ -106,7 +106,8 @@ git tag
 Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`)
 
 ```
-git tag ${ZPY_VERSION}
+git tag ${ZPY_VERSION} && \
+git push origin ${ZPY_VERSION}
 ```
 
 release Candidates are available to download through pip through explicit version or `pip install --pre zpy`
