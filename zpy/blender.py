@@ -54,9 +54,12 @@ def set_log_levels(level: str = 'debug') -> None:
         log_level = logging.INFO
     elif level == 'debug':
         log_level = logging.DEBUG
+    elif level == 'warning':
+        log_level = logging.WARNING
     else:
         log.warning(f'Invalid log level {level}')
         return
+    log.warning(f'Setting log level to {log_level}')
     for logger_name in ['zpy', 'zpy_addon', 'zpy.savers']:
         logging.getLogger(logger_name).setLevel(log_level)
 
