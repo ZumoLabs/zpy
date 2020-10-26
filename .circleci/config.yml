@@ -1,6 +1,7 @@
 version: 2.1
 
 jobs:
+
   build:
     working_directory: ~/repo
     docker:
@@ -51,7 +52,7 @@ jobs:
           root: ~/repo
           paths: .
 
-   publish-addon:
+  publish-addon:
     working_directory: ~/repo
     docker:
       - image: circleci/openjdk:8-jdk
@@ -82,6 +83,20 @@ workflows:
       - publish:
           requires:
             - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - build-addon:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - publish-addon:
+          requires:
+            - build-addon
           filters:
             tags:
               only: /^v.*/
