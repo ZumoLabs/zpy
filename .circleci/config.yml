@@ -13,6 +13,7 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
+
   publish:
     working_directory: ~/repo
     docker:
@@ -30,6 +31,43 @@ jobs:
             ./jfrog rt u dist/zpy-zumo-*.tar.gz zpy --build-name=zpy-build --build-number=$CIRCLE_BUILD_NUM
             ./jfrog rt bce zpy-build $CIRCLE_BUILD_NUM
             ./jfrog rt bp zpy-build $CIRCLE_BUILD_NUM
+
+  build-addon:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - run:
+          name: Install Requirements
+          command: apt-get -qy update && apt-get install -qy zip git
+      - run:
+          name: Package Addon
+          command: |
+            IMAGE_TAG=$(git describe --tags --dirty --always)
+            export ZPY_VERSION=$IMAGE_TAG
+            ./package_addon.sh
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+   publish-addon:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Install jFrog CLI
+          command: curl -fL https://getcli.jfrog.io | sh
+      - run:
+          name: Push to Artifactory
+          command: |
+            ./jfrog rt config --url $ARTIFACTORY_URL --user $ARTIFACTORY_USER --apikey $ARTIFACTORY_APIKEY --interactive=false
+            ./jfrog rt u *.zip addons --build-name=zpy-addon-build --build-number=$CIRCLE_BUILD_NUM
+            ./jfrog rt bce zpy-addon-build $CIRCLE_BUILD_NUM
+            ./jfrog rt bp zpy-addon-build $CIRCLE_BUILD_NUM
 
 workflows:
   version: 2
