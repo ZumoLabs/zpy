@@ -40,9 +40,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Requirements
-          command: apt-get -qy update && apt-get install -qy zip git
-      - run:
           name: Package Addon
           command: |
             IMAGE_TAG=$(git describe --tags --dirty --always)
