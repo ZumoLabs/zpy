@@ -17,7 +17,6 @@ import numpy as np
 
 import zpy
 
-
 log = logging.getLogger(__name__)
 
 
