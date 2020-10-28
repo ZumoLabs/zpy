@@ -47,9 +47,11 @@ def set_seed(seed: int = 0) -> None:
     np.random.seed(seed)
 
 
-def set_log_levels(level: str = 'debug') -> None:
+def set_log_levels(level: str = None) -> None:
     """ Set logger levels for all zpy modules. """
-    if level == 'info':
+    if level is None:
+        log_level = logging.INFO
+    elif level == 'info':
         log_level = logging.INFO
     elif level == 'debug':
         log_level = logging.DEBUG
@@ -59,7 +61,7 @@ def set_log_levels(level: str = 'debug') -> None:
         log.warning(f'Invalid log level {level}')
         return
     log.warning(f'Setting log level to {log_level}')
-    for logger_name in ['zpy', 'zpy_addon', 'zpy.savers']:
+    for logger_name in ['zpy', 'zpy_addon', 'zpy.savers', 'bpy.zpy_addon']:
         logging.getLogger(logger_name).setLevel(log_level)
 
 
@@ -82,9 +84,9 @@ def step(num_steps: int = 16,
         stop = bpy.context.scene.frame_end
         log.info(f'Animation enabled. Min frames: {start}. Max frames: {stop}')
     while step_idx < num_steps:
-        log.info(f'-----------------------------------------')
-        log.info(f'                   STEP                  ')
-        log.info(f'-----------------------------------------')
+        log.info('-----------------------------------------')
+        log.info('                   STEP                  ')
+        log.info('-----------------------------------------')
         log.info(f'Simulation step {step_idx} of {num_steps}.')
         start_time = time.time()
         if framerate > 0:
@@ -211,6 +213,7 @@ def load_text_from_file(
 
 def scene_information() -> Dict:
     """ Get the run() function kwargs. """
+    log.info(f'Collecting scene information')
     run_script = bpy.data.texts.get('run', None)
     if run_script is None:
         raise ValueError('No run script found in scene.')
@@ -235,8 +238,8 @@ def scene_information() -> Dict:
         _kwarg['type'] = str(param.annotation)
         _kwarg['default'] = param.default
         run_kwargs.append(_kwarg)
-
-    return {
+    
+    _ = {
         'name': bpy.context.scene.zpy_scene_name,
         'version': bpy.context.scene.zpy_scene_version,
         'description': scene_doc,
@@ -245,6 +248,8 @@ def scene_information() -> Dict:
         'zpy_version': zpy.__version__,
         'zpy_path': zpy.__file__,
     }
+    log.info(f'{_}')
+    return _
 
 
 @gin.configurable

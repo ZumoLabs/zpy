@@ -3,14 +3,15 @@
 """
 import logging
 import os
+import sys
 import time
 from pathlib import Path
-from typing import Union, List
-
-import zpy
+from typing import List, Union
 
 import bpy
 import gin
+
+import zpy
 
 log = logging.getLogger(__name__)
 
@@ -303,7 +304,24 @@ def _render(threads: int = 4):
     start_time = time.time()
     bpy.context.scene.render.threads = threads
     try:
+        # HACK: This disables the blender log
+        # https://blender.stackexchange.com/questions/44560
+        
+        # redirect output to log file
+        logfile = '.blender_render.log'
+        open(logfile, 'a').close()
+        old = os.dup(1)
+        sys.stdout.flush()
+        os.close(1)
+        os.open(logfile, os.O_WRONLY)
+
+        # do the rendering
         bpy.ops.render.render(write_still=True)
+
+        # disable output redirection
+        os.close(1)
+        os.dup(old)
+        os.close(old)
     except Exception as e:
         log.warning(f'Render raised exception {e}')
     duration = time.time() - start_time
