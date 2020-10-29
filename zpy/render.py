@@ -300,11 +300,9 @@ def _seg_render_settings():
     scene.display.shading.show_specular_highlight = False
 
 
-@gin.config
-def _render(
-        threads: int = 4,
-        logfile: str = 'render.blender_log'
-):
+def _render(threads: int = 4,
+            logfile: str = 'blender_render.log',
+            ):
     """ Render in Blender. """
     start_time = time.time()
     bpy.context.scene.render.threads = threads
