@@ -2,7 +2,7 @@
     Base class for outputing from a Saver object.
 """
 
-from zpy.savers.saver import Saver
+from zpy.saver import Saver
 
 class Output:
     """Holds the logic for outputting annotations to file."""

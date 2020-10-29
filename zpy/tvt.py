@@ -13,10 +13,10 @@ import zpy.file
 import gin
 
 
-from zpy.savers.output_zumo import parse_zumo_annotations
-from zpy.savers.saver import Saver
-from zpy.savers.output_zumo import OutputZUMO, ZUMOParseError
-from zpy.savers.output_coco import OutputCOCO, COCOParseError
+from zpy.output_zumo import parse_zumo_annotations
+from zpy.saver import Saver
+from zpy.output_zumo import OutputZUMO, ZUMOParseError
+from zpy.output_coco import OutputCOCO, COCOParseError
 
 log = logging.getLogger(__name__)
 

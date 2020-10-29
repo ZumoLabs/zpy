@@ -11,8 +11,8 @@ from typing import Dict, List, Tuple, Union
 import zpy
 
 import gin
-from zpy.savers.output import Output
-from zpy.savers.saver import Saver
+from zpy.output import Output
+from zpy.saver import Saver
 
 log = logging.getLogger(__name__)
 
