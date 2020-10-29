@@ -249,7 +249,7 @@ def _rgb_render_settings():
     scene.cycles.samples = 128
     scene.cycles.diffuse_bounces = 4
     scene.cycles.diffuse_samples = 12
-    
+
     scene.view_layers["View Layer"].pass_alpha_threshold = 0.5
 
     scene.cycles.max_bounces = 4
@@ -257,7 +257,7 @@ def _rgb_render_settings():
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.use_denoising = True
     scene.cycles.denoising_radius = 8
-    
+
     bpy.context.scene.cycles.use_denoising = True
     bpy.context.scene.cycles.denoiser = 'OPENIMAGEDENOISE'
 
@@ -282,9 +282,9 @@ def _seg_render_settings():
     scene.cycles.samples = 1
     scene.cycles.diffuse_bounces = 0
     scene.cycles.diffuse_samples = 0
-    
+
     scene.view_layers["View Layer"].pass_alpha_threshold = 0.0
-    
+
     scene.cycles.max_bounces = 0
     scene.cycles.bake_type = 'EMIT'
     scene.cycles.use_adaptive_sampling = False
@@ -299,16 +299,20 @@ def _seg_render_settings():
     scene.display.shading.light = 'FLAT'
     scene.display.shading.show_specular_highlight = False
 
-def _render(threads: int = 4):
+
+@gin.config
+def _render(
+        threads: int = 4,
+        logfile: str = 'render.blender_log'
+):
     """ Render in Blender. """
     start_time = time.time()
     bpy.context.scene.render.threads = threads
     try:
         # HACK: This disables the blender log
         # https://blender.stackexchange.com/questions/44560
-        
+
         # redirect output to log file
-        logfile = '.blender_render.log'
         open(logfile, 'a').close()
         old = os.dup(1)
         sys.stdout.flush()
@@ -436,7 +440,7 @@ def render_image(output_path: Union[str, Path],
         scene.display.shading.show_specular_highlight = False
 
         scene.view_settings.view_transform = 'Raw'
-        
+
     else:
         raise ValueError('Unknown render style.')
     bpy.context.view_layer.update()
