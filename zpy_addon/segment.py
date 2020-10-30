@@ -9,6 +9,7 @@ import os
 import random
 from pathlib import Path
 import math
+from typing import Tuple
 
 import bpy
 import mathutils
@@ -317,6 +318,22 @@ def _reset_categories(context):
         obj.color = zpy.color.default_color(output_style='frgba')
 
 
+def _add_category(context,
+                  name: str = None,
+                  color: Tuple[float] = None) -> None:
+    """ Add category to enum category property. """
+    if name in context.scene.categories.keys():
+        log.warning(f'Skipping duplicate category {name}.')
+        return
+    if color is None:
+        color = zpy.color.random_color(output_style='frgb')
+        log.info(f'Choosing random color for category {name}: {color}')
+    # Add category to categories dict
+    new_category = context.scene.categories.add()
+    new_category.name = name
+    new_category.color = color
+
+
 class CategoriesFromText(Operator):
     """ Populate categories from text block. """
     bl_idname = "object.zpy_categories_from_text"
@@ -345,16 +362,8 @@ class CategoriesFromText(Operator):
 
         _reset_categories(context)
 
-        for i, line in enumerate(category_text.lines):
-            _category = line.body
-            assert isinstance(_category, str), \
-                f'Invalid category at row {i}: category is not string.'
-            assert _category not in context.scene.categories.keys(), \
-                f'Invalid category at row {i}: category is duplicate.'
-            # Add category to categories dict
-            new_category = context.scene.categories.add()
-            new_category.name = _category
-            new_category.color = zpy.color.random_color(output_style='frgb')
+        for line in category_text.lines:
+            _add_category(context, name=line.body)
         return {'FINISHED'}
 
 
@@ -374,10 +383,11 @@ class CategoriesFromZUMOJSON(Operator, ImportHelper):
             f'ZUMO JSON does not have categories.'
         _reset_categories(context)
         for category in categories.values():
-            # Add category to categories dict
-            new_category = context.scene.categories.add()
-            new_category.name = category['name']
-            new_category.color = category['color']
+            _add_category(
+                context,
+                name=category.get('name', None),
+                color=category.get('color', None),
+            )
         return {'FINISHED'}
 
 
