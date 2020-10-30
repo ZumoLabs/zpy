@@ -1,7 +1,6 @@
 """
     Export panel and functions.
 """
-
 import importlib
 import logging
 import time
@@ -115,9 +114,9 @@ class ExportOperator(bpy.types.Operator):
         export_path = Path(context.scene.zpy_export_path) / export_dir_name
         zpy.file.verify_path(export_path, make=True)
 
-        # # TODO: Find missing files before export
-        # _path = zpy.file.verify_path('$ASSETS', make=False)
-        # bpy.ops.file.find_missing_files(directory=str(_path))
+        # Find missing files before export
+        _path = zpy.file.verify_path('$ASSETS', make=False)
+        bpy.ops.file.find_missing_files(directory=str(_path))
 
         # Fix all the asset paths by packing them into the .blend
         # file and then un-packing them into a 'textures' folder.

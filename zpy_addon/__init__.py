@@ -1,11 +1,11 @@
 """
     Blender Addons require a special __init__ file.
 """
-
 import importlib
 import logging
-import sys
-from pathlib import Path
+
+import bpy
+import zpy
 
 log = logging.getLogger(__name__)
 
@@ -13,39 +13,23 @@ bl_info = {
     "name": "zpy",
     "author": "Zumo Labs",
     "version": (1, 0),
-    # TODO: Must be kept up to date with $BLENDER_VERSION in README.
+    # TODO: Keep up to date with $BLENDER_VERSION in README.
     "blender": (2, 90, 0),
     "location": "View3D > Properties > zpy",
     "description": "Synthetic data creation tools for Blender.",
     "warning": "",
-    "doc_url": "", # TODO: Link to Github README?
+    "doc_url": "https://github.com/ZumoLabs/zpy/blob/main/README.md",
     "category": "3D View",
 }
 
 if "bpy" in locals():
-    from . import segment
-    from . import render
-    from . import export
-    from . import script
-    import zpy
-    importlib.reload(segment)
+    log.warning('Reloading zpy_addon files.')
+    from . import export, render, script, segment
+    importlib.reload(export)
     importlib.reload(render)
+    importlib.reload(script)
+    importlib.reload(segment)
     importlib.reload(zpy)
-    from zpy import blender
-    from zpy import color
-    from zpy import file
-    from zpy import material
-    from zpy import render
-    from zpy import image
-    # HACK: Reset the random colors on import
-    zpy.color.reset()
-else:
-    import bpy
-    import zpy
-    from . import segment
-    from . import render
-    from . import export
-    from . import script
 
 classes = (
     # Properties
@@ -71,7 +55,6 @@ classes = (
     script.LoadRunpyOperator,
     script.PushRunpyOperator,
     script.RunOperator,
-    script.CommitOperator,
     # Panels
     segment.SegmentPanel,
     render.RenderPanel,
@@ -84,6 +67,7 @@ def register():
     """ Register any classes and properties. """
     for cls in classes:
         try:
+            log.info(f'Registering class {cls.__name__}')
             bpy.utils.register_class(cls)
         except Exception as e:
             log.warning(f'Exception when registering {cls.__name__}: {e}')
@@ -98,6 +82,7 @@ def unregister():
     """ Unregister any classes and properties. """
     for cls in classes:
         try:
+            log.info(f'Un-registering class {cls.__name__}')
             bpy.utils.unregister_class(cls)
         except Exception as e:
             log.warning(f'Exception when un-registering {cls.__name__}: {e}')

@@ -43,18 +43,6 @@ def _load_runpy(self, context) -> None:
     bpy.ops.scene.zpy_load_runpy()
 
 
-class CommitOperator(Operator):
-    """ Write out run and config texts to file outside .blend file. """
-    bl_idname = "scene.zpy_commit"
-    bl_label = "Commit"
-    bl_description = "Write out run and config texts to file outside .blend file."
-    bl_category = "ZumoLabs"
-    bl_options = {'REGISTER'}
-
-    def execute(self, context):
-        return {'FINISHED'}
-
-
 class RunOperator(Operator):
     """ Launch the run script in Blender's texts. """
     bl_idname = "scene.zpy_run"

@@ -114,6 +114,7 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
     """
     if log.getEffectiveLevel() == logging.DEBUG:
         log.debug('Starting VSCode debugger in Blender.')
+        # TODO: Can we assume the user will properly set up this environment variable?
         path = '$BLENDERADDONS/blender-debugger-for-vscode/__init__.py'
         path = zpy.file.verify_path(path, make=False)
         bpy.ops.preferences.addon_install(filepath=str(path))
@@ -238,7 +239,7 @@ def scene_information() -> Dict:
         _kwarg['type'] = str(param.annotation)
         _kwarg['default'] = param.default
         run_kwargs.append(_kwarg)
-    
+
     _ = {
         'name': bpy.context.scene.zpy_scene_name,
         'version': bpy.context.scene.zpy_scene_version,
