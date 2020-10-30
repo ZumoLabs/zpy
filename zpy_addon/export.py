@@ -4,29 +4,16 @@
 
 import importlib
 import logging
-import os
-import sys
-from datetime import date
 import time
 from pathlib import Path
 
 import bpy
+import zpy
 
 log = logging.getLogger(__name__)
 
 if "bpy" in locals():
-    import zpy
     importlib.reload(zpy)
-    from zpy import blender
-    from zpy import color
-    from zpy import file
-    from zpy import material
-    from zpy import render
-    from zpy import image
-    # HACK: Reset the random colors on import
-    zpy.color.reset()
-else:
-    import zpy
 
 
 def registerSceneProperties():
@@ -131,7 +118,7 @@ class ExportOperator(bpy.types.Operator):
         # # TODO: Find missing files before export
         # _path = zpy.file.verify_path('$ASSETS', make=False)
         # bpy.ops.file.find_missing_files(directory=str(_path))
-    
+
         # Fix all the asset paths by packing them into the .blend
         # file and then un-packing them into a 'textures' folder.
         try:

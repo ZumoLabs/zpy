@@ -9,6 +9,8 @@ from zpy import blender
 from zpy import blender
 from zpy import camera
 from zpy import color
+# HACK: Reset the random colors on import
+color.reset()
 from zpy import file
 from zpy import image
 from zpy import keypoints

@@ -1,36 +1,21 @@
 """
     Segment panel and functions.
 """
-import hashlib
 import importlib
 import json
 import logging
-import os
 import random
-from pathlib import Path
-import math
 from typing import Tuple
 
 import bpy
-import mathutils
+import zpy
 from bpy.types import Operator
-from bpy_extras.io_utils import ExportHelper, ImportHelper
+from bpy_extras.io_utils import ImportHelper
 
 log = logging.getLogger(__name__)
 
 if "bpy" in locals():
-    import zpy
     importlib.reload(zpy)
-    from zpy import blender
-    from zpy import color
-    from zpy import file
-    from zpy import material
-    from zpy import render
-    from zpy import image
-    # HACK: Reset the random colors on import
-    zpy.color.reset()
-else:
-    import zpy
 
 
 def registerObjectProperties():
