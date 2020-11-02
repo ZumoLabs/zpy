@@ -20,7 +20,7 @@
 
 ## Abstract
 
-fooo [1] foooo [2] fooo [3].
+Collecting, labeling, and cleaning data for computer vision is a pain. Jump into the future and create your own data instead! This synthetic data is faster to develop with, effectively infinite, and gives you full control to prevent bias and privacy issues from creeping in. We created `zpy` to make synthetic data easy, by piecing together all the different free pieces of code and providing an easy way to generate synthetic data at scale.
 
 ## Install
 
@@ -109,8 +109,8 @@ export ASSETS="~/assets"
 ## Examples
 
 - [Hello World]()
-- [Raspberry Pi Component Detection]()
-- [Vote Counting]()
+- [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
+- [Vote Counting](https://towardsdatascience.com/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data-d8e24eca114d)
 
 ## Contributing
 
