@@ -1,21 +1,21 @@
 <div align="center">
 
-<img src="doc/zl_tile_logo.png" width="50px">
+<img src="doc/zl_tile_logo.png" width="100px">
 
 **`zpy`: Synthetic data in Blender.**
 
 <p align="center">
   <a href="https://zumolabs.ai/">Website</a> •
   <a href="#Install">Install</a> •
-  <a href="#Tutorials">Tutorials</a> •
+  <a href="#Examples">Examples</a> •
   <a href="#Contribute">Contribute</a> •
   <a href="#Licence">Licence</a>
 </p>
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pytorch-lightning)](https://pypi.org/project/pytorch-lightning/)
-[![PyPI Status](https://badge.fury.io/py/pytorch-lightning.svg)](https://badge.fury.io/py/pytorch-lightning)
-[![Slack](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://join.slack.com/t/pytorch-lightning/shared_invite/zt-f6bl2l0l-JYMK3tbAgAmGRrlNr00f1A)
-[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/PytorchLightning/pytorch-lightning/blob/master/LICENSE)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/zpy)](https://pypi.org/project/zpy/)
+[![PyPI Status](https://badge.fury.io/py/zpy.svg)](https://badge.fury.io/py/zpy)
+[![Slack](https://img.shields.io/badge/slack-ZumoLabs-green.svg?logo=slack)](https://join.slack.com/t/pytorch-lightning/shared_invite/zt-f6bl2l0l-JYMK3tbAgAmGRrlNr00f1A)
+[![license](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](https://github.com/ZumoLabs/zpy/blob/master/LICENSE)
 </div>
 
 ## Abstract
@@ -81,13 +81,9 @@ export PIP_EXTRA_INDEX_URL="https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae355
 
 Blender makes it easy to install Addons from a packaged zip file.
 
-Start Blender and navigate to "Edit -> Preferences -> Add-ons". Search and enable "zpy_addon". Save your config.
+Start Blender and navigate to "Edit -> Preferences -> Add-ons". Search and enable "zpy_addon". Save your config. The add-on will show up in the "N" panel. You can enable the N panel by just pressing "n" on your keyboard.
 
 ![Enabling the addon](./doc/addon_setup_location.png)
-
-The add-on will show up in the "N" panel. You can enable the N panel by just pressing "n" on your keyboard.
-
-![The N panel](./doc/addon_panel_location.png)
 
 ### Install: Developer Environment
 
@@ -110,15 +106,17 @@ Some scenes require the path to the asset library as an environment variable. Ex
 export ASSETS="~/assets"
 ```
 
-## Tutorials
+## Examples
 
-TODO
+- [Hello World]()
+- [Raspberry Pi Component Detection]()
+- [Vote Counting]()
 
 ## Contributing
 
 ### Contributing: Community
 
-TODO
+We welcome community contributions! Join the conversation at our [Slack channel]().
 
 ### Contributing: Cutting a Release
 
