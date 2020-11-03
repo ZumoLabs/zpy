@@ -36,11 +36,13 @@ export ZPY_VERSION="v1.1.13"
 Blender is the best free and open 3D creation software in the world! Download the latest Blender [here](https://www.blender.org/download/). This code has been tested using Blender version:
 
 ```
-export BLENDER_VERSION="2.90"
-export BLENDER_VERSION_FULL="2.90.1"
+export BLENDER_VERSION="2.91"
+export BLENDER_VERSION_FULL="2.91.0-276d19f63b45"
 ```
 
 ### Install: Pip (Python Package)
+
+TODO: Install from public pip package
 
 These instructions install the pip package directly in your Blender folder. More information on how [Blender paths work](https://docs.blender.org/manual/en/latest/advanced/blender_directory_layout.html):
 
@@ -59,31 +61,19 @@ You might have to install pip itself:
 ${BLENDER_BIN_PY} -m ensurepip && ${BLENDER_BIN_PIP} install --upgrade pip
 ```
 
-Then install the pip module
-
-```
-$BLENDER_BIN_PIP install --extra-index-url=https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae3552aee:@packagecloud.io/zumolabs/pypi/pypi/simple zpy-zumo
-```
-
 You might have to install more pip packages
 
 ```
 $BLENDER_BIN_PIP install -r requirements.txt
 ```
 
-OPTIONAL: Export packagecloud pypi as external index url.
+### Install: Blender Addon From Zip
 
-```
-export PIP_EXTRA_INDEX_URL="https://74ab8c3212f97d202fdfe59ce6ff9baa2fed10cae3552aee:@packagecloud.io/zumolabs/pypi/pypi/simple"
-```
+You can install a Blender Addon directly from a packaged zip file. You can download the lastest `zpy` addon [here]().
 
-### Install: Blender Addon
+Now start Blender and navigate to "Edit -> Preferences -> Add-ons". Hit the "Install" button and navigate to the zip folder you just downloaded. The add-on will show up in the "N" panel. You can enable the N panel by just pressing "n" on your keyboard.
 
-Blender makes it easy to install Addons from a packaged zip file.
-
-Start Blender and navigate to "Edit -> Preferences -> Add-ons". Search and enable "zpy_addon". Save your config. The add-on will show up in the "N" panel. You can enable the N panel by just pressing "n" on your keyboard.
-
-![Enabling the addon](./doc/addon_setup_location.png)
+![Enabling the addon](./doc/addon_zip_install_menus.png)
 
 ### Install: Developer Environment
 
