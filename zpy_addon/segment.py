@@ -68,60 +68,15 @@ def _category_items(self, context):
 def _category_update(self, context):
     """ Update the category. """
     if context.selected_objects:
-        # Make sure there is an AOV pass for category colors
-        zpy.render.make_aov_pass('category')
         # Use the value of the category enum dropdown
         category = context.scene.categories[int(context.scene.categories_enum)]
-        for obj in _for_obj_in_selected_objs(context):
-            obj.seg.category_name = category.name
-            obj.seg.category_color = category.color
-            obj.color = zpy.color.frgb_to_frgba(category.color)
-            # Populate vertex colors
-            populate_vertex_colors(context,
-                                   obj,
-                                   zpy.color.frgb_to_srgba(category.color),
-                                   'category')
-            # Add category aov output node to object material
-            zpy.material.make_aov_material_output_node(
-                obj=obj, style='category')
-
-
-def _for_obj_in_selected_objs(context):
-    """ Safe iterable for selected objects. """
-    for obj in context.selected_objects:
-        # Only meshes or empty objects TODO: Why the empty objects
-        if not (obj.type == 'MESH' or obj.type == 'EMPTY'):
-            continue
-        # Make sure object exists in the scene
-        if bpy.data.objects.get(obj.name, None) is None:
-            continue
-        yield obj
-
-
-def populate_vertex_colors(context,
-                           obj: bpy.types.Object,
-                           color_rgba: tuple,
-                           seg_type: str = 'instance'):
-    """Fill the given Vertex Color Layer with the color parameter values"""
-    if not obj.type == 'MESH':
-        return
-    # Remove any existing vertex color data
-    if len(obj.data.vertex_colors):
-        for vcol in obj.data.vertex_colors.keys():
-            if seg_type in vcol:
-                obj.data.vertex_colors.remove(obj.data.vertex_colors[seg_type])
-    # Add new vertex color data
-    obj.data.vertex_colors.new(name=seg_type)
-    # HACK: Make sure selected object is the active object
-    bpy.ops.object.select_all(action='DESELECT')
-    obj.select_set(True)
-    context.view_layer.objects.active = obj
-    # Iterate through each vertex in the mesh
-    i = 0
-    for poly in obj.data.polygons:
-        for _ in poly.loop_indices:
-            obj.data.vertex_colors[seg_type].data[i].color = color_rgba
-            i += 1
+        for obj in zpy.object.for_obj_in_selected_objs(context):
+            zpy.object.segment(
+                obj=obj,
+                name=category.name,
+                color=category.color,
+                as_category=True,
+            )
 
 
 class SegmentableProperties(bpy.types.PropertyGroup):
@@ -163,24 +118,8 @@ class SegmentInstanceMany(Operator):
 
     def execute(self, context):
         context.space_data.shading.color_type = 'OBJECT'
-        for obj in _for_obj_in_selected_objs(context):
-            bpy.context.view_layer.objects.active = obj
-            # Pick a random color for every sub-object
-            _color = zpy.color.random_color(output_style='frgb')
-            # Set properties for object
-            obj.seg.instance_name = obj.name
-            obj.seg.instance_color = _color
-            obj.color = zpy.color.frgb_to_frgba(_color)
-            # Populate vertex colors
-            populate_vertex_colors(context,
-                                   obj,
-                                   zpy.color.frgb_to_srgba(_color),
-                                   'instance')
-            # Add instance aov output node to object material
-            zpy.material.make_aov_material_output_node(
-                obj=obj, style='instance')
-        # Make sure there is an AOV pass for instance colors
-        zpy.render.make_aov_pass('instance')
+        for obj in zpy.object.for_obj_in_selected_objs(context):
+            zpy.object.segment(obj=obj, name=obj.name)
         return {'FINISHED'}
 
 
@@ -203,22 +142,8 @@ class SegmentInstanceSingle(Operator):
         # Pick a random color and instance name
         _name = context.selected_objects[0].name
         _color = zpy.color.random_color(output_style='frgb')
-        for obj in _for_obj_in_selected_objs(context):
-            context.view_layer.objects.active = obj
-            # Set properties for object
-            obj.seg.instance_name = _name
-            obj.seg.instance_color = _color
-            obj.color = zpy.color.frgb_to_frgba(_color)
-            # Populate vertex colors
-            populate_vertex_colors(context,
-                                   obj,
-                                   zpy.color.frgb_to_srgba(_color),
-                                   'instance')
-            # Add instance aov output node to object material
-            zpy.material.make_aov_material_output_node(
-                obj=obj, style='instance')
-        # Make sure there is an AOV pass for instance colors
-        zpy.render.make_aov_pass('instance')
+        for obj in zpy.object.for_obj_in_selected_objs(context):
+            zpy.object.segment(obj=obj, name=_name, color=_color)
         return {'FINISHED'}
 
 
@@ -296,7 +221,7 @@ def _reset_categories(context):
     for _ in range(len(context.scene.categories)):
         context.scene.categories.remove(0)
     # Reset all categories
-    for obj in _for_obj_in_selected_objs(context):
+    for obj in zpy.object.for_obj_in_selected_objs(context):
         obj.seg.category_name = 'default'
         obj.seg.category_color = zpy.color.default_color(
             output_style='frgb')

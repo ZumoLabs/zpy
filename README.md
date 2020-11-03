@@ -93,7 +93,7 @@ ln -s ~/zumolabs/zpy/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addo
 Some scenes require the path to the asset library as an environment variable. Example:
 
 ```
-export ASSETS="~/assets"
+export ASSETS="/home/ook/assets"
 ```
 
 ## Examples

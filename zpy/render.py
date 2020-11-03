@@ -36,24 +36,27 @@ def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
 @gin.configurable
 def make_aov_pass(
     style: str = 'instance',
-):
+) -> None:
     """ Make AOV pass in Cycles. """
     # Make sure engine is set to Cycles
     if not (bpy.context.scene.render.engine == "CYCLES"):
         log.warning(' Setting render engine to CYCLES to use AOV')
-        bpy.context.scene.render.engine == "CYCLES"
+        bpy.context.scene.render.engine = "CYCLES"
+        bpy.context.scene.render.use_compositing = True
     # Only certain styles are available
     valid_styles = ['instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
     # Go through existing passes and make sure it doesn't exist before creating
-    if bpy.context.view_layer['cycles'].get('aov', None) is not None:
+    if bpy.context.view_layer['cycles'].get('aovs', None) is not None:
         for aov in bpy.context.view_layer['cycles']['aovs']:
             if aov['name'] == style:
-                log.debug(f'AOV pass for {style} already exists.')
+                log.info(f'AOV pass for {style} already exists.')
                 return
     bpy.ops.cycles.add_aov()
     bpy.context.view_layer['cycles']['aovs'][-1]['name'] = style
+    bpy.context.view_layer.update()
+    log.info(f'Created AOV pass for {style}.')
 
 
 @gin.configurable
@@ -61,18 +64,18 @@ def make_aov_file_output_node(
     style: str = 'rgb',
 ) -> bpy.types.CompositorNodeOutputFile:
     """ Make AOV Output nodes in Composition Graph. """
-    log.debug(f'Making AOV output node for {style}')
+    log.info(f'Making AOV output node for {style}')
 
     # Only certain styles are available
     valid_styles = ['rgb', 'depth', 'instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
-
+    
     # Make sure scene composition is using nodes
     if not bpy.context.scene.use_nodes:
         bpy.context.scene.use_nodes = True
     _tree = bpy.context.scene.node_tree
-
+    
     # Get or create render layer node
     if _tree.nodes.get('Render Layers', None) is None:
         rl_node = _tree.nodes.new('CompositorNodeRLayers')
@@ -83,6 +86,10 @@ def make_aov_file_output_node(
     composite_node = _tree.nodes.get('Composite')
     if composite_node is not None:
         _tree.nodes.remove(composite_node)
+
+    # Instance and category require an AOV pass
+    if style in ['instance', 'category']:
+        zpy.render.make_aov_pass(style)
 
     # Visualize node shows image in workspace
     _name = f'{style} viewer'
@@ -244,7 +251,6 @@ def _rgb_render_settings():
     scene.render.film_transparent = False
     scene.render.dither_intensity = 1.0
     scene.render.filter_size = 1.5
-    scene.render.use_compositing = True
 
     scene.cycles.samples = 128
     scene.cycles.diffuse_bounces = 4
@@ -277,7 +283,6 @@ def _seg_render_settings():
     scene.render.film_transparent = True
     scene.render.dither_intensity = 0.
     scene.render.filter_size = 0.
-    scene.render.use_compositing = True
 
     scene.cycles.samples = 1
     scene.cycles.diffuse_bounces = 0
