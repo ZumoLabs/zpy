@@ -256,7 +256,7 @@ def scene_information() -> Dict:
 def load_hdri(
     path: Union[str, Path],
     scale: Tuple[float] = (1.0, 1.0, 1.0),
-):
+) -> None:
     """ Load an HDRI from path.
 
     Great source of HDRIs:
@@ -286,8 +286,10 @@ def load_hdri(
 @gin.configurable
 def random_hdri(
     asset_dir: Union[str, Path] = '$ASSETS/lib/hdris/4k',
-):
+) -> Path:
     """ Generate a random HDRI from an asset path. """
     asset_directory = zpy.file.verify_path(
         asset_dir, make=False, check_dir=True)
-    return random.choice([x for x in asset_directory.iterdir() if x.is_file()])
+    hdri_path = random.choice([x for x in asset_directory.iterdir() if x.is_file()])
+    load_hdri(hdri_path)
+    return hdri_path
