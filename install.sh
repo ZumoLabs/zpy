@@ -1,9 +1,9 @@
 #!/bin/bash
-set -ue
+set -e
 
 BLENDER_VERSION="2.90"
 BLENDER_VERSION_FULL="2.90.1"
-ZPY_VERSION="1.1.14"
+ZPY_VERSION="1.1.13"
 
 # First check if the OS is Linux.
 if [[ "$(uname)" = "Linux" ]]; then
@@ -98,6 +98,9 @@ if $ON_MAC ; then
     echo "Must install cURL"
     exit 1
   fi
+  if ! command -v unzip >/dev/null; then
+    echo "Must install zip"
+  fi
 elif $ON_LINUX ; then
   if ! command -v wget >/dev/null; then
     echo "Must install wget"
@@ -122,6 +125,7 @@ if [ "$RESP" = "y" ]; then
   elif $ON_MAC ; then
     curl -O https://download.blender.org/release/Blender${BLENDER_VERSION}/blender-${BLENDER_VERSION_FULL}-macOS.dmg
     mac_dmg_install blender-${BLENDER_VERSION_FULL}-macOS.dmg
+    rm -rf blender-${BLENDER_VERSION_FULL}-macOS.dmg
     echo "Blender installed succesfully."
   else 
     echo "Windows currently not supported"
@@ -130,20 +134,65 @@ else
   echo "Skipping Blender install."
 fi
 
+bprint "Verifying Credentials..."
+if [ -z "${ARTIFACTORY_USER}" ]; then
+  echo "Please define ARTIFACTORY_USER for https://zumolabs.jfrog.io/"
+  exit 1
+fi
+
+if [ -z "${ARTIFACTORY_KEY}" ]; then
+  echo "Please define ARTIFACTORY_KEY for https://zumolabs.jfrog.io/"
+  exit 1
+fi
+
 # Install zpy pip
 bprint "Downloading and installing zpy python package..."
 read -p "Should I download and install zpy python package? (y/n) " RESP
 if [ "$RESP" = "y" ]; then
-  echo "YES zpy package"
+  if $ON_LINUX ; then
+    export BLENDER_PATH="/bin/$BLENDER_VERSION"
+    export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
+    export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
+    export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
+    ${BLENDER_BIN_PY} -m ensurepip && ${BLENDER_BIN_PIP} install --upgrade pip
+    ${BLENDER_BIN_PIP} install --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
+    echo "zpy pip installed succesfully."
+  elif $ON_MAC ; then
+    export BLENDER_PATH="/Applications/Blender.app/Contents/Resources/${BLENDER_VERSION}"
+    export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
+    export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
+    export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    ${BLENDER_BIN_PY} get-pip.py && ${BLENDER_BIN_PIP} install --upgrade pip
+    ${BLENDER_BIN_PIP} install --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
+    rm -rf get-pip.py
+    echo "zpy pip installed succesfully."
+  else 
+    echo "Windows currently not supported"
+  fi
 else
-  echo "NOPE zpy package"
+  echo "Skipping zpy pip install"
 fi
 
 # Install zpy addon
 bprint "Downloading and installing zpy addon..."
 read -p "Should I download and install zpy addon? (y/n) " RESP
 if [ "$RESP" = "y" ]; then
-  echo "YES zpy addon"
+  if $ON_LINUX ; then
+    curl -H "X-JFrog-Art-Api:${ARTIFACTORY_KEY}" -O "https://zumolabs.jfrog.io/artifactory/addons/zpy_addon-v${ZPY_VERSION}.zip"
+    export BLENDERADDONS="/bin/${BLENDER_VERSION}/scripts/addons"
+    unzip zpy_addon-v${ZPY_VERSION}.zip -d ${BLENDERADDONS}/
+    rm zpy_addon-v${ZPY_VERSION}.zip
+    echo "zpy addon installed succesfully."
+  elif $ON_MAC ; then
+    curl -H "X-JFrog-Art-Api:${ARTIFACTORY_KEY}" -O "https://zumolabs.jfrog.io/artifactory/addons/zpy_addon-v${ZPY_VERSION}.zip"
+    export BLENDERADDONS="/Applications/Blender.app/Contents/Resources/${BLENDER_VERSION}/scripts/addons"
+    unzip zpy_addon-v${ZPY_VERSION}.zip -d ${BLENDERADDONS}/
+    rm zpy_addon-v${ZPY_VERSION}.zip
+    echo "zpy addon installed succesfully."
+  else 
+    echo "Windows currently not supported"
+  fi
 else
-  echo "NOPE zpy addon"
+  echo "Skipping zpy addon install"
 fi
