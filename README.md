@@ -20,7 +20,7 @@
 
 ## Abstract
 
-Collecting, labeling, and cleaning data for computer vision is a pain. Jump into the future and create your own data instead! This synthetic data is faster to develop with, effectively infinite, and gives you full control to prevent bias and privacy issues from creeping in. We created `zpy` to make synthetic data easy, by piecing together all the different free pieces of code and providing an easy way to generate synthetic data at scale.
+Collecting, labeling, and cleaning data for computer vision is a pain. Jump into the future and create your own data instead! This synthetic data is faster to develop with, effectively infinite, and gives you full control to prevent bias and privacy issues from creeping in. We created `zpy` to make synthetic data easy, by simplifying the scene creation process and providing an easy way to generate synthetic data at scale.
 
 ## Install
 
@@ -90,7 +90,9 @@ mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
 ln -s ~/zumolabs/zpy/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addons/zpy_addon
 ```
 
-Some scenes require the path to the asset library as an environment variable. Example:
+### Install: Asset Library
+
+If you use additional assets from our library, you can set it as an environment variable. Example:
 
 ```
 export ASSETS="/home/ook/assets"
@@ -117,25 +119,22 @@ git fetch --tag
 git tag
 ```
 
-Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`)
+Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`). Check progress on [CI](https://app.circleci.com/pipelines/github/ZumoLabs/zpy)
 
 ```
 git tag ${ZPY_VERSION} && \
 git push origin ${ZPY_VERSION}
 ```
+
 Release Candidates are available to download through pip through explicit version or `pip install --pre zpy`
-
-Check progress on [CI](https://app.circleci.com/pipelines/github/ZumoLabs/zpy)
-
-Check progress on [packagecloud](https://packagecloud.io/zumolabs/pypi)
 
 ## Licence
 
-This release of zpy is under the GPLv3 license, a free copyleft license used by Blender.
+This release of zpy is under the GPLv3 license, a free copyleft license used by Blender. TLDR: Its free, use it! And remember: contributing is better than branching!
 
 ## BibTeX
 
-If you want to cite these tools:
+If you use `zpy` in your research, we would appreciate the citation!
 
 ```bibtex
 @article{zpy,
