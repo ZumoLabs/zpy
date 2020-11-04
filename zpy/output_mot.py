@@ -1,16 +1,13 @@
 """
     MOT (Multi Object Tracking) dataset format.
 """
-
-import copy
 import logging
-from datetime import date
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
-
-import zpy
+from typing import List, Union
 
 import gin
+
+import zpy
 from zpy.output import Output
 from zpy.saver import Saver
 

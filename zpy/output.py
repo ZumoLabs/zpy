@@ -1,8 +1,9 @@
 """
-    Base class for outputing from a Saver object.
+    Base class for new annotation formats. Any new annotation format must be
+    able to take a saver object and output annotations.
 """
-
 from zpy.saver import Saver
+
 
 class Output:
     """Holds the logic for outputting annotations to file."""
@@ -12,10 +13,5 @@ class Output:
         self.saver = saver
 
     def output_annotations(self):
-        """ Output ZUMO_META annotations.
-
-        The ZUMO format is meant to be as close to
-        a serialized version of this class as possbile.
-
-        """
+        """ Output annotation file. """
         raise NotImplementedError('Must implement output_annotations()')

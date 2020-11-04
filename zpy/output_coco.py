@@ -1,20 +1,14 @@
 """
     COCO (Common Objects in Context) dataset format.
 """
-
 import copy
-import itertools
 import logging
-import os
-import pprint
-from datetime import date
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
-
-import numpy as np
-import zpy
+from typing import List, Union
 
 import gin
+
+import zpy
 from zpy.output import Output
 from zpy.saver import Saver
 
@@ -121,7 +115,8 @@ class OutputCOCO(Output):
 
     @gin.configurable
     def coco_annotations(self,
-                         keys_to_add: List[str] = ['bbox', 'area', 'segmentation'],
+                         keys_to_add: List[str] = [
+                             'bbox', 'area', 'segmentation'],
                          clipped: bool = False,
                          only_default_images: bool = True,
                          ):
@@ -407,12 +402,12 @@ def parse_coco_annotations(
         # Save each image to Saver object
         if output_saver:
             saver.images[image_id] = {
-                'id' : image_id,
+                'id': image_id,
                 'name': filename,
                 'output_path': str(coco_url),
                 'height': height,
                 'width': width,
-                'style' : 'default',
+                'style': 'default',
             }
             # Add any extra keys.
             if image_keys_to_add is not None:

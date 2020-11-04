@@ -1,10 +1,7 @@
 """
-    Visualization utilities for tesseract.
-    
-    TODO: Match style of the data portal.
+    Visualization and plotting utilities.
 """
 import logging
-import os
 import random
 import time
 from pathlib import Path
@@ -12,15 +9,11 @@ from typing import Dict, List, Tuple, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d as plt3d
 import numpy as np
-import zpy
-import zpy.color
-import zpy.file
-import zpy.image
-from matplotlib.collections import PatchCollection
 from matplotlib.patches import Arrow, Circle, Polygon, Rectangle
 from matplotlib.ticker import MaxNLocator
+
+import zpy
 
 log = logging.getLogger(__name__)
 
@@ -134,6 +127,7 @@ def pixel_histograms(
     """ Plots histograms of pixel values for each color channel. """
     assert flat_images is not None, 'Images required.'
     import seaborn as sns
+
     # HACK: Incorrect type assumption
     flat_images = flat_images[0]
     fig = plt.figure(figsize=(16, 8))

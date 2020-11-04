@@ -7,7 +7,6 @@ import bpy
 import gin
 
 import zpy
-import zpy.blender
 
 log = logging.getLogger(__name__)
 

@@ -1,18 +1,15 @@
 """
-    Logic for saving. 
+    Saver object stores annotations, images, etc during scene runtime.
 """
-
-import copy
 import logging
-import os
 from datetime import date
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 import gin
 import numpy as np
+
 import zpy
-import zpy.file
 
 log = logging.getLogger(__name__)
 

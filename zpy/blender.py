@@ -1,5 +1,5 @@
 """
-    Blender utilities for Blender Python.
+    Blender utilities.
 """
 import inspect
 import logging
@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 import bpy
-import bpy_extras
 import gin
 import mathutils
 import numpy as np

@@ -1,22 +1,20 @@
 """
     Splitting a dataset into train, validate, and test.
 """
+import copy
 import json
 import logging
 import random
 from datetime import date
-import copy
 from pathlib import Path
 from typing import Dict, List, Union
-import zpy
-import zpy.file
+
 import gin
 
-
-from zpy.output_zumo import parse_zumo_annotations
+import zpy
+from zpy.output_coco import COCOParseError, OutputCOCO
+from zpy.output_zumo import OutputZUMO, ZUMOParseError, parse_zumo_annotations
 from zpy.saver import Saver
-from zpy.output_zumo import OutputZUMO, ZUMOParseError
-from zpy.output_coco import OutputCOCO, COCOParseError
 
 log = logging.getLogger(__name__)
 

@@ -14,7 +14,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 from pprint import pformat
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Union
 
 log = logging.getLogger(__name__)
 

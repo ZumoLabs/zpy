@@ -80,71 +80,37 @@ def make_aov_material_output_node(
 
 @gin.configurable
 def make_mat(name: str = None,
-             style: str = 'segmentation',
-             color: Union[Tuple[float], str] = None,
              texture_path: Union[str, Path] = None,
-             engine: str = 'cycles',
+             color: Tuple[float] = None,
              ) -> bpy.types.Material:
-    """ Makes a material of a given style. 
-
-    TODO: REMOVE
-
-    """
+    """ Makes a material from a texture or color."""
     mat = bpy.data.materials.get(name)
     if mat is not None:
         log.debug(f'Material {name} already exists')
         return mat
-    if isinstance(color, str):
-        color = zpy.color.hex_to_frgb(color)
     mat = bpy.data.materials.new(name=name)
-    if style == 'segmentation' and (engine == 'eevee'):
-        # Segmentation uses the workbench render engine
-        # and just needs a simple material with a color.
-        mat.diffuse_color = color + (1.,)
-        mat.shadow_method = 'NONE'
-        mat.roughness = 1.0
-        mat.specular_intensity = 0.0
+    mat.use_nodes = True
+    bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
+    out_node = mat.node_tree.nodes.get('Material Output')
+    if color is not None:
+        mat.node_tree.nodes.remove(bsdf_node)
+        bsdf_node = mat.node_tree.nodes.new('ShaderNodeBsdfDiffuse')
+        bsdf_node.inputs['Color'].default_value = color + (1.,)
+        mat.node_tree.links.new(out_node.inputs[0], bsdf_node.outputs[0])
+    elif texture_path is not None:
+        assert texture_path is not None, 'Must provide texture path.'
+        tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
+        tex_node.name = 'ImageTexture'
+        coord_node = mat.node_tree.nodes.new('ShaderNodeTexCoord')
+        texture_path = zpy.file.verify_path(texture_path, make=False)
+        bpy.ops.image.open(filepath=str(texture_path))
+        tex_node.image = bpy.data.images[texture_path.name]
+        tex_node.image.colorspace_settings.name = 'Filmic Log'
+        mat.node_tree.links.new(tex_node.outputs[0], bsdf_node.inputs[0])
+        mat.node_tree.links.new(coord_node.outputs[0], tex_node.inputs[0])
+        tex_node.image.reload()
     else:
-        mat.use_nodes = True
-        bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
-        out_node = mat.node_tree.nodes.get('Material Output')
-        if style == 'segmentation' and (engine == 'cycles'):
-            assert color is not None, 'Must provide color.'
-            mat.node_tree.nodes.remove(bsdf_node)
-            seg_node = mat.node_tree.nodes.new('ShaderNodeEmission')
-            seg_node.inputs['Strength'].default_value = 1.0
-            seg_node.inputs['Color'].default_value = color + (1.,)
-            mat.node_tree.links.new(out_node.inputs[0], seg_node.outputs[0])
-        elif style == 'diffuse_color':
-            assert color is not None, 'Must provide color.'
-            mat.node_tree.nodes.remove(bsdf_node)
-            bsdf_node = mat.node_tree.nodes.new('ShaderNodeBsdfDiffuse')
-            bsdf_node.inputs['Color'].default_value = color + (1.,)
-            mat.node_tree.links.new(out_node.inputs[0], bsdf_node.outputs[0])
-        elif style == 'texture':
-            assert texture_path is not None, 'Must provide texture path.'
-            tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
-            tex_node.name = 'ImageTexture'
-            coord_node = mat.node_tree.nodes.new('ShaderNodeTexCoord')
-            texture_path = zpy.file.verify_path(texture_path, make=False)
-            bpy.ops.image.open(filepath=str(texture_path))
-            tex_node.image = bpy.data.images[texture_path.name]
-            tex_node.image.colorspace_settings.name = 'Filmic Log'
-            mat.node_tree.links.new(tex_node.outputs[0], bsdf_node.inputs[0])
-            mat.node_tree.links.new(coord_node.outputs[0], tex_node.inputs[0])
-            tex_node.image.reload()
-        elif style == 'depth':
-            """
-            TODO: Depth material.
-
-            https://www.youtube.com/watch?v=gPwdLOSpMUA&t=435s
-
-            https://blender.stackexchange.com/questions/42579/render-depth-map-to-image-with-python-script/42667
-
-            """
-        else:
-            raise ValueError('Unknown material style.')
-    log.debug(f'New material {name} - {style} color {color}')
+        raise ValueError('make_mat requries either color or texture path.')
     return mat
 
 
