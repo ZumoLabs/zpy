@@ -121,17 +121,17 @@ if [ "$RESP" = "y" ]; then
     tar -xvf blender-${BLENDER_VERSION_FULL}-linux64.tar.xz --strip-components=1 -C /bin
     rm -rf blender-${BLENDER_VERSION_FULL}-linux64.tar.xz
     rm -rf blender-${BLENDER_VERSION_FULL}-linux64
-    echo "Blender installed succesfully."
+    echo "Blender installed succesfully"
   elif $ON_MAC ; then
     curl -O https://download.blender.org/release/Blender${BLENDER_VERSION}/blender-${BLENDER_VERSION_FULL}-macOS.dmg
     mac_dmg_install blender-${BLENDER_VERSION_FULL}-macOS.dmg
     rm -rf blender-${BLENDER_VERSION_FULL}-macOS.dmg
-    echo "Blender installed succesfully."
+    echo "Blender installed succesfully"
   else 
     echo "Windows currently not supported"
   fi
 else
-  echo "Skipping Blender install."
+  echo "Skipping Blender install"
 fi
 
 bprint "Verifying Credentials..."
@@ -155,8 +155,8 @@ if [ "$RESP" = "y" ]; then
     export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
     export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
     ${BLENDER_BIN_PY} -m ensurepip && ${BLENDER_BIN_PIP} install --upgrade pip
-    ${BLENDER_BIN_PIP} install --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
-    echo "zpy pip installed succesfully."
+    ${BLENDER_BIN_PIP} install --upgrade --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
+    echo "zpy pip installed succesfully"
   elif $ON_MAC ; then
     export BLENDER_PATH="/Applications/Blender.app/Contents/Resources/${BLENDER_VERSION}"
     export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
@@ -164,9 +164,9 @@ if [ "$RESP" = "y" ]; then
     export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     ${BLENDER_BIN_PY} get-pip.py && ${BLENDER_BIN_PIP} install --upgrade pip
-    ${BLENDER_BIN_PIP} install --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
+    ${BLENDER_BIN_PIP} install --upgrade --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
     rm -rf get-pip.py
-    echo "zpy pip installed succesfully."
+    echo "zpy pip installed succesfully"
   else 
     echo "Windows currently not supported"
   fi
@@ -183,13 +183,13 @@ if [ "$RESP" = "y" ]; then
     export BLENDERADDONS="/bin/${BLENDER_VERSION}/scripts/addons"
     unzip zpy_addon-v${ZPY_VERSION}.zip -d ${BLENDERADDONS}/
     rm zpy_addon-v${ZPY_VERSION}.zip
-    echo "zpy addon installed succesfully."
+    echo "zpy addon installed succesfully"
   elif $ON_MAC ; then
     curl -H "X-JFrog-Art-Api:${ARTIFACTORY_KEY}" -O "https://zumolabs.jfrog.io/artifactory/addons/zpy_addon-v${ZPY_VERSION}.zip"
     export BLENDERADDONS="/Applications/Blender.app/Contents/Resources/${BLENDER_VERSION}/scripts/addons"
     unzip zpy_addon-v${ZPY_VERSION}.zip -d ${BLENDERADDONS}/
     rm zpy_addon-v${ZPY_VERSION}.zip
-    echo "zpy addon installed succesfully."
+    echo "zpy addon installed succesfully"
   else 
     echo "Windows currently not supported"
   fi
