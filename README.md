@@ -27,7 +27,7 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 The current version of zpy is:
 
 ```
-export ZPY_VERSION="v1.1.13"
+export ZPY_VERSION="v1.2.0"
 ```
 
 ### Install: Blender
