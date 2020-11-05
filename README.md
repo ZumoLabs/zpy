@@ -32,7 +32,7 @@ You can set `BLENDER_VERSION` `BLENDER_VERSION_FULL` and `ZPY_VERSION`for specif
 
 ### Enabling the Addon
 
-Now start Blender and navigate to "Edit -> Preferences -> Add-ons". Hit the "Install" button and navigate to the zip folder you just downloaded. The add-on will show up in the "N" panel. You can enable the N panel by just pressing "n" on your keyboard.
+Now start Blender and navigate to "Edit -> Preferences -> Add-ons". You should be able to activate the addon there.
 
 ![Enabling the addon](./doc/addon_zip_install_menus.png)
 
