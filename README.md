@@ -30,15 +30,22 @@ $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZumoLabs/zpy/main
 
 You can set `BLENDER_VERSION` `BLENDER_VERSION_FULL` and `ZPY_VERSION`for specific versions 
 
-### Enabling the Addon
+### Install: Within Blender
 
-Now start Blender and navigate to "Edit -> Preferences -> Add-ons". You should be able to activate the addon there.
+You can install the addon from within Blender itself. Navigate to "Edit -> Preferences -> Add-ons". You should be able to install and enable the addon from there there.
 
 ![Enabling the addon](./doc/addon_zip_install_menus.png)
 
 ### Install: Developer Environment
 
 If you are setting up a development environment it will be easier to symlink the zpy pip module directly into the Blender python library. This can be achieved with something like:
+
+```
+export BLENDER_VERSION="2.91"
+export BLENDER_VERSION_FULL="2.91.0-276d19f63b45"
+export BLENDER_PATH="/home/ook/Downloads/blender-${BLENDER_VERSION_FULL}-linux64/${BLENDER_VERSION}"
+export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
+```
 
 ```
 ln -s ~/zumolabs/zpy/zpy ${BLENDER_LIB_PY}/site-packages/
