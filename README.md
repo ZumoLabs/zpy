@@ -34,7 +34,7 @@ You can set `BLENDER_VERSION` `BLENDER_VERSION_FULL` and `ZPY_VERSION`for specif
 
 You can install the addon from within Blender itself. Navigate to "Edit -> Preferences -> Add-ons". You should be able to install and enable the addon from there there.
 
-![Enabling the addon](./doc/addon_zip_install_menus.png)
+![Enabling the addon](./doc/install_zpy.png)
 
 ### Install: Developer Environment
 
