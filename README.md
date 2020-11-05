@@ -24,52 +24,13 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 
 ## Install
 
-The current version of zpy is:
-
-```
-export ZPY_VERSION="v1.2.0"
+``` 
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZumoLabs/zpy/main/install.sh?token=<token>)"
 ```
 
-### Install: Blender
+You can set `BLENDER_VERSION` `BLENDER_VERSION_FULL` and `ZPY_VERSION`for specific versions 
 
-
-Blender is the best free and open 3D creation software in the world! Download the latest Blender [here](https://www.blender.org/download/). This code has been tested using Blender version:
-
-```
-export BLENDER_VERSION="2.91"
-export BLENDER_VERSION_FULL="2.91.0-276d19f63b45"
-```
-
-### Install: Pip (Python Package)
-
-TODO: Install from public pip package
-
-These instructions install the pip package directly in your Blender folder. More information on how [Blender paths work](https://docs.blender.org/manual/en/latest/advanced/blender_directory_layout.html):
-
-**You will have to change these paths depending on your system.**
-
-```
-export BLENDER_PATH="/home/ook/Downloads/blender-${BLENDER_VERSION_FULL}-linux64/${BLENDER_VERSION}"
-export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
-export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
-export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
-```
-
-You might have to install pip itself:
-
-```
-${BLENDER_BIN_PY} -m ensurepip && ${BLENDER_BIN_PIP} install --upgrade pip
-```
-
-You might have to install more pip packages
-
-```
-$BLENDER_BIN_PIP install -r requirements.txt
-```
-
-### Install: Blender Addon From Zip
-
-You can install a Blender Addon directly from a packaged zip file. You can download the lastest `zpy` addon [here]().
+### Enabling the Addon
 
 Now start Blender and navigate to "Edit -> Preferences -> Add-ons". Hit the "Install" button and navigate to the zip folder you just downloaded. The add-on will show up in the "N" panel. You can enable the N panel by just pressing "n" on your keyboard.
 

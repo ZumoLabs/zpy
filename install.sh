@@ -1,9 +1,12 @@
 #!/bin/bash
 set -e
 
-BLENDER_VERSION="2.90"
+BLENDER_VERSION=${BLENDER_VERSION:-"2.90"}
 BLENDER_VERSION_FULL="2.90.1"
 ZPY_VERSION="1.2.1-rc0"
+
+echo $BLENDER_VERSION
+exit 1
 
 # First check if the OS is Linux.
 if [[ "$(uname)" = "Linux" ]]; then
