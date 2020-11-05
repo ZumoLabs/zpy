@@ -38,6 +38,8 @@ You can install the addon from within Blender itself. Navigate to "Edit -> Prefe
 
 ### Install: Developer Environment
 
+TODO: Remove once made public 
+
 If you are setting up a development environment it will be easier to symlink the zpy pip module directly into the Blender python library. This can be achieved with something like:
 
 ```
@@ -58,8 +60,6 @@ mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
 ln -s ~/zumolabs/zpy/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addons/zpy_addon
 ```
 
-### Install: Asset Library
-
 If you use additional assets from our library, you can set it as an environment variable. Example:
 
 ```
@@ -68,17 +68,26 @@ export ASSETS="/home/ook/assets"
 
 ## Examples
 
-- [Hello World]()
+**Tutorial**
+- [Shapes]()
+
+**Classification**
+- [Transformers in Vision]()
+
+**Object Detection**
 - [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
 - [Vote Counting](https://towardsdatascience.com/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data-d8e24eca114d)
 
+**Segmentation**
+- [Monkey Demo]()
+
 ## Contributing
 
-### Contributing: Community
-
-We welcome community contributions! Join the conversation at our [Slack channel]().
+We welcome community contributions! Search through the [current issues](https://github.com/ZumoLabs/zpy/issues) or open your own.
 
 ### Contributing: Cutting a Release
+
+TODO: Remove once made public 
 
 Fetch and list existing tags
 
@@ -98,7 +107,7 @@ Release Candidates are available to download through pip through explicit versio
 
 ## Licence
 
-This release of zpy is under the GPLv3 license, a free copyleft license used by Blender. TLDR: Its free, use it! And remember: contributing is better than branching!
+This release of zpy is under the GPLv3 license, a free copyleft license used by Blender. TLDR: Its free, use it!
 
 ## BibTeX
 
