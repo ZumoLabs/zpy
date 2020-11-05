@@ -5,9 +5,6 @@ BLENDER_VERSION=${BLENDER_VERSION:-"2.90"}
 BLENDER_VERSION_FULL=${BLENDER_VERSION_FULL:-"2.90.1"}
 ZPY_VERSION=${ZPY_VERSION:-"1.2.1-rc0"}
 
-echo $BLENDER_VERSION
-exit 1
-
 # First check if the OS is Linux.
 if [[ "$(uname)" = "Linux" ]]; then
   ON_LINUX=true
@@ -150,7 +147,7 @@ fi
 
 # Install zpy pip
 bprint "Downloading and installing zpy python package..."
-read -p "Should I download and install zpy python package? (y/n) " RESP
+read -p "Download and install zpy python package? (y/n) " RESP
 if [ "$RESP" = "y" ]; then
   if $ON_LINUX ; then
     export BLENDER_PATH="/bin/$BLENDER_VERSION"
@@ -179,7 +176,7 @@ fi
 
 # Install zpy addon
 bprint "Downloading and installing zpy addon..."
-read -p "Should I download and install zpy addon? (y/n) " RESP
+read -p "Download and install zpy addon? (y/n) " RESP
 if [ "$RESP" = "y" ]; then
   if $ON_LINUX ; then
     curl -H "X-JFrog-Art-Api:${ARTIFACTORY_KEY}" -O "https://zumolabs.jfrog.io/artifactory/addons/zpy_addon-v${ZPY_VERSION}.zip"
