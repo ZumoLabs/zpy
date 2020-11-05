@@ -1,35 +1,21 @@
 """
     Segment panel and functions.
 """
-import hashlib
 import importlib
 import json
 import logging
-import os
 import random
-from pathlib import Path
-import math
+from typing import Tuple
 
 import bpy
-import mathutils
+import zpy
 from bpy.types import Operator
-from bpy_extras.io_utils import ExportHelper, ImportHelper
+from bpy_extras.io_utils import ImportHelper
 
 log = logging.getLogger(__name__)
 
 if "bpy" in locals():
-    import zpy
     importlib.reload(zpy)
-    from zpy import blender
-    from zpy import color
-    from zpy import file
-    from zpy import material
-    from zpy import render
-    from zpy import image
-    # HACK: Reset the random colors on import
-    zpy.color.reset()
-else:
-    import zpy
 
 
 def registerObjectProperties():
@@ -82,60 +68,15 @@ def _category_items(self, context):
 def _category_update(self, context):
     """ Update the category. """
     if context.selected_objects:
-        # Make sure there is an AOV pass for category colors
-        zpy.render.make_aov_pass('category')
         # Use the value of the category enum dropdown
         category = context.scene.categories[int(context.scene.categories_enum)]
-        for obj in _for_obj_in_selected_objs(context):
-            obj.seg.category_name = category.name
-            obj.seg.category_color = category.color
-            obj.color = zpy.color.frgb_to_frgba(category.color)
-            # Populate vertex colors
-            populate_vertex_colors(context,
-                                   obj,
-                                   zpy.color.frgb_to_srgba(category.color),
-                                   'category')
-            # Add category aov output node to object material
-            zpy.material.make_aov_material_output_node(
-                obj=obj, style='category')
-
-
-def _for_obj_in_selected_objs(context):
-    """ Safe iterable for selected objects. """
-    for obj in context.selected_objects:
-        # Only meshes or empty objects TODO: Why the empty objects
-        if not (obj.type == 'MESH' or obj.type == 'EMPTY'):
-            continue
-        # Make sure object exists in the scene
-        if bpy.data.objects.get(obj.name, None) is None:
-            continue
-        yield obj
-
-
-def populate_vertex_colors(context,
-                           obj: bpy.types.Object,
-                           color_rgba: tuple,
-                           seg_type: str = 'instance'):
-    """Fill the given Vertex Color Layer with the color parameter values"""
-    if not obj.type == 'MESH':
-        return
-    # Remove any existing vertex color data
-    if len(obj.data.vertex_colors):
-        for vcol in obj.data.vertex_colors.keys():
-            if seg_type in vcol:
-                obj.data.vertex_colors.remove(obj.data.vertex_colors[seg_type])
-    # Add new vertex color data
-    obj.data.vertex_colors.new(name=seg_type)
-    # HACK: Make sure selected object is the active object
-    bpy.ops.object.select_all(action='DESELECT')
-    obj.select_set(True)
-    context.view_layer.objects.active = obj
-    # Iterate through each vertex in the mesh
-    i = 0
-    for poly in obj.data.polygons:
-        for _ in poly.loop_indices:
-            obj.data.vertex_colors[seg_type].data[i].color = color_rgba
-            i += 1
+        for obj in zpy.object.for_obj_in_selected_objs(context):
+            zpy.object.segment(
+                obj=obj,
+                name=category.name,
+                color=category.color,
+                as_category=True,
+            )
 
 
 class SegmentableProperties(bpy.types.PropertyGroup):
@@ -177,24 +118,8 @@ class SegmentInstanceMany(Operator):
 
     def execute(self, context):
         context.space_data.shading.color_type = 'OBJECT'
-        for obj in _for_obj_in_selected_objs(context):
-            bpy.context.view_layer.objects.active = obj
-            # Pick a random color for every sub-object
-            _color = zpy.color.random_color(output_style='frgb')
-            # Set properties for object
-            obj.seg.instance_name = obj.name
-            obj.seg.instance_color = _color
-            obj.color = zpy.color.frgb_to_frgba(_color)
-            # Populate vertex colors
-            populate_vertex_colors(context,
-                                   obj,
-                                   zpy.color.frgb_to_srgba(_color),
-                                   'instance')
-            # Add instance aov output node to object material
-            zpy.material.make_aov_material_output_node(
-                obj=obj, style='instance')
-        # Make sure there is an AOV pass for instance colors
-        zpy.render.make_aov_pass('instance')
+        for obj in zpy.object.for_obj_in_selected_objs(context):
+            zpy.object.segment(obj=obj, name=obj.name)
         return {'FINISHED'}
 
 
@@ -217,22 +142,8 @@ class SegmentInstanceSingle(Operator):
         # Pick a random color and instance name
         _name = context.selected_objects[0].name
         _color = zpy.color.random_color(output_style='frgb')
-        for obj in _for_obj_in_selected_objs(context):
-            context.view_layer.objects.active = obj
-            # Set properties for object
-            obj.seg.instance_name = _name
-            obj.seg.instance_color = _color
-            obj.color = zpy.color.frgb_to_frgba(_color)
-            # Populate vertex colors
-            populate_vertex_colors(context,
-                                   obj,
-                                   zpy.color.frgb_to_srgba(_color),
-                                   'instance')
-            # Add instance aov output node to object material
-            zpy.material.make_aov_material_output_node(
-                obj=obj, style='instance')
-        # Make sure there is an AOV pass for instance colors
-        zpy.render.make_aov_pass('instance')
+        for obj in zpy.object.for_obj_in_selected_objs(context):
+            zpy.object.segment(obj=obj, name=_name, color=_color)
         return {'FINISHED'}
 
 
@@ -310,11 +221,27 @@ def _reset_categories(context):
     for _ in range(len(context.scene.categories)):
         context.scene.categories.remove(0)
     # Reset all categories
-    for obj in _for_obj_in_selected_objs(context):
+    for obj in zpy.object.for_obj_in_selected_objs(context):
         obj.seg.category_name = 'default'
         obj.seg.category_color = zpy.color.default_color(
             output_style='frgb')
         obj.color = zpy.color.default_color(output_style='frgba')
+
+
+def _add_category(context,
+                  name: str = None,
+                  color: Tuple[float] = None) -> None:
+    """ Add category to enum category property. """
+    if name in context.scene.categories.keys():
+        log.warning(f'Skipping duplicate category {name}.')
+        return
+    if color is None:
+        color = zpy.color.random_color(output_style='frgb')
+        log.info(f'Choosing random color for category {name}: {color}')
+    # Add category to categories dict
+    new_category = context.scene.categories.add()
+    new_category.name = name
+    new_category.color = color
 
 
 class CategoriesFromText(Operator):
@@ -345,16 +272,8 @@ class CategoriesFromText(Operator):
 
         _reset_categories(context)
 
-        for i, line in enumerate(category_text.lines):
-            _category = line.body
-            assert isinstance(_category, str), \
-                f'Invalid category at row {i}: category is not string.'
-            assert _category not in context.scene.categories.keys(), \
-                f'Invalid category at row {i}: category is duplicate.'
-            # Add category to categories dict
-            new_category = context.scene.categories.add()
-            new_category.name = _category
-            new_category.color = zpy.color.random_color(output_style='frgb')
+        for line in category_text.lines:
+            _add_category(context, name=line.body)
         return {'FINISHED'}
 
 
@@ -374,10 +293,11 @@ class CategoriesFromZUMOJSON(Operator, ImportHelper):
             f'ZUMO JSON does not have categories.'
         _reset_categories(context)
         for category in categories.values():
-            # Add category to categories dict
-            new_category = context.scene.categories.add()
-            new_category.name = category['name']
-            new_category.color = category['color']
+            _add_category(
+                context,
+                name=category.get('name', None),
+                color=category.get('color', None),
+            )
         return {'FINISHED'}
 
 

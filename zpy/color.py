@@ -1,11 +1,10 @@
 """
     Utilities for color.
 """
-from typing import Dict, Union, Tuple, List
 import logging
-import numpy as np
 import random
 from pathlib import Path
+from typing import List, Tuple, Union
 
 from . import file
 

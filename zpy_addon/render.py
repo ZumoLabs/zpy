@@ -1,34 +1,18 @@
 """
     Rendering panel and functions.
 """
-import hashlib
 import importlib
-import json
 import logging
-import os
-import random
 from pathlib import Path
-import math
 
 import bpy
-import mathutils
+import zpy
 from bpy.types import Operator
 
 log = logging.getLogger(__name__)
 
 if "bpy" in locals():
-    import zpy
     importlib.reload(zpy)
-    from zpy import blender
-    from zpy import color
-    from zpy import file
-    from zpy import material
-    from zpy import render
-    from zpy import image
-    # HACK: Reset the random colors on import
-    zpy.color.reset()
-else:
-    import zpy
 
 
 def registerSceneProperties():
@@ -48,7 +32,7 @@ class RenderOperator(Operator):
     bl_description = "Render out segmented images."
     bl_category = "ZumoLabs"
     bl_options = {'REGISTER'}
-    
+
     @classmethod
     def poll(cls, context):
         # TODO: Make sure scene is good to render?

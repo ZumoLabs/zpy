@@ -1,18 +1,15 @@
 """
-    Logic for saving. 
+    Saver object stores annotations, images, etc during scene runtime.
 """
-
-import copy
 import logging
-import os
 from datetime import date
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 import gin
 import numpy as np
+
 import zpy
-import zpy.file
 
 log = logging.getLogger(__name__)
 
@@ -187,6 +184,7 @@ class Saver:
                        subcategory_zero_indexed: bool = True,
                        seg_image: str = None,
                        seg_color:  Tuple[float] = None,
+                       parse_on_add: bool = True,
                        **kwargs,
                        ) -> None:
         """ Add annotation. """
@@ -208,7 +206,7 @@ class Saver:
             annotation['subcategory_id'] = subcategory_id
         annotation.update(**kwargs)
         annotation['id'] = len(self.annotations)
-        log.debug(f'Adding annotation: {zpy.file.pretty_print(annotation)}')
+        log.info(f'Adding annotation: {zpy.file.pretty_print(annotation)}')
         # For segmentation images, add bbox/poly/mask annotation
         if seg_image is not None and seg_color is not None:
             seg_image_id = self.image_name_to_id.get(seg_image, None)
@@ -221,7 +219,8 @@ class Saver:
         # This call creates correspondences between segmentation images
         # and the annotations. It should be used after both the images
         # and annotations have been added to the saver.
-        self.parse_annotations_from_seg_image(image_name=seg_image)
+        if parse_on_add:
+            self.parse_annotations_from_seg_image(image_name=seg_image)
 
     def parse_annotations_from_seg_image(self,
                                          image_name: str,

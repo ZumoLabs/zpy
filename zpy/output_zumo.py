@@ -1,22 +1,15 @@
 """
     ZUMO dataset format.
 """
-
-import copy
-import itertools
 import logging
-import os
-import pprint
-from datetime import date
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
-
-import numpy as np
-import zpy
+from typing import Dict, Union
 
 import gin
-from zpy.savers.output import Output
-from zpy.savers.saver import Saver
+
+import zpy
+from zpy.output import Output
+from zpy.saver import Saver
 
 log = logging.getLogger(__name__)
 

@@ -1,34 +1,18 @@
 """
     Script loading/running panel and functions.
 """
-import hashlib
 import importlib
-import json
 import logging
-import os
-import random
 from pathlib import Path
-import math
 
 import bpy
-import mathutils
+import zpy
 from bpy.types import Operator
 
 log = logging.getLogger(__name__)
 
 if "bpy" in locals():
-    import zpy
     importlib.reload(zpy)
-    from zpy import blender
-    from zpy import color
-    from zpy import file
-    from zpy import material
-    from zpy import render
-    from zpy import image
-    # HACK: Reset the random colors on import
-    zpy.color.reset()
-else:
-    import zpy
 
 
 def registerSceneProperties():
@@ -57,18 +41,6 @@ def _load_gin_config(self, context) -> None:
 def _load_runpy(self, context) -> None:
     """ Load run.py from file. """
     bpy.ops.scene.zpy_load_runpy()
-
-
-class CommitOperator(Operator):
-    """ Write out run and config texts to file outside .blend file. """
-    bl_idname = "scene.zpy_commit"
-    bl_label = "Commit"
-    bl_description = "Write out run and config texts to file outside .blend file."
-    bl_category = "ZumoLabs"
-    bl_options = {'REGISTER'}
-
-    def execute(self, context):
-        return {'FINISHED'}
 
 
 class RunOperator(Operator):
@@ -102,6 +74,7 @@ class LoadGinConfigOperator(bpy.types.Operator):
             text_name=self.DEFAULT_TEXT_NAME)
         return {'FINISHED'}
 
+
 class PushGinConfigOperator(bpy.types.Operator):
     """ Push gin config to file. """
     bl_idname = "scene.zpy_push_gin_config"
@@ -109,12 +82,14 @@ class PushGinConfigOperator(bpy.types.Operator):
     bl_description = "Push gin config to file."
     bl_category = "ZumoLabs"
     bl_options = {'REGISTER'}
-    
+
     def execute(self, context):
-        _text = bpy.data.texts[LoadGinConfigOperator.DEFAULT_TEXT_NAME].as_string()
+        _text = bpy.data.texts[LoadGinConfigOperator.DEFAULT_TEXT_NAME].as_string(
+        )
         with open(bpy.path.abspath(context.scene.zpy_gin_config_path), 'w') as _file:
             _file.write(_text)
         return {'FINISHED'}
+
 
 class LoadRunpyOperator(bpy.types.Operator):
     """ Load run.py from file. """
@@ -133,6 +108,7 @@ class LoadRunpyOperator(bpy.types.Operator):
             text_name=self.DEFAULT_TEXT_NAME)
         return {'FINISHED'}
 
+
 class PushRunpyOperator(bpy.types.Operator):
     """ Push run.py to file. """
     bl_idname = "scene.zpy_push_runpy"
@@ -146,6 +122,7 @@ class PushRunpyOperator(bpy.types.Operator):
         with open(bpy.path.abspath(context.scene.zpy_runpy_path), 'w') as _file:
             _file.write(_text)
         return {'FINISHED'}
+
 
 class ScriptPanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """

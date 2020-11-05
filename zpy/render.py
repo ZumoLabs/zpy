@@ -3,14 +3,15 @@
 """
 import logging
 import os
+import sys
 import time
 from pathlib import Path
-from typing import Union, List
-
-import zpy
+from typing import Union
 
 import bpy
 import gin
+
+import zpy
 
 log = logging.getLogger(__name__)
 
@@ -35,24 +36,27 @@ def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
 @gin.configurable
 def make_aov_pass(
     style: str = 'instance',
-):
+) -> None:
     """ Make AOV pass in Cycles. """
     # Make sure engine is set to Cycles
     if not (bpy.context.scene.render.engine == "CYCLES"):
         log.warning(' Setting render engine to CYCLES to use AOV')
-        bpy.context.scene.render.engine == "CYCLES"
+        bpy.context.scene.render.engine = "CYCLES"
+        bpy.context.scene.render.use_compositing = True
     # Only certain styles are available
     valid_styles = ['instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
     # Go through existing passes and make sure it doesn't exist before creating
-    if bpy.context.view_layer['cycles'].get('aov', None) is not None:
+    if bpy.context.view_layer['cycles'].get('aovs', None) is not None:
         for aov in bpy.context.view_layer['cycles']['aovs']:
             if aov['name'] == style:
-                log.debug(f'AOV pass for {style} already exists.')
+                log.info(f'AOV pass for {style} already exists.')
                 return
     bpy.ops.cycles.add_aov()
     bpy.context.view_layer['cycles']['aovs'][-1]['name'] = style
+    bpy.context.view_layer.update()
+    log.info(f'Created AOV pass for {style}.')
 
 
 @gin.configurable
@@ -60,18 +64,18 @@ def make_aov_file_output_node(
     style: str = 'rgb',
 ) -> bpy.types.CompositorNodeOutputFile:
     """ Make AOV Output nodes in Composition Graph. """
-    log.debug(f'Making AOV output node for {style}')
+    log.info(f'Making AOV output node for {style}')
 
     # Only certain styles are available
     valid_styles = ['rgb', 'depth', 'instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
-
+    
     # Make sure scene composition is using nodes
     if not bpy.context.scene.use_nodes:
         bpy.context.scene.use_nodes = True
     _tree = bpy.context.scene.node_tree
-
+    
     # Get or create render layer node
     if _tree.nodes.get('Render Layers', None) is None:
         rl_node = _tree.nodes.new('CompositorNodeRLayers')
@@ -82,6 +86,10 @@ def make_aov_file_output_node(
     composite_node = _tree.nodes.get('Composite')
     if composite_node is not None:
         _tree.nodes.remove(composite_node)
+
+    # Instance and category require an AOV pass
+    if style in ['instance', 'category']:
+        zpy.render.make_aov_pass(style)
 
     # Visualize node shows image in workspace
     _name = f'{style} viewer'
@@ -243,12 +251,11 @@ def _rgb_render_settings():
     scene.render.film_transparent = False
     scene.render.dither_intensity = 1.0
     scene.render.filter_size = 1.5
-    scene.render.use_compositing = True
 
     scene.cycles.samples = 128
     scene.cycles.diffuse_bounces = 4
     scene.cycles.diffuse_samples = 12
-    
+
     scene.view_layers["View Layer"].pass_alpha_threshold = 0.5
 
     scene.cycles.max_bounces = 4
@@ -256,7 +263,7 @@ def _rgb_render_settings():
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.use_denoising = True
     scene.cycles.denoising_radius = 8
-    
+
     bpy.context.scene.cycles.use_denoising = True
     bpy.context.scene.cycles.denoiser = 'OPENIMAGEDENOISE'
 
@@ -276,14 +283,13 @@ def _seg_render_settings():
     scene.render.film_transparent = True
     scene.render.dither_intensity = 0.
     scene.render.filter_size = 0.
-    scene.render.use_compositing = True
 
     scene.cycles.samples = 1
     scene.cycles.diffuse_bounces = 0
     scene.cycles.diffuse_samples = 0
-    
+
     scene.view_layers["View Layer"].pass_alpha_threshold = 0.0
-    
+
     scene.cycles.max_bounces = 0
     scene.cycles.bake_type = 'EMIT'
     scene.cycles.use_adaptive_sampling = False
@@ -298,135 +304,32 @@ def _seg_render_settings():
     scene.display.shading.light = 'FLAT'
     scene.display.shading.show_specular_highlight = False
 
-def _render(threads: int = 4):
+
+def _render(threads: int = 4,
+            logfile: str = 'blender_render.log',
+            ):
     """ Render in Blender. """
     start_time = time.time()
     bpy.context.scene.render.threads = threads
     try:
+        # HACK: This disables the blender log
+        # https://blender.stackexchange.com/questions/44560
+
+        # redirect output to log file
+        open(logfile, 'a').close()
+        old = os.dup(1)
+        sys.stdout.flush()
+        os.close(1)
+        os.open(logfile, os.O_WRONLY)
+
+        # do the rendering
         bpy.ops.render.render(write_still=True)
+
+        # disable output redirection
+        os.close(1)
+        os.dup(old)
+        os.close(old)
     except Exception as e:
         log.warning(f'Render raised exception {e}')
     duration = time.time() - start_time
     log.info(f'Rendering took {duration}s to complete.')
-
-
-@gin.configurable
-def render_image(output_path: Union[str, Path],
-                 width: int = 640,
-                 height: int = 480,
-                 threads: int = 4,
-                 style: str = 'default',
-                 empty_background: bool = False,
-                 engine: str = 'cycles',
-                 ):
-    """ Render an image. 
-
-    TODO: REMOVE
-
-    """
-    start_time = time.time()
-    scene = bpy.context.scene
-    scene.render.resolution_x = width
-    scene.render.resolution_y = height
-    scene.render.filepath = str(output_path)
-    scene.render.threads = threads
-    scene.render.image_settings.file_format = 'PNG'
-    # TODO: The properties do not lose state when switching
-    #       style, thus requiring manual-resetting.
-    if style == 'default' and engine == 'cycles':
-        scene.render.engine = "CYCLES"
-        scene.render.film_transparent = empty_background
-        scene.render.dither_intensity = 1.0
-        scene.render.filter_size = 1.5
-        scene.render.use_compositing = False
-
-        scene.cycles.samples = 128
-        scene.cycles.diffuse_bounces = 4
-        scene.cycles.diffuse_samples = 12
-        scene.cycles.max_bounces = 4
-        scene.cycles.bake_type = 'COMBINED'
-        scene.cycles.use_adaptive_sampling = True
-
-        scene.view_settings.view_transform = 'Filmic'
-
-        scene.display.render_aa = '8'
-        scene.display.viewport_aa = 'FXAA'
-        scene.display.shading.color_type = 'TEXTURE'
-        scene.display.shading.light = 'STUDIO'
-        scene.display.shading.show_specular_highlight = True
-
-    elif style == 'default' and engine == 'eevee':
-        scene.render.engine = "BLENDER_EEVEE"
-        scene.render.film_transparent = empty_background
-        scene.render.dither_intensity = 1.0
-        scene.render.filter_size = 1.5
-        scene.render.use_compositing = False
-
-        scene.view_settings.view_transform = 'Filmic'
-
-        scene.display.render_aa = '8'
-        scene.display.viewport_aa = 'FXAA'
-        scene.display.shading.color_type = 'TEXTURE'
-        scene.display.shading.light = 'STUDIO'
-        scene.display.shading.show_specular_highlight = True
-
-        scene.eevee.taa_render_samples = 64
-        scene.eevee.taa_samples = 16
-        scene.eevee.use_soft_shadows = True
-
-        scene.eevee.use_ssr = True
-        scene.eevee.use_ssr_halfres = True
-        scene.eevee.ssr_quality = 0.25
-        scene.eevee.ssr_thickness = 0.2
-        scene.eevee.ssr_max_roughness = 0.5
-
-        scene.eevee.use_shadow_high_bitdepth = True
-        scene.eevee.use_soft_shadows = True
-
-        scene.eevee.use_gtao = True
-        scene.eevee.shadow_cube_size = '1024'
-        scene.eevee.shadow_cascade_size = '1024'
-
-    elif style == 'segmentation' and engine == 'cycles':
-        scene.render.engine = "CYCLES"
-        scene.render.film_transparent = True
-        scene.render.dither_intensity = 0.
-        scene.render.filter_size = 0.
-        scene.render.use_compositing = False
-
-        scene.cycles.samples = 1
-        scene.cycles.diffuse_bounces = 0
-        scene.cycles.diffuse_samples = 0
-        scene.cycles.max_bounces = 0
-        scene.cycles.bake_type = 'EMIT'
-        scene.cycles.use_adaptive_sampling = False
-        scene.cycles.use_denoising = False
-
-        scene.view_settings.view_transform = 'Raw'
-
-    elif style == 'segmentation' and engine == 'eevee':
-        scene.render.engine = "BLENDER_WORKBENCH"
-        scene.render.film_transparent = True
-        scene.render.dither_intensity = 0.
-        scene.render.filter_size = 0.
-        scene.render.use_compositing = False
-
-        scene.display.render_aa = 'OFF'
-        scene.display.viewport_aa = 'OFF'
-        scene.display.shading.color_type = 'MATERIAL'
-        scene.display.shading.light = 'FLAT'
-        scene.display.shading.show_specular_highlight = False
-
-        scene.view_settings.view_transform = 'Raw'
-        
-    else:
-        raise ValueError('Unknown render style.')
-    bpy.context.view_layer.update()
-    bpy.ops.render.render(write_still=True)
-    duration = time.time() - start_time
-    log.info(
-        f'Rendering {style} to {output_path.name} took {duration}s to complete.')
-    if log.getEffectiveLevel() == logging.DEBUG:
-        _filename = f'blender-debug-scene-post-{output_path.stem}.blend'
-        _path = output_path.parent / _filename
-        zpy.blender.output_intermediate_scene(_path)

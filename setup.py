@@ -16,7 +16,8 @@ setup(
     'gin-config==0.3.0',
     'scikit-image==0.17.2',
     'shapely==1.7.1',
-    'seaborn==0.11.0'
+    'seaborn==0.11.0',
+    'ptvsd==4.3.2'
   ],
   include_package_data=True,
 )

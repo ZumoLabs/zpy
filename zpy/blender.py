@@ -1,5 +1,5 @@
 """
-    Blender utilities for Blender Python.
+    Blender utilities.
 """
 import inspect
 import logging
@@ -10,13 +10,11 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 import bpy
-import bpy_extras
 import gin
 import mathutils
 import numpy as np
 
 import zpy
-
 
 log = logging.getLogger(__name__)
 
@@ -48,9 +46,11 @@ def set_seed(seed: int = 0) -> None:
     np.random.seed(seed)
 
 
-def set_log_levels(level: str = 'debug') -> None:
+def set_log_levels(level: str = None) -> None:
     """ Set logger levels for all zpy modules. """
-    if level == 'info':
+    if level is None:
+        log_level = logging.INFO
+    elif level == 'info':
         log_level = logging.INFO
     elif level == 'debug':
         log_level = logging.DEBUG
@@ -60,7 +60,7 @@ def set_log_levels(level: str = 'debug') -> None:
         log.warning(f'Invalid log level {level}')
         return
     log.warning(f'Setting log level to {log_level}')
-    for logger_name in ['zpy', 'zpy_addon', 'zpy.savers']:
+    for logger_name in ['zpy', 'zpy_addon', 'zpy.savers', 'bpy.zpy_addon']:
         logging.getLogger(logger_name).setLevel(log_level)
 
 
@@ -83,9 +83,9 @@ def step(num_steps: int = 16,
         stop = bpy.context.scene.frame_end
         log.info(f'Animation enabled. Min frames: {start}. Max frames: {stop}')
     while step_idx < num_steps:
-        log.info(f'-----------------------------------------')
-        log.info(f'                   STEP                  ')
-        log.info(f'-----------------------------------------')
+        log.info('-----------------------------------------')
+        log.info('                   STEP                  ')
+        log.info('-----------------------------------------')
         log.info(f'Simulation step {step_idx} of {num_steps}.')
         start_time = time.time()
         if framerate > 0:
@@ -113,6 +113,7 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
     """
     if log.getEffectiveLevel() == logging.DEBUG:
         log.debug('Starting VSCode debugger in Blender.')
+        # TODO: Can we assume the user will properly set up this environment variable?
         path = '$BLENDERADDONS/blender-debugger-for-vscode/__init__.py'
         path = zpy.file.verify_path(path, make=False)
         bpy.ops.preferences.addon_install(filepath=str(path))
@@ -212,6 +213,7 @@ def load_text_from_file(
 
 def scene_information() -> Dict:
     """ Get the run() function kwargs. """
+    log.info(f'Collecting scene information')
     run_script = bpy.data.texts.get('run', None)
     if run_script is None:
         raise ValueError('No run script found in scene.')
@@ -237,7 +239,7 @@ def scene_information() -> Dict:
         _kwarg['default'] = param.default
         run_kwargs.append(_kwarg)
 
-    return {
+    _ = {
         'name': bpy.context.scene.zpy_scene_name,
         'version': bpy.context.scene.zpy_scene_version,
         'description': scene_doc,
@@ -246,13 +248,15 @@ def scene_information() -> Dict:
         'zpy_version': zpy.__version__,
         'zpy_path': zpy.__file__,
     }
+    log.info(f'{_}')
+    return _
 
 
 @gin.configurable
 def load_hdri(
     path: Union[str, Path],
     scale: Tuple[float] = (1.0, 1.0, 1.0),
-):
+) -> None:
     """ Load an HDRI from path.
 
     Great source of HDRIs:
@@ -282,8 +286,10 @@ def load_hdri(
 @gin.configurable
 def random_hdri(
     asset_dir: Union[str, Path] = '$ASSETS/lib/hdris/4k',
-):
+) -> Path:
     """ Generate a random HDRI from an asset path. """
     asset_directory = zpy.file.verify_path(
         asset_dir, make=False, check_dir=True)
-    return random.choice([x for x in asset_directory.iterdir() if x.is_file()])
+    hdri_path = random.choice([x for x in asset_directory.iterdir() if x.is_file()])
+    load_hdri(hdri_path)
+    return hdri_path

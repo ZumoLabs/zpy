@@ -1,32 +1,18 @@
 """
     Export panel and functions.
 """
-
 import importlib
 import logging
-import os
-import sys
-from datetime import date
 import time
 from pathlib import Path
 
 import bpy
+import zpy
 
 log = logging.getLogger(__name__)
 
 if "bpy" in locals():
-    import zpy
     importlib.reload(zpy)
-    from zpy import blender
-    from zpy import color
-    from zpy import file
-    from zpy import material
-    from zpy import render
-    from zpy import image
-    # HACK: Reset the random colors on import
-    zpy.color.reset()
-else:
-    import zpy
 
 
 def registerSceneProperties():
@@ -127,6 +113,10 @@ class ExportOperator(bpy.types.Operator):
         export_dir_name = f'{context.scene.zpy_scene_name}_v{context.scene.zpy_scene_version}'
         export_path = Path(context.scene.zpy_export_path) / export_dir_name
         zpy.file.verify_path(export_path, make=True)
+
+        # Find missing files before export
+        _path = zpy.file.verify_path('$ASSETS', make=False)
+        bpy.ops.file.find_missing_files(directory=str(_path))
 
         # Fix all the asset paths by packing them into the .blend
         # file and then un-packing them into a 'textures' folder.

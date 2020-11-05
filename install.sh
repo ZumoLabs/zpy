@@ -3,7 +3,7 @@ set -e
 
 BLENDER_VERSION="2.90"
 BLENDER_VERSION_FULL="2.90.1"
-ZPY_VERSION="1.1.13"
+ZPY_VERSION="1.2.1-rc0"
 
 # First check if the OS is Linux.
 if [[ "$(uname)" = "Linux" ]]; then
@@ -155,7 +155,7 @@ if [ "$RESP" = "y" ]; then
     export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
     export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
     ${BLENDER_BIN_PY} -m ensurepip && ${BLENDER_BIN_PIP} install --upgrade pip
-    ${BLENDER_BIN_PIP} install --upgrade --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
+    ${BLENDER_BIN_PIP} install --pre --upgrade --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
     echo "zpy pip installed succesfully"
   elif $ON_MAC ; then
     export BLENDER_PATH="/Applications/Blender.app/Contents/Resources/${BLENDER_VERSION}"
@@ -164,7 +164,7 @@ if [ "$RESP" = "y" ]; then
     export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     ${BLENDER_BIN_PY} get-pip.py && ${BLENDER_BIN_PIP} install --upgrade pip
-    ${BLENDER_BIN_PIP} install --upgrade --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
+    ${BLENDER_BIN_PIP} install --pre --upgrade --extra-index-url=https://${ARTIFACTORY_USER}:${ARTIFACTORY_KEY}@zumolabs.jfrog.io/artifactory/api/pypi/zpy/simple zpy-zumo==${ZPY_VERSION}
     rm -rf get-pip.py
     echo "zpy pip installed succesfully"
   else 

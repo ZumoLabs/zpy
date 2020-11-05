@@ -7,17 +7,16 @@ from itertools import groupby
 from pathlib import Path
 from typing import Dict, List, Union
 
-import numpy as np
-import zpy
-import zpy.file
-
 import gin
+import numpy as np
 from scipy import ndimage as ndi
 from shapely.geometry import MultiPolygon, Polygon
 from skimage import color, exposure, img_as_uint, io, measure
 from skimage.exposure import match_histograms
 from skimage.morphology import binary_closing, binary_opening
 from skimage.transform import resize
+
+import zpy
 
 log = logging.getLogger(__name__)
 
