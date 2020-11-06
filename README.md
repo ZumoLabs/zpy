@@ -45,7 +45,7 @@ If you are setting up a development environment it will be easier to symlink the
 ```
 export BLENDER_VERSION="2.91"
 export BLENDER_VERSION_FULL="2.91.0-276d19f63b45"
-export BLENDER_PATH="/home/ook/Downloads/blender-${BLENDER_VERSION_FULL}-linux64/${BLENDER_VERSION}"
+export BLENDER_PATH="$HOME/Downloads/blender-${BLENDER_VERSION_FULL}-linux64/${BLENDER_VERSION}"
 export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
 ```
 
