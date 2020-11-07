@@ -175,7 +175,7 @@ def translate(
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
-    bpy.ops.transform.rotate(value=translation)
+    bpy.ops.transform.translate(value=translation)
 
 
 def rotate(
@@ -187,7 +187,7 @@ def rotate(
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
-    bpy.ops.transform.translate(value=rotation, orient_axis=axis)
+    bpy.ops.transform.rotate(value=rotation, orient_axis=axis)
 
 
 def scale(
