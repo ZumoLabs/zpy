@@ -4,7 +4,7 @@
 import logging
 import random
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Tuple, Union, List, Any
 
 import bpy
 import gin
@@ -66,7 +66,7 @@ def is_inside(
     return not(v < 0.0)
 
 
-def for_obj_in_selected_objs(context) -> None:
+def for_obj_in_selected_objs(context) -> bpy.types.Object:
     """ Safe iterable for selected objects. """
     for obj in context.selected_objects:
         # Only meshes or empty objects TODO: Why the empty objects
@@ -77,6 +77,14 @@ def for_obj_in_selected_objs(context) -> None:
             continue
         context.view_layer.objects.active = obj
         yield obj
+
+
+def for_obj_in_collections(list_of_collections: List[Any]) -> bpy.types.Object:
+    """ Yield objects in list of collection. """
+    for collection in list_of_collections:
+        for obj in collection.all_objects:
+            # This gives you direct access to data block
+            yield bpy.data.objects[obj.name]
 
 
 def segment(
