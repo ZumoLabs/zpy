@@ -66,17 +66,13 @@ def set_log_levels(level: str = None) -> None:
 
 @gin.configurable
 def step(num_steps: int = 16,
-         demo: bool = False,
          framerate: int = 0,
          start_frame: int = 1,
          refresh_ui: bool = False,
-         demo_max_steps: int = 5,
          ) -> int:
     """ Step logic helper for the scene. """
     assert num_steps is not None, 'Invalid num_steps'
     assert num_steps > 0, 'Invalid num_steps'
-    if demo:
-        num_steps = min(num_steps, demo_max_steps)
     step_idx = 0
     if framerate > 0:
         start = bpy.context.scene.frame_start

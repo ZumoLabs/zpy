@@ -256,7 +256,7 @@ def _rgb_render_settings():
     scene.cycles.diffuse_bounces = 4
     scene.cycles.diffuse_samples = 12
 
-    scene.view_layers["View Layer"].pass_alpha_threshold = 0.5
+    scene.view_layers[0].pass_alpha_threshold = 0.5        
 
     scene.cycles.max_bounces = 4
     scene.cycles.bake_type = 'COMBINED'
@@ -288,7 +288,7 @@ def _seg_render_settings():
     scene.cycles.diffuse_bounces = 0
     scene.cycles.diffuse_samples = 0
 
-    scene.view_layers["View Layer"].pass_alpha_threshold = 0.0
+    scene.view_layers[0].pass_alpha_threshold = 0.0
 
     scene.cycles.max_bounces = 0
     scene.cycles.bake_type = 'EMIT'
