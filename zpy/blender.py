@@ -264,10 +264,13 @@ def load_hdri(
     path = zpy.file.verify_path(path, make=False)
     world = bpy.context.scene.world
     world.use_nodes = True
-    out_node = world.node_tree.nodes.get('World Output')
-    bg_node = world.node_tree.nodes.get('Background')
-    env_node = world.node_tree.nodes.get('Environment Texture')
-    # tex_node = world.node_tree.nodes.new('ShaderNodeTexCoord')
+    out_node = world.node_tree.nodes.get('World Output', None)
+    if out_node is None:
+        out_node = world.node_tree.nodes.new('World Output')
+    bg_node = world.node_tree.nodes.get('Background', None)
+    if bg_node is None:
+        bg_node = world.node_tree.nodes.new('Background')
+    env_node = world.node_tree.nodes.get('Environment Texture', None)
     if env_node is None:
         env_node = world.node_tree.nodes.new('ShaderNodeTexEnvironment')
     env_node.image = bpy.data.images.load(str(path))
