@@ -124,7 +124,7 @@ def is_visible(
     scene = bpy.context.scene
     if camera is None:
         camera = scene.camera
-    result = scene.ray_cast(bpy.context.view_layer.depsgraph,
+    result = scene.ray_cast(depsgraph=bpy.context.view_layer.depsgraph,
                             origin=camera.location,
                             direction=(loc - camera.location))
     # Whether a hit occured
