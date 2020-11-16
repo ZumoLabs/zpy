@@ -82,6 +82,7 @@ class CleanUpDirOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
+        log.info('Cleaning up scene.')
         # Remove any backup blender files
         zpy.file.remove_files_with_suffix(
             path=context.scene.zpy_export_path,
@@ -106,6 +107,10 @@ class ExportOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
+        # Shows progress cursor in Blender UI.
+        log.info('Export Started.')
+        bpy.context.window_manager.progress_begin(0, 100)
+
         # Clean scene before every export
         bpy.ops.scene.zpy_cleanup_scene()
 
@@ -115,6 +120,8 @@ class ExportOperator(bpy.types.Operator):
         zpy.file.verify_path(export_path, make=True)
 
         # Find missing files before export
+        log.info('Export Step 1 of 4: Checking for any missing files.')
+        bpy.context.window_manager.progress_update(10)
         _path = zpy.file.verify_path('$ASSETS', make=False)
         bpy.ops.file.find_missing_files(directory=str(_path))
 
@@ -124,6 +131,8 @@ class ExportOperator(bpy.types.Operator):
             bpy.ops.wm.save_as_mainfile(
                 filepath=str(export_path / 'main.blend'),
             )
+            log.info('Export Step 2 of 4: Packing files into .blend.')
+            bpy.context.window_manager.progress_update(30)
             bpy.ops.file.make_paths_absolute()
             bpy.ops.file.make_paths_relative()
             bpy.ops.file.pack_all()
@@ -133,7 +142,10 @@ class ExportOperator(bpy.types.Operator):
             self.report({'ERROR'}, e)
             log.warning(f'Exception when exporting: {e}')
             return {'CANCELLED'}
-
+        
+        log.info('Export Step 3 of 4: Saving meta-information.')
+        bpy.context.window_manager.progress_update(70)
+                
         # Save nfo file with some meta information
         save_time = time.strftime("%m%d%Y_%H%M_%S")
         nfo_file = export_path / \
@@ -149,6 +161,8 @@ class ExportOperator(bpy.types.Operator):
         # TODO: Export glTF into zip directory
 
         # Zip up the exported directory for easy upload
+        log.info('Export Step 4 of 4: Zipping up package.')
+        bpy.context.window_manager.progress_update(90)
         zpy.file.zip_file(
             in_path=export_path,
             zip_path=Path(context.scene.zpy_export_path) /
@@ -157,7 +171,9 @@ class ExportOperator(bpy.types.Operator):
 
         # Clean scene after every export
         bpy.ops.scene.zpy_cleanup_scene()
-
+        
+        log.info('Export Completed.')
+        bpy.context.window_manager.progress_end()
         return {'FINISHED'}
 
 
