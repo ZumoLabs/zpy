@@ -243,6 +243,7 @@ def scene_information() -> Dict:
         'export_date':  time.strftime("%m%d%Y_%H%M_%S"),
         'zpy_version': zpy.__version__,
         'zpy_path': zpy.__file__,
+        'blender_version': '.'.join([str(_) for _ in bpy.app.version]),
     }
     log.info(f'{_}')
     return _
