@@ -36,7 +36,7 @@ class OutputMOT(Output):
         """
         mot = []
         for annotation in self.saver.annotations:
-            if self.saver.images[annotation['image_id']]['style'] is not 'default':
+            if self.saver.images[annotation['image_id']]['style'] != 'default':
                 # MOT annotations only have image annotations
                 # for RGB images. No segmentation images.
                 continue

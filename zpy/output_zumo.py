@@ -112,11 +112,12 @@ def parse_zumo_annotations(
         if image_id < 0:
             raise ZUMOParseError(f'invalid image id {image_id}')
         # Frame
-        frame = img['frame']
-        if not isinstance(frame, int):
-            raise ZUMOParseError(f'frame {frame} must be int.')
-        if image_id < 0:
-            raise ZUMOParseError(f'invalid image frame {frame}')
+        frame = img.get('frame', None)
+        if frame is not None:
+            if not isinstance(frame, int):
+                raise ZUMOParseError(f'frame {frame} must be int.')
+            if image_id < 0:
+                raise ZUMOParseError(f'invalid image frame {frame}')
         # Height and Width
         height, width = img['height'], img['width']
         if not isinstance(height, int):
@@ -127,20 +128,23 @@ def parse_zumo_annotations(
             raise ZUMOParseError(
                 f'width and height h:{height} w:{width} must be > 0')
         # Name
-        name = img['name']
-        if not isinstance(name, str):
-            raise ZUMOParseError(f'name {name} must be str.')
-        if (not zpy.file.frame_from_image_name(name) == frame) and \
-                (not zpy.file.frame_from_image_name(name) == image_id):
-            raise ZUMOParseError(f'name {name} does not correspond to'
-                                 f' frame {frame} or image_id {image_id}.')
+        name = img.get('name', None)
+        if name is not None:
+            if not isinstance(name, str):
+                raise ZUMOParseError(f'name {name} must be str.')
+            if frame is not None and \
+                (not zpy.file.frame_from_image_name(name) == frame) and \
+                    (not zpy.file.frame_from_image_name(name) == image_id):
+                raise ZUMOParseError(f'name {name} does not correspond to'
+                                     f' frame {frame} or image_id {image_id}.')
         # Output path
-        output_path = img['output_path']
-        if not isinstance(output_path, str):
-            raise ZUMOParseError(f'output_path {output_path} must be str.')
-        if not Path(output_path).exists():
-            raise ZUMOParseError(
-                f'output_path {output_path} does not exist')
+        output_path = img.get('output_path', None)
+        if output_path is not None:
+            if not isinstance(output_path, str):
+                raise ZUMOParseError(f'output_path {output_path} must be str.')
+            if not Path(output_path).exists():
+                raise ZUMOParseError(
+                    f'output_path {output_path} does not exist')
         # Save each image to Saver object
         if output_saver:
             saver.images[image_id] = img

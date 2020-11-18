@@ -81,7 +81,7 @@ def image_shape_plot(
     assert images is not None, 'Images required.'
     image_shapes = [np.shape(_) for _ in images]
     # HACK: Filter out 2D images
-    image_shapes = [_ for _ in image_shapes if len(_) is 3]
+    image_shapes = [_ for _ in image_shapes if len(_) == 3]
     image_shape = np.asarray(image_shapes)
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.hist2d(image_shape[:, 0], image_shape[:, 1], bins=(50, 50))
