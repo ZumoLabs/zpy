@@ -5,18 +5,21 @@ del get_versions
 # TODO: Some interaction between Blender's Python
 # and Gin-Config requires this part below. If
 # you know the answer: do let us know :)
-from zpy import blender
-from zpy import blender
-from zpy import camera
+try:
+    from zpy import blender
+    from zpy import keypoints
+    from zpy import camera
+    from zpy import material
+    from zpy import object
+    from zpy import render
+except ModuleNotFoundError:
+    # Load zpy without blender utils.
+    pass
 from zpy import color
 # HACK: Reset the random colors on import
 color.reset()
 from zpy import file
 from zpy import image
-from zpy import keypoints
-from zpy import material
-from zpy import object
-from zpy import render
 from zpy import viz
 from zpy import output
 from zpy import output_coco
