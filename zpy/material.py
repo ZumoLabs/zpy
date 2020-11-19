@@ -2,13 +2,15 @@
     Utilities for Materials in Blender.
 """
 import logging
+import random
 from pathlib import Path
-from typing import Union, Tuple
+from typing import Tuple, Union
 
-import zpy
 import bpy
 import gin
 import numpy as np
+
+import zpy
 
 log = logging.getLogger(__name__)
 
@@ -76,6 +78,27 @@ def make_aov_material_output_node(
         aovoutput_node.name = style
         _tree.links.new(vertexcolor_node.outputs['Color'],
                         aovoutput_node.inputs['Color'])
+
+
+@gin.configurable
+def jitter(
+    mat: bpy.types.Material = None,
+    roughness_std: float = 0.1,
+    metallic_std: float = 0.1,
+    specular_std: float = 0.1,
+) -> None:
+    "Randomize a real texture a little."
+
+    bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
+    if bsdf_node is None:
+        log.warning(f'No BSDF node to jitter for material {mat.name}')
+        return
+    bsdf_node.inputs['Roughness'].default_value += random.gauss(
+        0, roughness_std)
+    bsdf_node.inputs['Metallic'].default_value += random.gauss(
+        0, metallic_std)
+    bsdf_node.inputs['Specular'].default_value += random.gauss(
+        0, specular_std)
 
 
 @gin.configurable
