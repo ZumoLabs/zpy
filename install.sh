@@ -3,7 +3,7 @@ set -e
 
 BLENDER_VERSION=${BLENDER_VERSION:-"2.90"}
 BLENDER_VERSION_FULL=${BLENDER_VERSION_FULL:-"2.90.1"}
-ZPY_VERSION=${ZPY_VERSION:-"1.2.3"}
+ZPY_VERSION=${ZPY_VERSION:-"1.2.4"}
 
 # First check if the OS is Linux.
 if [[ "$(uname)" = "Linux" ]]; then
