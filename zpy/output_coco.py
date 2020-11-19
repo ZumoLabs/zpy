@@ -182,7 +182,15 @@ class OutputCOCO(Output):
                                 else annotation['bboxes']
                         else:
                             coco_ann[key] = value
-
+                    try:
+                        if key == 'area':
+                            coco_ann['area'] = annotation['bbox'][2] * \
+                                annotation['bbox'][3]
+                        elif key == 'areas':
+                            coco_ann['areas'] = [bbox[2] * bbox[3]
+                                                    for bbox in annotation['bboxes']]
+                    except:
+                        pass
             # HACK: Require bbox for an annotation
             if coco_ann.get('bbox', None) is not None:
                 coco_annotations.append(coco_ann)
@@ -241,7 +249,6 @@ class OutputCOCO(Output):
                         else [annotation['segmentation'][i]]
                 except:
                     pass
-
                 try:
                     _coco_ann['segmentation_rle'] = [
                         annotation['segmentation_rle'][i]]
@@ -267,6 +274,10 @@ class OutputCOCO(Output):
                         height=height,
                         annotation=annotation['bboxes'][i]) if clipped \
                         else annotation['bboxes'][i]
+                except:
+                    pass
+                try:
+                    _coco_ann['area'] = annotation['areas'][i]
                 except:
                     pass
 
