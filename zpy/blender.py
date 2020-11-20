@@ -285,7 +285,7 @@ def load_hdri(
 
 @gin.configurable
 def random_hdri(
-    asset_dir: Union[str, Path] = '$ASSETS/lib/hdris/4k',
+    asset_dir: Union[str, Path] = '$ASSETS/lib/hdris/hdri_maker_lib/04k_Library',
 ) -> Path:
     """ Generate a random HDRI from an asset path. """
     asset_directory = zpy.file.verify_path(

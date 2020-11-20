@@ -52,6 +52,7 @@ class RunOperator(Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
+        zpy.blender.use_gpu()
         zpy.blender.parse_config(LoadGinConfigOperator.DEFAULT_TEXT_NAME)
         zpy.blender.run_text(LoadRunpyOperator.DEFAULT_TEXT_NAME)
         return {'FINISHED'}

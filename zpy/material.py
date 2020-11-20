@@ -83,9 +83,9 @@ def make_aov_material_output_node(
 @gin.configurable
 def jitter(
     mat: bpy.types.Material = None,
-    roughness_std: float = 0.1,
-    metallic_std: float = 0.1,
-    specular_std: float = 0.1,
+    roughness_std: float = 0.2,
+    metallic_std: float = 0.2,
+    specular_std: float = 0.2,
 ) -> None:
     "Randomize a real texture a little."
 

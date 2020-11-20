@@ -244,9 +244,10 @@ def filecopy(src_dir: Union[str, Path] = None,
 
 def open_folder_in_explorer(
     path: Union[str, Path],
+    make: bool = False,
 ):
     """ Opens a directory in the fileexplorer of your OS. """
-    path = verify_path(path, check_dir=True)
+    path = verify_path(path, check_dir=True, make=make)
     if sys.platform.startswith('darwin'):
         subprocess.call(('open', path))
     elif os.name == 'nt':

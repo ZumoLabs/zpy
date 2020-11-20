@@ -85,7 +85,8 @@ class OpenOutputDirOperator(Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        zpy.file.open_folder_in_explorer(context.scene.zpy_output_path)
+        zpy.file.open_folder_in_explorer(
+            context.scene.zpy_output_path, make=True)
         return {'FINISHED'}
 
 

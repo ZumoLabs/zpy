@@ -32,9 +32,8 @@ def registerSceneProperties():
     bpy.types.Scene.zpy_export_path = bpy.props.StringProperty(
         name='Export Path',
         description="Export path for packaged zumo scenes.",
-        default='',
+        default=str(zpy.file.default_temp_path()),
         subtype='DIR_PATH',
-        # set=set_scene_export_path,
     )
 
 
@@ -52,14 +51,6 @@ def set_scene_version(self, value) -> None:
         self.zpy_scene_version = '0'
 
 
-def set_scene_export_path(self, value) -> None:
-    """ Verify and update the export path. """
-    if not Path(value).exists():
-        log.warning('Export path does not exist, using blendfile path.')
-        self.zpy_export_path = str(
-            Path(bpy.context.blend_data.filepath).parent)
-
-
 class OpenExportDirOperator(bpy.types.Operator):
     """ Open file browser at export dir. """
     bl_idname = "scene.zpy_open_export_dir"
@@ -69,7 +60,8 @@ class OpenExportDirOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        zpy.file.open_folder_in_explorer(context.scene.zpy_export_path)
+        zpy.file.open_folder_in_explorer(
+            context.scene.zpy_export_path, make=True)
         return {'FINISHED'}
 
 
@@ -142,10 +134,10 @@ class ExportOperator(bpy.types.Operator):
             self.report({'ERROR'}, e)
             log.warning(f'Exception when exporting: {e}')
             return {'CANCELLED'}
-        
+
         log.info('Export Step 3 of 4: Saving meta-information.')
         bpy.context.window_manager.progress_update(70)
-                
+
         # Save nfo file with some meta information
         save_time = time.strftime("%m%d%Y_%H%M_%S")
         nfo_file = export_path / \
@@ -171,7 +163,7 @@ class ExportOperator(bpy.types.Operator):
 
         # Clean scene after every export
         bpy.ops.scene.zpy_cleanup_scene()
-        
+
         log.info('Export Completed.')
         bpy.context.window_manager.progress_end()
         return {'FINISHED'}
