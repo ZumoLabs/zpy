@@ -14,7 +14,7 @@ bl_info = {
     "author": "Zumo Labs",
     "version": (1, 0),
     # TODO: Keep up to date with $BLENDER_VERSION in README.
-    "blender": (2, 90, 0),
+    "blender": (2, 91, 0),
     "location": "View3D > Properties > zpy",
     "description": "Synthetic data creation tools for Blender.",
     "warning": "",
