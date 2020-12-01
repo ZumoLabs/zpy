@@ -40,14 +40,23 @@ You can install the addon from within Blender itself. Navigate to "Edit -> Prefe
 
 TODO: Remove once made public 
 
-If you are setting up a development environment it will be easier to symlink the zpy pip module directly into the Blender python library. This can be achieved with something like:
-
 ```
 export BLENDER_VERSION="2.91"
 export BLENDER_VERSION_FULL="2.91.0"
 export BLENDER_PATH="$HOME/Downloads/blender-${BLENDER_VERSION_FULL}-linux64/${BLENDER_VERSION}"
 export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
+export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
+export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
 ```
+
+Install additional Python dependencies using Blender Python's pip:
+
+```
+${BLENDER_BIN_PY} -m ensurepip && ${BLENDER_BIN_PIP} install --upgrade pip
+${BLENDER_BIN_PIP} install -r $HOME/zumolabs/zpy/requirements.txt
+```
+
+If you are setting up a development environment it will be easier to symlink the zpy pip module directly into the Blender python library. This can be achieved with something like:
 
 ```
 ln -s ~/zumolabs/zpy/zpy ${BLENDER_LIB_PY}/site-packages/
