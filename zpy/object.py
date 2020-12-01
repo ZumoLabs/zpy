@@ -179,7 +179,7 @@ def translate(
     obj: bpy.types.Object,
     translation: Tuple[float] = (0, 0, 0),
 ) -> None:
-    """ Translate an object. """
+    """ Translate an object (in blender units). """
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
@@ -191,7 +191,7 @@ def rotate(
     rotation: float = 0,
     axis: str = 'Z'
 ):
-    """ Rotate an object """
+    """ Rotate an object (in radians) """
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
@@ -227,7 +227,7 @@ def jitter(
         (1.0, 1.0),
     ),
 ):
-    """ Apply random scale and rotation to object """
+    """ Apply random scale (blender units) and rotation (radians) to object """
     translate(
         obj=obj,
         translation=(
