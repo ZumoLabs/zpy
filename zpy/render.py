@@ -16,21 +16,33 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def toggle_hidden(obj: bpy.types.Object, hidden: bool = True) -> None:
-    """ Recursive function to make object and children invisible. """
+def toggle_hidden(
+    obj: bpy.types.Object,
+    hidden: bool = True,
+    filter_string: str = None,
+) -> None:
+    """ Recursive function to make object and children invisible.
+
+    Optionally filter by a string in object name.
+
+    """
     if obj is None:
         log.warning('Empty object given to toggle_hidden')
         return
     if hasattr(obj, 'hide_render') and hasattr(obj, 'hide_viewport'):
-        log.debug(f'Hiding object {obj.name}')
-        bpy.data.objects[obj.name].select_set(True)
-        bpy.data.objects[obj.name].hide_render = hidden
-        bpy.data.objects[obj.name].hide_viewport = hidden
+        if (filter_string is None) or (filter_string in obj.name):
+            log.debug(f'Hiding object {obj.name}')
+            bpy.data.objects[obj.name].select_set(True)
+            bpy.data.objects[obj.name].hide_render = hidden
+            bpy.data.objects[obj.name].hide_viewport = hidden
+        else:
+            log.debug(
+                f'Object {obj.name} does not contain filter string {filter_string}')
     else:
         log.warning('Object does not have hide properties')
         return
     for child in obj.children:
-        toggle_hidden(child, hidden)
+        toggle_hidden(child, hidden=hidden, filter_string=filter_string)
 
 
 @gin.configurable
@@ -70,12 +82,12 @@ def make_aov_file_output_node(
     valid_styles = ['rgb', 'depth', 'instance', 'category']
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
-    
+
     # Make sure scene composition is using nodes
     if not bpy.context.scene.use_nodes:
         bpy.context.scene.use_nodes = True
     _tree = bpy.context.scene.node_tree
-    
+
     # Get or create render layer node
     if _tree.nodes.get('Render Layers', None) is None:
         rl_node = _tree.nodes.new('CompositorNodeRLayers')
@@ -256,7 +268,7 @@ def _rgb_render_settings():
     scene.cycles.diffuse_bounces = 4
     scene.cycles.diffuse_samples = 12
 
-    scene.view_layers[0].pass_alpha_threshold = 0.5        
+    scene.view_layers[0].pass_alpha_threshold = 0.5
 
     scene.cycles.max_bounces = 4
     scene.cycles.bake_type = 'COMBINED'

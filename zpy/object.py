@@ -228,34 +228,28 @@ def jitter(
     ),
 ):
     """ Apply random scale (blender units) and rotation (radians) to object """
-    translate(
-        obj=obj,
-        translation=(
-            random.uniform(translate_range[0][0], translate_range[0][1]),
-            random.uniform(translate_range[1][0], translate_range[1][1]),
-            random.uniform(translate_range[2][0], translate_range[2][1]),
-        ),
-    )
-    rotate(
-        obj=obj,
-        rotation=random.uniform(rotate_range[0][0], rotate_range[0][1]),
-        axis='X',
-    )
-    rotate(
-        obj=obj,
-        rotation=random.uniform(rotate_range[1][0], rotate_range[1][1]),
-        axis='Y',
-    )
-    rotate(
-        obj=obj,
-        rotation=random.uniform(rotate_range[2][0], rotate_range[2][1]),
-        axis='Z',
-    )
-    scale(
-        obj=obj,
-        scale=(
-            random.uniform(scale_range[0][0], scale_range[0][1]),
-            random.uniform(scale_range[1][0], scale_range[1][1]),
-            random.uniform(scale_range[2][0], scale_range[2][1]),
-        ),
-    )
+    translate(obj,
+              translation=(
+                  random.uniform(translate_range[0][0], translate_range[0][1]),
+                  random.uniform(translate_range[1][0], translate_range[1][1]),
+                  random.uniform(translate_range[2][0], translate_range[2][1]),
+              ))
+    rotate(obj,
+           rotation=random.uniform(rotate_range[0][0], rotate_range[0][1]),
+           axis='X',
+           )
+    rotate(obj,
+           rotation=random.uniform(rotate_range[1][0], rotate_range[1][1]),
+           axis='Y',
+           )
+    rotate(obj,
+           rotation=random.uniform(rotate_range[2][0], rotate_range[2][1]),
+           axis='Z',
+           )
+    scale(obj,
+          scale=(
+              random.uniform(scale_range[0][0], scale_range[0][1]),
+              random.uniform(scale_range[1][0], scale_range[1][1]),
+              random.uniform(scale_range[2][0], scale_range[2][1]),
+          ))
+    bpy.context.view_layer.update()
