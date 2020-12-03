@@ -10,7 +10,7 @@ import time
 import traceback
 from functools import partial, wraps
 from pprint import pformat
-from typing import Dict
+from typing import Any, Dict
 
 import zmq
 
@@ -23,6 +23,21 @@ log = logging.getLogger(__name__)
 class InvalidRequest(Exception):
     """ Network message to launcher is incorrect. """
     pass
+
+
+def verify_key(
+    request: Dict,
+    key: str,
+    key_type: type = None
+) -> Any:
+    """ Check request dict for key, raise error if not present, or if wrong type. """
+    value = request.get(key, None)
+    if value is None:
+        raise InvalidRequest(f'Required key {key} not found.')
+    if key_type is not None:
+        if not isinstance(value, key_type):
+            raise InvalidRequest(f'Key {key} must be of type {key_type}.')
+    return value
 
 
 class Process(multiprocessing.Process):
@@ -102,14 +117,6 @@ def accept_requests(run_func):
             # Reply will include duration of request
             start_time = time.time()
             try:
-                # Make sure request type is valid
-                request_type = request.get('type', None)
-                if request_type is None:
-                    raise InvalidRequest(f'Request missing field: type')
-                if not isinstance(request_type, str):
-                    raise InvalidRequest(
-                        f'Request field type is not a string')
-
                 # Request can set a log level
                 log_level = request.get('log_level', None)
                 if log_level is not None:
