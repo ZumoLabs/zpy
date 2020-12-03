@@ -29,6 +29,9 @@ def set_log_levels(
         log.warning(f'Invalid log level {level}')
         return
     log.warning(f'Setting log level to {log_level}')
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)s: %(levelname)s %(filename)s] %(message)s')
     for logger_name in modules:
         logging.getLogger(logger_name).setLevel(log_level)
 
@@ -37,7 +40,7 @@ def linebreaker_log(message: str, line_length: int = 80):
     """ Good looking line-breaker log message. """
     # Clip the message
     message = message[:line_length]
-    whitespace = ' ' * int(line_length / 2 - len(message))
+    whitespace = ' ' * int((line_length - len(message)) / 2)
     # La piece de resistance
     log.info('-'*line_length)
     log.info(f'{whitespace}{message.upper()}{whitespace}')
