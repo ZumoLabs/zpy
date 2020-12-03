@@ -19,11 +19,14 @@ from zpy import color
 # HACK: Reset the random colors on import
 color.reset()
 from zpy import file
+from zpy import gin
 from zpy import image
-from zpy import viz
+from zpy import logging
+from zpy import requests
 from zpy import output
 from zpy import output_coco
 from zpy import output_mot
 from zpy import output_zumo
 from zpy import saver
 from zpy import tvt
+from zpy import viz
