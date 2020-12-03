@@ -75,7 +75,9 @@ def request_as_process(request_func):
         global reply
         reply.update(_reply)
         if p.exception:
-            reply['exception'] = str(p.exception)
+            reply['exception'] = str(p.exception[0])
+            reply['exception_type'] = str(type(p.exception[0]).__name__)
+            reply['trace'] = str(p.exception[1])
             reply['code'] = 400
     return wrapped_request_func
 
