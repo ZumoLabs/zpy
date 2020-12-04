@@ -108,7 +108,7 @@ git tag
 Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`). Check progress on [CI](https://app.circleci.com/pipelines/github/ZumoLabs/zpy)
 
 ```
-export ZPY_VERSION="v1.2.6"
+export ZPY_VERSION="v1.2.7"
 git tag ${ZPY_VERSION} && \
 git push origin ${ZPY_VERSION}
 ```

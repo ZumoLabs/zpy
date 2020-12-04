@@ -157,3 +157,18 @@ def accept_requests(run_func):
         log.info('Exiting launcher.')
 
     return wrapped_run_func
+
+
+def send_request(uri: str, request: Dict) -> Dict:
+    """ Send a request over a uri. """
+    log.info('Connecting ...')
+    context = zmq.Context()
+    socket = context.socket(zmq.REQ)
+    socket.connect(uri)
+    log.info('... Done!')
+    log.info(f'Sending request: {request}')
+    socket.send_json(json.dumps(request))
+    log.info(f'Waiting for response...')
+    response = json.loads(socket.recv_json())
+    log.info(f'Received response: {pformat(response)}')
+    return response
