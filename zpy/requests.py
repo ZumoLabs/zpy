@@ -159,12 +159,16 @@ def accept_requests(run_func):
     return wrapped_run_func
 
 
-def send_request(uri: str, request: Dict) -> Dict:
+def send_request(
+    request: Dict,
+    ip: str = '127.0.0.1',
+    port: str = '5555',
+) -> Dict:
     """ Send a request over a uri. """
-    log.info('Connecting ...')
+    log.info(f'Connecting to {ip}:{port} ...')
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
-    socket.connect(uri)
+    socket.connect(f'tcp://{ip}:{port}')
     log.info('... Done!')
     log.info(f'Sending request: {request}')
     socket.send_json(json.dumps(request))
