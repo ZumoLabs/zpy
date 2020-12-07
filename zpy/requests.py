@@ -113,7 +113,8 @@ def accept_requests(run_func):
             log.info('Waiting for requests...')
             waiting = True
             request = json.loads(socket.recv_json())
-            log.info(f'Received request: {pformat(request)}')
+            zpy.logging.linebreaker_log('new request')
+            log.info(f'New request: {pformat(request)}')
             waiting = False
 
             # Reply will include duration of request

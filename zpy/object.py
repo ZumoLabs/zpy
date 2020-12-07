@@ -87,6 +87,25 @@ def for_obj_in_collections(list_of_collections: List[Any]) -> bpy.types.Object:
             yield bpy.data.objects[obj.name]
 
 
+def randomly_hide_within_collection(
+    list_of_collections: List[Any],
+    chance_to_hide: float = 0.9,
+) -> None:
+    """ Randomly hide objects in a list of collections. """
+    to_hide = []
+    for obj in for_obj_in_collections(list_of_collections):
+        if random.random() < chance_to_hide:
+            to_hide.append(obj.name)
+    # HACK: hide objects by name, this causes segfault
+    # if done in the for loop above, due to some kind of
+    # pass by reference vs by value shenaniganry going on
+    # with blender python sitting on top of blender C
+    for name in to_hide:
+        bpy.data.objects[name].select_set(True)
+        bpy.data.objects[name].hide_render = True
+        bpy.data.objects[name].hide_viewport = True
+
+
 def segment(
     obj: bpy.types.Object,
     name: str = 'default',

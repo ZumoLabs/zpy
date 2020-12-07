@@ -170,7 +170,10 @@ def refresh_blender_ui() -> None:
     bpy.context.view_layer.update()
 
 
-def load_scene(path: Union[str, Path]) -> None:
+def load_scene(
+    path: Union[str, Path],
+    auto_execute_scripts : bool = True,
+    ) -> None:
     """ Load a scene from a *.blend file. """
     # HACK: Clear out scene of cameras and lights
     clear_scene(['CAMERA', 'LIGHT'])
@@ -184,6 +187,11 @@ def load_scene(path: Union[str, Path]) -> None:
     # HACK: Delete extra workspaces that are created e.g. 'Animation.001'
     _workspaces = [ws for ws in bpy.data.workspaces if '.0' in ws.name]
     bpy.data.batch_remove(ids=_workspaces)
+    # Allow execution of scripts inside loaded scene
+    if auto_execute_scripts:
+        log.warning('Allowing .blend file to run scripts automatically')
+        log.warning('   this is unsafe for blend files from an untrusted source')
+        bpy.types.PreferencesFilePaths.use_scripts_auto_execute = auto_execute_scripts
 
 
 def clear_scene(to_clear: List = ["MESH"]) -> None:

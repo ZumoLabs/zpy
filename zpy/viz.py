@@ -134,13 +134,13 @@ def pixel_histograms(
     plt.suptitle('Pixel Histograms (Red, Green, Blue)', fontsize=18)
     ax = plt.subplot(311)
     ax = pretty_axes(ax)
-    sns.distplot(flat_images[:, 0], bins=255, color='r', ax=ax)
+    sns.histplot(flat_images[:, 0], bins=255, color='r', ax=ax)
     ax = plt.subplot(312)
     ax = pretty_axes(ax)
-    sns.distplot(flat_images[:, 1], bins=255, color='g', ax=ax)
+    sns.histplot(flat_images[:, 1], bins=255, color='g', ax=ax)
     ax = plt.subplot(313)
     ax = pretty_axes(ax)
-    sns.distplot(flat_images[:, 2], bins=255, color='b', ax=ax)
+    sns.histplot(flat_images[:, 2], bins=255, color='b', ax=ax)
     plt.tight_layout()
     return 'pixel_histograms', fig
 
