@@ -245,7 +245,7 @@ def draw_bbox(
                   (bbox[2]),
                   (bbox[3]),
                   linewidth=3,
-                  color=color,
+                  facecolor=color,
                   edgecolor=color,
                   alpha=alpha,
                   )
