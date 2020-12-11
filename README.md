@@ -110,7 +110,7 @@ Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`). Check pr
 ```
 export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
 cd $ZPY_SRC_PATH
-export ZPY_VERSION="v1.2.8"
+export ZPY_VERSION="v1.2.9"
 git tag ${ZPY_VERSION} && \
 git push origin ${ZPY_VERSION}
 ```
