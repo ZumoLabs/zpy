@@ -31,7 +31,6 @@ catch-alls at the bottom.
 You can test these out at: https://regex101.com/
 '''
 IMAGE_REGEX = '.*\.(jpeg|jpg|png|bmp)'
-ANNOTATION_REGEX = '.*\.(json|xml|yaml)'
 FILE_TYPE_REGEX = {
     # Images
     'instance segmentation image': 'IMG_[0-9]*_iseg' + IMAGE_REGEX,
@@ -43,9 +42,9 @@ FILE_TYPE_REGEX = {
     'rgb image': 'IMG_[0-9]*_rgb' + IMAGE_REGEX,
     'image': IMAGE_REGEX,
     # Annotations
-    'zumo annotation': 'ZUMO_[0-9]*.json',
-    'zumo metafile': 'ZUMO_META.json',
-    'annotation': ANNOTATION_REGEX,
+    'zumo annotation': 'ZUMO_META.json',
+    'coco annotation': '.*coco.*\.json',
+    'annotation': '.*\.(json|xml|yaml)',
 }
 
 
@@ -275,7 +274,7 @@ def unzip_file(zip_path: Union[str, Path], out_path: Union[str, Path]) -> None:
     out_path = verify_path(out_path, check_dir=True)
     if not zip_path.suffix == '.zip':
         raise ValueError(f'{zip_path} is not a zip file')
-    
+
     zf = zipfile.ZipFile(str(zip_path))
     zipped_size_mb = round(
         sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)
@@ -293,13 +292,13 @@ def zip_file(in_path: Union[str, Path], zip_path: Union[str, Path]) -> None:
     zip_path = verify_path(zip_path)
     if not zip_path.suffix == '.zip':
         raise ValueError(f'{zip_path} is not a zip file')
-    
+
     shutil.make_archive(
         base_name=zip_path.parent / zip_path.stem,
         format='zip',
         root_dir=in_path)
     log.info(f'Done zipping to {zip_path}.')
-    
+
     zf = zipfile.ZipFile(str(zip_path))
     zipped_size_mb = round(
         sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)
