@@ -128,8 +128,10 @@ class ExportOperator(bpy.types.Operator):
             bpy.ops.file.make_paths_absolute()
             bpy.ops.file.make_paths_relative()
             bpy.ops.file.pack_all()
-            bpy.ops.wm.save_as_mainfile(copy=True)
             bpy.ops.file.unpack_all(method='WRITE_LOCAL')
+            bpy.ops.wm.save_as_mainfile(
+                filepath=str(export_path / 'main.blend'),
+            )
         except Exception as e:
             self.report({'ERROR'}, e)
             log.warning(f'Exception when exporting: {e}')
