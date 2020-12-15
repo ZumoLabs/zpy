@@ -31,7 +31,7 @@ catch-alls at the bottom.
 You can test these out at: https://regex101.com/
 '''
 IMAGE_REGEX = '.*\.(jpeg|jpg|png|bmp)'
-FILE_TYPE_REGEX = {
+FILE_REGEX = {
     # Images
     'instance segmentation image': 'IMG_[0-9]*_iseg' + IMAGE_REGEX,
     'class segmentation image': 'IMG_[0-9]*_cseg' + IMAGE_REGEX,
@@ -50,7 +50,7 @@ FILE_TYPE_REGEX = {
 
 def dataset_contents(
     path: Union[str, Path],
-    filetype_regex: Dict = FILE_TYPE_REGEX,
+    filetype_regex: Dict = FILE_REGEX,
 ) -> Dict:
     """Use regex to search inside a data directory."""
     path = verify_path(path, check_dir=True, make=False)
@@ -73,9 +73,9 @@ def file_is_of_type(filename: Union[str, Path], filetype: str) -> bool:
     """ Check to see if file is of type given by regex."""
     if isinstance(filename, Path):
         filename = str(filename)
-    assert FILE_TYPE_REGEX.get(filetype, None) is not None, \
-        f'{filetype} must be in {FILE_TYPE_REGEX.keys()}'
-    if re.search(FILE_TYPE_REGEX[filetype], filename):
+    assert FILE_REGEX.get(filetype, None) is not None, \
+        f'{filetype} must be in {FILE_REGEX.keys()}'
+    if re.search(FILE_REGEX[filetype], filename):
         return True
     return False
 

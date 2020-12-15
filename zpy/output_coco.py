@@ -117,7 +117,7 @@ class OutputCOCO(Output):
     def coco_annotations(self,
                          keys_to_add: List[str] = [
                              'bbox', 'area', 'segmentation'],
-                         clipped: bool = False,
+                         clipped: bool = True,
                          only_default_images: bool = True,
                          ):
         """ coco annotations """
@@ -144,37 +144,37 @@ class OutputCOCO(Output):
                     value = annotation.get(key, None)
                     if value is not None:
                         if key == 'segmentation':
-                            coco_ann['segmentation'] = self.saver.clip_annotation(
-                                height=height,
+                            coco_ann['segmentation'] = self.saver.clip_coordinate_list(
                                 width=width,
+                                height=height,
                                 annotation=annotation['segmentation']) if clipped \
                                 else annotation['segmentation']
                         elif key == 'segmentation_rle':
                             coco_ann['segmentation_rle'] = annotation['segmentation_rle']
                         elif key == 'segmentation_float':
-                            coco_ann['segmentation_float'] = self.saver.clip_annotation(
-                                is_float=True,
+                            coco_ann['segmentation_float'] = self.saver.clip_coordinate_list(
+                                normalized=True,
                                 annotation=annotation['segmentation_float']) if clipped \
                                 else annotation['segmentation_float']
                         elif key == 'bbox_float':
-                            coco_ann['bbox_float'] = self.saver.clip_annotation(
-                                is_float=True,
+                            coco_ann['bbox_float'] = self.saver.clip_bbox(
+                                normalized=True,
                                 annotation=annotation['bbox_float']) if clipped \
                                 else annotation['bbox_float']
                         elif key == 'bbox':
-                            coco_ann['bbox'] = self.saver.clip_annotation(
+                            coco_ann['bbox'] = self.saver.clip_bbox(
                                 width=width,
                                 height=height,
                                 annotation=annotation['bbox']) if clipped \
                                 else annotation['bbox']
                         elif key == 'bboxes_float':
-                            coco_ann['bboxes_float'] = [self.saver.clip_annotation(
-                                is_float=True,
+                            coco_ann['bboxes_float'] = [self.saver.clip_bbox(
+                                normalized=True,
                                 annotation=bbox) for
                                 bbox in annotation['bboxes_float']] if clipped \
                                 else annotation['bboxes_float']
                         elif key == 'bboxes':
-                            coco_ann['bboxes'] = [self.saver.clip_annotation(
+                            coco_ann['bboxes'] = [self.saver.clip_bbox(
                                 height=height,
                                 width=width,
                                 annotation=bbox) for
@@ -201,7 +201,7 @@ class OutputCOCO(Output):
     def coco_split_segmentation_annotations(self,
                                             keys_to_add: List[str] = [
                                                 'bbox', 'area', 'segmentation'],
-                                            clipped: bool = False,
+                                            clipped: bool = True,
                                             only_default_images: bool = True,
                                             ):
         """ coco annotations one per segmentation """
@@ -242,7 +242,7 @@ class OutputCOCO(Output):
             for i in range(num_components):
                 _coco_ann = copy.deepcopy(coco_ann)
                 try:
-                    _coco_ann['segmentation'] = [self.saver.clip_annotation(
+                    _coco_ann['segmentation'] = [self.saver.clip_coordinate_list(
                         height=height,
                         width=width,
                         annotation=annotation['segmentation'][i])] if clipped \
@@ -255,21 +255,21 @@ class OutputCOCO(Output):
                 except:
                     pass
                 try:
-                    _coco_ann['segmentation_float'] = [self.saver.clip_annotation(
-                        is_float=True,
+                    _coco_ann['segmentation_float'] = [self.saver.clip_coordinate_list(
+                        normalized=True,
                         annotation=annotation['segmentation_float'][i])] if clipped \
                         else [annotation['segmentation_float'][i]]
                 except:
                     pass
                 try:
-                    _coco_ann['bbox_float'] = self.saver.clip_annotation(
-                        is_float=True,
+                    _coco_ann['bbox_float'] = self.saver.clip_bbox(
+                        normalized=True,
                         annotation=annotation['bboxes_float'][i]) if clipped \
                         else annotation['bboxes_float'][i]
                 except:
                     pass
                 try:
-                    _coco_ann['bbox'] = self.saver.clip_annotation(
+                    _coco_ann['bbox'] = self.saver.clip_bbox(
                         width=width,
                         height=height,
                         annotation=annotation['bboxes'][i]) if clipped \

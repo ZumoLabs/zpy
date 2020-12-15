@@ -348,31 +348,51 @@ class Saver:
                 f.write(f'{k},{v}\n')
 
     @staticmethod
-    def clip_annotation(
-        height: int = None,
-        width: int = None,
-        is_float: bool = False,
-        annotation: List[int] = None
-    ) -> List[int]:
-        if isinstance(annotation, list):
-            return [self.clip_annotation(height=height,
-                                         width=width,
-                                         is_float=is_float,
-                                         annotation=ann) for ann in annotation]
+    def clip_coordinate_list(
+        annotation: List[Union[int, float]] = None,
+        height: Union[int, float] = None,
+        width: Union[int, float] = None,
+        normalized: bool = False,
+    ) -> List[Union[int, float]]:
+        """ Clip a list of coordinates (e.g. segmentation polygon) """
+        if normalized:
+            # Coordinates are in (0, 1)
+            max_x, max_y = 1.0, 1.0
+        else:
+            # Coordinates are w.r.t image height and width
+            max_x, max_y = width, height
         new_annotation = []
         for x, y in zip(*[iter(annotation)]*2):
             new_x, new_y = x, y
-            max_x, max_y = width, height
-            if is_float:
-                max_x, max_y = 1, 1
-            if x > max_x:
-                new_x = max_x
             if x < 0:
                 new_x = 0
-            if y > max_y:
-                new_y = max_y
             if y < 0:
                 new_y = 0
+            if x > max_x:
+                new_x = max_x
+            if y > max_y:
+                new_y = max_y
             new_annotation.append(new_x)
             new_annotation.append(new_y)
         return new_annotation
+
+    @staticmethod
+    def clip_bbox(
+        bbox: List[Union[int, float]] = None,
+        height: Union[int, float] = None,
+        width: Union[int, float] = None,
+        normalized: bool = False,
+    ) -> List[Union[int, float]]:
+        """ Clip a bounding box in [x, y, width, height] format. """
+        if normalized:
+            # Coordinates are in (0, 1)
+            max_x, max_y = 1.0, 1.0
+        else:
+            # Coordinates are w.r.t image height and width
+            max_x, max_y = width, height
+        new_bbox = [0] * 4
+        new_bbox[0] = max(0, min(bbox[0], max_x))
+        new_bbox[1] = max(0, min(bbox[1], max_y))
+        new_bbox[2] = max(0, min(bbox[2], (max_x - new_bbox[0])))
+        new_bbox[3] = max(0, min(bbox[3], (max_y - new_bbox[1])))
+        return new_bbox
