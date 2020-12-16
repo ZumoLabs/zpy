@@ -165,6 +165,7 @@ class Saver:
             'name': name,
             'style': style,
             'output_path': str(output_path),
+            'relative_path': str(Path(output_path).relative_to(self.output_dir)),
             'frame': frame,
             'width': width,
             'height': height,

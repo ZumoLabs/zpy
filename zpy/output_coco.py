@@ -159,25 +159,25 @@ class OutputCOCO(Output):
                         elif key == 'bbox_float':
                             coco_ann['bbox_float'] = self.saver.clip_bbox(
                                 normalized=True,
-                                annotation=annotation['bbox_float']) if clipped \
+                                bbox=annotation['bbox_float']) if clipped \
                                 else annotation['bbox_float']
                         elif key == 'bbox':
                             coco_ann['bbox'] = self.saver.clip_bbox(
                                 width=width,
                                 height=height,
-                                annotation=annotation['bbox']) if clipped \
+                                bbox=annotation['bbox']) if clipped \
                                 else annotation['bbox']
                         elif key == 'bboxes_float':
                             coco_ann['bboxes_float'] = [self.saver.clip_bbox(
                                 normalized=True,
-                                annotation=bbox) for
+                                bbox=bbox) for
                                 bbox in annotation['bboxes_float']] if clipped \
                                 else annotation['bboxes_float']
                         elif key == 'bboxes':
                             coco_ann['bboxes'] = [self.saver.clip_bbox(
                                 height=height,
                                 width=width,
-                                annotation=bbox) for
+                                bbox=bbox) for
                                 bbox in annotation['bboxes']] if clipped \
                                 else annotation['bboxes']
                         else:
@@ -264,7 +264,7 @@ class OutputCOCO(Output):
                 try:
                     _coco_ann['bbox_float'] = self.saver.clip_bbox(
                         normalized=True,
-                        annotation=annotation['bboxes_float'][i]) if clipped \
+                        bbox=annotation['bboxes_float'][i]) if clipped \
                         else annotation['bboxes_float'][i]
                 except:
                     pass
@@ -272,7 +272,7 @@ class OutputCOCO(Output):
                     _coco_ann['bbox'] = self.saver.clip_bbox(
                         width=width,
                         height=height,
-                        annotation=annotation['bboxes'][i]) if clipped \
+                        bbox=annotation['bboxes'][i]) if clipped \
                         else annotation['bboxes'][i]
                 except:
                     pass
