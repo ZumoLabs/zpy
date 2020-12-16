@@ -191,7 +191,7 @@ def load_scene(
     if auto_execute_scripts:
         log.warning('Allowing .blend file to run scripts automatically')
         log.warning('   this is unsafe for blend files from an untrusted source')
-        bpy.types.PreferencesFilePaths.use_scripts_auto_execute = auto_execute_scripts
+        bpy.context.preferences.filepaths.use_scripts_auto_execute = auto_execute_scripts
 
 
 def clear_scene(to_clear: List = ["MESH"]) -> None:
