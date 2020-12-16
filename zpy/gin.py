@@ -62,3 +62,10 @@ def parse_gin_config(gin_config: str = None,
                 f'Could not find gin config at {gin_config_path}')
         gin.clear_config()
         gin.parse_config_file(str(gin_config_path))
+
+
+def parse_gin_in_request(request: Dict) -> None:
+    """ Parse any gin related keys in a request dict. """
+    zpy.gin.parse_gin_config(gin_config=request.get('gin_config', None))
+    zpy.gin.parse_gin_bindings(gin_bindings=request.get('gin_bindings', None))
+    gin.finalize()
