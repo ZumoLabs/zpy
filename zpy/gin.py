@@ -49,11 +49,12 @@ def parse_gin_bindings(gin_bindings: Dict = None) -> None:
 
 
 def parse_gin_config(gin_config: str = None,
-                     gin_config_dir: Path = Path('configs')) -> None:
+                     gin_config_dir: str = '$CONFIG') -> None:
     """ Parse a gin config file by path. """
     if gin_config is None:
         log.info(f'No gin file to parse.')
     else:
+        gin_config_dir = zpy.file.verify_path(gin_config_dir, check_dir=True)
         gin_config_filename = Path(gin_config + '.gin')
         gin_config_path = gin_config_dir / gin_config_filename
         log.info(f'Parsing gin config at {gin_config_path}')
