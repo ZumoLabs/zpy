@@ -356,6 +356,11 @@ class Saver:
         normalized: bool = False,
     ) -> List[Union[int, float]]:
         """ Clip a list of coordinates (e.g. segmentation polygon) """
+        if any(isinstance(i, list) for i in annotation):
+            return [Saver.clip_coordinate_list(height=height,
+                                               width=width,
+                                               normalized=normalized,
+                                               annotation=ann) for ann in annotation]
         if normalized:
             # Coordinates are in (0, 1)
             max_x, max_y = 1.0, 1.0
@@ -363,6 +368,7 @@ class Saver:
             # Coordinates are w.r.t image height and width
             max_x, max_y = width, height
         new_annotation = []
+        # TODO: This zip unpack here is unreadable
         for x, y in zip(*[iter(annotation)]*2):
             new_x, new_y = x, y
             if x < 0:
