@@ -9,7 +9,7 @@ import gin
 
 import zpy
 from zpy.output import Output
-from zpy.saver import Saver
+from zpy.saver import ImageSaver
 
 log = logging.getLogger(__name__)
 
@@ -88,7 +88,7 @@ def parse_zumo_annotations(
 
     # Optionally output a saver object.
     if output_saver:
-        saver = Saver(output_dir=data_dir,
+        saver = ImageSaver(output_dir=data_dir,
                       annotation_path=annotation_file,
                       description=zumo_metadata['metadata']['description'],
                       clean_dir=False,
@@ -145,7 +145,7 @@ def parse_zumo_annotations(
             if not Path(output_path).exists():
                 raise ZUMOParseError(
                     f'output_path {output_path} does not exist')
-        # Save each image to Saver object
+        # Save each image to ImageSaver object
         if output_saver:
             saver.images[image_id] = img
 
@@ -193,7 +193,7 @@ def parse_zumo_annotations(
             if category.get('skeleton', None) is None:
                 raise ZUMOParseError(
                     f'skeleton must be present with {keypoints}')
-        # Save each category to Saver object
+        # Save each category to ImageSaver object
         if output_saver:
             saver.categories[category_id] = category
 
@@ -232,7 +232,7 @@ def parse_zumo_annotations(
                     raise ZUMOParseError(
                         'keypoints_xyz not correct size {len(keypoints)}')
 
-        # Save each annotation to Saver object
+        # Save each annotation to ImageSaver object
         if output_saver:
             saver.annotations.append(annotation)
 
