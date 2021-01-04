@@ -10,7 +10,7 @@ import gin
 
 import zpy
 from zpy.output import Output
-from zpy.saver import ImageSaver
+from zpy.saver_image import ImageSaver
 
 log = logging.getLogger(__name__)
 

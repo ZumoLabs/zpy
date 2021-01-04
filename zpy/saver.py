@@ -61,6 +61,28 @@ class Saver:
         self.category_name_to_id = {}
 
     @gin.configurable
+    def add_annotation(self,
+                       category: str = None,
+                       subcategory: str = None,
+                       subcategory_zero_indexed: bool = True,
+                       **kwargs,
+                       ) -> Dict:
+        """ Add annotation. """
+        assert category is not None, 'Must provide a category for annotation.'
+        category_id = self.category_name_to_id.get(category, None)
+        assert category_id is not None, f'Could not find id for category {category}'
+        self.categories[category_id]['count'] += 1
+        if subcategory is not None:
+            subcategory_id = self.categories[category_id]['subcategories'].index(
+                subcategory)
+            self.categories[category_id]['subcategory_count'][subcategory_id] += 1
+            subcategory_id += 0 if subcategory_zero_indexed else 1
+            annotation['subcategory_id'] = subcategory_id
+        annotation['category_id'] = category_id
+        annotation['id'] = len(self.annotations)
+        return annotation
+
+    @gin.configurable
     def add_category(self,
                      name: str = 'default',
                      supercategories: List[str] = None,
@@ -172,9 +194,9 @@ class Saver:
         """ Clip a list of coordinates (e.g. segmentation polygon) """
         if any(isinstance(i, list) for i in annotation):
             return [zpy.saver.Saver.clip_coordinate_list(height=height,
-                                               width=width,
-                                               normalized=normalized,
-                                               annotation=ann) for ann in annotation]
+                                                         width=width,
+                                                         normalized=normalized,
+                                                         annotation=ann) for ann in annotation]
         if normalized:
             # Coordinates are in (0, 1)
             max_x, max_y = 1.0, 1.0

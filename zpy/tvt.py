@@ -14,7 +14,7 @@ import gin
 import zpy
 from zpy.output_coco import COCOParseError, OutputCOCO
 from zpy.output_zumo import OutputZUMO, ZUMOParseError, parse_zumo_annotations
-from zpy.saver import ImageSaver
+from zpy.saver_image import ImageSaver
 
 log = logging.getLogger(__name__)
 
