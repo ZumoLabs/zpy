@@ -10,7 +10,7 @@ import gin
 
 import zpy
 from zpy.output import Output
-from zpy.saver import Saver
+from zpy.saver_image import ImageSaver
 
 log = logging.getLogger(__name__)
 
@@ -335,10 +335,10 @@ def parse_coco_annotations(
     annotation_file: Union[str, Path] = None,
     data_dir: Union[str, Path] = None,
     output_saver: bool = False,
-    # Specify which keys to add to Saver
+    # Specify which keys to add to ImageSaver
     image_keys_to_add: List[str] = None,
-) -> Saver:
-    """ Parse COCO annotations, optionally output a Saver object. """
+) -> ImageSaver:
+    """ Parse COCO annotations, optionally output a ImageSaver object. """
     log.info(f'Parsing COCO annotations at {annotation_file}...')
     # Check annotation file path
     annotation_file = zpy.file.verify_path(annotation_file)
@@ -366,7 +366,7 @@ def parse_coco_annotations(
 
     # Optionally output a saver object.
     if output_saver:
-        saver = Saver(output_dir=data_dir,
+        saver = ImageSaver(output_dir=data_dir,
                       annotation_path=annotation_file,
                       description=coco_annotations['info']['description'],
                       clean_dir=False,
@@ -410,7 +410,7 @@ def parse_coco_annotations(
         coco_path = data_dir / coco_url
         if not coco_path.exists():
             raise COCOParseError(f'coco url {coco_path} does not exist')
-        # Save each image to Saver object
+        # Save each image to ImageSaver object
         if output_saver:
             saver.images[image_id] = {
                 'id': image_id,
@@ -469,7 +469,7 @@ def parse_coco_annotations(
             if category.get('skeleton', None) is None:
                 raise COCOParseError(
                     f'skeleton must be present with {keypoints}')
-        # Save each category to Saver object
+        # Save each category to ImageSaver object
         if output_saver:
             _category = saver.categories.get(category_id, None)
             if _category is None:
@@ -512,7 +512,7 @@ def parse_coco_annotations(
                     raise COCOParseError(
                         'keypoints_xyz not correct size {len(keypoints)}')
 
-        # Save each annotation to Saver object
+        # Save each annotation to ImageSaver object
         if output_saver:
             saver.annotations.append(annotation)
 

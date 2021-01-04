@@ -23,10 +23,14 @@ from zpy import gin
 from zpy import image
 from zpy import logging
 from zpy import requests
+from zpy import tvt
+from zpy import viz
+# Output object
 from zpy import output
 from zpy import output_coco
 from zpy import output_mot
 from zpy import output_zumo
+# Saver object
 from zpy import saver
-from zpy import tvt
-from zpy import viz
+from zpy import saver_image
+from zpy import saver_video

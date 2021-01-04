@@ -14,7 +14,7 @@ import gin
 import zpy
 from zpy.output_coco import COCOParseError, OutputCOCO
 from zpy.output_zumo import OutputZUMO, ZUMOParseError, parse_zumo_annotations
-from zpy.saver import Saver
+from zpy.saver_image import ImageSaver
 
 log = logging.getLogger(__name__)
 
@@ -188,9 +188,9 @@ def zumo_to_tvt(batches_path: Union[str, Path] = None,
             dataset_metadata = zumo_annotation['metadata'].copy()
             # Update time to now
             dataset_metadata['year'] = \
-                date.today().strftime(Saver.DATETIME_YEAR_FORMAT)
+                date.today().strftime(ImageSaver.DATETIME_YEAR_FORMAT)
             dataset_metadata['date_created'] = \
-                date.today().strftime(Saver.DATETIME_FORMAT)
+                date.today().strftime(ImageSaver.DATETIME_FORMAT)
 
         # Verify that all batches have the same metadata fields
         for field in ['description', 'contributor', 'url']:

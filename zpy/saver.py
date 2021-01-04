@@ -1,5 +1,5 @@
 """
-    Saver object stores annotations, images, etc during scene runtime.
+    Base Saver object for storing annotations, categories, etc during scene runtime.
 """
 import logging
 from datetime import date
@@ -55,13 +55,32 @@ class Saver:
             'date_created': date.today().strftime(self.DATETIME_FORMAT),
             'save_path': str(self.output_dir),
         }
-        self.images = {}
         self.categories = {}
         self.annotations = []
         # Reverse-lookup dictionaries for name/color to id
         self.category_name_to_id = {}
-        self.image_name_to_id = {}
-        self.seg_annotations_color_to_id = {}
+
+    @gin.configurable
+    def add_annotation(self,
+                       category: str = None,
+                       subcategory: str = None,
+                       subcategory_zero_indexed: bool = True,
+                       **kwargs,
+                       ) -> Dict:
+        """ Add annotation. """
+        assert category is not None, 'Must provide a category for annotation.'
+        category_id = self.category_name_to_id.get(category, None)
+        assert category_id is not None, f'Could not find id for category {category}'
+        self.categories[category_id]['count'] += 1
+        if subcategory is not None:
+            subcategory_id = self.categories[category_id]['subcategories'].index(
+                subcategory)
+            self.categories[category_id]['subcategory_count'][subcategory_id] += 1
+            subcategory_id += 0 if subcategory_zero_indexed else 1
+            annotation['subcategory_id'] = subcategory_id
+        annotation['category_id'] = category_id
+        annotation['id'] = len(self.annotations)
+        return annotation
 
     @gin.configurable
     def add_category(self,
@@ -149,195 +168,12 @@ class Saver:
         # Overwrite the old annotations
         self.annotations = new_annotations
 
-    @gin.configurable
-    def add_image(self,
-                  name: str = 'default image',
-                  style: str = 'default',
-                  output_path: Union[str, Path] = '/tmp/test.png',
-                  frame: int = 0,
-                  width: int = 0,
-                  height: int = 0,
-                  zero_indexed: bool = True,
-                  **kwargs,
-                  ) -> None:
-        """ Add image to save object. """
-        image = {
-            'name': name,
-            'style': style,
-            'output_path': str(output_path),
-            'relative_path': str(Path(output_path).relative_to(self.output_dir)),
-            'frame': frame,
-            'width': width,
-            'height': height,
-        }
-        image.update(**kwargs)
-        image['id'] = len(self.images.keys())
-        image['id'] += 0 if zero_indexed else 1
-        log.debug(f'Adding image: {zpy.file.pretty_print(image)}')
-        self.images[image['id']] = image
-        self.image_name_to_id[name] = image['id']
-
-    @gin.configurable
-    def add_annotation(self,
-                       image: str = 'default image',
-                       category: str = None,
-                       subcategory: str = None,
-                       subcategory_zero_indexed: bool = True,
-                       seg_image: str = None,
-                       seg_color:  Tuple[float] = None,
-                       parse_on_add: bool = True,
-                       **kwargs,
-                       ) -> None:
-        """ Add annotation. """
-        image_id = self.image_name_to_id.get(image, None)
-        assert image_id is not None, f'Could not find id for image {image}'
-        assert category is not None, 'Must provide a category for annotation.'
-        category_id = self.category_name_to_id.get(category, None)
-        assert category_id is not None, f'Could not find id for category {category}'
-        self.categories[category_id]['count'] += 1
-        annotation = {
-            'image_id': image_id,
-            'category_id': category_id,
-        }
-        if subcategory is not None:
-            subcategory_id = self.categories[category_id]['subcategories'].index(
-                subcategory)
-            self.categories[category_id]['subcategory_count'][subcategory_id] += 1
-            subcategory_id += 0 if subcategory_zero_indexed else 1
-            annotation['subcategory_id'] = subcategory_id
-        annotation.update(**kwargs)
-        annotation['id'] = len(self.annotations)
-        log.info(f'Adding annotation: {zpy.file.pretty_print(annotation)}')
-        # For segmentation images, add bbox/poly/mask annotation
-        if seg_image is not None and seg_color is not None:
-            seg_image_id = self.image_name_to_id.get(seg_image, None)
-            assert seg_image_id is not None, f'Could not find id for image {seg_image}'
-            annotation['seg_color'] = seg_color
-            if self.seg_annotations_color_to_id.get(seg_image, None) is None:
-                self.seg_annotations_color_to_id[seg_image] = {}
-            self.seg_annotations_color_to_id[seg_image][seg_color] = annotation['id']
-        self.annotations.append(annotation)
-        # This call creates correspondences between segmentation images
-        # and the annotations. It should be used after both the images
-        # and annotations have been added to the saver.
-        if parse_on_add:
-            self.parse_annotations_from_seg_image(image_name=seg_image)
-
-    def parse_annotations_from_seg_image(self,
-                                         image_name: str,
-                                         ) -> Dict:
-        """ Populate annotation field based on segmentation image. """
-        # Verify that file is segmentation image
-        is_iseg = zpy.file.file_is_of_type(
-            image_name, 'instance segmentation image')
-        is_cseg = zpy.file.file_is_of_type(
-            image_name, 'class segmentation image')
-        if not (is_iseg or is_cseg):
-            raise ValueError('Image is not segmentation image')
-        seg_image_id = self.image_name_to_id.get(image_name, None)
-        assert seg_image_id is not None, f'Could not find id for image {image_name}'
-        image_path = self.images[seg_image_id]['output_path']
-        if self.seg_annotations_color_to_id.get(image_name, None) is None:
-            log.warning(f'No annotations found for {image_name}')
-        for annotation in zpy.image.seg_to_annotations(image_path):
-            if self.seg_annotations_color_to_id[image_name].get(annotation['color'], None) is None:
-                log.warning(
-                    f'No annotations found for color {annotation["color"]} in {image_name}')
-                log.warning(
-                    f'Available colors are {list(self.seg_annotations_color_to_id[image_name].keys())}')
-                closest_color = zpy.color.closest_color(
-                    annotation["color"],
-                    list(self.seg_annotations_color_to_id[image_name].keys()))
-                if closest_color is None:
-                    log.warning(
-                        f'Could not find close enough color, skipping ...')
-                    continue
-                else:
-                    log.warning(f'Using closest color {closest_color}')
-                    idx = self.seg_annotations_color_to_id[image_name][closest_color]
-            else:
-                idx = self.seg_annotations_color_to_id[image_name][annotation["color"]]
-            self.annotations[idx].update(annotation)
-
     def output_gin_config(self):
         """ Output the full gin config. """
         gin_config_filepath = self.output_dir / self.GIN_CONFIG_FILENAME
         log.info(f'Writing out gin config to {gin_config_filepath}')
         with open(gin_config_filepath, "w") as f:
             f.write(gin.operative_config_str())
-
-    @gin.configurable
-    def output_annotated_images(self,
-                                num_annotated_images: int = 10,
-                                ) -> None:
-        """ Dump annotated sampled images to the meta folder. """
-        log.info('Output annotated images...')
-        import zpy.viz
-        output_path = self.output_dir / self.HIDDEN_METAFOLDER_FILENAME
-        output_path = zpy.file.verify_path(
-            output_path, make=True, check_dir=True)
-        for i, image in enumerate(self.images.values()):
-            # Annotation images take a while
-            if i >= num_annotated_images:
-                return
-            annotations = []
-            for annotation in self.annotations:
-                if annotation['image_id'] == image['id']:
-                    annotations.append(annotation)
-            if len(annotations) > 0:
-                zpy.viz.draw_annotations(image_path=Path(image["output_path"]),
-                                         annotations=annotations,
-                                         categories=self.categories,
-                                         output_path=output_path)
-
-    @gin.configurable
-    def output_meta_analysis(self,
-                             image_sample_size: int = 50):
-        """ Perform a full meta analysis.  """
-        log.info(
-            f'perform meta analysis image_sample_size:{image_sample_size}...')
-
-        import zpy.file
-        image_paths = [i['output_path']
-                       for i in self.images.values() if i['style'] == 'default']
-        image_paths = zpy.file.sample(
-            image_paths, sample_size=image_sample_size)
-        opened_images = [zpy.image.open_image(i) for i in image_paths]
-        flat_images = zpy.image.flatten_images(opened_images)
-        pixel_mean_std = zpy.image.pixel_mean_std(flat_images)
-
-        meta_dict = {
-            'number_images': len(self.images),
-            'number_annotations': len(self.annotations),
-            'number_categories': len(self.categories),
-            'category_names': [c['name'] for c in self.categories.values()],
-            'pixel_mean': np.array2string(pixel_mean_std["mean"], precision=2),
-            'pixel_std': np.array2string(pixel_mean_std["std"], precision=2),
-            'pixel_256_mean': np.array2string(pixel_mean_std["mean_256"], precision=0),
-            'pixel_256_std': np.array2string(pixel_mean_std["std_256"], precision=0),
-        }
-
-        output_path = self.output_dir / self.HIDDEN_METAFOLDER_FILENAME
-        output_path = zpy.file.verify_path(
-            output_path, make=True, check_dir=True)
-        self.write_datasheet(
-            output_path / self.HIDDEN_DATASHEET_FILENAME, meta_dict)
-
-        try:
-            import zpy.viz
-            zpy.viz.image_grid_plot(
-                images=opened_images, output_path=output_path)
-            zpy.viz.image_shape_plot(
-                images=opened_images, output_path=output_path)
-            zpy.viz.color_correlations_plot(
-                flat_images=flat_images, output_path=output_path)
-            zpy.viz.pixel_histograms(
-                flat_images=flat_images, output_path=output_path)
-            zpy.viz.category_barplot(
-                categories=self.categories, output_path=output_path)
-        except Exception as e:
-            log.warning(f'Error when visualizing {e}')
-            pass
 
     @staticmethod
     def write_datasheet(
@@ -357,10 +193,10 @@ class Saver:
     ) -> List[Union[int, float]]:
         """ Clip a list of coordinates (e.g. segmentation polygon) """
         if any(isinstance(i, list) for i in annotation):
-            return [Saver.clip_coordinate_list(height=height,
-                                               width=width,
-                                               normalized=normalized,
-                                               annotation=ann) for ann in annotation]
+            return [zpy.saver.Saver.clip_coordinate_list(height=height,
+                                                         width=width,
+                                                         normalized=normalized,
+                                                         annotation=ann) for ann in annotation]
         if normalized:
             # Coordinates are in (0, 1)
             max_x, max_y = 1.0, 1.0
