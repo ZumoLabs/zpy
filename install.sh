@@ -13,6 +13,7 @@ else
   ON_MAC=true
   ON_LINUX=false
 fi
+# TODO: print out a warning about not supporting Windows
 
 # string formatters
 if [[ -t 1 ]]; then

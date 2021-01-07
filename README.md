@@ -38,9 +38,16 @@ You can install the addon from within Blender itself. Navigate to "Edit -> Prefe
 
 ### Install: Developer Environment
 
-TODO: Remove once made public 
+If you use additional assets from our library, you can set it as an environment variable. Example:
 
 ```
+export ASSETS="/home/ook/assets"
+```
+
+#### Linux
+
+```
+export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
 export BLENDER_VERSION="2.91"
 export BLENDER_VERSION_FULL="2.91.0"
 export BLENDER_PATH="$HOME/Downloads/blender-${BLENDER_VERSION_FULL}-linux64/${BLENDER_VERSION}"
@@ -52,27 +59,47 @@ export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
 Install additional Python dependencies using Blender Python's pip:
 
 ```
-${BLENDER_BIN_PY} -m ensurepip && ${BLENDER_BIN_PIP} install --upgrade pip
-${BLENDER_BIN_PIP} install -r $HOME/zumolabs/zpy/requirements.txt
+${BLENDER_BIN_PY} -m ensurepip
+${BLENDER_BIN_PIP} install --upgrade pip
+${BLENDER_BIN_PIP} install -r ${ZPY_SRC_PATH}requirements.txt
 ```
 
 If you are setting up a development environment it will be easier to symlink the zpy pip module directly into the Blender python library. This can be achieved with something like:
 
 ```
-ln -s ~/zumolabs/zpy/zpy ${BLENDER_LIB_PY}/site-packages/
+ln -s ${ZPY_SRC_PATH}/zpy ${BLENDER_LIB_PY}/site-packages/
 ```
 
 You can also symlink the zpy addon in this way. For linux this is:
 
 ```
 mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
-ln -s ~/zumolabs/zpy/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addons/zpy_addon
+ln -s ${ZPY_SRC_PATH}/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addons/zpy_addon
 ```
 
-If you use additional assets from our library, you can set it as an environment variable. Example:
+#### Windows
+
+These instructions use GitBash terminal, make sure to run as administrator!
 
 ```
-export ASSETS="/home/ook/assets"
+export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
+export BLENDER_VERSION="2.91"
+export BLENDER_PATH="/c/Program\ Files/Blender\ Foundation/Blender\ ${BLENDER_VERSION}/${BLENDER_VERSION}"
+export BLENDER_BIN_PY="${BLENDER_PATH}/python/lib/python.exe"
+export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
+```
+
+First symlink zpy and the addon into Blender's install location:
+```
+ln -s ${ZPY_SRC_PATH}/zpy ${BLENDER_PATH}/python/lib/
+ln -s ${ZPY_SRC_PATH}/zpy_addon ${BLENDER_PATH}/scripts/addons
+```
+
+Install the dependencies
+```
+${BLENDER_BIN_PY} -m ensurepip
+${BLENDER_BIN_PY} -m pip install --upgrade pip
+${BLENDER_BIN_PY} -m pip install -r ${ZPY_SRC_PATH}/requirements.txt
 ```
 
 ## Examples
