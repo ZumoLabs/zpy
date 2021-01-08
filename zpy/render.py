@@ -323,25 +323,27 @@ def _render(threads: int = 4,
     """ Render in Blender. """
     start_time = time.time()
     bpy.context.scene.render.threads = threads
+    # try:
+    #     # HACK: This disables the blender log by redirecting output to log file
+    #     # https://blender.stackexchange.com/questions/44560
+    #     open(logfile, 'a').close()
+    #     old = os.dup(1)
+    #     sys.stdout.flush()
+    #     os.close(1)
+    #     os.open(logfile, os.O_WRONLY)
+    # except Exception as e:
+    #     log.warning(f'Render log removal raised exception {e}')
     try:
-        # HACK: This disables the blender log
-        # https://blender.stackexchange.com/questions/44560
-
-        # redirect output to log file
-        open(logfile, 'a').close()
-        old = os.dup(1)
-        sys.stdout.flush()
-        os.close(1)
-        os.open(logfile, os.O_WRONLY)
-
         # do the rendering
         bpy.ops.render.render(write_still=True)
-
-        # disable output redirection
-        os.close(1)
-        os.dup(old)
-        os.close(old)
     except Exception as e:
         log.warning(f'Render raised exception {e}')
+    # try:
+    #     # disable output redirection
+    #     os.close(1)
+    #     os.dup(old)
+    #     os.close(old)
+    # except Exception as e:
+    #     log.warning(f'Render log removal raised exception {e}')
     duration = time.time() - start_time
     log.info(f'Rendering took {duration}s to complete.')
