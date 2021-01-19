@@ -135,7 +135,7 @@ class ExportOperator(bpy.types.Operator):
                 compress=False,
             )
         except Exception as e:
-            self.report({'ERROR'}, e)
+            self.report({'ERROR'}, str(e))
             log.warning(f'Exception when exporting: {e}')
             return {'CANCELLED'}
 
