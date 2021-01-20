@@ -151,7 +151,7 @@ def populate_vertex_colors(
         return
     # Make sure selected object is the active object
     bpy.ops.object.select_all(action='DESELECT')
-    obj.select_set(True)
+    obj.select_set(True, view_layer=bpy.context.scene.view_layers[0])
     bpy.context.view_layer.objects.active = obj
     # Remove any existing vertex color data
     if len(obj.data.sculpt_vertex_colors):
