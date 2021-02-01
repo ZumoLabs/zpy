@@ -33,29 +33,15 @@ def load_blend_obj(
     bpy.ops.file.find_missing_files(directory=str(path.parent / 'TEX'))
     return bpy.data.objects[name]
 
-
 def delete_obj(name=str) -> None:
     """ Delete a human by name. """
     # TODO: Delete a human from the collections
-    
-    #This does not make sense, becasue this just returns a collection if it exists. 
-    #Most likely this function never deletes any object
-        #obj = bpy.data.collections.get(name)
-    
     obj=bpy.data.objects[name]
-
-    
     if obj is not None:
-        
-        #complicates removing
-            #bpy.context.active_object = obj
-        #bpy.ops.object.delete(confirm=False)
-        
         bpy.data.objects.remove( obj, do_unlink=True)
         log.debug(f'Removed obj: {name}')
     else:
         log.debug(f'Could not find obj: {name}')
-
 
 @gin.configurable
 def is_inside(
