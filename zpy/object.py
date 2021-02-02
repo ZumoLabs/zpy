@@ -302,7 +302,8 @@ def make_kdtree(collections: List[bpy.types.Collection]) -> mathutils.kdtree.KDT
     insert_idx = 0
     for obj in for_obj_in_collections(collections):
         for v in obj.data.vertices:
-            kd.insert(v.co, insert_idx)
+            world_coordinate_v = obj.matrix_world @ v.co
+            kd.insert(world_coordinate_v, insert_idx)
             insert_idx += 1
     # Balancing is the most expensive operation
     kd.balance()
@@ -314,28 +315,27 @@ def floor_occupancy(
     x_bounds: Tuple[float],
     y_bounds: Tuple[float],
     z_height: float = 0.0,
-    num_points: int = 5,
+    num_points: int = 20,
 ) -> float:
     """ Get occupancy percentage for floor (XY plane). """
     log.info(f'Calculating floor occupancy ....')
     # TODO: This can definitely be vectorized better
     x_space, x_step = np.linspace(*x_bounds, num=num_points, retstep=True)
     y_space, y_step = np.linspace(*y_bounds, num=num_points, retstep=True)
-    occupancy_grid = np.zeros((num_points, num_points), dtype=np.float)
+    occupancy_grid = np.zeros((num_points, num_points))
     for x_idx, x in enumerate(x_space):
         for y_idx, y in enumerate(y_space):
             x = float(x) 
             y = float(y)
-            closest_point = kdtree.find((x, y, z_height))
-            if (closest_point[0] > (x - x_step)) and \
-                    (closest_point[0] < (x + x_step)):
-                if (closest_point[0] > (y - y_step)) and \
-                        (closest_point[0] < (y + y_step)):
-                        # At least one vertex in cuboid
-                        occupancy_grid[x_idx][y_idx] = 1
+            closest_point = kdtree.find((x, y, z_height))[0]
+            if (closest_point.x > (x - x_step)) and \
+                    (closest_point.x < (x + x_step)):
+                if (closest_point.y > (y - y_step)) and \
+                        (closest_point.y < (y + y_step)):
+                        occupancy_grid[x_idx][y_idx] = 1.0
     log.info(f'... Done.')
-    log.info(f'Floor occupancy grid: {occupancy_grid}')
-    return np.mean(occupancy_grid)
+    log.debug(f'Floor occupancy grid: {str(occupancy_grid)}')
+    return float(np.mean(occupancy_grid.copy()))
 
 
 def volume_occupancy(
@@ -343,7 +343,7 @@ def volume_occupancy(
     x_bounds: Tuple[float],
     y_bounds: Tuple[float],
     z_bounds: Tuple[float],
-    num_points: int = 5,
+    num_points: int = 20,
 ) -> float:
     """ Get occupancy percentage for volume. """
     log.info(f'Calculating volume occupancy ....')
@@ -351,22 +351,21 @@ def volume_occupancy(
     x_space, x_step = np.linspace(*x_bounds, num=num_points, retstep=True)
     y_space, y_step = np.linspace(*y_bounds, num=num_points, retstep=True)
     z_space, z_step = np.linspace(*z_bounds, num=num_points, retstep=True)
-    occupancy_grid = np.zeros((num_points, num_points, num_points), dtype=np.float)
+    occupancy_grid = np.zeros((num_points, num_points, num_points))
     for x_idx, x in enumerate(x_space):
         for y_idx, y in enumerate(y_space):
             for z_idx, z in enumerate(z_space):
                 x = float(x) 
                 y = float(y)
                 z = float(z)
-                closest_point = kdtree.find((x, y, z))
-                if (closest_point[0] > (x - x_step)) and \
-                     (closest_point[0] < (x + x_step)):
-                    if (closest_point[0] > (y - y_step)) and \
-                         (closest_point[0] < (y + y_step)):
-                        if (closest_point[0] > (z - z_step)) and \
-                             (closest_point[0] < (z + z_step)):
-                            # At least one vertex in cuboid
-                            occupancy_grid[x_idx][y_idx][z_idx] = 1
+                closest_point = kdtree.find((x, y, z))[0]
+                if (closest_point.x > (x - x_step)) and \
+                     (closest_point.x < (x + x_step)):
+                    if (closest_point.y > (y - y_step)) and \
+                         (closest_point.y < (y + y_step)):
+                        if (closest_point.z > (z - z_step)) and \
+                             (closest_point.z < (z + z_step)):
+                            occupancy_grid[x_idx][y_idx][z_idx] = 1.0
     log.info(f'... Done.')
-    log.info(f'Volume occupancy grid: {occupancy_grid}')
-    return np.mean(occupancy_grid)
+    log.debug(f'Volume occupancy grid: {str(occupancy_grid)}')
+    return float(np.mean(occupancy_grid.copy()))
