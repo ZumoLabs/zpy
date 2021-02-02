@@ -40,6 +40,7 @@ FILE_REGEX = {
     'stereo left image': 'IMG_[0-9]*_stereoL' + IMAGE_REGEX,
     'stereo right image': 'IMG_[0-9]*_stereoR' + IMAGE_REGEX,
     'rgb image': 'IMG_[0-9]*_rgb' + IMAGE_REGEX,
+    'custom image': 'IMG_[0-9]*' + IMAGE_REGEX,
     'image': IMAGE_REGEX,
     # Annotations
     'zumo annotation': 'ZUMO_META.json',
@@ -83,6 +84,11 @@ def file_is_of_type(filename: Union[str, Path], filetype: str) -> bool:
 def make_rgb_image_name(idx: int, extension: str = '.png') -> str:
     """ Return rgb image name from image id. """
     return 'IMG_%08d_rgb' % idx + extension
+
+
+def make_custom_image_name(idx: int, name: str, extension: str = '.png') -> str:
+    """ Return rgb image name from image id. """
+    return 'IMG_%08d_%s' % (idx, name) + extension
 
 
 def make_cseg_image_name(idx: int, extension: str = '.png') -> str:

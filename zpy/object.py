@@ -4,11 +4,12 @@
 import logging
 import random
 from pathlib import Path
-from typing import Tuple, Union, List, Any
+from typing import Any, List, Tuple, Union
 
 import bpy
 import gin
 import mathutils
+import numpy as np
 
 import zpy
 
@@ -33,15 +34,17 @@ def load_blend_obj(
     bpy.ops.file.find_missing_files(directory=str(path.parent / 'TEX'))
     return bpy.data.objects[name]
 
+
 def delete_obj(name=str) -> None:
     """ Delete a human by name. """
     # TODO: Delete a human from the collections
-    obj=bpy.data.objects[name]
+    obj = bpy.data.objects[name]
     if obj is not None:
-        bpy.data.objects.remove( obj, do_unlink=True)
+        bpy.data.objects.remove(obj, do_unlink=True)
         log.debug(f'Removed obj: {name}')
     else:
         log.debug(f'Could not find obj: {name}')
+
 
 @gin.configurable
 def is_inside(
@@ -76,21 +79,23 @@ def for_obj_in_selected_objs(context) -> bpy.types.Object:
         yield obj
 
 
-def for_obj_in_collections(list_of_collections: List[Any]) -> bpy.types.Object:
+def for_obj_in_collections(
+    collections: List[bpy.types.Collection],
+) -> bpy.types.Object:
     """ Yield objects in list of collection. """
-    for collection in list_of_collections:
+    for collection in collections:
         for obj in collection.all_objects:
             # This gives you direct access to data block
             yield bpy.data.objects[obj.name]
 
 
 def randomly_hide_within_collection(
-    list_of_collections: List[Any],
+    collections: List[bpy.types.Collection],
     chance_to_hide: float = 0.9,
 ) -> None:
     """ Randomly hide objects in a list of collections. """
     to_hide = []
-    for obj in for_obj_in_collections(list_of_collections):
+    for obj in for_obj_in_collections(collections):
         if random.random() < chance_to_hide:
             to_hide.append(obj.name)
     # HACK: hide objects by name, this causes segfault
@@ -291,23 +296,77 @@ def make_kdtree(collections: List[bpy.types.Collection]) -> mathutils.kdtree.KDT
     # First get the size of the objects (number of vertices)
     size = 0
     for obj in for_obj_in_collections(collections):
-        size += len(obj.data.mesh.vertices)
+        size += len(obj.data.vertices)
     # Then add them to a tree object
     kd = mathutils.kdtree.KDTree(size)
+    insert_idx = 0
     for obj in for_obj_in_collections(collections):
-        for i, v in enumerate(obj.data.mesh.vertices):
-            kd.insert(v.co, i)
+        for v in obj.data.vertices:
+            kd.insert(v.co, insert_idx)
+            insert_idx += 1
     # Balancing is the most expensive operation
     kd.balance()
     return kd
 
-def floor_occupancy(collection: bpy.types.Collection,
-                    floor_x_bounds: Tuple[float],
-                    floor_y_bounds: Tuple[float],
-                    ) -> float:
-    """ Get occupancy percentage for floor (XY plane). """
-    pass
 
-def volume_occupancy(collection) -> float:
+def floor_occupancy(
+    kdtree: mathutils.kdtree.KDTree,
+    x_bounds: Tuple[float],
+    y_bounds: Tuple[float],
+    z_height: float = 0.0,
+    num_points: int = 5,
+) -> float:
+    """ Get occupancy percentage for floor (XY plane). """
+    log.info(f'Calculating floor occupancy ....')
+    # TODO: This can definitely be vectorized better
+    x_space, x_step = np.linspace(*x_bounds, num=num_points, retstep=True)
+    y_space, y_step = np.linspace(*y_bounds, num=num_points, retstep=True)
+    occupancy_grid = np.zeros((num_points, num_points), dtype=np.float)
+    for x_idx, x in enumerate(x_space):
+        for y_idx, y in enumerate(y_space):
+            x = float(x) 
+            y = float(y)
+            closest_point = kdtree.find((x, y, z_height))
+            if (closest_point[0] > (x - x_step)) and \
+                    (closest_point[0] < (x + x_step)):
+                if (closest_point[0] > (y - y_step)) and \
+                        (closest_point[0] < (y + y_step)):
+                        # At least one vertex in cuboid
+                        occupancy_grid[x_idx][y_idx] = 1
+    log.info(f'... Done.')
+    log.info(f'Floor occupancy grid: {occupancy_grid}')
+    return np.mean(occupancy_grid)
+
+
+def volume_occupancy(
+    kdtree: mathutils.kdtree.KDTree,
+    x_bounds: Tuple[float],
+    y_bounds: Tuple[float],
+    z_bounds: Tuple[float],
+    num_points: int = 5,
+) -> float:
     """ Get occupancy percentage for volume. """
-    pass
+    log.info(f'Calculating volume occupancy ....')
+    # TODO: This can definitely be vectorized better
+    x_space, x_step = np.linspace(*x_bounds, num=num_points, retstep=True)
+    y_space, y_step = np.linspace(*y_bounds, num=num_points, retstep=True)
+    z_space, z_step = np.linspace(*z_bounds, num=num_points, retstep=True)
+    occupancy_grid = np.zeros((num_points, num_points, num_points), dtype=np.float)
+    for x_idx, x in enumerate(x_space):
+        for y_idx, y in enumerate(y_space):
+            for z_idx, z in enumerate(z_space):
+                x = float(x) 
+                y = float(y)
+                z = float(z)
+                closest_point = kdtree.find((x, y, z))
+                if (closest_point[0] > (x - x_step)) and \
+                     (closest_point[0] < (x + x_step)):
+                    if (closest_point[0] > (y - y_step)) and \
+                         (closest_point[0] < (y + y_step)):
+                        if (closest_point[0] > (z - z_step)) and \
+                             (closest_point[0] < (z + z_step)):
+                            # At least one vertex in cuboid
+                            occupancy_grid[x_idx][y_idx][z_idx] = 1
+    log.info(f'... Done.')
+    log.info(f'Volume occupancy grid: {occupancy_grid}')
+    return np.mean(occupancy_grid)
