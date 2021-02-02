@@ -272,3 +272,45 @@ def jitter(
               random.uniform(scale_range[2][0], scale_range[2][1]),
           ))
     bpy.context.view_layer.update()
+
+
+_SAVED_POSES = {}
+
+
+def save_pose(obj: bpy.types.Object, pose_name: str) -> None:
+    """ Save a pose (rot and pos) to dict. """
+    log.info(f'Saving pose {pose_name} based on object {obj.name}')
+    _SAVED_POSES[pose_name] = obj.matrix_world.copy()
+
+
+def restore_pose(obj: bpy.types.Object, pose_name: str) -> None:
+    """ Restore an object to a position. """
+    log.info(f'Restoring pose {pose_name} to object {obj.name}')
+    obj.matrix_world = _SAVED_POSES[pose_name]
+
+
+def make_kdtree(collections: List[bpy.types.Collection]) -> mathutils.kdtree.KDTree:
+    """ Creates a KDTree of vertices from a collection of objects. """
+    # First get the size of the objects (number of vertices)
+    size = 0
+    for obj in for_obj_in_collections(collections):
+        size += len(obj.data.mesh.vertices)
+    # Then add them to a tree object
+    kd = mathutils.kdtree.KDTree(size)
+    for obj in for_obj_in_collections(collections):
+        for i, v in enumerate(obj.data.mesh.vertices):
+            kd.insert(v.co, i)
+    # Balancing is the most expensive operation
+    kd.balance()
+    return kd
+
+def floor_occupancy(collection: bpy.types.Collection,
+                    floor_x_bounds: Tuple[float],
+                    floor_y_bounds: Tuple[float],
+                    ) -> float:
+    """ Get occupancy percentage for floor (XY plane). """
+    pass
+
+def volume_occupancy(collection) -> float:
+    """ Get occupancy percentage for volume. """
+    pass
