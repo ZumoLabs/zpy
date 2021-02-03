@@ -4,7 +4,7 @@
 import logging
 import random
 from pathlib import Path
-from typing import Any, List, Tuple, Union
+from typing import List, Tuple
 
 import bpy
 import gin
@@ -30,7 +30,7 @@ def random_points_in_bounded_3dgauss(
     num_points: int = 20,
     min_distance: float = 0.5,
     max_tries: int = None,
-) -> List(mathutils.Vector):
+) -> List[mathutils.Vector]:
     """ Randomly sample N points from 3D Gaussian into a kdtree. """
     points = []
     kd = mathutils.kdtree.KDTree(num_points)

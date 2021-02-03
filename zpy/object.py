@@ -35,15 +35,19 @@ def load_blend_obj(
     return bpy.data.objects[name]
 
 
-def delete_obj(name=str) -> None:
-    """ Delete a human by name. """
-    # TODO: Delete a human from the collections
-    obj = bpy.data.objects[name]
+def delete_obj(obj: Union[bpy.types.Object, str]) -> None:
+    """ Delete an object. """
+    if isinstance(obj, str):
+        obj = bpy.data.objects[obj]
     if obj is not None:
-        bpy.data.objects.remove(obj, do_unlink=True)
-        log.debug(f'Removed obj: {name}')
+        log.debug(f'Removing obj: {obj.name}')
+        # Make sure selected object is the active object
+        bpy.ops.object.select_all(action='DESELECT')
+        obj.select_set(True)
+        bpy.ops.object.delete()
+        # bpy.data.objects.remove(obj, do_unlink=True)
     else:
-        log.debug(f'Could not find obj: {name}')
+        log.debug(f'Could not find object')
 
 
 @gin.configurable
