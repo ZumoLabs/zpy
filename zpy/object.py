@@ -197,6 +197,20 @@ def random_position_within_constraints(
         )
 
 
+def copy(
+    obj: bpy.types.Object,
+    name: str = None,
+    collection: bpy.types.Collection = None,
+) -> bpy.types.Object:
+    """ Create a copy of the object. """
+    new_obj = bpy.data.objects.new(obj.name, obj.data)
+    if name is not None:
+        new_obj.name = name
+    if collection is not None:
+        collection.objects.link(new_obj)
+    return new_obj
+
+
 def translate(
     obj: bpy.types.Object,
     translation: Tuple[float] = (0, 0, 0),
@@ -290,83 +304,3 @@ def restore_pose(obj: bpy.types.Object, pose_name: str) -> None:
     """ Restore an object to a position. """
     log.info(f'Restoring pose {pose_name} to object {obj.name}')
     obj.matrix_world = _SAVED_POSES[pose_name]
-
-
-def make_kdtree(collections: List[bpy.types.Collection]) -> mathutils.kdtree.KDTree:
-    """ Creates a KDTree of vertices from a collection of objects. """
-    # First get the size of the objects (number of vertices)
-    size = 0
-    for obj in for_obj_in_collections(collections):
-        size += len(obj.data.vertices)
-    # Then add them to a tree object
-    kd = mathutils.kdtree.KDTree(size)
-    insert_idx = 0
-    for obj in for_obj_in_collections(collections):
-        for v in obj.data.vertices:
-            world_coordinate_v = obj.matrix_world @ v.co
-            kd.insert(world_coordinate_v, insert_idx)
-            insert_idx += 1
-    # Balancing is the most expensive operation
-    kd.balance()
-    return kd
-
-
-def floor_occupancy(
-    kdtree: mathutils.kdtree.KDTree,
-    x_bounds: Tuple[float],
-    y_bounds: Tuple[float],
-    z_height: float = 0.0,
-    num_points: int = 20,
-) -> float:
-    """ Get occupancy percentage for floor (XY plane). """
-    log.info(f'Calculating floor occupancy ....')
-    # TODO: This can definitely be vectorized better
-    x_space, x_step = np.linspace(*x_bounds, num=num_points, retstep=True)
-    y_space, y_step = np.linspace(*y_bounds, num=num_points, retstep=True)
-    occupancy_grid = np.zeros((num_points, num_points))
-    for x_idx, x in enumerate(x_space):
-        for y_idx, y in enumerate(y_space):
-            x = float(x) 
-            y = float(y)
-            closest_point = kdtree.find((x, y, z_height))[0]
-            if (closest_point.x > (x - x_step)) and \
-                    (closest_point.x < (x + x_step)):
-                if (closest_point.y > (y - y_step)) and \
-                        (closest_point.y < (y + y_step)):
-                        occupancy_grid[x_idx][y_idx] = 1.0
-    log.info(f'... Done.')
-    log.debug(f'Floor occupancy grid: {str(occupancy_grid)}')
-    return float(np.mean(occupancy_grid.copy()))
-
-
-def volume_occupancy(
-    kdtree: mathutils.kdtree.KDTree,
-    x_bounds: Tuple[float],
-    y_bounds: Tuple[float],
-    z_bounds: Tuple[float],
-    num_points: int = 20,
-) -> float:
-    """ Get occupancy percentage for volume. """
-    log.info(f'Calculating volume occupancy ....')
-    # TODO: This can definitely be vectorized better
-    x_space, x_step = np.linspace(*x_bounds, num=num_points, retstep=True)
-    y_space, y_step = np.linspace(*y_bounds, num=num_points, retstep=True)
-    z_space, z_step = np.linspace(*z_bounds, num=num_points, retstep=True)
-    occupancy_grid = np.zeros((num_points, num_points, num_points))
-    for x_idx, x in enumerate(x_space):
-        for y_idx, y in enumerate(y_space):
-            for z_idx, z in enumerate(z_space):
-                x = float(x) 
-                y = float(y)
-                z = float(z)
-                closest_point = kdtree.find((x, y, z))[0]
-                if (closest_point.x > (x - x_step)) and \
-                     (closest_point.x < (x + x_step)):
-                    if (closest_point.y > (y - y_step)) and \
-                         (closest_point.y < (y + y_step)):
-                        if (closest_point.z > (z - z_step)) and \
-                             (closest_point.z < (z + z_step)):
-                            occupancy_grid[x_idx][y_idx][z_idx] = 1.0
-    log.info(f'... Done.')
-    log.debug(f'Volume occupancy grid: {str(occupancy_grid)}')
-    return float(np.mean(occupancy_grid.copy()))

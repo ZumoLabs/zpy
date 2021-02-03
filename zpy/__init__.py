@@ -7,6 +7,7 @@ del get_versions
 # you know the answer: do let us know :)
 try:
     from zpy import blender
+    from zpy import kdtree
     from zpy import keypoints
     from zpy import camera
     from zpy import material
