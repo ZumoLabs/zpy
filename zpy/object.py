@@ -85,8 +85,9 @@ def for_obj_in_collections(
     """ Yield objects in list of collection. """
     for collection in collections:
         for obj in collection.all_objects:
-            # This gives you direct access to data block
-            yield bpy.data.objects[obj.name]
+            if obj.type == 'MESH':
+                # This gives you direct access to data block
+                yield bpy.data.objects[obj.name]
 
 
 def randomly_hide_within_collection(
