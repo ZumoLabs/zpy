@@ -28,10 +28,13 @@ class OutputCSV(Output):
     @gin.configurable
     def output_annotations(self,
                            annotation_dict_to_csv_row_func : Callable,
-                           annotation_path: Union[str, Path] = None,
+                           annotation_path : Union[str, Path] = None,
+                           header : List[str] = None,
                            ):
         """ Ouput Generic CSV annotations. """
         csv_data = []
+        if header is not None:
+            csv_data.append(header)
         for annotation in self.saver.annotations:
                 row = annotation_dict_to_csv_row_func(annotation)
                 if row is not None:
