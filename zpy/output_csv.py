@@ -62,5 +62,6 @@ def parse_csv_annotations(
     # Make sure all the rows are the same length
     csv_data_iterable = iter(csv_data)
     length = len(next(csv_data_iterable))
+    log.debug(f'Row length in CSV: {[length for l in csv_data_iterable]}')
     if not all(len(l) == length for l in csv_data_iterable):
         raise CSVParseError(f'Not all rows in the CSV have same length {length}')

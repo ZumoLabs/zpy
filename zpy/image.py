@@ -37,10 +37,29 @@ def open_image(image_path: Union[str, Path]) -> np.ndarray:
     return img
 
 
-def remove_alpha_channel(image_path: Union[str, Path]) -> None:
+def remove_alpha_channel(
+    image_path: Union[str, Path]
+) -> None:
     """Remove the alpha channel in an image."""
     img = open_image(image_path)
     io.imsave(image_path, img)
+    log.info(f'Saving image with no alpha channel at {image_path}')
+
+
+@gin.configurable
+def jpeg_compression(
+    image_path: Union[str, Path],
+    quality : int = 40,    
+) -> Path:
+    """Add jpeg compression to an image."""
+    img = open_image(image_path)
+    # Make sure image is jpeg
+    image_path = zpy.files.verify_path(image_path, make=False)
+    if not image_path.suffix == '.jpeg':
+        image_path = image_path.with_suffix('.jpeg')
+    io.imsave(image_path, img, quality=quality)
+    log.info(f'Saving compressed image at {image_path}')
+    return image_path
 
 
 @gin.configurable

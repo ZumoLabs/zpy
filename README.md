@@ -30,6 +30,12 @@ You can install the addon from within Blender itself. Navigate to "Edit -> Prefe
 
 ![Enabling the addon](./doc/install_zpy.png)
 
+Use Blender's python console, install the following pip dependencies:
+
+```
+
+```
+
 ### Install: Using Install Script
 
 ``` 
@@ -115,6 +121,7 @@ export ASSETS="/home/$USER/assets"
 **Tutorial**
 - [Shapes]()
 - [Uploading a Scene]()
+- [Using the CLI]()
 
 **Object Detection**
 - [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
