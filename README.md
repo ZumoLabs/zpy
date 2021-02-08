@@ -24,27 +24,27 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 
 ## Install
 
-``` 
-$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZumoLabs/zpy/main/install.sh?token=<token>)"
-```
-
-You can set `BLENDER_VERSION` `BLENDER_VERSION_FULL` and `ZPY_VERSION`for specific versions 
-
-### Install: Within Blender
+### Install: Using Blender GUI
 
 You can install the addon from within Blender itself. Navigate to "Edit -> Preferences -> Add-ons". You should be able to install and enable the addon from there there.
 
 ![Enabling the addon](./doc/install_zpy.png)
 
-### Install: Developer Environment
+### Install: Using Install Script
 
-If you use additional assets from our library, you can set it as an environment variable. Example:
-
-```
-export ASSETS="/home/ook/assets"
+``` 
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZumoLabs/zpy/main/install.sh?token=<token>)"
 ```
 
-#### Linux
+Set these environment variables for specific versions:
+
+```
+export BLENDER_VERSION="2.91"
+export BLENDER_VERSION_FULL="2.91.0"
+export ZPY_VERSION="v1.3.3"
+```
+
+### Install: Developer Environment (Linux)
 
 ```
 export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
@@ -77,7 +77,7 @@ mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
 ln -s ${ZPY_SRC_PATH}/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addons/zpy_addon
 ```
 
-#### Windows
+### Install: Developer Environment (Windows)
 
 These instructions use GitBash terminal, make sure to run as administrator!
 
@@ -102,20 +102,25 @@ ${BLENDER_BIN_PY} -m pip install --upgrade pip
 ${BLENDER_BIN_PY} -m pip install -r ${ZPY_SRC_PATH}/requirements.txt
 ```
 
+### Install: Asset Library
+
+If you use additional assets from our library, you can set it as an environment variable. Example:
+
+```
+export ASSETS="/home/$USER/assets"
+```
+
 ## Examples
 
 **Tutorial**
 - [Shapes]()
-
-**Classification**
-- [Transformers in Vision]()
 
 **Object Detection**
 - [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
 - [Vote Counting](https://towardsdatascience.com/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data-d8e24eca114d)
 
 **Segmentation**
-- [Monkey Demo]()
+- [Suzanne and Friends]()
 
 ## Contributing
 
