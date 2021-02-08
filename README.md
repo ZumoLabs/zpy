@@ -114,6 +114,7 @@ export ASSETS="/home/$USER/assets"
 
 **Tutorial**
 - [Shapes]()
+- [Uploading a Scene]()
 
 **Object Detection**
 - [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
