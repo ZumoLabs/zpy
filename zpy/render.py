@@ -16,35 +16,6 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def toggle_hidden(
-    obj: bpy.types.Object,
-    hidden: bool = True,
-    filter_string: str = None,
-) -> None:
-    """ Recursive function to make object and children invisible.
-
-    Optionally filter by a string in object name.
-
-    """
-    if obj is None:
-        log.warning('Empty object given to toggle_hidden')
-        return
-    if hasattr(obj, 'hide_render') and hasattr(obj, 'hide_viewport'):
-        if (filter_string is None) or (filter_string in obj.name):
-            log.debug(f'Hiding object {obj.name}')
-            bpy.data.objects[obj.name].select_set(True)
-            bpy.data.objects[obj.name].hide_render = hidden
-            bpy.data.objects[obj.name].hide_viewport = hidden
-        else:
-            log.debug(
-                f'Object {obj.name} does not contain filter string {filter_string}')
-    else:
-        log.warning('Object does not have hide properties')
-        return
-    for child in obj.children:
-        toggle_hidden(child, hidden=hidden, filter_string=filter_string)
-
-
 @gin.configurable
 def make_aov_pass(
     style: str = 'instance',
@@ -151,6 +122,14 @@ def make_aov_file_output_node(
 
     return fileout_node
 
+def add_lens_dirt_to_node(
+    node_tree : bpy.types.NodeTree,
+    input_node : bpy.types.Node,
+    output_node : bpy.types.Node,
+) -> bpy.types.Node:
+    """ Add lens dirt effect to a compositor node. """
+    # TODO: @kursad code to create dirt effect here.
+    return None
 
 @gin.configurable
 def render_aov(
@@ -323,6 +302,7 @@ def _render(threads: int = 4,
     """ Render in Blender. """
     start_time = time.time()
     bpy.context.scene.render.threads = threads
+    # TODO: The commented out code here only works on Linux (fails on Windows)
     # try:
     #     # HACK: This disables the blender log by redirecting output to log file
     #     # https://blender.stackexchange.com/questions/44560
@@ -334,7 +314,7 @@ def _render(threads: int = 4,
     # except Exception as e:
     #     log.warning(f'Render log removal raised exception {e}')
     try:
-        # do the rendering
+        # This is the actual render call
         bpy.ops.render.render(write_still=True)
     except Exception as e:
         log.warning(f'Render raised exception {e}')

@@ -93,6 +93,33 @@ def for_obj_in_collections(
                 # This gives you direct access to data block
                 yield bpy.data.objects[obj.name]
 
+def toggle_hidden(
+    obj: bpy.types.Object,
+    hidden: bool = True,
+    filter_string: str = None,
+) -> None:
+    """ Recursive function to make object and children invisible.
+
+    Optionally filter by a string in object name.
+
+    """
+    if obj is None:
+        log.warning('Empty object given to toggle_hidden')
+        return
+    if hasattr(obj, 'hide_render') and hasattr(obj, 'hide_viewport'):
+        if (filter_string is None) or (filter_string in obj.name):
+            log.debug(f'Hiding object {obj.name}')
+            bpy.data.objects[obj.name].select_set(True)
+            bpy.data.objects[obj.name].hide_render = hidden
+            bpy.data.objects[obj.name].hide_viewport = hidden
+        else:
+            log.debug(
+                f'Object {obj.name} does not contain filter string {filter_string}')
+    else:
+        log.warning('Object does not have hide properties')
+        return
+    for child in obj.children:
+        toggle_hidden(child, hidden=hidden, filter_string=filter_string)
 
 def randomly_hide_within_collection(
     collections: List[bpy.types.Collection],
