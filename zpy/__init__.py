@@ -5,10 +5,11 @@ del get_versions
 import logging as py_logging
 log = py_logging.getLogger(__name__)
 
+# Import files first since it is used in other zpy modules
+from zpy import files
 # Color utilities will reset the random colors on import
 from zpy import color
 color.reset()
-from zpy import files
 from zpy import gin
 from zpy import image
 from zpy import logging

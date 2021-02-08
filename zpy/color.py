@@ -6,7 +6,7 @@ import random
 from pathlib import Path
 from typing import List, Tuple, Union
 
-from . import file
+import zpy
 
 log = logging.getLogger(__name__)
 
@@ -20,8 +20,8 @@ def reset():
     """ Load colors from file and reset random idx. """
     global COLORS, RANDOM_COLOR_IDX
     _path = Path(__file__).parent / COLORS_FILE
-    file.verify_path(_path)
-    COLORS = file.read_json(_path)
+    zpy.files.verify_path(_path)
+    COLORS = zpy.files.read_json(_path)
     RANDOM_COLOR_IDX = 1
 
 
