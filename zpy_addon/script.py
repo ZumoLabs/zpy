@@ -48,7 +48,7 @@ class RunOperator(Operator):
     bl_idname = "scene.zpy_run"
     bl_label = "Run"
     bl_description = "Launch the run script in Blender's texts."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
@@ -67,7 +67,7 @@ class LoadGinConfigOperator(bpy.types.Operator):
     bl_idname = "scene.zpy_load_gin_config"
     bl_label = "Load gin config from file."
     bl_description = "Load gin config from file."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     # Default name of the texts in Blender when loading
@@ -85,7 +85,7 @@ class PushGinConfigOperator(bpy.types.Operator):
     bl_idname = "scene.zpy_push_gin_config"
     bl_label = "Push gin config to file."
     bl_description = "Push gin config to file."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
@@ -101,7 +101,7 @@ class LoadRunpyOperator(bpy.types.Operator):
     bl_idname = "scene.zpy_load_runpy"
     bl_label = "Load run.py from file."
     bl_description = "Load run.py from file."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     # Default name of the texts in Blender when loading
@@ -119,7 +119,7 @@ class PushRunpyOperator(bpy.types.Operator):
     bl_idname = "scene.zpy_push_runpy"
     bl_label = "Push run.py to file."
     bl_description = "Push run.py to file."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
@@ -134,7 +134,7 @@ class ScriptPanel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Script"
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
 
     def draw(self, context):
         layout = self.layout

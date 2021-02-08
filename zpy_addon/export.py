@@ -56,7 +56,7 @@ class OpenExportDirOperator(bpy.types.Operator):
     bl_idname = "scene.zpy_open_export_dir"
     bl_label = "Open Export Dir"
     bl_description = "Open file browser at export dir."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
@@ -70,7 +70,7 @@ class CleanUpDirOperator(bpy.types.Operator):
     bl_idname = "scene.zpy_cleanup_scene"
     bl_label = "Clean Up Export Dir"
     bl_description = "Clean up export dir."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
@@ -95,7 +95,7 @@ class ExportOperator(bpy.types.Operator):
     bl_idname = "scene.zpy_export_scene"
     bl_label = "Export scene"
     bl_description = "Export scene for ingest to Data Portal."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
@@ -178,7 +178,7 @@ class ExportPanel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Export"
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
 
     def draw(self, context):
         layout = self.layout

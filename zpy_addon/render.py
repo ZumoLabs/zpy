@@ -30,7 +30,7 @@ class RenderOperator(Operator):
     bl_idname = "scene.zpy_render"
     bl_label = "Render"
     bl_description = "Render out segmented images."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -68,7 +68,7 @@ class CleanOutputDirOperator(bpy.types.Operator):
     bl_idname = "scene.zpy_cleanup_output_dir"
     bl_label = "Clean Output Dir"
     bl_description = "Clean output dir."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
@@ -81,7 +81,7 @@ class OpenOutputDirOperator(Operator):
     bl_idname = "scene.zpy_open_output_dir"
     bl_label = "Open Output Dir"
     bl_description = "Open file browser at output dir."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
@@ -95,7 +95,7 @@ class RenderPanel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Render"
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
 
     def draw(self, context):
         layout = self.layout
