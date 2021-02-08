@@ -3,6 +3,13 @@ from distutils.core import setup
 from setuptools import find_packages
 import versioneer
 
+def get_requirements_from_file(filepath):
+    requires = []
+    with open(filepath, 'r') as f:
+        requires.append(f.readline())
+    return requires
+
+
 setup(
   name='zpy-zumo',
   version=versioneer.get_version(),
@@ -11,13 +18,10 @@ setup(
   author='Zumo Labs',
   author_email='infra@zumolabs.ai',
   packages=find_packages(),
-  install_requires=[
-    'numpy==1.19.4',
-    'gin-config==0.3.0',
-    'scikit-image==0.17.2',
-    'shapely==1.7.1',
-    'seaborn==0.11.0',
-    'ptvsd==4.3.2'
-  ],
+  install_requires=get_requirements_from_file('requirements.txt'),
   include_package_data=True,
+  entry_points='''
+    [console_scripts]
+    zpy=zcli.cli:cli
+  '''
 )
