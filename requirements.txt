@@ -3,6 +3,5 @@ gin-config
 versioneer
 scikit-image
 shapely
-ptvsd
 seaborn
 zmq
