@@ -32,7 +32,7 @@ def registerSceneProperties():
     bpy.types.Scene.zpy_export_path = bpy.props.StringProperty(
         name='Export Path',
         description="Export path for packaged zumo scenes.",
-        default=str(zpy.file.default_temp_path()),
+        default=str(zpy.files.default_temp_path()),
         subtype='DIR_PATH',
     )
 
@@ -60,7 +60,7 @@ class OpenExportDirOperator(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        zpy.file.open_folder_in_explorer(
+        zpy.files.open_folder_in_explorer(
             context.scene.zpy_export_path, make=True)
         return {'FINISHED'}
 
@@ -76,12 +76,12 @@ class CleanUpDirOperator(bpy.types.Operator):
     def execute(self, context):
         log.info('Cleaning up scene.')
         # Remove any backup blender files
-        zpy.file.remove_files_with_suffix(
+        zpy.files.remove_files_with_suffix(
             path=context.scene.zpy_export_path,
             exts=['.blend1', '.blend2', '.blend3'],
         )
         # Remove any existing nfo files
-        zpy.file.remove_files_with_suffix(
+        zpy.files.remove_files_with_suffix(
             path=context.scene.zpy_export_path,
             exts=['.nfo'],
         )
@@ -109,12 +109,12 @@ class ExportOperator(bpy.types.Operator):
         # Create export directory in the Blender filepath
         export_dir_name = f'{context.scene.zpy_scene_name}_v{context.scene.zpy_scene_version}'
         export_path = Path(context.scene.zpy_export_path) / export_dir_name
-        zpy.file.verify_path(export_path, make=True)
+        zpy.files.verify_path(export_path, make=True)
 
         # Find missing files before export
         log.info('Export Step 1 of 4: Checking for any missing files.')
         bpy.context.window_manager.progress_update(10)
-        _path = zpy.file.verify_path('$ASSETS', make=False)
+        _path = zpy.files.verify_path('$ASSETS', make=False)
         bpy.ops.file.find_missing_files(directory=str(_path))
 
         # Fix all the asset paths by packing them into the .blend
@@ -149,7 +149,7 @@ class ExportOperator(bpy.types.Operator):
         nfo_file.write_text('')
 
         # Output scene information in ZUMO_META
-        zpy.file.write_json(
+        zpy.files.write_json(
             export_path / 'ZUMO_META.json',
             zpy.blender.scene_information(),
         )
@@ -159,7 +159,7 @@ class ExportOperator(bpy.types.Operator):
         # Zip up the exported directory for easy upload
         log.info('Export Step 4 of 4: Zipping up package.')
         bpy.context.window_manager.progress_update(90)
-        zpy.file.zip_file(
+        zpy.files.zip_file(
             in_path=export_path,
             zip_path=Path(context.scene.zpy_export_path) /
             f'{export_dir_name}.zip',

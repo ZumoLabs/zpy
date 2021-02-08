@@ -22,7 +22,7 @@ def load_blend_obj(
         link: bool = False,
 ) -> bpy.types.Object:
     """ Load object from blend file. """
-    path = zpy.file.verify_path(path, make=False)
+    path = zpy.files.verify_path(path, make=False)
     with bpy.data.libraries.load(str(path), link=link) as (data_from, data_to):
         for from_obj in data_from.objects:
             if from_obj.startswith(name):

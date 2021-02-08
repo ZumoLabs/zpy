@@ -47,7 +47,7 @@ class OutputCSV(Output):
         else:
             annotation_path = self.saver.annotation_path
         # Write out annotations to file
-        zpy.file.write_csv(annotation_path, csv_data)
+        zpy.files.write_csv(annotation_path, csv_data)
         # Verify annotations
         parse_csv_annotations(annotation_path)
 
@@ -58,7 +58,7 @@ def parse_csv_annotations(
 ) -> None:
     """ Parse CSV annotations """
     log.info(f'Verifying CSV annotations at {annotation_file}...')
-    csv_data = zpy.file.read_csv(annotation_file)
+    csv_data = zpy.files.read_csv(annotation_file)
     # Make sure all the rows are the same length
     csv_data_iterable = iter(csv_data)
     length = len(next(csv_data_iterable))

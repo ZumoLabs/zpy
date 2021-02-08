@@ -48,7 +48,7 @@ class ImageSaver(zpy.saver.Saver):
         image.update(**kwargs)
         image['id'] = len(self.images.keys())
         image['id'] += 0 if zero_indexed else 1
-        log.debug(f'Adding image: {zpy.file.pretty_print(image)}')
+        log.debug(f'Adding image: {zpy.files.pretty_print(image)}')
         self.images[image['id']] = image
         self.image_name_to_id[name] = image['id']
 
@@ -82,7 +82,7 @@ class ImageSaver(zpy.saver.Saver):
             annotation['subcategory_id'] = subcategory_id
         annotation.update(**kwargs)
         annotation['id'] = len(self.annotations)
-        log.info(f'Adding annotation: {zpy.file.pretty_print(annotation)}')
+        log.info(f'Adding annotation: {zpy.files.pretty_print(annotation)}')
         # For segmentation images, add bbox/poly/mask annotation
         if seg_image is not None and seg_color is not None:
             seg_image_id = self.image_name_to_id.get(seg_image, None)
@@ -103,9 +103,9 @@ class ImageSaver(zpy.saver.Saver):
                                          ) -> Dict:
         """ Populate annotation field based on segmentation image. """
         # Verify that file is segmentation image
-        is_iseg = zpy.file.file_is_of_type(
+        is_iseg = zpy.files.file_is_of_type(
             image_name, 'instance segmentation image')
-        is_cseg = zpy.file.file_is_of_type(
+        is_cseg = zpy.files.file_is_of_type(
             image_name, 'class segmentation image')
         if not (is_iseg or is_cseg):
             raise ValueError('Image is not segmentation image')
@@ -142,7 +142,7 @@ class ImageSaver(zpy.saver.Saver):
         log.info('Output annotated images...')
         import zpy.viz
         output_path = self.output_dir / self.HIDDEN_METAFOLDER_FILENAME
-        output_path = zpy.file.verify_path(
+        output_path = zpy.files.verify_path(
             output_path, make=True, check_dir=True)
         for i, image in enumerate(self.images.values()):
             # Annotation images take a while
@@ -165,10 +165,10 @@ class ImageSaver(zpy.saver.Saver):
         log.info(
             f'perform meta analysis image_sample_size:{image_sample_size}...')
 
-        import zpy.file
+        import zpy.files
         image_paths = [i['output_path']
                        for i in self.images.values() if i['style'] == 'default']
-        image_paths = zpy.file.sample(
+        image_paths = zpy.files.sample(
             image_paths, sample_size=image_sample_size)
         opened_images = [zpy.image.open_image(i) for i in image_paths]
         flat_images = zpy.image.flatten_images(opened_images)
@@ -186,7 +186,7 @@ class ImageSaver(zpy.saver.Saver):
         }
 
         output_path = self.output_dir / self.HIDDEN_METAFOLDER_FILENAME
-        output_path = zpy.file.verify_path(
+        output_path = zpy.files.verify_path(
             output_path, make=True, check_dir=True)
         self.write_datasheet(
             output_path / self.HIDDEN_DATASHEET_FILENAME, meta_dict)

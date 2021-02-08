@@ -58,12 +58,12 @@ def kdtree_from_collection(collections: List[bpy.types.Collection]) -> mathutils
     """ Creates a KDTree of vertices from a collection of objects. """
     # First get the size of the objects (number of vertices)
     size = 0
-    for obj in zpy.object.for_obj_in_collections(collections):
+    for obj in zpy.objects.for_obj_in_collections(collections):
         size += len(obj.data.vertices)
     # Then add them to a tree object
     kd = mathutils.kdtree.KDTree(size)
     insert_idx = 0
-    for obj in zpy.object.for_obj_in_collections(collections):
+    for obj in zpy.objects.for_obj_in_collections(collections):
         for v in obj.data.vertices:
             world_coordinate_v = obj.matrix_world @ v.co
             kd.insert(world_coordinate_v, insert_idx)

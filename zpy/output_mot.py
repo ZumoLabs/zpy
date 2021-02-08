@@ -90,7 +90,7 @@ class OutputMOT(Output):
         else:
             annotation_path = self.saver.annotation_path
         # Write out annotations to file
-        zpy.file.write_csv(annotation_path, mot)
+        zpy.files.write_csv(annotation_path, mot)
         # Verify annotations
         parse_mot_annotations(annotation_path)
 
@@ -101,7 +101,7 @@ def parse_mot_annotations(
 ) -> None:
     """ Parse MOT annotations """
     log.info(f'Verifying MOT annotations at {annotation_file}...')
-    mot = zpy.file.read_csv(annotation_file)
+    mot = zpy.files.read_csv(annotation_file)
     for row in mot:
         if not len(row) == 9:
             raise MOTParseError(

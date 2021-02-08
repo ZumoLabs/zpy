@@ -34,17 +34,17 @@ class Saver:
                  ):
         # the output dir
         if output_dir is None:
-            output_dir = zpy.file.default_temp_path()
-        self.output_dir = zpy.file.verify_path(
+            output_dir = zpy.files.default_temp_path()
+        self.output_dir = zpy.files.verify_path(
             output_dir, make=True, check_dir=True)
         log.debug(f'Saver output directory at {output_dir}')
         if clean_dir:
-            zpy.file.clean_dir(self.output_dir)
+            zpy.files.clean_dir(self.output_dir)
         # Annotation files can be optionally written out to a different dir
         if annotation_path is None:
             self.annotation_path = annotation_path
         else:
-            self.annotation_path = zpy.file.verify_path(annotation_path)
+            self.annotation_path = zpy.files.verify_path(annotation_path)
             log.debug(f'Saver annotation path at {annotation_path}')
         # Very similar keys to COCO-style
         self.metadata = {
@@ -106,7 +106,7 @@ class Saver:
         category.update(**kwargs)
         category['id'] = len(self.categories.keys())
         category['id'] += 0 if zero_indexed else 1
-        log.debug(f'Adding category: {zpy.file.pretty_print(category)}')
+        log.debug(f'Adding category: {zpy.files.pretty_print(category)}')
         self.categories[category['id']] = category
         self.category_name_to_id[name] = category['id']
 

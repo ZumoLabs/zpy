@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 def open_image(image_path: Union[str, Path]) -> np.ndarray:
     """Open image from path to ndarray."""
-    image_path = zpy.file.verify_path(image_path, make=False)
+    image_path = zpy.files.verify_path(image_path, make=False)
     img = None
     try:
         img = io.imread(image_path)
@@ -128,7 +128,7 @@ def seg_to_annotations(
         max_categories: int = 1000):
     """ Convert a segmentation image and bounding box to polygon segmentations. """
     log.info(f'Extracting annotations from segmentation: {image_path}')
-    image_path = zpy.file.verify_path(image_path, make=False)
+    image_path = zpy.files.verify_path(image_path, make=False)
     img = open_image(image_path)
     img_height, img_width = img.shape[0], img.shape[1]
     # Unique colors represent each unique category

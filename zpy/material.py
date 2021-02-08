@@ -125,7 +125,7 @@ def make_mat(name: str = None,
         tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
         tex_node.name = 'ImageTexture'
         coord_node = mat.node_tree.nodes.new('ShaderNodeTexCoord')
-        texture_path = zpy.file.verify_path(texture_path, make=False)
+        texture_path = zpy.files.verify_path(texture_path, make=False)
         bpy.ops.image.open(filepath=str(texture_path))
         tex_node.image = bpy.data.images[texture_path.name]
         tex_node.image.colorspace_settings.name = 'Filmic Log'

@@ -48,7 +48,7 @@ class VideoSaver(zpy.saver.Saver):
         video.update(**kwargs)
         video['id'] = len(self.videos.keys())
         video['id'] += 0 if zero_indexed else 1
-        log.debug(f'Adding video: {zpy.file.pretty_print(video)}')
+        log.debug(f'Adding video: {zpy.files.pretty_print(video)}')
         self.videos[video['id']] = video
         self.video_name_to_id[name] = video['id']
 

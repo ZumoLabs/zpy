@@ -36,7 +36,7 @@ def plotter(func):
                 show: bool = False,
                 **kwargs,
                 ) -> matplotlib.figure.Figure:
-        output_path = zpy.file.verify_path(
+        output_path = zpy.files.verify_path(
             output_path, make=True, check_dir=True)
         plt.style.use('fivethirtyeight')
         plot_name, fig = func(**kwargs)
