@@ -33,7 +33,9 @@ You can install the addon from within Blender itself. Navigate to "Edit -> Prefe
 Use Blender's python console, install the following pip dependencies:
 
 ```
-
+#TODO
+import subprocess
+subprocess.call([ bpy.app.binary_path_python,"-m","pip", "install", "--upgrade","pip"])
 ```
 
 ### Install: Using Install Script
