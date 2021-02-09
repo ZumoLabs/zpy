@@ -52,12 +52,12 @@ def jpeg_compression(
     quality : int = 40,    
 ) -> Path:
     """Add jpeg compression to an image."""
-    img = open_image(image_path)
-    # Make sure image is jpeg
     image_path = zpy.files.verify_path(image_path, make=False)
+    img = io.imread(image_path)
+    # Make sure image is jpeg
     if not image_path.suffix == '.jpeg':
         image_path = image_path.with_suffix('.jpeg')
-    io.imsave(image_path, img, quality=quality)
+    io.imsave(image_path, arr=img, quality=quality)
     log.info(f'Saving compressed image at {image_path}')
     return image_path
 
