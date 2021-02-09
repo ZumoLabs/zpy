@@ -1,6 +1,6 @@
 from zcli.config import login, initialize_config, switch_env, read_config
 from zcli.datasets import fetch_datasets, fetch_dataset
-from zcli.scenes import fetch_scenes
+from zcli.scenes import fetch_scenes, fetch_scene, create_scene
 from zcli.jobs import fetch_jobs
 from zcli.utils import to_pathlib_path
 
@@ -107,7 +107,48 @@ def get_dataset(name, dtype, path):
 @click.argument('path')
 def get_scene(name, path):
     config = read_config()
+    dir_path = to_pathlib_path(path)
+    if not dir_path.exists():
+        log.info(f'output path {dir_path} does not exist')
+        return
     fetch_scene(name, path, config['ENDPOINT'], config['TOKEN'])
+
+##############
+### UPLOAD ###
+##############
+
+@cli.group()
+def upload():
+    """ upload resource """
+    pass
+
+
+@upload.command('scene')
+@click.argument('name')
+@click.argument('path')
+def upload_scene(name, path):
+    config = read_config()
+    input_path = to_pathlib_path(path)
+    if not input_path.exists():
+        log.warning(f'input path {input_path} does not exist')
+        return
+    if input_path.suffix != '.zip':
+        log.warning(f'input path {input_path} not a zip file')
+    create_scene(name, path, config['ENDPOINT'], config['TOKEN'])
+
+
+@upload.command('dataset')
+@click.argument('name')
+@click.argument('path')
+def upload_dataset(name, path):
+    config = read_config()
+    input_path = to_pathlib_path(path)
+    if not input_path.exists():
+        log.info(f'input path {input_path} does not exist')
+        return
+    if input_path.suffix != '.zip':
+        log.warning(f'input path {input_path} not a zip file')
+    create_uploaded_dataset(name, path, config['ENDPOINT'], config['TOKEN'])
 
 
 ##############
@@ -115,27 +156,27 @@ def get_scene(name, path):
 ##############
 
 
-#@click.group()
-#def create():
-#    """ create resource """
-#    pass
-#
-#@click.command('dataset')
-#def create_dataset():
-#    log.info('create dataset')
-#
-#@click.command('scene')
-#def create_scene():
-#    log.info('create scene')
-#
-#create.add_command(create_dataset)
-#create.add_command(create_scene)
+@cli.group()
+def create():
+    """ create resource """
+    pass
 
-# Commands
 
-#zpy.add_command(_help)
-#zpy.add_command(_env)
-#zpy.add_command(_login)
-#zpy.add_command(list)
-#zpy.add_command(fetch)
-#zpy.add_command(create)
+@create.command('dataset')
+@click.argument('name')
+@click.argument('scene')
+@click.argument('datasets', '-d', multiple=True)
+@click.argument('args', nargs=-1)
+def create_dataset(name, scene, datasets, args):
+    config = read_config()
+    dataset_config = dict(zip(args[::2], args[1::2]))
+    create_generated_dataset(name, scene, datasets, dataset_config, config['ENDPOINT'], config['TOKEN'])
+
+
+@create.command('job')
+@click.argument('name')
+@click.argument('operation')
+@click.argument('args', nargs=-1)
+def create_job(name, operation):
+    config = read_config()
+    create_job(name, operation, job_config, config['ENDPOINT'], config['TOKEN'])

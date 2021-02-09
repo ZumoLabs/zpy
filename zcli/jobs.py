@@ -16,7 +16,7 @@ def fetch_jobs(endpoint, token):
     endpoint = f'{endpoint}/api/v1/jobs/'
     r = requests.get(endpoint, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed('Unable to fetch scenes')
+        raise FetchFailed('Unable to fetch jobs')
     jobs = json.loads(r.text)['results']
     tbl = TableLogger(columns='state,name,operation,created',default_colwidth=30)
     if len(jobs) == 0:

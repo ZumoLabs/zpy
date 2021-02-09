@@ -1,4 +1,4 @@
-from zcli.utils import auth_headers
+from zcli.utils import auth_headers, download_url, to_pathlib_path
 from table_logger import TableLogger
 import requests
 import logging
@@ -7,32 +7,59 @@ import json
 log = logging.getLogger(__name__)
 
 
-class FetchFailed(Exception):
-    pass
+def create_dataset(name, scene, path, config, url, token):
+    """ create a dataset on ragnarok """
+    endpoint = f'{url}/api/v1/scenes/'
+    params = {'name': scene}
+    r = requests.get(endpoint, params=params, headers=auth_headers(token))
+    if r.status_code != 200:
+        raise FetchFailed(f'Unable to fetch scenes')
+    response = json.loads(r.text)
+    if response['count'] != 1:
+        raise FetchFailed(f'Unable to find scene with name {scene}')
+    endpoint = f'{url}/api/v1/generated-data-sets/'
+    data = {
+        'scene': scene,
+        'config': json.dumps(config),
+        'name': name
+    }
+    r = requests.post(endpoint, data=data, heaers=auth_headers(token))
+    if r.status_code != 200:
+        raise CreateFailed(f'Unable to create dataset {name} for scene {scene} with config {config}')
+    log.info(f'created dataset {name} for scene {scene} with config {config}')
+    
+
+def create_uploaded_dataset(name, path, url, token):
+    """ uploaded a dataset to ragnarok """
+    endpoint = f'{url}/api/v1/uploaded-data-sets/'
+    data = {'name': name}
+    files = {'file': open(path, 'rb')}
+    r = requests.post(endpoint, data=data, headers=auth_headers(token), files=files)
+    if r.status_code != 201:
+        log.warning(f'unable to create dataset {name} from {path}')
+        return
+    log.info('created dataset {name} from {path}')
 
 
-class ModelNotFound(Exception):
-    pass
-
-
-def fetch_dataset(name, path, dataset_type, endpoint, token):
+def fetch_dataset(name, path, dataset_type, url, token):
     """ fetch a dataset from ragnarok """
-    endpoint = f'{endpoint}/api/v1/{dataset_type}-data-sets/'
+    endpoint = f'{url}/api/v1/{dataset_type}-data-sets/'
     params = {'name': name}
     r = requests.get(endpoint, params=params, headers=auth_headers(token))
     if r.status_code != 200:
         raise FetchFailed(f'Unable to fetch {dataset_type} datasets')
     response = json.loads(r.text)
     if response['count'] != 1:
-        raise ModelNotFound(f'Unable to find {dataset_type} dataset with name "{name}"')
-    dataset_id = response['results'][0]
-    print (dataset_id)
-    endpoint = f"{endpoint}/api/v1/data-sets/{response['results']['id']}/download"
+        raise FetchFailed(f'Unable to find {dataset_type} dataset with name "{name}"')
+    dataset = response['results'][0]
+    endpoint = f"{url}/api/v1/{dataset['dataset_type']}-data-sets/{dataset['id']}/download"
     r = requests.get(endpoint, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed(f"Unable to fetch dataset {response['results']['id']}")
+        raise FetchFailed(f"Unable to get download link for dataset {dataset['id']}")
     response = json.loads(r.text)
-    print (response)
+    name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
+    output_path = to_pathlib_path(path) / name_slug
+    download_url(response['redirect_link'], output_path)
 
 
 def fetch_datasets(endpoint, token):
