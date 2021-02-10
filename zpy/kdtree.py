@@ -79,14 +79,15 @@ def floor_occupancy(
     x_bounds: Tuple[float],
     y_bounds: Tuple[float],
     z_height: float = 0.0,
-    num_points: int = 20,
+    num_points_x: int = 20,
+    num_points_y: int = 20,
 ) -> float:
     """ Get occupancy percentage for floor (XY plane). """
     log.info(f'Calculating floor occupancy ....')
     # TODO: This can definitely be vectorized better
-    x_space, x_step = np.linspace(*x_bounds, num=num_points, retstep=True)
-    y_space, y_step = np.linspace(*y_bounds, num=num_points, retstep=True)
-    occupancy_grid = np.zeros((num_points, num_points))
+    x_space, x_step = np.linspace(*x_bounds, num=num_points_x, retstep=True)
+    y_space, y_step = np.linspace(*y_bounds, num=num_points_y, retstep=True)
+    occupancy_grid = np.zeros((num_points_x, num_points_y))
     for x_idx, x in enumerate(x_space):
         for y_idx, y in enumerate(y_space):
             x = float(x)
@@ -108,15 +109,17 @@ def volume_occupancy(
     x_bounds: Tuple[float],
     y_bounds: Tuple[float],
     z_bounds: Tuple[float],
-    num_points: int = 20,
+    num_points_x: int = 20,
+    num_points_y: int = 20,
+    num_points_z: int = 20,
 ) -> float:
     """ Get occupancy percentage for volume. """
     log.info(f'Calculating volume occupancy ....')
     # TODO: This can definitely be vectorized better
-    x_space, x_step = np.linspace(*x_bounds, num=num_points, retstep=True)
-    y_space, y_step = np.linspace(*y_bounds, num=num_points, retstep=True)
-    z_space, z_step = np.linspace(*z_bounds, num=num_points, retstep=True)
-    occupancy_grid = np.zeros((num_points, num_points, num_points))
+    x_space, x_step = np.linspace(*x_bounds, num=num_points_x, retstep=True)
+    y_space, y_step = np.linspace(*y_bounds, num=num_points_y, retstep=True)
+    z_space, z_step = np.linspace(*z_bounds, num=num_points_z, retstep=True)
+    occupancy_grid = np.zeros((num_points_x, num_points_y, num_points_z))
     for x_idx, x in enumerate(x_space):
         for y_idx, y in enumerate(y_space):
             for z_idx, z in enumerate(z_space):
