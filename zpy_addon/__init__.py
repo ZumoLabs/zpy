@@ -5,9 +5,14 @@ import importlib
 import logging
 
 import bpy
-import zpy
 
 log = logging.getLogger(__name__)
+
+try:
+    import zpy
+except ModuleNotFoundError:
+    log.warn('Could not find required pip packages.')
+    install_pip_depenencies()
 
 bl_info = {
     "name": "zpy",
@@ -86,6 +91,25 @@ def unregister():
             bpy.utils.unregister_class(cls)
         except Exception as e:
             log.warning(f'Exception when un-registering {cls.__name__}: {e}')
+
+
+def install_pip_depenencies():
+    """ Install pip dependencies required by zpy addon."""
+    import subprocess
+    import sys
+    # TODO: METHOD 1
+    # Install zpy and it's dependencies with setup.py
+    subprocess.call([sys.executable,"setup.py","install", "--user"])
+
+    # TODO: METHOD 2
+    # Requirements files contains pip modules
+    with open('requirements.txt') as f:
+        required = f.read().splitlines()
+    # Update pip and install required pip modules
+    subprocess.call([sys.executable,"-m","pip", "install", "--upgrade","pip"])
+    for pip_module in required:
+        log.info(f'Installing pip module {pip_module}')
+        subprocess.call([sys.executable,"-m","pip", "install", pip_module])
 
 
 if __name__ == "__main__":
