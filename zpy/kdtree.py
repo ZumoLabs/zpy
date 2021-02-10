@@ -79,11 +79,16 @@ def floor_occupancy(
     x_bounds: Tuple[float],
     y_bounds: Tuple[float],
     z_height: float = 0.0,
-    num_points_x: int = 20,
-    num_points_y: int = 20,
+    num_voxels : int = 100,
 ) -> float:
     """ Get occupancy percentage for floor (XY plane). """
     log.info(f'Calculating floor occupancy ....')
+    x_side_length = abs(x_bounds[1] - x_bounds[0])
+    y_side_length = abs(y_bounds[1] - y_bounds[0])
+    # Number of voxels determines number of points in each dimmension
+    voxel_cube_side_length = ((x_side_length * y_side_length) / num_voxels)**(1/2)
+    num_points_x = x_side_length / voxel_cube_side_length
+    num_points_y = y_side_length / voxel_cube_side_length
     # TODO: This can definitely be vectorized better
     x_space, x_step = np.linspace(*x_bounds, num=num_points_x, retstep=True)
     y_space, y_step = np.linspace(*y_bounds, num=num_points_y, retstep=True)
@@ -109,12 +114,18 @@ def volume_occupancy(
     x_bounds: Tuple[float],
     y_bounds: Tuple[float],
     z_bounds: Tuple[float],
-    num_points_x: int = 20,
-    num_points_y: int = 20,
-    num_points_z: int = 20,
+    num_voxels : int = 100,
 ) -> float:
     """ Get occupancy percentage for volume. """
     log.info(f'Calculating volume occupancy ....')
+    x_side_length = abs(x_bounds[1] - x_bounds[0])
+    y_side_length = abs(y_bounds[1] - y_bounds[0])
+    z_side_length = abs(z_bounds[1] - z_bounds[0])
+    # Number of voxels determines number of points in each dimmension
+    voxel_cube_side_length = ((x_side_length * y_side_length * z_side_length) / num_voxels)**(1/3)
+    num_points_x = x_side_length / voxel_cube_side_length
+    num_points_y = y_side_length / voxel_cube_side_length
+    num_points_z = z_side_length / voxel_cube_side_length
     # TODO: This can definitely be vectorized better
     x_space, x_step = np.linspace(*x_bounds, num=num_points_x, retstep=True)
     y_space, y_step = np.linspace(*y_bounds, num=num_points_y, retstep=True)
