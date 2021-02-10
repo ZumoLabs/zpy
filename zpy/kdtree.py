@@ -90,9 +90,9 @@ def floor_occupancy(
     num_points_x = x_side_length / voxel_cube_side_length
     num_points_y = y_side_length / voxel_cube_side_length
     # TODO: This can definitely be vectorized better
-    x_space, x_step = np.linspace(*x_bounds, num=num_points_x, retstep=True)
-    y_space, y_step = np.linspace(*y_bounds, num=num_points_y, retstep=True)
-    occupancy_grid = np.zeros((num_points_x, num_points_y))
+    x_space, x_step = np.linspace(*x_bounds, num=int(num_points_x), retstep=True)
+    y_space, y_step = np.linspace(*y_bounds, num=int(num_points_y), retstep=True)
+    occupancy_grid = np.zeros((int(num_points_x), int(num_points_y)))
     for x_idx, x in enumerate(x_space):
         for y_idx, y in enumerate(y_space):
             x = float(x)
@@ -127,10 +127,10 @@ def volume_occupancy(
     num_points_y = y_side_length / voxel_cube_side_length
     num_points_z = z_side_length / voxel_cube_side_length
     # TODO: This can definitely be vectorized better
-    x_space, x_step = np.linspace(*x_bounds, num=num_points_x, retstep=True)
-    y_space, y_step = np.linspace(*y_bounds, num=num_points_y, retstep=True)
-    z_space, z_step = np.linspace(*z_bounds, num=num_points_z, retstep=True)
-    occupancy_grid = np.zeros((num_points_x, num_points_y, num_points_z))
+    x_space, x_step = np.linspace(*x_bounds, num=int(num_points_x), retstep=True)
+    y_space, y_step = np.linspace(*y_bounds, num=int(num_points_y), retstep=True)
+    z_space, z_step = np.linspace(*z_bounds, num=int(num_points_z), retstep=True)
+    occupancy_grid = np.zeros((int(num_points_x), int(num_points_y), int(num_points_z)))
     for x_idx, x in enumerate(x_space):
         for y_idx, y in enumerate(y_space):
             for z_idx, z in enumerate(z_space):
