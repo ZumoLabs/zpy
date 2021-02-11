@@ -93,6 +93,7 @@ def for_obj_in_collections(
                 # This gives you direct access to data block
                 yield bpy.data.objects[obj.name]
 
+
 def toggle_hidden(
     obj: bpy.types.Object,
     hidden: bool = True,
@@ -120,6 +121,7 @@ def toggle_hidden(
         return
     for child in obj.children:
         toggle_hidden(child, hidden=hidden, filter_string=filter_string)
+
 
 def randomly_hide_within_collection(
     collections: List[bpy.types.Collection],
@@ -257,7 +259,7 @@ def rotate(
     obj: bpy.types.Object,
     rotation: float = 0,
     axis: str = 'Z'
-):
+) -> None:
     """ Rotate an object (in radians) """
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
@@ -268,7 +270,7 @@ def rotate(
 def scale(
     obj: bpy.types.Object,
     scale: Tuple[float] = (1.0, 1.0, 1.0)
-):
+) -> None:
     """ Scale an object """
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
@@ -293,7 +295,7 @@ def jitter(
         (1.0, 1.0),
         (1.0, 1.0),
     ),
-):
+) -> None:
     """ Apply random scale (blender units) and rotation (radians) to object """
     translate(obj,
               translation=(

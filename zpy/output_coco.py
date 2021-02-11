@@ -188,7 +188,7 @@ class OutputCOCO(Output):
                                 annotation['bbox'][3]
                         elif key == 'areas':
                             coco_ann['areas'] = [bbox[2] * bbox[3]
-                                                    for bbox in annotation['bboxes']]
+                                                 for bbox in annotation['bboxes']]
                     except:
                         pass
             # HACK: Require bbox for an annotation
@@ -367,10 +367,10 @@ def parse_coco_annotations(
     # Optionally output a saver object.
     if output_saver:
         saver = ImageSaver(output_dir=data_dir,
-                      annotation_path=annotation_file,
-                      description=coco_annotations['info']['description'],
-                      clean_dir=False,
-                      )
+                           annotation_path=annotation_file,
+                           description=coco_annotations['info']['description'],
+                           clean_dir=False,
+                           )
 
     # Check Images
     log.info('Parsing images...')

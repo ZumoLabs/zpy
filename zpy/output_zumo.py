@@ -89,10 +89,10 @@ def parse_zumo_annotations(
     # Optionally output a saver object.
     if output_saver:
         saver = ImageSaver(output_dir=data_dir,
-                      annotation_path=annotation_file,
-                      description=zumo_metadata['metadata']['description'],
-                      clean_dir=False,
-                      )
+                           annotation_path=annotation_file,
+                           description=zumo_metadata['metadata']['description'],
+                           clean_dir=False,
+                           )
 
     # Check Images
     log.info('Parsing images...')
