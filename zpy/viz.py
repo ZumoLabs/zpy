@@ -236,11 +236,12 @@ def draw_bbox(
         bbox: List,
         color: Tuple[int],
         text: str = None,
-        alpha: float = 0.2) -> None:
+        alpha: float = 0.2,
+) -> None:
     """ Draw a bounding box on the matplotlib axes object. """
     # TODO: fix the bordering in matplotlib so that the pixels
     #   line up appropriately bounding boxes are [x, y, w, h]
-    log.debug(f'drawing bbox {bbox} {color}')
+    log.debug(f'Drawing bbox {bbox} {color}')
     r = Rectangle((bbox[0], bbox[1]),
                   (bbox[2]),
                   (bbox[3]),
@@ -268,9 +269,10 @@ def draw_segmentation(
         ax: matplotlib.axes.Axes,
         segmentation: List,
         color: Tuple[int],
-        alpha: float = 0.6) -> None:
+        alpha: float = 0.6,
+) -> None:
     """ Draw a segmentation polygon on the matplotlib axes object. """
-    log.debug(f'drawing segmentation {segmentation} {color}')
+    log.debug(f'Drawing segmentation {segmentation} {color}')
     for seg in segmentation:
         p = Polygon(
             np.array(seg).reshape((int(len(seg)/2), 2)),
@@ -285,7 +287,8 @@ def draw_keypoints(
         keypoints: List,
         skeleton: Dict,
         color: Tuple[int],
-        alpha: float = 0.8) -> None:
+        alpha: float = 0.8,
+) -> None:
     """
     Draws keypoints of an instance and follows the rules for keypoint connections
     to draw lines between appropriate keypoints.
@@ -299,6 +302,7 @@ def draw_keypoints(
             v=2: labeled and visible
 
     """
+    log.debug(f'Drawing keypoints')
     for k1, k2 in skeleton:
 
         # HACK: 0 indexed versus 1 indexed skeleton

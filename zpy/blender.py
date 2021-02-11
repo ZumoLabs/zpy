@@ -65,11 +65,12 @@ def set_log_levels(level: str = None) -> None:
 
 
 @gin.configurable
-def step(num_steps: int = 16,
-         framerate: int = 0,
-         start_frame: int = 1,
-         refresh_ui: bool = False,
-         ) -> int:
+def step(
+    num_steps: int = 16,
+    framerate: int = 0,
+    start_frame: int = 1,
+    refresh_ui: bool = False,
+) -> int:
     """ Step logic helper for the scene. """
     assert num_steps is not None, 'Invalid num_steps'
     assert num_steps > 0, 'Invalid num_steps'
@@ -153,8 +154,10 @@ def connect_addon(name: str = 'zpy_addon') -> None:
     bpy.ops.preferences.addon_enable(module=name)
 
 
-def output_intermediate_scene(path: Union[str, Path] = '/tmp/blender-debug-scene-tmp.blend') -> None:
+def output_intermediate_scene(path: Union[str, Path] = None) -> None:
     """ Output intermediate saved scene. """
+    if path is None:
+        path = zpy.files.default_temp_path() / 'blender-debug-scene-tmp.blend'
     path = zpy.files.verify_path(path, make=False)
     log.debug(f'Saving intermediate scene to {path}')
     bpy.ops.wm.save_as_mainfile(filepath=str(path), compress=False)

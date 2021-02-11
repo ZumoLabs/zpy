@@ -96,9 +96,10 @@ def pixel_mean_std(flat_images: List[np.ndarray]) -> Dict:
     }
 
 
-def flatten_images(images: List[np.ndarray],
-                   max_pixels: int = 500000,
-                   ) -> List[np.ndarray]:
+def flatten_images(
+    images: List[np.ndarray],
+    max_pixels: int = 500000,
+) -> List[np.ndarray]:
     """ Flatten out images in a list. """
     flat_images = []
     for image in images:
