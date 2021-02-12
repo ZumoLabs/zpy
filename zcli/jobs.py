@@ -9,15 +9,13 @@ log = logging.getLogger(__name__)
 
 def create_new_job(name, operation, config, datasets, url, token):
     """ create job on ragnarok """
-    print ('asdfadsf')
     endpoint = f'{url}/api/v1/jobs/'
     data = {
         'operation': operation,
         'name': name,
         'input_data_sets': datasets,
-        'config': config
+        'config': json.dumps(config)
     }
-    print (data)
     r = requests.post(endpoint, data=data, headers=auth_headers(token))
     if r.status_code != 201:
         log.warning(f'Unable to create {operation} job {name} on datasets {datasets}')

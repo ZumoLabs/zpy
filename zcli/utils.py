@@ -10,9 +10,16 @@ import random
 log = logging.getLogger(__name__)
 
 
+def _safe_eval(key):
+    try:
+        return eval(key)
+    else:
+        return key
+
+
 def parse_args(args):
     keys = args[::2]
-    vals = map(lambda x: eval(x), args[1::2])
+    vals = map(lambda x: _safe_eval(x), args[1::2])
     return dict(zip(keys,vals))
 
 

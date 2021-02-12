@@ -183,4 +183,5 @@ def create_dataset(name, scene, args):
 def create_job(name, operation, datasets, args):
     config = read_config()
     job_config = parse_args(args)
-    create_new_job(name, operation, job_config, list(datasets), config['ENDPOINT'], config['TOKEN'])
+    datasets_list = [x for x in datasets]
+    create_new_job(name, operation, job_config, datasets_list, config['ENDPOINT'], config['TOKEN'])
