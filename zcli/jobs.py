@@ -7,8 +7,22 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class FetchFailed(Exception):
-    pass
+def create_new_job(name, operation, config, datasets, url, token):
+    """ create job on ragnarok """
+    print ('asdfadsf')
+    endpoint = f'{url}/api/v1/jobs/'
+    data = {
+        'operation': operation,
+        'name': name,
+        'input_data_sets': datasets,
+        'config': config
+    }
+    print (data)
+    r = requests.post(endpoint, data=data, headers=auth_headers(token))
+    if r.status_code != 201:
+        log.warning(f'Unable to create {operation} job {name} on datasets {datasets}')
+        return
+    log.info(f'created {operation} job {name} {config} on datasets {datasets}')
 
 
 def fetch_jobs(endpoint, token):
@@ -16,7 +30,8 @@ def fetch_jobs(endpoint, token):
     endpoint = f'{endpoint}/api/v1/jobs/'
     r = requests.get(endpoint, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed('Unable to fetch jobs')
+        log.warning('Unable to fetch jobs')
+        return
     jobs = json.loads(r.text)['results']
     tbl = TableLogger(columns='state,name,operation,created',default_colwidth=30)
     if len(jobs) == 0:

@@ -1,11 +1,12 @@
 from zcli.config import login, initialize_config, switch_env, read_config
-from zcli.datasets import fetch_datasets, fetch_dataset
+from zcli.datasets import fetch_datasets, fetch_dataset, create_uploaded_dataset, create_generated_dataset
 from zcli.scenes import fetch_scenes, fetch_scene, create_scene
-from zcli.jobs import fetch_jobs
-from zcli.utils import to_pathlib_path
+from zcli.jobs import fetch_jobs, create_new_job
+from zcli.utils import to_pathlib_path, parse_args
 
 import logging
 import click
+import json
 
 log = logging.getLogger(__name__)
 
@@ -31,6 +32,7 @@ def _help():
 @cli.command('env')
 @click.argument('env', type=click.Choice(['local', 'stage', 'prod']))
 def _env(env):
+    """ switch target environment """
     log.info(f'switching to environment {env}')
     switch_env(env)
 
@@ -44,6 +46,7 @@ def _login(username, password):
 
 @cli.command('config')
 def _config():
+    """ display config """
     config = read_config()
     log.info('zpy cli configuration:')
     log.info(config)
@@ -165,18 +168,19 @@ def create():
 @create.command('dataset')
 @click.argument('name')
 @click.argument('scene')
-@click.argument('datasets', '-d', multiple=True)
 @click.argument('args', nargs=-1)
-def create_dataset(name, scene, datasets, args):
+def create_dataset(name, scene, args):
     config = read_config()
-    dataset_config = dict(zip(args[::2], args[1::2]))
-    create_generated_dataset(name, scene, datasets, dataset_config, config['ENDPOINT'], config['TOKEN'])
+    dataset_config = parse_args(args)
+    create_generated_dataset(name, scene, dataset_config, config['ENDPOINT'], config['TOKEN'])
 
 
 @create.command('job')
 @click.argument('name')
 @click.argument('operation')
+@click.option('datasets', '-d', multiple=True)
 @click.argument('args', nargs=-1)
-def create_job(name, operation):
+def create_job(name, operation, datasets, args):
     config = read_config()
-    create_job(name, operation, job_config, config['ENDPOINT'], config['TOKEN'])
+    job_config = parse_args(args)
+    create_new_job(name, operation, job_config, list(datasets), config['ENDPOINT'], config['TOKEN'])

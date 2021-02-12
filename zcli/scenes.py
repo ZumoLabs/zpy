@@ -17,7 +17,7 @@ def create_scene(name, path, url, token):
     if r.status_code != 201:
         log.warning(f'unable to create scene {name} from {path}')
         return
-    log.info('created scene {name} from {path}')
+    log.info(f'created scene {name} from {path}')
 
 
 def fetch_scene(name, path, url, token):

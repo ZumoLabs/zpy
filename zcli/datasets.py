@@ -7,26 +7,30 @@ import json
 log = logging.getLogger(__name__)
 
 
-def create_dataset(name, scene, path, config, url, token):
+def create_generated_dataset(name, scene_name, config, url, token):
     """ create a dataset on ragnarok """
     endpoint = f'{url}/api/v1/scenes/'
-    params = {'name': scene}
+    params = {'name': scene_name}
     r = requests.get(endpoint, params=params, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed(f'Unable to fetch scenes')
+        log.warning(f'Unable to fetch scenes')
+        return
     response = json.loads(r.text)
     if response['count'] != 1:
-        raise FetchFailed(f'Unable to find scene with name {scene}')
+        log.warning(f'Unable to find scene with name {scene}')
+        return
+    scene = response['results'][0]
     endpoint = f'{url}/api/v1/generated-data-sets/'
     data = {
-        'scene': scene,
+        'scene': scene['id'],
         'config': json.dumps(config),
         'name': name
     }
-    r = requests.post(endpoint, data=data, heaers=auth_headers(token))
-    if r.status_code != 200:
-        raise CreateFailed(f'Unable to create dataset {name} for scene {scene} with config {config}')
-    log.info(f'created dataset {name} for scene {scene} with config {config}')
+    r = requests.post(endpoint, data=data, headers=auth_headers(token))
+    if r.status_code != 201:
+        log.warning(f'Unable to create dataset {name} for scene {scene_name} with config {config}')
+        return
+    log.info(f'created dataset {name} for scene {scene_name} with config {config}')
     
 
 def create_uploaded_dataset(name, path, url, token):
@@ -38,7 +42,7 @@ def create_uploaded_dataset(name, path, url, token):
     if r.status_code != 201:
         log.warning(f'unable to create dataset {name} from {path}')
         return
-    log.info('created dataset {name} from {path}')
+    log.info(f'created dataset {name} from {path}')
 
 
 def fetch_dataset(name, path, dataset_type, url, token):
@@ -67,13 +71,13 @@ def fetch_datasets(endpoint, token):
     u_datasets = fetch_uploaded_datasets(endpoint, token)
     g_datasets = fetch_generated_datasets(endpoint, token)
     j_datasets = fetch_job_datasets(endpoint, token)
-    tbl = TableLogger(columns='state,type,name,timestamp',default_colwidth=30)
+    tbl = TableLogger(columns='state,type,name,timestamp,id',default_colwidth=30)
     for d in u_datasets:
-        tbl(d['state'], 'UPLOADED', d['name'], d['created_at'])
+        tbl(d['state'], 'UPLOADED', d['name'], d['created_at'], d['id'])
     for d in g_datasets:
-        tbl(d['state'], 'GENERATED', d['name'], d['created_at'])
+        tbl(d['state'], 'GENERATED', d['name'], d['created_at'], d['id'])
     for d in j_datasets:
-        tbl(d['state'], 'JOB', d['name'], d['created_at'])
+        tbl(d['state'], 'JOB', d['name'], d['created_at'], d['id'])
 
 
 def fetch_uploaded_datasets(endpoint, token):

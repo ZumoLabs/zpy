@@ -5,24 +5,16 @@ from tqdm import tqdm
 from urllib.request import urlopen
 from urllib.parse import urlparse
 import logging
+import random
 
 log = logging.getLogger(__name__)
 
 
-class DownloadProgressBar(tqdm):
-    def update_to(self, b=1, bsize=1, tsize=None):
-        if tsize is not None:
-            self.total = tsize
-        self.update(b * bsize - self.n)
+def parse_args(args):
+    keys = args[::2]
+    vals = map(lambda x: eval(x), args[1::2])
+    return dict(zip(keys,vals))
 
-
-#def download_url(url, output_dir):
-#    parsed_url = urlparse(url)    
-#    output_path = to_pathlib_path(output_dir) / os.path.basename(parsed_url.path)
-#    with DownloadProgressBar(unit='B', unit_scale=True,
-#                             miniters=1, desc=url.split('/')[-1]) as t:
-#        #urllib.request.urlretrieve(url, filename=output_path, reporthook=t.update_to)
-#        urllib.request.urlretrieve(url)
 
 def download_url(url, output_path):
     u = urlopen(url)
