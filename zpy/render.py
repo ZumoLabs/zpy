@@ -66,8 +66,8 @@ def make_aov_file_output_node(
         rl_node = _tree.nodes.new('CompositorNodeRLayers')
     else:
         rl_node = _tree.nodes['Render Layers']
-    assert rl_node.outputs.get(style, None) is not None, \
-        f'Render Layer output {style} does not exist.'
+    # assert rl_node.outputs.get(style, None) is not None, \
+    #     f'Render Layer output {style} does not exist.'
 
     # Remove Composite Node if it exists
     composite_node = _tree.nodes.get('Composite')
@@ -166,7 +166,7 @@ def render_aov(
     cseg_path: Union[str, Path] = None,
     width: int = 640,
     height: int = 480,
-    hsv: Tuple(float) = None,
+    hsv: Tuple[float] = None,
 ):
     """ Render images using AOV nodes. """
     scene = bpy.context.scene
