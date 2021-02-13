@@ -6,7 +6,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import Union
+from typing import Union, Tuple
 
 import bpy
 import gin
@@ -45,6 +45,8 @@ def make_aov_pass(
 @gin.configurable
 def make_aov_file_output_node(
     style: str = 'rgb',
+    add_hsv: bool = True,
+    add_lens_dirt: bool = False,
 ) -> bpy.types.CompositorNodeOutputFile:
     """ Make AOV Output nodes in Composition Graph. """
     log.info(f'Making AOV output node for {style}')
@@ -64,6 +66,8 @@ def make_aov_file_output_node(
         rl_node = _tree.nodes.new('CompositorNodeRLayers')
     else:
         rl_node = _tree.nodes['Render Layers']
+    assert rl_node.outputs.get(style, None) is not None, \
+        f'Render Layer output {style} does not exist.'
 
     # Remove Composite Node if it exists
     composite_node = _tree.nodes.get('Composite')
@@ -110,26 +114,49 @@ def make_aov_file_output_node(
         _tree.links.new(norm_node.outputs[0], invert_node.inputs['Color'])
         _tree.links.new(invert_node.outputs[0], view_node.inputs['Image'])
         _tree.links.new(invert_node.outputs[0], fileout_node.inputs['Image'])
-    else:
-        # HACK: Some styles have specific output node names
-        if style == 'rgb':
-            style = 'Image'
-        assert rl_node.outputs.get(style, None) is not None, \
-            f'Render Layer output {style} does not exist.'
-        # TODO: Denoise node (bpy.types.CompositorNodeDenoise)
+    elif style == 'rgb':
+        _node = rl_node
+        if add_lens_dirt:
+            _node = lens_dirt_node(
+                node_tree=_tree,
+                input_node=rl_node
+            )
+            _tree.links.new(rl_node.outputs['Image'], _node.inputs['Image'])
+        if add_hsv:
+            _node = hsv_node(
+                node_tree=_tree,
+                input_node=rl_node
+            )
+            _tree.links.new(rl_node.outputs['Image'], _node.inputs['Image'])
+        _tree.links.new(_node.outputs['Image'], view_node.inputs['Image'])
+        _tree.links.new(_node.outputs['Image'], fileout_node.inputs['Image'])
+    else:  # category and instance segmentation
         _tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
         _tree.links.new(rl_node.outputs[style], fileout_node.inputs['Image'])
 
     return fileout_node
 
-def add_lens_dirt_to_node(
-    node_tree : bpy.types.NodeTree,
-    input_node : bpy.types.Node,
-    output_node : bpy.types.Node,
+
+def lens_dirt_node(
+    node_tree: bpy.types.NodeTree,
+    input_node: bpy.types.Node,
 ) -> bpy.types.Node:
     """ Add lens dirt effect to a compositor node. """
     # TODO: @kursad code to create dirt effect here.
-    return None
+    log.warn("NotImplemented: lens dirt ")
+    return input_node
+
+
+def hsv_node(
+    node_tree: bpy.types.NodeTree,
+    input_node: bpy.types.Node,
+) -> bpy.types.Node:
+    """ Adds a Hue-Saturation-Value Node."""
+    hsv_node = node_tree.nodes.new('CompositorNodeHueSat')
+    hsv_node.name = 'hsv'
+    node_tree.links.new(input_node.outputs['Image'], hsv_node.inputs['Image'])
+    return hsv_node
+
 
 @gin.configurable
 def render_aov(
@@ -139,6 +166,7 @@ def render_aov(
     cseg_path: Union[str, Path] = None,
     width: int = 640,
     height: int = 480,
+    hsv: Tuple(float) = None,
 ):
     """ Render images using AOV nodes. """
     scene = bpy.context.scene
@@ -178,6 +206,14 @@ def render_aov(
             if style in ['rgb']:
                 output_node.format.color_depth = '8'
                 output_node.format.view_settings.view_transform = 'Filmic'
+                if hsv is not None:
+                    hsv_node = scene.node_tree.nodes.get('hsv', None)
+                    if hsv_node is not None:
+                        hsv_node.inputs[1].default_value = max(0, min(hsv[0], 1))
+                        hsv_node.inputs[2].default_value = max(0, min(hsv[1], 2))
+                        hsv_node.inputs[3].default_value = max(0, min(hsv[2], 2))
+                    else:
+                        log.warn('Render given HSV but no HSV node found.')
             if style in ['depth']:
                 output_node.format.color_depth = '8'
                 output_node.format.use_zbuffer = True
