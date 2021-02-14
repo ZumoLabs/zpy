@@ -49,7 +49,7 @@ Set these environment variables for specific versions:
 ```
 export BLENDER_VERSION="2.91"
 export BLENDER_VERSION_FULL="2.91.0"
-export ZPY_VERSION="v1.3.4"
+export ZPY_VERSION="v1.3.5"
 ```
 
 ### Install: Linux: Developer Environment <a name="developermode_linux"></a>
