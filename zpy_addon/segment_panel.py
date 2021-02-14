@@ -46,7 +46,7 @@ class CategoryProperties(bpy.types.PropertyGroup):
     )
     color: bpy.props.FloatVectorProperty(
         name="Category Color",
-        subtype='COLOR_GAMMA',
+        subtype='COLOR',
         description="Category color for segmentation.",
     )
 
@@ -87,7 +87,7 @@ class SegmentableProperties(bpy.types.PropertyGroup):
     )
     category_color: bpy.props.FloatVectorProperty(
         name="Category Color",
-        subtype='COLOR_GAMMA',
+        subtype='COLOR',
         description="Category color for segmentation.",
     )
     instance_name: bpy.props.StringProperty(
@@ -97,7 +97,7 @@ class SegmentableProperties(bpy.types.PropertyGroup):
     )
     instance_color: bpy.props.FloatVectorProperty(
         name="Instance Color",
-        subtype='COLOR_GAMMA',
+        subtype='COLOR',
         description="Instance color for segmentation.",
     )
 
