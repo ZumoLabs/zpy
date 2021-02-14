@@ -33,13 +33,13 @@ You can test these out at: https://regex101.com/
 IMAGE_REGEX = '.*\.(jpeg|jpg|png|bmp)'
 FILE_REGEX = {
     # Images
-    'instance segmentation image': 'IMG_[0-9]*_iseg' + IMAGE_REGEX,
-    'class segmentation image': 'IMG_[0-9]*_cseg' + IMAGE_REGEX,
-    'depth image': 'IMG_[0-9]*_depth' + IMAGE_REGEX,
-    'normal image': 'IMG_[0-9]*_normal' + IMAGE_REGEX,
-    'stereo left image': 'IMG_[0-9]*_stereoL' + IMAGE_REGEX,
-    'stereo right image': 'IMG_[0-9]*_stereoR' + IMAGE_REGEX,
-    'rgb image': 'IMG_[0-9]*_rgb' + IMAGE_REGEX,
+    'instance segmentation image': 'IMG_[0-9]*.*iseg' + IMAGE_REGEX,
+    'class segmentation image': 'IMG_[0-9]*.*cseg' + IMAGE_REGEX,
+    'depth image': 'IMG_[0-9]*.*depth' + IMAGE_REGEX,
+    'normal image': 'IMG_[0-9]*.*normal' + IMAGE_REGEX,
+    'stereo left image': 'IMG_[0-9]*.*stereoL' + IMAGE_REGEX,
+    'stereo right image': 'IMG_[0-9]*.*stereoR' + IMAGE_REGEX,
+    'rgb image': 'IMG_[0-9]*.*rgb' + IMAGE_REGEX,
     'custom image': 'IMG_[0-9]*' + IMAGE_REGEX,
     'image': IMAGE_REGEX,
     # Annotations
