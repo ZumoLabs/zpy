@@ -54,6 +54,15 @@ export ZPY_VERSION="v1.3.4"
 
 ### Install: Linux: Developer Environment <a name="developermode_linux"></a>
 
+First clone the zpy repository:
+
+```
+mkdir -p $HOME/zumolabs && cd $HOME/zumolabs
+git clone https://github.com/ZumoLabs/zpy.git zpy
+```
+
+Set the following environment variables:
+
 ```
 export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
 export BLENDER_VERSION="2.91"
@@ -75,14 +84,7 @@ ${BLENDER_BIN_PIP} install -r ${ZPY_SRC_PATH}requirements.txt
 If you are setting up a development environment it will be easier to symlink the zpy pip module directly into the Blender python library. This can be achieved with something like:
 
 ```
-mkdir -p $HOME/zumolabs && cd $HOME/zumolabs
-git clone https://github.com/ZumoLabs/zpy.git zpy
 ln -s ${ZPY_SRC_PATH}/zpy ${BLENDER_LIB_PY}/site-packages/
-```
-
-You can also symlink the zpy addon in this way. For linux this is:
-
-```
 mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
 ln -s ${ZPY_SRC_PATH}/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addons/zpy_addon
 ```
@@ -90,6 +92,15 @@ ln -s ${ZPY_SRC_PATH}/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/add
 ### Install: Windows: Developer Environment <a name="developermode_windows"></a>
 
 These instructions use GitBash terminal, make sure to run as administrator!
+
+First clone the zpy repository:
+
+```
+mkdir -p $HOME/zumolabs && cd $HOME/zumolabs
+git clone https://github.com/ZumoLabs/zpy.git zpy
+```
+
+Set the following environment variables:
 
 ```
 export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
@@ -99,10 +110,9 @@ export BLENDER_BIN_PY="${BLENDER_PATH}/python/lib/python.exe"
 export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
 ```
 
-First symlink zpy and the addon into Blender's install location:
+If you are setting up a development environment it will be easier to symlink the zpy pip module directly into the Blender python library. This can be achieved with something like:
+
 ```
-mkdir -p $HOME/zumolabs && cd $HOME/zumolabs
-git clone https://github.com/ZumoLabs/zpy.git zpy
 ln -s ${ZPY_SRC_PATH}/zpy ${BLENDER_PATH}/python/lib/
 ln -s ${ZPY_SRC_PATH}/zpy_addon ${BLENDER_PATH}/scripts/addons
 ```
@@ -117,9 +127,10 @@ ${BLENDER_BIN_PY} -m pip install -r ${ZPY_SRC_PATH}/requirements.txt
 ## Examples
 
 **Tutorial**
-- [Suzanne]()
-- [Uploading a Scene]()
-- [Using the CLI]()
+- [Suzanne: Part 1](https://github.com/ZumoLabs/zpy/main/examples/suzzane/README.md)
+- [Suzanne: Part 2](https://github.com/ZumoLabs/zpy/main/examples/suzzane_2/README.md)
+- [Uploading a Scene](https://github.com/ZumoLabs/zpy/main/examples/uploading_a_scene/README.md)
+- [Using the CLI](https://github.com/ZumoLabs/zpy/main/examples/using_the_cli/README.md)
 
 **Projects**
 - [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
@@ -128,29 +139,6 @@ ${BLENDER_BIN_PY} -m pip install -r ${ZPY_SRC_PATH}/requirements.txt
 ## Contributing
 
 We welcome community contributions! Search through the [current issues](https://github.com/ZumoLabs/zpy/issues) or open your own.
-
-### Contributing: Cutting a Release
-
-TODO: Remove once made public 
-
-Fetch and list existing tags
-
-```
-git fetch --tag
-git tag
-```
-
-Cut a release candidate (e.g. `v1.0.0-rc0`) or release (e.g. `v1.0.0`). Check progress on [CI](https://app.circleci.com/pipelines/github/ZumoLabs/zpy)
-
-```
-export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
-cd $ZPY_SRC_PATH
-export ZPY_VERSION="v1.3.4"
-git tag ${ZPY_VERSION} && \
-git push origin ${ZPY_VERSION}
-```
-
-Release Candidates are available to download through pip through explicit version or `pip install --pre zpy`
 
 ## Licence
 
