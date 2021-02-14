@@ -90,7 +90,7 @@ class Saver:
                      color:  Tuple[float] = (0., 0., 0.),
                      zero_indexed: bool = True,
                      **kwargs,
-                     ) -> None:
+                     ) -> Dict:
         """ Add category. """
         # Default for super- and sub- categories is empty list
         supercategories = supercategories or []
@@ -109,6 +109,7 @@ class Saver:
         log.debug(f'Adding category: {zpy.files.pretty_print(category)}')
         self.categories[category['id']] = category
         self.category_name_to_id[name] = category['id']
+        return category
 
     @gin.configurable
     def remap_filter_categories(self,

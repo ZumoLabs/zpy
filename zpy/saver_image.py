@@ -34,7 +34,7 @@ class ImageSaver(zpy.saver.Saver):
                   height: int = 0,
                   zero_indexed: bool = True,
                   **kwargs,
-                  ) -> None:
+                  ) -> Dict:
         """ Add image to save object. """
         image = {
             'name': name,
@@ -51,6 +51,7 @@ class ImageSaver(zpy.saver.Saver):
         log.debug(f'Adding image: {zpy.files.pretty_print(image)}')
         self.images[image['id']] = image
         self.image_name_to_id[name] = image['id']
+        return image
 
     @gin.configurable
     def add_annotation(self,
@@ -62,7 +63,7 @@ class ImageSaver(zpy.saver.Saver):
                        seg_color:  Tuple[float] = None,
                        parse_on_add: bool = True,
                        **kwargs,
-                       ) -> None:
+                       ) -> Dict:
         """ Add annotation. """
         image_id = self.image_name_to_id.get(image, None)
         assert image_id is not None, f'Could not find id for image {image}'
@@ -97,6 +98,7 @@ class ImageSaver(zpy.saver.Saver):
         # and annotations have been added to the saver.
         if parse_on_add:
             self.parse_annotations_from_seg_image(image_name=seg_image)
+        return annotation
 
     def parse_annotations_from_seg_image(self,
                                          image_name: str,
