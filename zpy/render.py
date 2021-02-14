@@ -295,7 +295,7 @@ def _rgb_render_settings():
     bpy.context.scene.cycles.denoiser = 'OPENIMAGEDENOISE'
 
     scene.view_settings.view_transform = 'Filmic'
-    scene.sequencer_colorspace_settings.name = 'Filmic'
+    scene.sequencer_colorspace_settings.name = 'Filmic Log'
 
     scene.display.render_aa = '8'
     scene.display.viewport_aa = 'FXAA'
