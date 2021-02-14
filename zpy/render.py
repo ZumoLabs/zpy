@@ -295,7 +295,7 @@ def _rgb_render_settings():
     bpy.context.scene.cycles.denoiser = 'OPENIMAGEDENOISE'
 
     scene.view_settings.view_transform = 'Filmic'
-    scene.sequencer_colorspace_settings.name = 'Filmic Log'
+    # scene.sequencer_colorspace_settings.name = 'Filmic Log'
 
     scene.display.render_aa = '8'
     scene.display.viewport_aa = 'FXAA'
@@ -325,10 +325,10 @@ def _seg_render_settings():
     scene.cycles.denoising_radius = 0
 
     scene.view_settings.view_transform = 'Raw'
-    scene.sequencer_colorspace_settings.name = 'Raw'
+    # scene.sequencer_colorspace_settings.name = 'Raw'
 
-    scene.world.use_nodes=False
-    scene.display_settings.display_device = 'None'
+    # scene.world.use_nodes=False
+    # scene.display_settings.display_device = 'None'
 
     scene.display.render_aa = 'OFF'
     scene.display.viewport_aa = 'OFF'
