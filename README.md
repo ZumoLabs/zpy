@@ -14,7 +14,7 @@
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/zpy)](https://pypi.org/project/zpy/)
 [![PyPI Status](https://badge.fury.io/py/zpy.svg)](https://badge.fury.io/py/zpy)
-[![Slack](https://img.shields.io/badge/slack-ZumoLabs-green.svg?logo=slack)](https://join.slack.com/t/pytorch-lightning/shared_invite/zt-f6bl2l0l-JYMK3tbAgAmGRrlNr00f1A)
+[![Discord](https://img.shields.io/badge/discord-Community-green.svg?logo=discord)](https://discord.gg/UrR97Tyd)
 [![license](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](https://github.com/ZumoLabs/zpy/blob/master/LICENSE)
 </div>
 
@@ -24,21 +24,21 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 
 ## Install
 
-### Install: Using Blender GUI
+- Windows/Mac/Linux
+  - [Install from .zip inside Blender UI](#installzip).
+- Linux
+  - [Install from script](#installscript_linux)
+  - [Developer mode](#developermode_linux)
+- Windows
+  - [Developer mode](#developermode_windows)
 
-You can install the addon from within Blender itself. Navigate to "Edit -> Preferences -> Add-ons". You should be able to install and enable the addon from there there.
+### Install: Using Blender GUI <a name="installzip"></a>
+
+You can install the addon from within Blender itself. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there there.
 
 ![Enabling the addon](./doc/install_zpy.png)
 
-Use Blender's python console, install the following pip dependencies:
-
-```
-#TODO
-import subprocess
-subprocess.call([ bpy.app.binary_path_python,"-m","pip", "install", "--upgrade","pip"])
-```
-
-### Install: Using Install Script
+### Install: Linux: Using Install Script <a name="installscript_linux"></a>
 
 ``` 
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZumoLabs/zpy/main/install.sh?token=<token>)"
@@ -52,7 +52,7 @@ export BLENDER_VERSION_FULL="2.91.0"
 export ZPY_VERSION="v1.3.4"
 ```
 
-### Install: Developer Environment (Linux)
+### Install: Linux: Developer Environment <a name="developermode_linux"></a>
 
 ```
 export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
@@ -63,8 +63,6 @@ export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
 export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
 export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
 ```
-
-
 
 Install additional Python dependencies using Blender Python's pip:
 
@@ -89,7 +87,7 @@ mkdir -p ~/.config/blender/${BLENDER_VERSION}/scripts/addons
 ln -s ${ZPY_SRC_PATH}/zpy_addon ~/.config/blender/${BLENDER_VERSION}/scripts/addons/zpy_addon
 ```
 
-### Install: Developer Environment (Windows)
+### Install: Windows: Developer Environment <a name="developermode_windows"></a>
 
 These instructions use GitBash terminal, make sure to run as administrator!
 
@@ -116,27 +114,16 @@ ${BLENDER_BIN_PY} -m pip install --upgrade pip
 ${BLENDER_BIN_PY} -m pip install -r ${ZPY_SRC_PATH}/requirements.txt
 ```
 
-### Install: Asset Library
-
-If you use additional assets from our library, you can set it as an environment variable. Example:
-
-```
-export ASSETS="/home/$USER/assets"
-```
-
 ## Examples
 
 **Tutorial**
-- [Shapes]()
+- [Suzanne]()
 - [Uploading a Scene]()
 - [Using the CLI]()
 
-**Object Detection**
+**Projects**
 - [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
 - [Vote Counting](https://towardsdatascience.com/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data-d8e24eca114d)
-
-**Segmentation**
-- [Suzanne and Friends]()
 
 ## Contributing
 
