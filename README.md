@@ -127,10 +127,10 @@ ${BLENDER_BIN_PY} -m pip install -r ${ZPY_SRC_PATH}/requirements.txt
 ## Examples
 
 **Tutorial**
-- [Suzanne: Part 1](https://github.com/ZumoLabs/zpy/main/examples/suzzane/README.md)
-- [Suzanne: Part 2](https://github.com/ZumoLabs/zpy/main/examples/suzzane_2/README.md)
-- [Uploading a Scene](https://github.com/ZumoLabs/zpy/main/examples/uploading_a_scene/README.md)
-- [Using the CLI](https://github.com/ZumoLabs/zpy/main/examples/using_the_cli/README.md)
+- [Suzanne: Part 1](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne)
+- [Suzanne: Part 2](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_2)
+- [Uploading a Scene](https://github.com/ZumoLabs/zpy/tree/main/examples/uploading_a_scene)
+- [Using the CLI](https://github.com/ZumoLabs/zpy/tree/main/examples/using_the_cli)
 
 **Projects**
 - [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
