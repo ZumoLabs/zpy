@@ -8,25 +8,30 @@ The ZPY cli is meant as a command line tool to interact with assets on the zumo 
 
 ## Configuration
 
-Authenticate with the backend
+Authenticate with the backend 
+```zpy login```
 
 <p align="center"><img src="gif/login.gif?raw=true"/></p>
 
-Verify CLI configuration
+Verify CLI configuration 
+```zpy config```
 
 <p align="center"><img src="gif/config.gif?raw=true"/></p>
 
 ## List
 
-> List Datasets
+List Datasets
+```zpy list datasets```
 
 <p align="center"><img src="gif/listdataset.gif?raw=true"/></p>
 
-> List Scenes
+List Scenes
+```zpy list scenes```
 
 <p align="center"><img src="gif/listscene.gif?raw=true"/></p>
 
-> List Jobs
+List Jobs
+```zpy list jobs```
 
 <p align="center"><img src="gif/listjob.gif?raw=true"/></p>
 
