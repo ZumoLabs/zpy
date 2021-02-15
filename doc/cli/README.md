@@ -41,17 +41,20 @@ List Jobs
 
 <p align="center"><img src="gif/getdataset.gif?raw=true"/></p>
 
-> Download Scene
+Download Scene
+```zpy get scene <name> /output/directory```
 
 <p align="center"><img src="gif/getscene.gif?raw=true"/></p>
 
 ## Upload
 
-> Upload Scene
+Upload Scene
+```zpy upload scene <name> /path/to/scene```
 
 <p align="center"><img src="gif/uploadscene.gif?raw=true"/></p>
 
-> Upload Dataset
+Upload Dataset
+```zpy upload dataset <name> /path/to/dataset```
 
 <p align="center"><img src="gif/uploaddataset.gif?raw=true"/></p>
 
