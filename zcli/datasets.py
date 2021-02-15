@@ -17,7 +17,7 @@ def create_generated_dataset(name, scene_name, config, url, token):
         return
     response = json.loads(r.text)
     if response['count'] != 1:
-        log.warning(f'Unable to find scene with name {scene}')
+        log.warning(f'Unable to find scene with name {scene_name}')
         return
     scene = response['results'][0]
     endpoint = f'{url}/api/v1/generated-data-sets/'
