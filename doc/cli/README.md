@@ -1,4 +1,6 @@
-** zpy cli usage guide **
+<div align="center">
+**zpy cli usage guide**
+</div>
 
 ## Usage
 
@@ -6,17 +8,13 @@ The ZPY cli is meant as a command line tool to interact with assets on the zumo 
 
 ## Configuration
 
-> Authenticate with the backend:
+Authenticate with the backend
 
 <p align="center"><img src="gif/login.gif?raw=true"/></p>
 
-> Verify credentials:
+Verify CLI configuration
 
 <p align="center"><img src="gif/config.gif?raw=true"/></p>
-
-> (Dev) Switch Environments:
-
-<p align="center"><img src="gif/switchenv.gif?raw=true"/></p>
 
 ## List
 
@@ -62,3 +60,8 @@ The ZPY cli is meant as a command line tool to interact with assets on the zumo 
 
 <p align="center"><img src="gif/createjob.gif?raw=true"/></p>
 
+## Developer Commands
+
+Switch target Environment
+
+<p align="center"><img src="gif/switchenv.gif?raw=true"/></p>
