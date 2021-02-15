@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 def _safe_eval(key):
     try:
         return eval(key)
-    else:
+    except:
         return key
 
 

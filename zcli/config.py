@@ -24,9 +24,9 @@ def initialize_config():
         log.debug(config)
         return
     CONFIG = {
-        'ENVIRONMENT': 'stage',
+        'ENVIRONMENT': 'prod',
         'TOKEN': None,
-        'ENDPOINT': ENDPOINTS['stage']
+        'ENDPOINT': ENDPOINTS['prod']
     }
     log.debug(f'initializing new zpy config {path}...')
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -40,8 +40,12 @@ def login(username, password):
     endpoint = f"{config['ENDPOINT']}/auth/login/"
     log.info(f'login {endpoint}')
     r = requests.post(endpoint, auth=HTTPBasicAuth(username, password))
+    if r.status_code != 200:
+        log.warning(f'unable to login user {username}')
+        return
     token = r.json()['token']
     write_token(token)
+    log.warning(f'successful login for user {username}')
 
 
 def write_token(token):
