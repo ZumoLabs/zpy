@@ -49,7 +49,7 @@ class OutputZUMO(Output):
         else:
             annotation_path = self.saver.annotation_path
         # Write out annotations to file
-        zpy.file.write_json(annotation_path, zumo_dict)
+        zpy.files.write_json(annotation_path, zumo_dict)
         # Verify annotations
         parse_zumo_annotations(
             annotation_file=annotation_path, data_dir=self.saver.output_dir)
@@ -65,14 +65,14 @@ def parse_zumo_annotations(
     log.info(f'Parsing ZUMO annotations at {annotation_file}...')
 
     # Check annotation file path
-    annotation_file = zpy.file.verify_path(annotation_file)
+    annotation_file = zpy.files.verify_path(annotation_file)
     if data_dir is not None:
-        data_dir = zpy.file.verify_path(data_dir, check_dir=True)
+        data_dir = zpy.files.verify_path(data_dir, check_dir=True)
     else:
         # If no data_dir, assume annotation file is in the root folder.
         data_dir = annotation_file.parent
 
-    zumo_metadata = zpy.file.read_json(annotation_file)
+    zumo_metadata = zpy.files.read_json(annotation_file)
     images = zumo_metadata['images']
     if len(images.keys()) == 0:
         raise ZUMOParseError(f'no images found in {annotation_file}')
@@ -89,10 +89,10 @@ def parse_zumo_annotations(
     # Optionally output a saver object.
     if output_saver:
         saver = ImageSaver(output_dir=data_dir,
-                      annotation_path=annotation_file,
-                      description=zumo_metadata['metadata']['description'],
-                      clean_dir=False,
-                      )
+                           annotation_path=annotation_file,
+                           description=zumo_metadata['metadata']['description'],
+                           clean_dir=False,
+                           )
 
     # Check Images
     log.info('Parsing images...')
@@ -133,8 +133,8 @@ def parse_zumo_annotations(
             if not isinstance(name, str):
                 raise ZUMOParseError(f'name {name} must be str.')
             if frame is not None and \
-                (not zpy.file.frame_from_image_name(name) == frame) and \
-                    (not zpy.file.frame_from_image_name(name) == image_id):
+                (not zpy.files.frame_from_image_name(name) == frame) and \
+                    (not zpy.files.frame_from_image_name(name) == image_id):
                 raise ZUMOParseError(f'name {name} does not correspond to'
                                      f' frame {frame} or image_id {image_id}.')
         # Output path

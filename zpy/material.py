@@ -102,10 +102,11 @@ def jitter(
 
 
 @gin.configurable
-def make_mat(name: str = None,
-             texture_path: Union[str, Path] = None,
-             color: Tuple[float] = None,
-             ) -> bpy.types.Material:
+def make_mat(
+    name: str = None,
+    texture_path: Union[str, Path] = None,
+    color: Tuple[float] = None,
+) -> bpy.types.Material:
     """ Makes a material from a texture or color."""
     mat = bpy.data.materials.get(name)
     if mat is not None:
@@ -125,7 +126,7 @@ def make_mat(name: str = None,
         tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
         tex_node.name = 'ImageTexture'
         coord_node = mat.node_tree.nodes.new('ShaderNodeTexCoord')
-        texture_path = zpy.file.verify_path(texture_path, make=False)
+        texture_path = zpy.files.verify_path(texture_path, make=False)
         bpy.ops.image.open(filepath=str(texture_path))
         tex_node.image = bpy.data.images[texture_path.name]
         tex_node.image.colorspace_settings.name = 'Filmic Log'
@@ -137,10 +138,11 @@ def make_mat(name: str = None,
     return mat
 
 
-def set_mat(obj: Union[str, bpy.types.Object] = None,
-            mat: Union[str, bpy.types.Material] = None,
-            recursive: bool = True,
-            ):
+def set_mat(
+    obj: Union[str, bpy.types.Object] = None,
+    mat: Union[str, bpy.types.Material] = None,
+    recursive: bool = True,
+) -> None:
     """ Recursively sets object material.
 
     Allows string material and object names as input.

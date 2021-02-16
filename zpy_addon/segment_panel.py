@@ -70,8 +70,8 @@ def _category_update(self, context):
     if context.selected_objects:
         # Use the value of the category enum dropdown
         category = context.scene.categories[int(context.scene.categories_enum)]
-        for obj in zpy.object.for_obj_in_selected_objs(context):
-            zpy.object.segment(
+        for obj in zpy.objects.for_obj_in_selected_objs(context):
+            zpy.objects.segment(
                 obj=obj,
                 name=category.name,
                 color=category.color,
@@ -118,8 +118,8 @@ class SegmentInstanceMany(Operator):
 
     def execute(self, context):
         context.space_data.shading.color_type = 'OBJECT'
-        for obj in zpy.object.for_obj_in_selected_objs(context):
-            zpy.object.segment(obj=obj, name=obj.name)
+        for obj in zpy.objects.for_obj_in_selected_objs(context):
+            zpy.objects.segment(obj=obj, name=obj.name)
         return {'FINISHED'}
 
 
@@ -142,8 +142,8 @@ class SegmentInstanceSingle(Operator):
         # Pick a random color and instance name
         _name = context.selected_objects[0].name
         _color = zpy.color.random_color(output_style='frgb')
-        for obj in zpy.object.for_obj_in_selected_objs(context):
-            zpy.object.segment(obj=obj, name=_name, color=_color)
+        for obj in zpy.objects.for_obj_in_selected_objs(context):
+            zpy.objects.segment(obj=obj, name=_name, color=_color)
         return {'FINISHED'}
 
 
@@ -221,7 +221,7 @@ def _reset_categories(context):
     for _ in range(len(context.scene.categories)):
         context.scene.categories.remove(0)
     # Reset all categories
-    for obj in zpy.object.for_obj_in_selected_objs(context):
+    for obj in zpy.objects.for_obj_in_selected_objs(context):
         obj.seg.category_name = 'default'
         obj.seg.category_color = zpy.color.default_color(
             output_style='frgb')
@@ -287,7 +287,7 @@ class CategoriesFromZUMOJSON(Operator, ImportHelper):
         default='*.json', options={'HIDDEN'})
 
     def execute(self, context):
-        zumo_json = zpy.file.read_json(self.filepath)
+        zumo_json = zpy.files.read_json(self.filepath)
         categories = zumo_json.get('categories', None)
         assert categories is not None, \
             f'ZUMO JSON does not have categories.'
@@ -306,7 +306,7 @@ class SegmentPanel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Segment"
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
 
     def draw(self, context):
         layout = self.layout

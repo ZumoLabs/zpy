@@ -65,11 +65,12 @@ def set_log_levels(level: str = None) -> None:
 
 
 @gin.configurable
-def step(num_steps: int = 16,
-         framerate: int = 0,
-         start_frame: int = 1,
-         refresh_ui: bool = False,
-         ) -> int:
+def step(
+    num_steps: int = 16,
+    framerate: int = 0,
+    start_frame: int = 1,
+    refresh_ui: bool = False,
+) -> int:
     """ Step logic helper for the scene. """
     assert num_steps is not None, 'Invalid num_steps'
     assert num_steps > 0, 'Invalid num_steps'
@@ -111,7 +112,7 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
         log.debug('Starting VSCode debugger in Blender.')
         # TODO: Can we assume the user will properly set up this environment variable?
         path = '$BLENDERADDONS/blender-debugger-for-vscode/__init__.py'
-        path = zpy.file.verify_path(path, make=False)
+        path = zpy.files.verify_path(path, make=False)
         bpy.ops.preferences.addon_install(filepath=str(path))
         bpy.ops.preferences.addon_enable(module='blender-debugger-for-vscode')
         bpy.ops.debug.connect_debugger_vscode()
@@ -148,14 +149,16 @@ def connect_addon(name: str = 'zpy_addon') -> None:
     """ Connects a Blender AddOn. """
     log.debug(f'Connecting Addon {name}.')
     path = f'$BLENDERADDONS/{name}/__init__.py'
-    path = zpy.file.verify_path(path, make=False)
+    path = zpy.files.verify_path(path, make=False)
     bpy.ops.preferences.addon_install(filepath=str(path))
     bpy.ops.preferences.addon_enable(module=name)
 
 
-def output_intermediate_scene(path: Union[str, Path] = '/tmp/blender-debug-scene-tmp.blend') -> None:
+def output_intermediate_scene(path: Union[str, Path] = None) -> None:
     """ Output intermediate saved scene. """
-    path = zpy.file.verify_path(path, make=False)
+    if path is None:
+        path = zpy.files.default_temp_path() / 'blender-debug-scene-tmp.blend'
+    path = zpy.files.verify_path(path, make=False)
     log.debug(f'Saving intermediate scene to {path}')
     bpy.ops.wm.save_as_mainfile(filepath=str(path), compress=False)
 
@@ -177,7 +180,7 @@ def load_scene(
     """ Load a scene from a *.blend file. """
     # HACK: Clear out scene of cameras and lights
     clear_scene(['CAMERA', 'LIGHT'])
-    path = zpy.file.verify_path(path, make=False)
+    path = zpy.files.verify_path(path, make=False)
     log.debug(f'Loading scene from {str(path)}.')
     with bpy.data.libraries.load(str(path)) as (data_from, data_to):
         for attr in dir(data_to):
@@ -207,7 +210,7 @@ def load_text_from_file(
     text_name: str = '',
 ) -> None:
     """ Load a file into Blender's internal text UI. """
-    path = zpy.file.verify_path(path)
+    path = zpy.files.verify_path(path)
     if bpy.data.texts.get(text_name, None) is None:
         _text = bpy.data.texts.load(str(path), internal=True)
         _text.name = text_name
@@ -270,7 +273,7 @@ def load_hdri(
 
     """
     log.info(f'Loading HDRI at {path}')
-    path = zpy.file.verify_path(path, make=False)
+    path = zpy.files.verify_path(path, make=False)
     world = bpy.context.scene.world
     world.use_nodes = True
     out_node = world.node_tree.nodes.get('World Output', None)
@@ -296,7 +299,7 @@ def random_hdri(
     asset_dir: Union[str, Path] = '$ASSETS/lib/hdris/hdri_maker_lib/04k_Library',
 ) -> Path:
     """ Generate a random HDRI from an asset path. """
-    asset_directory = zpy.file.verify_path(
+    asset_directory = zpy.files.verify_path(
         asset_dir, make=False, check_dir=True)
     hdri_path = random.choice([x for x in asset_directory.iterdir() if x.is_file()])
     load_hdri(hdri_path)

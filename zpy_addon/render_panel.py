@@ -20,7 +20,7 @@ def registerSceneProperties():
     bpy.types.Scene.zpy_output_path = bpy.props.StringProperty(
         name='Output Path',
         description="Output path for rendered images, annotations, etc.",
-        default=str(zpy.file.default_temp_path()),
+        default=str(zpy.files.default_temp_path()),
         subtype='DIR_PATH',
     )
 
@@ -30,7 +30,7 @@ class RenderOperator(Operator):
     bl_idname = "scene.zpy_render"
     bl_label = "Render"
     bl_description = "Render out segmented images."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -42,10 +42,10 @@ class RenderOperator(Operator):
         context.space_data.shading.color_type = 'OBJECT'
 
         # Image names
-        rgb_image_name = zpy.file.make_rgb_image_name(0)
-        cseg_image_name = zpy.file.make_cseg_image_name(0)
-        iseg_image_name = zpy.file.make_iseg_image_name(0)
-        depth_image_name = zpy.file.make_depth_image_name(0)
+        rgb_image_name = zpy.files.make_rgb_image_name(0)
+        cseg_image_name = zpy.files.make_cseg_image_name(0)
+        iseg_image_name = zpy.files.make_iseg_image_name(0)
+        depth_image_name = zpy.files.make_depth_image_name(0)
 
         # Output path
         output_path = Path(context.scene.zpy_output_path)
@@ -68,11 +68,11 @@ class CleanOutputDirOperator(bpy.types.Operator):
     bl_idname = "scene.zpy_cleanup_output_dir"
     bl_label = "Clean Output Dir"
     bl_description = "Clean output dir."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        zpy.file.clean_dir(context.scene.zpy_output_path, keep_dir=True)
+        zpy.files.clean_dir(context.scene.zpy_output_path, keep_dir=True)
         return {'FINISHED'}
 
 
@@ -81,11 +81,11 @@ class OpenOutputDirOperator(Operator):
     bl_idname = "scene.zpy_open_output_dir"
     bl_label = "Open Output Dir"
     bl_description = "Open file browser at output dir."
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        zpy.file.open_folder_in_explorer(
+        zpy.files.open_folder_in_explorer(
             context.scene.zpy_output_path, make=True)
         return {'FINISHED'}
 
@@ -95,7 +95,7 @@ class RenderPanel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Render"
-    bl_category = "ZumoLabs"
+    bl_category = "ZPY"
 
     def draw(self, context):
         layout = self.layout

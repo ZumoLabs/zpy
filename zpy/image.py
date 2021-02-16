@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 def open_image(image_path: Union[str, Path]) -> np.ndarray:
     """Open image from path to ndarray."""
-    image_path = zpy.file.verify_path(image_path, make=False)
+    image_path = zpy.files.verify_path(image_path, make=False)
     img = None
     try:
         img = io.imread(image_path)
@@ -37,10 +37,29 @@ def open_image(image_path: Union[str, Path]) -> np.ndarray:
     return img
 
 
-def remove_alpha_channel(image_path: Union[str, Path]) -> None:
+def remove_alpha_channel(
+    image_path: Union[str, Path]
+) -> None:
     """Remove the alpha channel in an image."""
     img = open_image(image_path)
     io.imsave(image_path, img)
+    log.info(f'Saving image with no alpha channel at {image_path}')
+
+
+@gin.configurable
+def jpeg_compression(
+    image_path: Union[str, Path],
+    quality : int = 40,    
+) -> Path:
+    """Add jpeg compression to an image."""
+    image_path = zpy.files.verify_path(image_path, make=False)
+    img = io.imread(image_path)
+    # Make sure image is jpeg
+    if not image_path.suffix == '.jpeg':
+        image_path = image_path.with_suffix('.jpeg')
+    io.imsave(image_path, arr=img, quality=quality)
+    log.info(f'Saving compressed image at {image_path}')
+    return image_path
 
 
 @gin.configurable
@@ -77,9 +96,10 @@ def pixel_mean_std(flat_images: List[np.ndarray]) -> Dict:
     }
 
 
-def flatten_images(images: List[np.ndarray],
-                   max_pixels: int = 500000,
-                   ) -> List[np.ndarray]:
+def flatten_images(
+    images: List[np.ndarray],
+    max_pixels: int = 500000,
+) -> List[np.ndarray]:
     """ Flatten out images in a list. """
     flat_images = []
     for image in images:
@@ -128,7 +148,7 @@ def seg_to_annotations(
         max_categories: int = 1000):
     """ Convert a segmentation image and bounding box to polygon segmentations. """
     log.info(f'Extracting annotations from segmentation: {image_path}')
-    image_path = zpy.file.verify_path(image_path, make=False)
+    image_path = zpy.files.verify_path(image_path, make=False)
     img = open_image(image_path)
     img_height, img_width = img.shape[0], img.shape[1]
     # Unique colors represent each unique category

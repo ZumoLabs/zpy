@@ -3,17 +3,22 @@ set -e
 
 BLENDER_VERSION=${BLENDER_VERSION:-"2.91"}
 BLENDER_VERSION_FULL=${BLENDER_VERSION_FULL:-"2.91.0"}
-ZPY_VERSION=${ZPY_VERSION:-"1.3.3"}
+ZPY_VERSION=${ZPY_VERSION:-"1.3.5"}
 
-# First check if the OS is Linux.
-if [[ "$(uname)" = "Linux" ]]; then
-  ON_LINUX=true
-  ON_MAC=false
-else
-  ON_MAC=true
-  ON_LINUX=false
-fi
-# TODO: print out a warning about not supporting Windows
+if [ "$(uname)" == "Darwin" ]; then
+    # Do something under Mac OS X platform        
+    ON_MAC=true
+    ON_LINUX=false
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    # Do something under GNU/Linux platform
+    ON_LINUX=true
+    ON_MAC=false
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+    # Do something under 32 bits Windows NT platform
+    abort "Windows install through script not supported, please see README.md to install from zip instead."
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+    # Do something under 64 bits Windows NT platform
+    abort "Windows install through script not supported, please see README.md to install from zip instead."
 
 # string formatters
 if [[ -t 1 ]]; then

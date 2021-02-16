@@ -188,7 +188,7 @@ class OutputCOCO(Output):
                                 annotation['bbox'][3]
                         elif key == 'areas':
                             coco_ann['areas'] = [bbox[2] * bbox[3]
-                                                    for bbox in annotation['bboxes']]
+                                                 for bbox in annotation['bboxes']]
                     except:
                         pass
             # HACK: Require bbox for an annotation
@@ -312,7 +312,7 @@ class OutputCOCO(Output):
             annotation_path = self.saver.annotation_path
 
         # Write out annotations to file
-        zpy.file.write_json(annotation_path, coco_dict)
+        zpy.files.write_json(annotation_path, coco_dict)
         parse_coco_annotations(
             annotation_file=annotation_path, data_dir=self.saver.output_dir)
 
@@ -321,11 +321,11 @@ class OutputCOCO(Output):
             log.info('Outputting COCO annotations with multi-part' +
                      'segmentation split into seperate annotations')
             coco_dict['annotations'] = self.coco_split_segmentation_annotations()
-            annotation_path = zpy.file.make_underscore_path(
+            annotation_path = zpy.files.make_underscore_path(
                 annotation_path, 'splitseg')
 
             # Write out annotations to file
-            zpy.file.write_json(annotation_path, coco_dict)
+            zpy.files.write_json(annotation_path, coco_dict)
             parse_coco_annotations(
                 annotation_file=annotation_path, data_dir=self.saver.output_dir)
 
@@ -341,15 +341,15 @@ def parse_coco_annotations(
     """ Parse COCO annotations, optionally output a ImageSaver object. """
     log.info(f'Parsing COCO annotations at {annotation_file}...')
     # Check annotation file path
-    annotation_file = zpy.file.verify_path(annotation_file)
+    annotation_file = zpy.files.verify_path(annotation_file)
     if data_dir is not None:
-        data_dir = zpy.file.verify_path(data_dir, check_dir=True)
+        data_dir = zpy.files.verify_path(data_dir, check_dir=True)
     else:
         # If no data_dir, assume annotation file is in the root folder.
         data_dir = annotation_file.parent
 
     # Check that categories, images, and annotations are not blank
-    coco_annotations = zpy.file.read_json(annotation_file)
+    coco_annotations = zpy.files.read_json(annotation_file)
     images = coco_annotations["images"]
     if len(images) == 0:
         raise COCOParseError(f'no images found in {annotation_file}')
@@ -367,10 +367,10 @@ def parse_coco_annotations(
     # Optionally output a saver object.
     if output_saver:
         saver = ImageSaver(output_dir=data_dir,
-                      annotation_path=annotation_file,
-                      description=coco_annotations['info']['description'],
-                      clean_dir=False,
-                      )
+                           annotation_path=annotation_file,
+                           description=coco_annotations['info']['description'],
+                           clean_dir=False,
+                           )
 
     # Check Images
     log.info('Parsing images...')

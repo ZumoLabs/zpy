@@ -33,13 +33,13 @@ You can test these out at: https://regex101.com/
 IMAGE_REGEX = '.*\.(jpeg|jpg|png|bmp)'
 FILE_REGEX = {
     # Images
-    'instance segmentation image': 'IMG_[0-9]*_iseg' + IMAGE_REGEX,
-    'class segmentation image': 'IMG_[0-9]*_cseg' + IMAGE_REGEX,
-    'depth image': 'IMG_[0-9]*_depth' + IMAGE_REGEX,
-    'normal image': 'IMG_[0-9]*_normal' + IMAGE_REGEX,
-    'stereo left image': 'IMG_[0-9]*_stereoL' + IMAGE_REGEX,
-    'stereo right image': 'IMG_[0-9]*_stereoR' + IMAGE_REGEX,
-    'rgb image': 'IMG_[0-9]*_rgb' + IMAGE_REGEX,
+    'instance segmentation image': 'IMG_[0-9]*.*iseg' + IMAGE_REGEX,
+    'class segmentation image': 'IMG_[0-9]*.*cseg' + IMAGE_REGEX,
+    'depth image': 'IMG_[0-9]*.*depth' + IMAGE_REGEX,
+    'normal image': 'IMG_[0-9]*.*normal' + IMAGE_REGEX,
+    'stereo left image': 'IMG_[0-9]*.*stereoL' + IMAGE_REGEX,
+    'stereo right image': 'IMG_[0-9]*.*stereoR' + IMAGE_REGEX,
+    'rgb image': 'IMG_[0-9]*.*rgb' + IMAGE_REGEX,
     'custom image': 'IMG_[0-9]*' + IMAGE_REGEX,
     'image': IMAGE_REGEX,
     # Annotations
@@ -156,10 +156,11 @@ def pretty_print(_d: Dict) -> str:
     return pformat(_d, indent=2, width=120)
 
 
-def verify_path(path: Union[str, Path],
-                make: bool = False,
-                check_dir: bool = False,
-                ) -> Path:
+def verify_path(
+    path: Union[str, Path],
+    make: bool = False,
+    check_dir: bool = False,
+) -> Path:
     """Verifies (or creates) directory at path."""
     path = to_pathlib_path(path)
     if not path.exists():
@@ -232,10 +233,12 @@ def sample(things: List, sample_size: int = None) -> List:
     return sample_images
 
 
-def filecopy(src_dir: Union[str, Path] = None,
-             dst_dir: Union[str, Path] = None,
-             src_name: str = None,
-             dst_name: str = None):
+def filecopy(
+    src_dir: Union[str, Path] = None,
+    dst_dir: Union[str, Path] = None,
+    src_name: str = None,
+    dst_name: str = None,
+) -> None:
     """ Copy over a file. """
     src_dir = verify_path(src_dir, check_dir=True)
     dst_dir = verify_path(dst_dir, check_dir=True)
@@ -250,7 +253,7 @@ def filecopy(src_dir: Union[str, Path] = None,
 def open_folder_in_explorer(
     path: Union[str, Path],
     make: bool = False,
-):
+) -> None:
     """ Opens a directory in the fileexplorer of your OS. """
     path = verify_path(path, check_dir=True, make=make)
     if sys.platform.startswith('darwin'):
@@ -264,7 +267,7 @@ def open_folder_in_explorer(
 def remove_files_with_suffix(
     path: Union[str, Path],
     exts: List[str],
-):
+) -> None:
     """Remove file in a path with certain extension """
     path = verify_path(path, check_dir=True)
     for _path in path.glob("*"):
@@ -273,7 +276,10 @@ def remove_files_with_suffix(
             _path.unlink()
 
 
-def unzip_file(zip_path: Union[str, Path], out_path: Union[str, Path]) -> None:
+def unzip_file(
+    zip_path: Union[str, Path],
+    out_path: Union[str, Path],
+) -> None:
     """ Unzip a file at a local path. """
     log.info(f'Unzipping {zip_path} to {out_path}...')
     zip_path = verify_path(zip_path)
@@ -291,7 +297,10 @@ def unzip_file(zip_path: Union[str, Path], out_path: Union[str, Path]) -> None:
     log.info(f'Done extracting to {out_path}.')
 
 
-def zip_file(in_path: Union[str, Path], zip_path: Union[str, Path]) -> None:
+def zip_file(
+    in_path: Union[str, Path],
+    zip_path: Union[str, Path],
+) -> None:
     """ Zip a file at a local path. """
     log.info(f'Zipping {in_path} to {zip_path}...')
     in_path = verify_path(in_path)

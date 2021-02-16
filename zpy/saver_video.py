@@ -34,7 +34,7 @@ class VideoSaver(zpy.saver.Saver):
                   length: timedelta = 0,
                   zero_indexed: bool = True,
                   **kwargs,
-                  ) -> None:
+                  ) -> Dict:
         """ Add image to save object. """
         video = {
             'name': name,
@@ -48,16 +48,17 @@ class VideoSaver(zpy.saver.Saver):
         video.update(**kwargs)
         video['id'] = len(self.videos.keys())
         video['id'] += 0 if zero_indexed else 1
-        log.debug(f'Adding video: {zpy.file.pretty_print(video)}')
+        log.debug(f'Adding video: {zpy.files.pretty_print(video)}')
         self.videos[video['id']] = video
         self.video_name_to_id[name] = video['id']
+        return video
 
     @gin.configurable
     def add_annotation(self,
                        *args,
                        video: str = 'default video',
                        **kwargs,
-                       ) -> None:
+                       ) -> Dict:
         """ Add annotation. """
         annotation = super().add_annotation(*args, **kwargs)
         video_id = self.video_name_to_id.get(video, None)
@@ -65,6 +66,7 @@ class VideoSaver(zpy.saver.Saver):
         annotation['video_id'] = video_id
         annotation.update(**kwargs)
         self.annotations.append(annotation)
+        return annotation
 
     @gin.configurable
     def output_meta_analysis(self):

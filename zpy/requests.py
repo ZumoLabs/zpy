@@ -142,7 +142,7 @@ def accept_requests(run_func):
                 run_func(request)
 
             except Exception as e:
-                reply['error'] = str(e)
+                reply['exception'] = str(e)
                 reply['code'] = 400
 
             # Duration of request is logged and sent in reply

@@ -41,11 +41,11 @@ def batch_to_tvt(batches_path: List[Union[str, Path]] = None,
     """
     log.info('Converting batch of datasets into one Train-Val-Test dataset.')
     # Make sure each path in the list of batches is a directory
-    batches_path = [zpy.file.verify_path(
+    batches_path = [zpy.files.verify_path(
         p, check_dir=True) for p in batches_path]
 
     # There will be a root "dataset" directory in the output path
-    output_dir = zpy.file.verify_path(output_dir, check_dir=True)
+    output_dir = zpy.files.verify_path(output_dir, check_dir=True)
     dst_path = output_dir / dataset_name
     dst_path.mkdir(exist_ok=True, parents=True)
 
@@ -56,7 +56,7 @@ def batch_to_tvt(batches_path: List[Union[str, Path]] = None,
     dataset_dirs = {}
     _dataset_dir = dst_path / dataset_name
     for name in dataset_names:
-        dataset_dirs[name] = zpy.file.make_underscore_path(
+        dataset_dirs[name] = zpy.files.make_underscore_path(
             _dataset_dir, name)
         dataset_dirs[name].mkdir(exist_ok=True, parents=True)
 
@@ -72,9 +72,9 @@ def batch_to_tvt(batches_path: List[Union[str, Path]] = None,
         zumo_annotation_paths = {}
         _annotation_path = annotations_dir / (dataset_name + '.json')
         for name in dataset_names:
-            annotation_paths[name] = zpy.file.make_underscore_path(
+            annotation_paths[name] = zpy.files.make_underscore_path(
                 _annotation_path, name)
-            zumo_annotation_paths[name] = zpy.file.make_underscore_path(
+            zumo_annotation_paths[name] = zpy.files.make_underscore_path(
                 _annotation_path, name + '_zumo')
 
         zumo_to_tvt(batches_path,
@@ -181,7 +181,7 @@ def zumo_to_tvt(batches_path: Union[str, Path] = None,
         if not zumo_annotation_path.exists():
             log.warning(f'No ZUMO JSON found at {zumo_annotation_path}')
             continue
-        zumo_annotation = zpy.file.read_json(zumo_annotation_path)
+        zumo_annotation = zpy.files.read_json(zumo_annotation_path)
 
         # Set the metadata from the first dataset batch
         if batch_id == 0:
@@ -272,7 +272,7 @@ def zumo_to_tvt(batches_path: Union[str, Path] = None,
                 image_id_old_to_new[int(image['id'])] = val_image_id
                 image['id'] = val_image_id
                 # Add output path and image name
-                image['name'] = zpy.file.make_rgb_image_name(val_image_id)
+                image['name'] = zpy.files.make_rgb_image_name(val_image_id)
                 image['output_path'] = str(val_dir / image['name'])
                 # Add to annotation image dict
                 val_annotation_dict['images'][val_image_id] = copy.deepcopy(image)
@@ -289,7 +289,7 @@ def zumo_to_tvt(batches_path: Union[str, Path] = None,
                 image_id_old_to_new[int(image['id'])] = test_image_id
                 image['id'] = test_image_id
                 # Add output path and image name
-                image['name'] = zpy.file.make_rgb_image_name(test_image_id)
+                image['name'] = zpy.files.make_rgb_image_name(test_image_id)
                 image['output_path'] = str(test_dir / image['name'])
                 # Add to annotation image dict
                 test_annotation_dict['images'][test_image_id] = copy.deepcopy(image)
@@ -306,7 +306,7 @@ def zumo_to_tvt(batches_path: Union[str, Path] = None,
                 image_id_old_to_new[int(image['id'])] = train_image_id
                 image['id'] = train_image_id
                 # Add output path and image name
-                image['name'] = zpy.file.make_rgb_image_name(train_image_id)
+                image['name'] = zpy.files.make_rgb_image_name(train_image_id)
                 image['output_path'] = str(train_dir / image['name'])
                 # Add to annotation image dict
                 train_annotation_dict['images'][train_image_id] = copy.deepcopy(image)
@@ -350,9 +350,9 @@ def zumo_to_tvt(batches_path: Union[str, Path] = None,
                 annotation_dict['categories'][category_id]['subcategory_count'][subcategory_id] += 1
 
     # Write Jsons to file
-    zpy.file.write_json(annotation_train_filename, train_annotation_dict)
-    zpy.file.write_json(annotation_val_filename, val_annotation_dict)
-    zpy.file.write_json(annotation_test_filename, test_annotation_dict)
+    zpy.files.write_json(annotation_train_filename, train_annotation_dict)
+    zpy.files.write_json(annotation_val_filename, val_annotation_dict)
+    zpy.files.write_json(annotation_test_filename, test_annotation_dict)
 
 
 @gin.configurable
@@ -367,33 +367,33 @@ def _tvt_image_copy(old_idx: int = 0,
     """ Copy over an image and it's segmentation images to a train,test,val directory.
     """
     # Copy over RGB image
-    zpy.file.filecopy(
+    zpy.files.filecopy(
         src_dir=src_dir,
         dst_dir=dst_dir,
-        src_name=zpy.file.make_rgb_image_name(old_idx),
-        dst_name=zpy.file.make_rgb_image_name(new_idx),
+        src_name=zpy.files.make_rgb_image_name(old_idx),
+        dst_name=zpy.files.make_rgb_image_name(new_idx),
     )
     # Copy over iseg image
     if copy_iseg:
-        zpy.file.filecopy(
+        zpy.files.filecopy(
             src_dir=src_dir,
             dst_dir=dst_dir,
-            src_name=zpy.file.make_iseg_image_name(old_idx),
-            dst_name=zpy.file.make_iseg_image_name(new_idx),
+            src_name=zpy.files.make_iseg_image_name(old_idx),
+            dst_name=zpy.files.make_iseg_image_name(new_idx),
         )
     # Copy over cseg image
     if copy_cseg:
-        zpy.file.filecopy(
+        zpy.files.filecopy(
             src_dir=src_dir,
             dst_dir=dst_dir,
-            src_name=zpy.file.make_cseg_image_name(old_idx),
-            dst_name=zpy.file.make_cseg_image_name(new_idx),
+            src_name=zpy.files.make_cseg_image_name(old_idx),
+            dst_name=zpy.files.make_cseg_image_name(new_idx),
         )
     # Copy over depth image
     if copy_depth:
-        zpy.file.filecopy(
+        zpy.files.filecopy(
             src_dir=src_dir,
             dst_dir=dst_dir,
-            src_name=zpy.file.make_depth_image_name(old_idx),
-            dst_name=zpy.file.make_depth_image_name(new_idx),
+            src_name=zpy.files.make_depth_image_name(old_idx),
+            dst_name=zpy.files.make_depth_image_name(new_idx),
         )

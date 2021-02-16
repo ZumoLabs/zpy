@@ -22,7 +22,7 @@ def load_blend_obj(
         link: bool = False,
 ) -> bpy.types.Object:
     """ Load object from blend file. """
-    path = zpy.file.verify_path(path, make=False)
+    path = zpy.files.verify_path(path, make=False)
     with bpy.data.libraries.load(str(path), link=link) as (data_from, data_to):
         for from_obj in data_from.objects:
             if from_obj.startswith(name):
@@ -92,6 +92,35 @@ def for_obj_in_collections(
             if obj.type == 'MESH':
                 # This gives you direct access to data block
                 yield bpy.data.objects[obj.name]
+
+
+def toggle_hidden(
+    obj: bpy.types.Object,
+    hidden: bool = True,
+    filter_string: str = None,
+) -> None:
+    """ Recursive function to make object and children invisible.
+
+    Optionally filter by a string in object name.
+
+    """
+    if obj is None:
+        log.warning('Empty object given to toggle_hidden')
+        return
+    if hasattr(obj, 'hide_render') and hasattr(obj, 'hide_viewport'):
+        if (filter_string is None) or (filter_string in obj.name):
+            log.debug(f'Hiding object {obj.name}')
+            bpy.data.objects[obj.name].select_set(True)
+            bpy.data.objects[obj.name].hide_render = hidden
+            bpy.data.objects[obj.name].hide_viewport = hidden
+        else:
+            log.debug(
+                f'Object {obj.name} does not contain filter string {filter_string}')
+    else:
+        log.warning('Object does not have hide properties')
+        return
+    for child in obj.children:
+        toggle_hidden(child, hidden=hidden, filter_string=filter_string)
 
 
 def randomly_hide_within_collection(
@@ -230,7 +259,7 @@ def rotate(
     obj: bpy.types.Object,
     rotation: float = 0,
     axis: str = 'Z'
-):
+) -> None:
     """ Rotate an object (in radians) """
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
@@ -241,7 +270,7 @@ def rotate(
 def scale(
     obj: bpy.types.Object,
     scale: Tuple[float] = (1.0, 1.0, 1.0)
-):
+) -> None:
     """ Scale an object """
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
@@ -266,7 +295,7 @@ def jitter(
         (1.0, 1.0),
         (1.0, 1.0),
     ),
-):
+) -> None:
     """ Apply random scale (blender units) and rotation (radians) to object """
     translate(obj,
               translation=(
