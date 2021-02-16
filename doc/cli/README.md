@@ -1,5 +1,5 @@
 <div align="center">
-**zpy cli usage**
+**zpy** **cli** **usage**
 </div>
 
 <p align="center">
