@@ -7,17 +7,21 @@ import json
 log = logging.getLogger(__name__)
 
 
+class FetchFailed(Exception):
+    pass
+
+
 def create_generated_dataset(name, scene_name, config, url, token):
     """ create a dataset on ragnarok """
     endpoint = f'{url}/api/v1/scenes/'
     params = {'name': scene_name}
     r = requests.get(endpoint, params=params, headers=auth_headers(token))
     if r.status_code != 200:
-        log.warning(f'Unable to fetch scenes')
+        log.warning(f'unable to fetch scenes')
         return
     response = json.loads(r.text)
     if response['count'] != 1:
-        log.warning(f'Unable to find scene with name {scene_name}')
+        log.warning(f'unable to find scene with name {scene_name}')
         return
     scene = response['results'][0]
     endpoint = f'{url}/api/v1/generated-data-sets/'
@@ -51,15 +55,18 @@ def fetch_dataset(name, path, dataset_type, url, token):
     params = {'name': name}
     r = requests.get(endpoint, params=params, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed(f'Unable to fetch {dataset_type} datasets')
+        log.warning(f'Unable to fetch {dataset_type} datasets')
+        return
     response = json.loads(r.text)
     if response['count'] != 1:
-        raise FetchFailed(f'Unable to find {dataset_type} dataset with name "{name}"')
+        log.warning(f'Unable to find {dataset_type} dataset with name "{name}"')
+        return
     dataset = response['results'][0]
     endpoint = f"{url}/api/v1/{dataset['dataset_type']}-data-sets/{dataset['id']}/download"
     r = requests.get(endpoint, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed(f"Unable to get download link for dataset {dataset['id']}")
+        log.warning(f"Unable to get download link for dataset {dataset['id']}")
+        return
     response = json.loads(r.text)
     name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
     output_path = to_pathlib_path(path) / name_slug
@@ -84,7 +91,8 @@ def fetch_uploaded_datasets(endpoint, token):
     endpoint = f'{endpoint}/api/v1/uploaded-data-sets/'
     r = requests.get(endpoint, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed('Unable to fetch uploaded datasets')
+        log.warning('Unable to fetch uploaded datasets')
+        return []
     return json.loads(r.text)['results']
 
 
@@ -92,7 +100,8 @@ def fetch_generated_datasets(endpoint, token):
     endpoint = f'{endpoint}/api/v1/generated-data-sets/'
     r = requests.get(endpoint, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed('Unable to fetch generated datasets')
+        log.warning('Unable to fetch generated datasets')
+        return []
     return json.loads(r.text)['results']
 
 
@@ -100,5 +109,6 @@ def fetch_job_datasets(endpoint, token):
     endpoint = f'{endpoint}/api/v1/job-data-sets/'
     r = requests.get(endpoint, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed('Unable to fetch job datasets')
+        log.warning('Unable to fetch job datasets')
+        return []
     return json.loads(r.text)['results']
