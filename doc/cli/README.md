@@ -1,6 +1,16 @@
 <div align="center">
- **zpy cli usage guide**
+# cli usage
 </div>
+
+<p align="center">
+  <a href="app.zumolabs.ai">WebApp</a>
+  <a href="#Configuration">Configuration</a>
+  <a href="#List">List</a>
+  <a href="#Get">Get</a>
+  <a href="#Upload">Upload</a>
+  <a href="#Create">Create</a>
+  <a href="#Developer Commands">Developer Commands</a>
+</p>
 
 ## Usage
 
@@ -52,11 +62,11 @@ Upload Dataset : ```zpy upload dataset <name> /path/to/dataset```
 
 ## Create
 
-Create Dataset : ```zpy create dataset <name> <scene_name> kwargs ...```
+Create Dataset : ```zpy create dataset <name> <scene_name> kwargs```
 
 <p align="center"><img src="gif/createdataset.gif?raw=true"/></p>
 
-Create Job : ```zpy create job <name> <operation> -d <dataset_id> -d <dataset_id> ... kwargs```
+Create Job : ```zpy create job <name> <operation> -d <dataset_id> -d <dataset_id> kwargs```
 
 <p align="center"><img src="gif/createjob.gif?raw=true"/></p>
 
