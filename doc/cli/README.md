@@ -1,11 +1,11 @@
 <div align="center">
-__zpy cli usage__
+**CLI**
 </div>
 
 <p align="center">
-  <a href="app.zumolabs.ai">WebApp</a>\n
-  <a href="#Configuration">Configuration</a>\n
-  <a href="#List">List</a>\n
+  <a href="app.zumolabs.ai">WebApp</a> •
+  <a href="#Configuration">Configuration</a> •
+  <a href="#List">List</a> •
   <a href="#Get">Get</a> •
   <a href="#Upload">Upload</a> •
   <a href="#Create">Create</a> •
