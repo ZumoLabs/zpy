@@ -26,15 +26,18 @@ def fetch_scene(name, path, url, token):
     params = {'name': name}
     r = requests.get(endpoint, params=params, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed(f'Unable to fetch scenes')
+        log.warning(f'Unable to fetch scenes')
+        return
     response = json.loads(r.text)
     if response['count'] != 1:
-        raise FetchFailed(f'Unable to find scene with name "{name}"')
+        log.warning(f'Unable to find scene with name "{name}"')
+        return
     scene = response['results'][0]
     endpoint = f"{url}/api/v1/scenes/{scene['id']}/download"
     r = requests.get(endpoint, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed(f"Unable to get download link for scene {scene['id']}")
+        log.warning(f"Unable to get download link for scene {scene['id']}")
+        return
     response = json.loads(r.text)
     name_slug = f"{scene['name'].replace(' ', '_')}-{scene['id'][:8]}.zip"
     output_path = to_pathlib_path(path) / name_slug
@@ -46,7 +49,8 @@ def fetch_scenes(endpoint, token):
     endpoint = f'{endpoint}/api/v1/scenes/'
     r = requests.get(endpoint, headers=auth_headers(token))
     if r.status_code != 200:
-        raise FetchFailed('Unable to fetch scenes')
+        log.warning('Unable to fetch scenes')
+        return
     scenes = json.loads(r.text)['results']
     tbl = TableLogger(columns='state,name,zpy_version,blender_version,created',default_colwidth=30)
     if len(scenes) == 0:
