@@ -4,8 +4,13 @@ from distutils.core import setup
 from setuptools import find_packages
 import versioneer
 
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
+
+def get_requirements_from_file(filepath):
+    requires = []
+    with open(filepath, 'r') as f:
+        requires.append(f.readline())
+    return requires
+
 
 setup(
   name='zpy-zumo',
@@ -15,6 +20,10 @@ setup(
   author='Zumo Labs',
   author_email='infra@zumolabs.ai',
   packages=find_packages(),
-  install_requires=required,
+  install_requires=get_requirements_from_file('requirements.txt'),
   include_package_data=True,
+  entry_points='''
+    [console_scripts]
+    zpy=zcli.cli:cli
+  '''
 )
