@@ -1,0 +1,5 @@
+include requirements.txt
+include versioneer.py
+include zpy/_version.py
+include zpy/colors.json
+include zpy/colors_discrete.json
