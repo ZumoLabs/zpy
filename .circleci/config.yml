@@ -2,6 +2,21 @@ version: 2.1
 
 jobs:
 
+  tag:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - run:
+          name: Tag Branch
+          command: |
+            VERSION=$(git rev-parse --abbrev-ref HEAD | awk '{split($0,a,"-"); print a[2]}')
+            git config user.email "infra@zumolabs.ai"
+            git config user.name "CircleCI"
+            git tag $VERSION
+            git push origin $VERSION
+
   build:
     working_directory: ~/repo
     docker:
@@ -9,93 +24,68 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build the package
-          command: python setup.py sdist
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
-
-  publish:
-    working_directory: ~/repo
-    docker:
-      - image: circleci/openjdk:8-jdk
-    steps:
-      - attach_workspace:
-          at: ~/repo
+          name: build zpy package
+          command: python setup.py sdist bdist_wheel
       - run:
-          name: Install jFrog CLI
-          command: curl -fL https://getcli.jfrog.io | sh
-      - run:
-          name: Push to Artifactory
-          command: |
-            ./jfrog rt config --url $ARTIFACTORY_URL --user $ARTIFACTORY_USER --apikey $ARTIFACTORY_APIKEY --interactive=false
-            ./jfrog rt u dist/zpy-zumo-*.tar.gz zpy --build-name=zpy-build --build-number=$CIRCLE_BUILD_NUM
-            ./jfrog rt bce zpy-build $CIRCLE_BUILD_NUM
-            ./jfrog rt bp zpy-build $CIRCLE_BUILD_NUM
-
-  build-addon:
-    working_directory: ~/repo
-    docker:
-      - image: circleci/buildpack-deps:stretch
-    steps:
-      - checkout
-      - run:
-          name: Package Addon
+          name: build zpy addon
           command: |
             IMAGE_TAG=$(git describe --tags --dirty --always)
             export ZPY_VERSION=$IMAGE_TAG
             ./package_addon.sh
+            mv *.zip dist/
       - persist_to_workspace:
-          root: ~/repo
+          root: ~/repo/dist
           paths: .
 
-  publish-addon:
+  publish-pypi:
     working_directory: ~/repo
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: python:3.6
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/repo/dist
       - run:
-          name: Install jFrog CLI
-          command: curl -fL https://getcli.jfrog.io | sh
-      - run:
-          name: Push to Artifactory
+          name: publish package
           command: |
-            ./jfrog rt config --url $ARTIFACTORY_URL --user $ARTIFACTORY_USER --apikey $ARTIFACTORY_APIKEY --interactive=false
-            ./jfrog rt u *.zip addons --build-name=zpy-addon-build --build-number=$CIRCLE_BUILD_NUM
-            ./jfrog rt bce zpy-addon-build $CIRCLE_BUILD_NUM
-            ./jfrog rt bp zpy-addon-build $CIRCLE_BUILD_NUM
+            pip install --upgrade twine
+            twine upload --repository testpypi dist/*
+
+  publish-github-release:
+    working_directory: ~/repo
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ~/repo/dist
+      - run:
+          name: publish Release on github
+          command: |
+            VERSION=$(git describe --tags --dirty --always)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/repo/dist
 
 workflows:
   version: 2
   build-publish:
     jobs:
-      - build:
+      - tag:
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
-      - publish:
+              only: /release-v.*/
+      - build:
+          requires:
+            - tag
+          filters:
+            branches:
+              only: /release-v.*/
+      - publish-pypi:
           requires:
             - build
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
-      - build-addon:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-      - publish-addon:
+              only: /release-v.*/
+      - publish-github-release:
           requires:
-            - build-addon
+            - build
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only: /release-v.*/

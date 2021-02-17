@@ -19,6 +19,7 @@ setup(
   description='Zumo Labs Utility Bundle',
   author='Zumo Labs',
   author_email='infra@zumolabs.ai',
+  url='https://github.com/ZumoLabs/zpy',
   packages=find_packages(),
   install_requires=get_requirements_from_file('requirements.txt'),
   include_package_data=True,
