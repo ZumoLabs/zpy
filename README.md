@@ -35,7 +35,6 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 ### Install: Using Blender GUI <a name="installzip"></a>
 
 First download the [zip](https://github.com/ZumoLabs/zpy/tree/main/zpy_addon-v1.0.0.zip). Then open up Blender. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there there.
->>>>>>> e30e7169ecc39d37f9e676a49521ac20ea3dff29
 
 ![Enabling the addon](./doc/install_zpy.png)
 
