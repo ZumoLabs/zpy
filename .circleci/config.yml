@@ -53,7 +53,7 @@ jobs:
           name: publish package
           command: |
             pip install --upgrade twine
-            twine upload --repository testpypi dist/*
+            twine upload dist/*
 
   publish-github-release:
     working_directory: ~/repo
