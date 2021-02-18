@@ -3,9 +3,10 @@
 """
 import importlib
 import logging
-import os
 import subprocess
 import sys
+from pathlib import Path
+import shutil
 
 import bpy
 
@@ -15,23 +16,10 @@ log = logging.getLogger(__name__)
 def install_pip_depenencies():
     """ Install pip dependencies required by zpy addon."""
     log.info('Installing zpy and it\'s pip dendencies.')
-    this_dir_path = os.path.dirname(os.path.abspath(__file__))
     try:
-        log.info('Attempting to install zpy and it\'s' +
-                 ' dependencies with setup.py..')
-        setup_path = os.path.abspath(os.path.join(this_dir_path, 'setup.py'))
-        subprocess.run([sys.executable, setup_path,
-                        "install", "--user"], check=True)
-        log.warn('Success!')
-        return
-    except Exception as e:
-        log.warn(f'Failed {e}')
-    try:
-        log.info('Attempting to install zpy and it\'s' +
-                 ' dependencies with requirements file..')
+        log.info('Installing zpy and dependencies...')
         # Requirements files contains pip modules
-        requirements_path = os.path.abspath(
-            os.path.join(this_dir_path, 'requirements.txt'))
+        requirements_path = Path(__file__).parent / 'requirements.txt'
         with open(requirements_path) as f:
             required = f.read().splitlines()
         # Update pip and install required pip modules
@@ -41,14 +29,14 @@ def install_pip_depenencies():
             log.info(f'Installing pip module {pip_module}')
             subprocess.run([sys.executable, "-m", "pip",
                             "install", pip_module, "--user"], check=True)
-        log.info(f'Installing zpy')
-        subprocess.run([sys.executable, "-m", "pip",
-                        "install", '-e', this_dir_path, "--user"], check=True)
+        # Copy ZPY into Blender python's site packages
+        zpy_path = Path(__file__).parent / 'zpy'
+        package_path = Path(sys.executable).parent.parent / \
+            'lib' / 'site-packages' / 'zpy'
+        shutil.copytree(zpy_path, package_path)
         return
     except Exception as e:
-        log.warning(f'Failed {e}')
-    raise Exception('Could not install zpy and it\'s' +
-                    ' dependencies. Please open an issue.')
+        log.warning(f'Could not install ZPY and dependencies: {e}')
 
 
 try:
@@ -56,7 +44,6 @@ try:
 except ModuleNotFoundError:
     log.warn('Could not find required pip packages.')
     install_pip_depenencies()
-    import zpy
 
 bl_info = {
     "name": "zpy",
@@ -82,6 +69,7 @@ if "bpy" in locals():
     importlib.reload(render_panel)
     importlib.reload(script_panel)
     importlib.reload(segment_panel)
+    from . import zpy
     importlib.reload(zpy)
 
 classes = (
