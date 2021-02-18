@@ -58,7 +58,7 @@ coverage.xml
 *.pot
 
 # Zip files
-# *.zip 
+*.zip
 
 # Django stuff:
 *.log

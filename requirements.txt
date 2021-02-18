@@ -11,3 +11,4 @@ requests
 click
 table-logger==0.3.6
 tqdm
+urllib2
