@@ -16,5 +16,7 @@ cp -r setup.py zpy_addon/
 zip -r zpy_addon-${ZPY_VERSION}.zip zpy_addon/ \
     --exclude "*.png" ".git/*"
 
-# Remove the copied zpy folder
+# Remove the copied contents
 rm -rf zpy_addon/zpy
+rm -rf zpy_addon/requirements.txt
+rm -rf zpy_addon/setup.py
