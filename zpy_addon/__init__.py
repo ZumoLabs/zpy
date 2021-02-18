@@ -3,28 +3,59 @@
 """
 import importlib
 import logging
+import subprocess
+import sys
+from pathlib import Path
+import shutil
 
 import bpy
 
 log = logging.getLogger(__name__)
+
+
+def install_pip_depenencies():
+    """ Install pip dependencies required by zpy addon."""
+    log.info('Installing zpy and it\'s pip dendencies.')
+    try:
+        log.info('Installing zpy and dependencies...')
+        # Requirements files contains pip modules
+        requirements_path = Path(__file__).parent / 'requirements.txt'
+        with open(requirements_path) as f:
+            required = f.read().splitlines()
+        # Update pip and install required pip modules
+        subprocess.run([sys.executable, "-m", "pip",
+                        "install", "--upgrade", "pip", "--user"], check=True)
+        for pip_module in required:
+            log.info(f'Installing pip module {pip_module}')
+            subprocess.run([sys.executable, "-m", "pip",
+                            "install", pip_module, "--user"], check=True)
+        # Copy ZPY into Blender python's site packages
+        zpy_path = Path(__file__).parent / 'zpy'
+        package_path = Path(sys.executable).parent.parent / \
+            'lib' / 'site-packages' / 'zpy'
+        shutil.copytree(zpy_path, package_path)
+        return
+    except Exception as e:
+        log.warning(f'Could not install ZPY and dependencies: {e}')
+
 
 try:
     import zpy
 except ModuleNotFoundError:
     log.warn('Could not find required pip packages.')
     install_pip_depenencies()
-    import zpy
 
 bl_info = {
     "name": "zpy",
     "author": "Zumo Labs",
-    "version": (1, 0),
-    # TODO: Keep up to date with $BLENDER_VERSION in README.
+    # TODO: Keep up to date with $ZPY_VERSION
+    "version": (1, 0, 0),
+    # TODO: Keep up to date with $BLENDER_VERSION
     "blender": (2, 91, 0),
     "location": "View3D > Properties > zpy",
     "description": "Synthetic data creation tools for Blender.",
     "warning": "",
-    "doc_url": "https://github.com/ZumoLabs/zpy/blob/main/README.md",
+    "doc_url": "https://github.com/ZumoLabs/zpy/tree/main/README.md",
     "category": "3D View",
 }
 
@@ -38,6 +69,7 @@ if "bpy" in locals():
     importlib.reload(render_panel)
     importlib.reload(script_panel)
     importlib.reload(segment_panel)
+    from . import zpy
     importlib.reload(zpy)
 
 classes = (
@@ -95,27 +127,6 @@ def unregister():
             bpy.utils.unregister_class(cls)
         except Exception as e:
             log.warning(f'Exception when un-registering {cls.__name__}: {e}')
-
-
-def install_pip_depenencies():
-    """ Install pip dependencies required by zpy addon."""
-    log.info('Installing zpy and it\'s pip dendencies.')
-    
-    import subprocess
-    import sys
-    # TODO: METHOD 1
-    # Install zpy and it's dependencies with setup.py
-    subprocess.call([sys.executable,"setup.py","install", "--user"])
-
-    # TODO: METHOD 2
-    # Requirements files contains pip modules
-    with open('requirements.txt') as f:
-        required = f.read().splitlines()
-    # Update pip and install required pip modules
-    subprocess.call([sys.executable,"-m","pip", "install", "--upgrade","pip"])
-    for pip_module in required:
-        log.info(f'Installing pip module {pip_module}')
-        subprocess.call([sys.executable,"-m","pip", "install", pip_module])
 
 
 if __name__ == "__main__":
