@@ -8,6 +8,9 @@ jobs:
       - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "d7:93:58:7b:31:e3:62:53:2d:72:a4:a0:90:8b:8c:a8"
       - run:
           name: Tag Branch
           command: |
