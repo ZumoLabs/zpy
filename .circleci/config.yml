@@ -17,8 +17,8 @@ jobs:
             VERSION=$(git rev-parse --abbrev-ref HEAD | awk '{split($0,a,"-"); print a[2]}')
             git config user.email "infra@zumolabs.ai"
             git config user.name "CircleCI"
-            git tag $VERSION
-            git push origin $VERSION
+            git tag -f $VERSION
+            git push origin $VERSION -f
 
   build:
     working_directory: ~/repo
@@ -32,6 +32,7 @@ jobs:
       - run:
           name: build zpy addon
           command: |
+            apt-get update && apt-get install -y --no-install-recommends zip
             IMAGE_TAG=$(git describe --tags --dirty --always)
             export ZPY_VERSION=$IMAGE_TAG
             ./package_addon.sh
