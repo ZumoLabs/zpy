@@ -36,10 +36,11 @@ jobs:
             IMAGE_TAG=$(git describe --tags --dirty --always)
             export ZPY_VERSION=$IMAGE_TAG
             ./package_addon.sh
-            mv *.zip dist/
       - persist_to_workspace:
-          root: ~/repo/dist
-          paths: .
+          root: ~/repo
+          paths:
+            - dist/*
+            - *.zip
 
   publish-pypi:
     working_directory: ~/repo
@@ -47,7 +48,7 @@ jobs:
       - image: python:3.6
     steps:
       - attach_workspace:
-          at: ~/repo/dist
+          at: ~/repo
       - run:
           name: publish package
           command: |
@@ -59,12 +60,14 @@ jobs:
     docker:
       - image: cibuilds/github:0.10
     steps:
+      - checkout
       - attach_workspace:
-          at: ~/repo/dist
+          at: ~/repo
       - run:
           name: publish Release on github
           command: |
             VERSION=$(git describe --tags --dirty --always)
+            cp *.zip dist/
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/repo/dist
 
 workflows:
