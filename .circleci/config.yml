@@ -1,0 +1,98 @@
+version: 2.1
+
+jobs:
+
+  tag:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "d7:93:58:7b:31:e3:62:53:2d:72:a4:a0:90:8b:8c:a8"
+      - run:
+          name: Tag Branch
+          command: |
+            VERSION=$(git rev-parse --abbrev-ref HEAD | awk '{split($0,a,"-"); print a[2]}')
+            git config user.email "infra@zumolabs.ai"
+            git config user.name "CircleCI"
+            git tag -f $VERSION
+            git push origin $VERSION -f
+
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: python:3.6
+    steps:
+      - checkout
+      - run:
+          name: build zpy package
+          command: python setup.py sdist bdist_wheel
+      - run:
+          name: build zpy addon
+          command: |
+            apt-get update && apt-get install -y --no-install-recommends zip
+            IMAGE_TAG=$(git describe --tags --dirty --always)
+            export ZPY_VERSION=$IMAGE_TAG
+            ./package_addon.sh
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - dist/*
+            - ./*.zip
+
+  publish-pypi:
+    working_directory: ~/repo
+    docker:
+      - image: python:3.6
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: publish package
+          command: |
+            pip install --upgrade twine
+            twine upload dist/*
+
+  publish-github-release:
+    working_directory: ~/repo
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: publish Release on github
+          command: |
+            VERSION=$(git describe --tags --dirty --always)
+            cp *.zip dist/
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/repo/dist
+
+workflows:
+  version: 2
+  build-publish:
+    jobs:
+      - tag:
+          filters:
+            branches:
+              only: /release-v.*/
+      - build:
+          requires:
+            - tag
+          filters:
+            branches:
+              only: /release-v.*/
+      - publish-pypi:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /release-v.*/
+      - publish-github-release:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /release-v.*/
