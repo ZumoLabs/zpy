@@ -8,4 +8,4 @@ Welcome to the first `zpy` tutorial! In this tutorial we will introduce the foll
 
 # Video
 
-You can watch this tutorial as a [video on YouTube]().
+You can watch this tutorial as a [video on YouTube](https://youtu.be/py3mv70s82M).
