@@ -27,18 +27,21 @@ class OutputCSV(Output):
 
     @gin.configurable
     def output_annotations(self,
-                           annotation_dict_to_csv_row_func : Callable,
-                           annotation_path : Union[str, Path] = None,
-                           header : List[str] = None,
+                           annotation_dict_to_csv_row_func: Callable = None,
+                           annotation_path: Union[str, Path] = None,
+                           header: List[str] = None,
                            ):
         """ Ouput Generic CSV annotations. """
+        if annotation_dict_to_csv_row_func is None:
+            raise CSVParseError(
+                'Output CSV annotations requires a annotation_dict_to_csv_row_func')
         csv_data = []
         if header is not None:
             csv_data.append(header)
         for annotation in self.saver.annotations:
-                row = annotation_dict_to_csv_row_func(annotation)
-                if row is not None:
-                    csv_data.append(row)
+            row = annotation_dict_to_csv_row_func(annotation)
+            if row is not None:
+                csv_data.append(row)
         # Get the correct annotation path
         if annotation_path is not None:
             annotation_path = annotation_path
@@ -64,4 +67,5 @@ def parse_csv_annotations(
     length = len(next(csv_data_iterable))
     log.debug(f'Row length in CSV: {[length for l in csv_data_iterable]}')
     if not all(len(l) == length for l in csv_data_iterable):
-        raise CSVParseError(f'Not all rows in the CSV have same length {length}')
+        raise CSVParseError(
+            f'Not all rows in the CSV have same length {length}')

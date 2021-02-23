@@ -14,7 +14,8 @@ import gin
 import zpy
 from zpy.output_coco import COCOParseError, OutputCOCO
 from zpy.output_zumo import OutputZUMO, ZUMOParseError, parse_zumo_annotations
-from zpy.saver_image import ImageSaver
+from zpy.output_csv import CSVParseError, OutputCSV
+from zpy.saver import Saver
 
 log = logging.getLogger(__name__)
 
@@ -28,13 +29,13 @@ class TVTParseError(Exception):
 def batch_to_tvt(batches_path: List[Union[str, Path]] = None,
                  output_dir: Union[str, Path] = None,
                  dataset_name: str = None,
-                 tvt_format: str = 'zumo',
                  split_val: float = 0.25,
                  split_test: float = 0.25,
                  category_remap: Dict = None,
                  output_annotated_images: bool = True,
                  output_meta_analysis: bool = True,
                  output_coco_annotations: bool = False,
+                 output_csv_annotations: bool = False,
                  ):
     """ Combine a set of batches into one dataset, which will then be split
     into train, validate, and test datasets.
@@ -60,65 +61,60 @@ def batch_to_tvt(batches_path: List[Union[str, Path]] = None,
             _dataset_dir, name)
         dataset_dirs[name].mkdir(exist_ok=True, parents=True)
 
-    if tvt_format == 'zumo':
-        log.info('TVT will use ZUMO formatted datasets.')
+    # There will be a single "annotations" dir in the root "dataset" dir
+    annotations_dir = dst_path.joinpath('annotations')
+    annotations_dir.mkdir(exist_ok=True, parents=True)
 
-        # There will be a single "annotations" dir in the root "dataset" dir
-        annotations_dir = dst_path.joinpath('annotations')
-        annotations_dir.mkdir(exist_ok=True, parents=True)
+    # Make annotation files for train, val, and test
+    annotation_paths = {}
+    zumo_annotation_paths = {}
+    _annotation_path = annotations_dir / (dataset_name + '.json')
+    for name in dataset_names:
+        annotation_paths[name] = zpy.files.make_underscore_path(
+            _annotation_path, name)
+        zumo_annotation_paths[name] = zpy.files.make_underscore_path(
+            _annotation_path, name + '_zumo')
 
-        # Make annotation files for train, val, and test
-        annotation_paths = {}
-        zumo_annotation_paths = {}
-        _annotation_path = annotations_dir / (dataset_name + '.json')
-        for name in dataset_names:
-            annotation_paths[name] = zpy.files.make_underscore_path(
-                _annotation_path, name)
-            zumo_annotation_paths[name] = zpy.files.make_underscore_path(
-                _annotation_path, name + '_zumo')
-
-        zumo_to_tvt(batches_path,
-                    train_dir=dataset_dirs['train'],
-                    test_dir=dataset_dirs['test'],
-                    val_dir=dataset_dirs['val'],
-                    annotation_train_filename=zumo_annotation_paths['train'],
-                    annotation_val_filename=zumo_annotation_paths['val'],
-                    annotation_test_filename=zumo_annotation_paths['test'],
-                    split_val=split_val,
-                    split_test=split_test
-                    )
-
-        for name in dataset_names:
-            # Parse ZUMO annotations
-            try:
-                saver = parse_zumo_annotations(
-                    annotation_file=zumo_annotation_paths[name],
-                    data_dir=dataset_dirs[name],
-                    output_saver=True,
+    zumo_to_tvt(batches_path,
+                train_dir=dataset_dirs['train'],
+                test_dir=dataset_dirs['test'],
+                val_dir=dataset_dirs['val'],
+                annotation_train_filename=zumo_annotation_paths['train'],
+                annotation_val_filename=zumo_annotation_paths['val'],
+                annotation_test_filename=zumo_annotation_paths['test'],
+                split_val=split_val,
+                split_test=split_test
                 )
-                # Re-map categories
-                if category_remap is not None:
-                    saver.remap_filter_categories(category_remap)
-                # Output images with annotations drawn on top
-                if output_annotated_images:
-                    saver.output_annotated_images()
-                # Output meta analysis folder
-                if output_meta_analysis:
-                    saver.output_meta_analysis()
-                # COCO annotations
-                if output_coco_annotations:
-                    OutputCOCO(saver).output_annotations(
-                        annotation_path=annotation_paths[name])
-            except ZUMOParseError as e:
-                log.exception(f'ZUMOParseError error for tvt:{name}')
-            except COCOParseError as e:
-                log.exception(f'COCOParseError error for tvt:{name}')
 
-    elif tvt_format == 'sequences':
-        log.info('TVT will split each batch into test, train, and val.')
-
-    else:
-        raise ValueError(f'Invalid format for tvt: {tvt_format}')
+    for name in dataset_names:
+        # Parse ZUMO annotations
+        try:
+            saver = parse_zumo_annotations(
+                annotation_file=zumo_annotation_paths[name],
+                data_dir=dataset_dirs[name],
+                output_saver=True,
+            )
+            # Re-map categories
+            if category_remap is not None:
+                saver.remap_filter_categories(category_remap)
+            # Output images with annotations drawn on top
+            if output_annotated_images:
+                saver.output_annotated_images()
+            # Output meta analysis folder
+            if output_meta_analysis:
+                saver.output_meta_analysis()
+            # COCO annotations
+            if output_coco_annotations:
+                OutputCOCO(saver).output_annotations(
+                    annotation_path=annotation_paths[name])
+            # CSV annotations
+            if output_csv_annotations:
+                OutputCSV(saver).output_annotations(
+                    annotation_path=annotation_paths[name])
+        except ZUMOParseError as e:
+            log.exception(f'ZUMOParseError error for tvt:{name}')
+        except COCOParseError as e:
+            log.exception(f'COCOParseError error for tvt:{name}')
 
 
 @gin.configurable
@@ -138,7 +134,7 @@ def zumo_to_tvt(batches_path: Union[str, Path] = None,
                 subcategory_zero_indexed: bool = True,
                 image_zero_indexed: bool = True,
                 ):
-    """ Parse coco annotations within a list of batches and output tvt """
+    """ Parse ZUMO Annotations within a list of batches and output tvt """
 
     # Dictionaries which will eventually get written out to file as JSONs
     default_dict = {
@@ -188,9 +184,9 @@ def zumo_to_tvt(batches_path: Union[str, Path] = None,
             dataset_metadata = zumo_annotation['metadata'].copy()
             # Update time to now
             dataset_metadata['year'] = \
-                date.today().strftime(ImageSaver.DATETIME_YEAR_FORMAT)
+                date.today().strftime(Saver.DATETIME_YEAR_FORMAT)
             dataset_metadata['date_created'] = \
-                date.today().strftime(ImageSaver.DATETIME_FORMAT)
+                date.today().strftime(Saver.DATETIME_FORMAT)
 
         # Verify that all batches have the same metadata fields
         for field in ['description', 'contributor', 'url']:
