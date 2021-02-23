@@ -14,7 +14,6 @@ from zpy import gin
 from zpy import image
 from zpy import logging
 from zpy import requests
-from zpy import tvt
 # Output class (outputting annotations to file)
 from zpy import output
 from zpy import output_coco
