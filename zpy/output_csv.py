@@ -39,7 +39,7 @@ class OutputCSV(Output):
         if header is not None:
             csv_data.append(header)
         for annotation in self.saver.annotations:
-            row = annotation_dict_to_csv_row_func(annotation)
+            row = annotation_dict_to_csv_row_func(annotation, saver=self.saver)
             if row is not None:
                 csv_data.append(row)
         # Get the correct annotation path
