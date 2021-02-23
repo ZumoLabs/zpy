@@ -14,6 +14,7 @@ def set_log_levels(
         # Addon modules
         'zpy_addon',
         'bpy.zpy_addon'
+        'neuralyzer',
     ]
 ) -> None:
     """ Set logger levels for all zpy modules. """
@@ -28,12 +29,15 @@ def set_log_levels(
     else:
         log.warning(f'Invalid log level {level}')
         return
-    log.warning(f'Setting log level to {log_level}')
+    log.warning(f'Setting log level to {log_level} ({level})')
     logging.basicConfig(
         level=log_level,
         format='%(asctime)s: %(levelname)s %(filename)s] %(message)s')
     for logger_name in modules:
-        logging.getLogger(logger_name).setLevel(log_level)
+        try:
+            logging.getLogger(logger_name).setLevel(log_level)
+        except:
+            pass
 
 
 def linebreaker_log(message: str, line_length: int = 80):

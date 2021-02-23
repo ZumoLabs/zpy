@@ -122,7 +122,7 @@ def accept_requests(run_func):
                 # Request can set a log level
                 log_level = request.get('log_level', None)
                 if log_level is not None:
-                    zpy.logging.set_log_levels()
+                    zpy.logging.set_log_levels(level=log_level)
 
                 # Default reply will include a message and an error code
                 reply = {
