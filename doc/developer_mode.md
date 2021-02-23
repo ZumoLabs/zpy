@@ -29,7 +29,7 @@ Install additional Python dependencies using Blender Python's pip:
 ```
 ${BLENDER_BIN_PY} -m ensurepip
 ${BLENDER_BIN_PIP} install --upgrade pip
-${BLENDER_BIN_PIP} install -r ${ZPY_SRC_PATH}requirements.txt
+${BLENDER_BIN_PIP} install -r ${ZPY_SRC_PATH}/requirements.txt
 ```
 
 If you are setting up a development environment it will be easier to symlink the zpy pip module directly into the Blender python library. This can be achieved with something like:
