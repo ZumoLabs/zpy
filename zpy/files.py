@@ -111,6 +111,12 @@ def frame_from_image_name(image_name: str) -> int:
     return int(''.join([s for s in image_name if s.isdigit()]))
 
 
+def replace_index_in_image_name(image_name: str, new_idx : int) -> str:
+    """ Replace the id in an image name. """
+    # HACK: This will break for image names without 8-digit indices
+    return image_name[:4] + '%08d' % new_idx + image_name[12:]
+
+
 def make_underscore_path(path: Union[str, Path], name: str) -> Path:
     """ Make an underscore path: foo.txt -> foo_new.txt """
     path = to_pathlib_path(path)
