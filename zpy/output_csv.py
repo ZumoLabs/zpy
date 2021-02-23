@@ -64,7 +64,10 @@ def parse_csv_annotations(
     csv_data = zpy.files.read_csv(annotation_file)
     # Make sure all the rows are the same length
     csv_data_iterable = iter(csv_data)
-    length = len(next(csv_data_iterable))
+    try:
+        length = len(next(csv_data_iterable))
+    except StopIteration:
+        raise CSVParseError(f'No data found in CSV at {annotation_file}')
     log.debug(f'Row length in CSV: {[length for l in csv_data_iterable]}')
     if not all(len(l) == length for l in csv_data_iterable):
         raise CSVParseError(
