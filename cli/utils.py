@@ -10,6 +10,17 @@ import random
 log = logging.getLogger(__name__)
 
 
+def parse_dataset_filter(dfilter):
+    """ parse a dataset filter string """
+    dfilter_arr = dfilter.split(':')
+    field, pattern, regex = 'name', 'startswith', dfilter_arr[-1]
+    if len(dfilter_arr) == 2:
+        pattern = dfilter_arr[0]
+    elif len(dfilter_arr) == 3:
+        field, pattern = dfilter_arr[0], dfilter_arr[1]
+    return field, pattern, regex
+
+
 def _safe_eval(key):
     try:
         return eval(key)

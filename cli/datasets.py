@@ -1,14 +1,10 @@
-from cli.utils import auth_headers, download_url, to_pathlib_path
+from cli.utils import auth_headers, download_url, to_pathlib_path, parse_dataset_filter
 from table_logger import TableLogger
 import requests
 import logging
 import json
 
 log = logging.getLogger(__name__)
-
-
-class FetchFailed(Exception):
-    pass
 
 
 def create_generated_dataset(name, scene_name, config, url, token):
@@ -40,24 +36,25 @@ def create_generated_dataset(name, scene_name, config, url, token):
 def filter_dataset(dfilter, url, token):
     """ filter dataset """
     dset = []
-    dset.extend(filter_generated_dataset(dfilter, url, token))
-    dset.extend(filter_uploaded_dataset(dfilter, url, token))
-    dset.extend(filter_job_dataset(dfilter, url, token))
+    field, pattern, regex = parse_dataset_filter(dfilter)
+    endpoint = f'{endpoint}/api/v1/uploaded-data-sets/'
+    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, token))
+    endpoint = f'{endpoint}/api/v1/generated-data-sets/'
+    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, token))
+    endpoint = f'{endpoint}/api/v1/job-data-sets/'
+    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, token))
     return dset
 
-def filter_generated_dataset(dfilter, url, token):
+
+def filter_dataset_url(field, pattern, regex, url, token):
     """ filter generated dataset """
-    asdfasdf
-
-
-def filter_uploaded_dataset(dfilter, url, token):
-    """ filter uploaded dataset """
-    asfasdfa
-
-
-def filter_job_dataset(dfilter, url, token):
-    """ filter job dataset """
-    asdfasdf
+    endpoint = f'{url}/
+    r = requests.post(endpoint, headers=auth_headers(token))
+    if r.status_code != 200:
+        log.warning(f"Unable to filter {url}")
+        return []
+    response = json.loads(r.text)
+    return [x.id for x in response]
 
 
 def create_uploaded_dataset(name, path, url, token):
