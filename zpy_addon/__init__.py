@@ -44,9 +44,10 @@ def install_pip_depenencies():
 
 try:
     import zpy
-except ModuleNotFoundError:
-    install_pip_depenencies()
-    import zpy
+except ModuleNotFoundError as e:
+    # install_pip_depenencies()
+    # import zpy
+    print(e)
 
 
 if "bpy" in locals():
