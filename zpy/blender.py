@@ -160,7 +160,7 @@ def output_intermediate_scene(path: Union[str, Path] = None) -> None:
         path = zpy.files.default_temp_path() / 'blender-debug-scene-tmp.blend'
     path = zpy.files.verify_path(path, make=False)
     log.debug(f'Saving intermediate scene to {path}')
-    bpy.ops.wm.save_as_mainfile(filepath=str(path), compress=False)
+    bpy.ops.wm.save_as_mainfile(filepath=str(path), compress=False, copy=True)
 
 
 def refresh_blender_ui() -> None:

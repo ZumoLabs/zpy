@@ -28,10 +28,10 @@ def run():
         bpy.data.objects["Suzanne"], name='Suzanne', color=suzanne_seg_color)
 
     # Save the current camera position so we can jitter it later
-    zpy.objects.save_pose(bpy.data.objects["Camera"], "original_camera_pose")
+    zpy.objects.save_pose(bpy.data.objects["Camera"], "cam_pose")
 
     # Save the current suzanne position so we can jitter it later
-    zpy.objects.save_pose(bpy.data.objects["Suzanne"], "original_suzanne_pose")
+    zpy.objects.save_pose(bpy.data.objects["Suzanne"], "suzanne_pose")
 
     # Run the scene.
     for step_idx in zpy.blender.step():
@@ -40,38 +40,35 @@ def run():
         log.info('This is an info log')
         log.debug('This is a debug log')
 
-        # Jitter the camera pose
-        zpy.objects.restore_pose(
-            bpy.data.objects["Camera"], "original_camera_pose")
-        zpy.objects.jitter(
-            bpy.data.objects["Camera"],
-            translate_range=(
-                (-0.02, 0.02),
-                (-0.02, 0.02),
-                (-0.02, 0.02),
-            ),
-            rotate_range=(
-                # In radians
-                (-0.2, 0.2),
-                (-0.2, 0.2),
-                (-0.2, 0.2),
-            ))
+        # Return camera and Suzanne to original positions
+        zpy.objects.restore_pose(bpy.data.objects["Camera"], "cam_pose")
+        zpy.objects.restore_pose(bpy.data.objects["Suzanne"], "suzanne_pose")
 
         # Jitter Suzane pose
-        zpy.objects.restore_pose(
-            bpy.data.objects["Suzanne"], "original_suzanne_pose")
         zpy.objects.jitter(
             bpy.data.objects["Suzanne"],
             translate_range=(
-                (-0.02, 0.02),
-                (-0.02, 0.02),
-                (-0.02, 0.02)),
+                (-5, 5),
+                (-5, 5),
+                (-5, 5)),
             rotate_range=(
                 (-math.pi, math.pi),
                 (-math.pi, math.pi),
                 (-math.pi, math.pi),
             ))
 
+        # Jitter the camera pose
+        zpy.objects.jitter(
+            bpy.data.objects["Camera"],
+            translate_range=(
+                (-5, 5),
+                (-5, 5),
+                (-5, 5),
+            ))
+
+        # Camera should be looking at Suzanne
+        zpy.camera.look_at(bpy.data.objects["Camera"], bpy.data.objects["Suzanne"].location)
+        
         # Name for each of the output images
         rgb_image_name = zpy.files.make_rgb_image_name(step_idx)
         iseg_image_name = zpy.files.make_iseg_image_name(step_idx)

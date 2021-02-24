@@ -9,8 +9,6 @@ import zpy
 # ----------- STEPS
 
 zpy.blender.step.num_steps = 10
-zpy.blender.step.start_frame = 1
-zpy.blender.step.framerate = 0
 
 # ----------- IMAGE
 
