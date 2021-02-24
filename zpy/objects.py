@@ -35,6 +35,20 @@ def load_blend_obj(
     return bpy.data.objects[name]
 
 
+def select(obj: Union[bpy.types.Object, str]) -> None:
+    """ Delete an object. """
+    if isinstance(obj, str):
+        obj = bpy.data.objects[obj]
+    if obj is not None:
+        # TODO: This sometimes does not work due to context issues
+        log.debug(f'Selecting obj: {obj.name}')
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.context.view_layer.objects.active = obj
+        bpy.data.objects[obj.name].select_set(True)
+    else:
+        log.debug(f'Could not find object')
+
+
 def delete_obj(obj: Union[bpy.types.Object, str]) -> None:
     """ Delete an object. """
     if isinstance(obj, str):
@@ -185,10 +199,7 @@ def populate_vertex_colors(
     if not obj.type == 'MESH':
         log.warning(f'Object {obj.name} is not a mesh, has no vertices.')
         return
-    # Make sure selected object is the active object
-    bpy.ops.object.select_all(action='DESELECT')
-    #obj.select_set(True, view_layer=bpy.context.scene.view_layers[0])
-    bpy.context.view_layer.objects.active = obj
+    select(obj)
     # Remove any existing vertex color data
     if len(obj.data.sculpt_vertex_colors):
         for vcol in obj.data.sculpt_vertex_colors.keys():
@@ -249,11 +260,11 @@ def translate(
     translation: Tuple[float] = (0, 0, 0),
 ) -> None:
     """ Translate an object (in blender units). """
-    bpy.ops.object.select_all(action='DESELECT')
-    obj.select_set(True)
-    bpy.context.view_layer.objects.active = obj
-    bpy.ops.transform.translate(value=translation)
-
+    # select(obj)
+    # bpy.ops.transform.translate(value=translation)
+    # bpy.context.view_layer.update()
+    mat_trans = mathutils.Matrix.Translation(translation)
+    obj.matrix_world = mat_trans @ obj.matrix_world
 
 def rotate(
     obj: bpy.types.Object,
@@ -261,10 +272,11 @@ def rotate(
     axis: str = 'Z'
 ) -> None:
     """ Rotate an object (in radians) """
-    bpy.ops.object.select_all(action='DESELECT')
-    obj.select_set(True)
-    bpy.context.view_layer.objects.active = obj
-    bpy.ops.transform.rotate(value=rotation, orient_axis=axis)
+    # select(obj)
+    # bpy.ops.transform.rotate(value=rotation, orient_axis=axis)
+    # bpy.context.view_layer.update()
+    mat_rot = mathutils.Matrix.Rotation(rotation, 4, axis)
+    obj.matrix_world = mat_rot @ obj.matrix_world
 
 
 def scale(
@@ -272,10 +284,13 @@ def scale(
     scale: Tuple[float] = (1.0, 1.0, 1.0)
 ) -> None:
     """ Scale an object """
-    bpy.ops.object.select_all(action='DESELECT')
-    obj.select_set(True)
-    bpy.context.view_layer.objects.active = obj
-    bpy.ops.transform.resize(value=scale)
+    # select(obj)
+    # bpy.ops.transform.resize(value=scale)
+    # bpy.context.view_layer.update()
+    mag = scale[0] + scale[1] + scale[2]
+    norm_vector = (scale[0] / mag, scale[1] / mag, scale[2] / mag)
+    mat_scale = mathutils.Matrix.Scale(mag / 3.0, 4, norm_vector)
+    obj.matrix_world = mat_scale @ obj.matrix_world
 
 
 def jitter(

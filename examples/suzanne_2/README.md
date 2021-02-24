@@ -4,10 +4,9 @@ If you are new we recommend [Part 1 of this tutorial](https://github.com/ZumoLab
 
 - Logging
 - Gin configuration
-- Object and material jittering
+- Object jittering
 - Depth images
-- HSV randomization
 
 # Video
 
-You can watch this tutorial as a [video on YouTube]().
+You can watch this tutorial as a [video on YouTube](https://youtu.be/wGTe2jJF0nE).
