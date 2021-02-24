@@ -55,9 +55,10 @@ export ZPY_VERSION="v1.0.0"
 
 ## Examples
 
-**Tutorial**
+**Tutorials**
 - [Suzanne: Part 1](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne)
 - [Suzanne: Part 2](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_2)
+- [Suzanne: Part 3](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_3)
 - [Uploading a Scene](https://github.com/ZumoLabs/zpy/tree/main/examples/uploading_a_scene)
 
 **Projects**
