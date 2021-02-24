@@ -179,9 +179,12 @@ def create_dataset(name, scene, args):
 @click.argument('name')
 @click.argument('operation')
 @click.option('datasets', '-d', multiple=True)
+@click.option('filters', '-f', multiple=True)
 @click.argument('args', nargs=-1)
-def create_job(name, operation, datasets, args):
+def create_job(name, operation, datasets, filters, args):
     config = read_config()
     job_config = parse_args(args)
     datasets_list = [x for x in datasets]
+    for dfilter in filters:
+        filter_dataset(dfilter, config['ENDPOINT'], config['TOKEN'])
     create_new_job(name, operation, job_config, datasets_list, config['ENDPOINT'], config['TOKEN'])

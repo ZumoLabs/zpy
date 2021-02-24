@@ -35,7 +35,30 @@ def create_generated_dataset(name, scene_name, config, url, token):
         log.warning(f'Unable to create dataset {name} for scene {scene_name} with config {config}')
         return
     log.info(f'created dataset {name} for scene {scene_name} with config {config}')
-    
+
+
+def filter_dataset(dfilter, url, token):
+    """ filter dataset """
+    dset = []
+    dset.extend(filter_generated_dataset(dfilter, url, token))
+    dset.extend(filter_uploaded_dataset(dfilter, url, token))
+    dset.extend(filter_job_dataset(dfilter, url, token))
+    return dset
+
+def filter_generated_dataset(dfilter, url, token):
+    """ filter generated dataset """
+    asdfasdf
+
+
+def filter_uploaded_dataset(dfilter, url, token):
+    """ filter uploaded dataset """
+    asfasdfa
+
+
+def filter_job_dataset(dfilter, url, token):
+    """ filter job dataset """
+    asdfasdf
+
 
 def create_uploaded_dataset(name, path, url, token):
     """ uploaded a dataset to ragnarok """
