@@ -1,5 +1,5 @@
 from cli.config import login, initialize_config, switch_env, read_config
-from cli.datasets import fetch_datasets, fetch_dataset, create_uploaded_dataset, create_generated_dataset
+from cli.datasets import fetch_datasets, fetch_dataset, create_uploaded_dataset, create_generated_dataset, filter_dataset
 from cli.scenes import fetch_scenes, fetch_scene, create_scene
 from cli.jobs import fetch_jobs, create_new_job
 from cli.utils import to_pathlib_path, parse_args
@@ -186,5 +186,5 @@ def create_job(name, operation, datasets, filters, args):
     job_config = parse_args(args)
     datasets_list = [x for x in datasets]
     for dfilter in filters:
-        filter_dataset(dfilter, config['ENDPOINT'], config['TOKEN'])
+        datasets_list.extend(filter_dataset(dfilter, config['ENDPOINT'], config['TOKEN']))
     create_new_job(name, operation, job_config, datasets_list, config['ENDPOINT'], config['TOKEN'])
