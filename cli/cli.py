@@ -3,10 +3,10 @@ from cli.datasets import fetch_datasets, fetch_dataset, create_uploaded_dataset,
 from cli.scenes import fetch_scenes, fetch_scene, create_scene
 from cli.jobs import fetch_jobs, create_new_job
 from cli.utils import to_pathlib_path, parse_args
+from zpy.files import read_json
 
 import logging
 import click
-import json
 
 log = logging.getLogger(__name__)
 
@@ -180,10 +180,14 @@ def create_dataset(name, scene, args):
 @click.argument('operation')
 @click.option('datasets', '-d', multiple=True)
 @click.option('filters', '-f', multiple=True)
+@click.option('configfile', '-configfile')
 @click.argument('args', nargs=-1)
-def create_job(name, operation, datasets, filters, args):
+def create_job(name, operation, datasets, filters, configfile, args):
     config = read_config()
-    job_config = parse_args(args)
+    if configfile:
+        job_config = read_json(configfile)
+    else:
+        job_config = parse_args(args)
     datasets_list = [x for x in datasets]
     for dfilter in filters:
         datasets_list.extend(filter_dataset(dfilter, config['ENDPOINT'], config['TOKEN']))
