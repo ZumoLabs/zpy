@@ -134,6 +134,7 @@ class PushRunpyOperator(bpy.types.Operator):
 
 class ScriptPanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
+    bl_idname="SCENE_PT_ScriptPanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Script"

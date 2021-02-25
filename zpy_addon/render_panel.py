@@ -92,6 +92,7 @@ class OpenOutputDirOperator(Operator):
 
 class RenderPanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
+    bl_idname="SCENE_PT_RenderPanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Render"
