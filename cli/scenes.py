@@ -1,4 +1,5 @@
-from cli.utils import auth_headers, download_url, to_pathlib_path
+from cli.utils import auth_headers, download_url
+from zpy.files import to_pathlib_path
 from table_logger import TableLogger
 import requests
 import json

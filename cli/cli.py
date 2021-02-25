@@ -2,8 +2,8 @@ from cli.config import login, initialize_config, switch_env, read_config
 from cli.datasets import fetch_datasets, fetch_dataset, create_uploaded_dataset, create_generated_dataset, filter_dataset
 from cli.scenes import fetch_scenes, fetch_scene, create_scene
 from cli.jobs import fetch_jobs, create_new_job
-from cli.utils import to_pathlib_path, parse_args
-from zpy.files import read_json
+from cli.utils import parse_args
+from zpy.files import read_json, to_pathlib_path
 
 import logging
 import click

@@ -2,7 +2,7 @@ import os
 import yaml
 import logging
 from requests.auth import HTTPBasicAuth
-from cli.utils import to_pathlib_path
+from zpy.files import to_pathlib_path
 import requests
 
 log = logging.getLogger(__name__)

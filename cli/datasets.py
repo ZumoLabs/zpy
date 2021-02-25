@@ -1,4 +1,5 @@
-from cli.utils import auth_headers, download_url, to_pathlib_path, parse_dataset_filter
+from cli.utils import auth_headers, download_url, parse_dataset_filter
+from zpy.files import to_pathlib_path
 from table_logger import TableLogger
 import requests
 import logging
