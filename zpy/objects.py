@@ -16,6 +16,15 @@ import zpy
 log = logging.getLogger(__name__)
 
 
+def verify(obj: Union[str, bpy.types.Object], check_none = True) -> bpy.types.Object:
+    """ Return object given name or Object type object. """
+    if isinstance(obj, str):
+        obj = bpy.data.objects.get(obj)
+    if check_none and obj is None:
+        raise ValueError(f'Could not find object {obj}.')
+    return obj
+
+
 def load_blend_obj(
         name: str,
         path: Union[str, Path],
@@ -36,32 +45,22 @@ def load_blend_obj(
 
 
 def select(obj: Union[bpy.types.Object, str]) -> None:
-    """ Delete an object. """
-    if isinstance(obj, str):
-        obj = bpy.data.objects[obj]
-    if obj is not None:
-        # TODO: This sometimes does not work due to context issues
-        log.debug(f'Selecting obj: {obj.name}')
-        bpy.ops.object.select_all(action='DESELECT')
-        bpy.context.view_layer.objects.active = obj
-        bpy.data.objects[obj.name].select_set(True)
-    else:
-        log.debug(f'Could not find object')
+    """ Select an object. """
+    obj = verify(obj)
+    # TODO: This sometimes does not work due to context issues
+    log.debug(f'Selecting obj: {obj.name}')
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.context.view_layer.objects.active = obj
+    bpy.data.objects[obj.name].select_set(True)
 
 
 def delete_obj(obj: Union[bpy.types.Object, str]) -> None:
     """ Delete an object. """
-    if isinstance(obj, str):
-        obj = bpy.data.objects[obj]
-    if obj is not None:
-        log.debug(f'Removing obj: {obj.name}')
-        # Make sure selected object is the active object
-        bpy.ops.object.select_all(action='DESELECT')
-        obj.select_set(True)
-        bpy.ops.object.delete()
-        # bpy.data.objects.remove(obj, do_unlink=True)
-    else:
-        log.debug(f'Could not find object')
+    obj = verify(obj)
+    select(obj)
+    log.debug(f'Removing obj: {obj.name}')
+    bpy.ops.object.delete()
+    # bpy.data.objects.remove(obj, do_unlink=True)
 
 
 @gin.configurable
@@ -109,7 +108,7 @@ def for_obj_in_collections(
 
 
 def toggle_hidden(
-    obj: bpy.types.Object,
+    obj: Union[bpy.types.Object, str],
     hidden: bool = True,
     filter_string: str = None,
 ) -> None:
@@ -118,9 +117,7 @@ def toggle_hidden(
     Optionally filter by a string in object name.
 
     """
-    if obj is None:
-        log.warning('Empty object given to toggle_hidden')
-        return
+    obj = verify(obj)
     if hasattr(obj, 'hide_render') and hasattr(obj, 'hide_viewport'):
         if (filter_string is None) or (filter_string in obj.name):
             log.debug(f'Hiding object {obj.name}')
@@ -157,13 +154,14 @@ def randomly_hide_within_collection(
 
 
 def segment(
-    obj: bpy.types.Object,
+    obj: Union[bpy.types.Object, str],
     name: str = 'default',
     color: Tuple[float] = None,
     as_category: bool = False,
     as_single: bool = False,
 ) -> None:
     """ Segment an object."""
+    obj = verify(obj)
     if color is None:
         color = zpy.color.random_color(output_style='frgb')
     obj.color = zpy.color.frgb_to_frgba(color)
@@ -191,11 +189,12 @@ def segment(
 
 
 def populate_vertex_colors(
-        obj: bpy.types.Object,
+        obj: Union[bpy.types.Object, str],
         color_rgba: Tuple[float],
         seg_type: str = 'instance',
 ) -> None:
     """Fill the given Vertex Color Layer with the color parameter values"""
+    obj = verify(obj)
     if not obj.type == 'MESH':
         log.warning(f'Object {obj.name} is not a mesh, has no vertices.')
         return
@@ -221,9 +220,10 @@ def populate_vertex_colors(
 
 
 def random_position_within_constraints(
-    obj: bpy.types.Object
+    obj: Union[bpy.types.Object, str],
 ) -> None:
     """ Randomize position of object within constraints. """
+    obj = verify(obj)
     # Make sure object has constraints
     _constraints = obj.constraints.get('Limit Location', None)
     if _constraints is not None:
@@ -242,11 +242,12 @@ def random_position_within_constraints(
 
 
 def copy(
-    obj: bpy.types.Object,
+    obj: Union[bpy.types.Object, str],
     name: str = None,
     collection: bpy.types.Collection = None,
 ) -> bpy.types.Object:
     """ Create a copy of the object. """
+    obj = verify(obj)
     new_obj = bpy.data.objects.new(obj.name, obj.data)
     if name is not None:
         new_obj.name = name
@@ -256,22 +257,25 @@ def copy(
 
 
 def translate(
-    obj: bpy.types.Object,
+    obj: Union[bpy.types.Object, str],
     translation: Tuple[float] = (0, 0, 0),
 ) -> None:
     """ Translate an object (in blender units). """
+    obj = verify(obj)
     # select(obj)
     # bpy.ops.transform.translate(value=translation)
     # bpy.context.view_layer.update()
     mat_trans = mathutils.Matrix.Translation(translation)
     obj.matrix_world = mat_trans @ obj.matrix_world
 
+
 def rotate(
-    obj: bpy.types.Object,
+    obj: Union[bpy.types.Object, str],
     rotation: float = 0,
     axis: str = 'Z'
 ) -> None:
     """ Rotate an object (in radians) """
+    obj = verify(obj)
     # select(obj)
     # bpy.ops.transform.rotate(value=rotation, orient_axis=axis)
     # bpy.context.view_layer.update()
@@ -280,10 +284,11 @@ def rotate(
 
 
 def scale(
-    obj: bpy.types.Object,
+    obj: Union[bpy.types.Object, str],
     scale: Tuple[float] = (1.0, 1.0, 1.0)
 ) -> None:
     """ Scale an object """
+    obj = verify(obj)
     # select(obj)
     # bpy.ops.transform.resize(value=scale)
     # bpy.context.view_layer.update()
@@ -294,7 +299,7 @@ def scale(
 
 
 def jitter(
-    obj: bpy.types.Object,
+    obj: Union[bpy.types.Object, str],
     translate_range: Tuple[Tuple[float]] = (
         (-0.05, 0.05),
         (-0.05, 0.05),
@@ -312,6 +317,7 @@ def jitter(
     ),
 ) -> None:
     """ Apply random scale (blender units) and rotation (radians) to object """
+    obj = verify(obj)
     translate(obj,
               translation=(
                   random.uniform(translate_range[0][0], translate_range[0][1]),
@@ -342,13 +348,21 @@ def jitter(
 _SAVED_POSES = {}
 
 
-def save_pose(obj: bpy.types.Object, pose_name: str) -> None:
+def save_pose(
+    obj: Union[bpy.types.Object, str],
+    pose_name: str,
+) -> None:
     """ Save a pose (rot and pos) to dict. """
+    obj = verify(obj)
     log.info(f'Saving pose {pose_name} based on object {obj.name}')
     _SAVED_POSES[pose_name] = obj.matrix_world.copy()
 
 
-def restore_pose(obj: bpy.types.Object, pose_name: str) -> None:
+def restore_pose(
+    obj: Union[bpy.types.Object, str],
+    pose_name: str,
+) -> None:
     """ Restore an object to a position. """
+    obj = verify(obj)
     log.info(f'Restoring pose {pose_name} to object {obj.name}')
     obj.matrix_world = _SAVED_POSES[pose_name]
