@@ -44,9 +44,13 @@ def install_pip_depenencies():
 
 try:
     import zpy
-except ModuleNotFoundError:
-    install_pip_depenencies()
-    import zpy
+except ModuleNotFoundError as e:
+    log.exception('No zpy module found, please follow developer ' + \
+        'install instructions at https://github.com/ZumoLabs/zpy#install')
+    # TODO: Automatic installation of pip dependencies
+    #       waiting on https://developer.blender.org/T71420
+    # install_pip_depenencies()
+    # import zpy
 
 
 if "bpy" in locals():
