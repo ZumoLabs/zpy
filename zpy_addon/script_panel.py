@@ -43,28 +43,6 @@ def _load_runpy(self, context) -> None:
     bpy.ops.scene.zpy_load_runpy()
 
 
-class RunOperator(Operator):
-    """ Launch the run script in Blender's texts. """
-    bl_idname = "scene.zpy_run"
-    bl_label = "Run"
-    bl_description = "Launch the run script in Blender's texts."
-    bl_category = "ZPY"
-    bl_options = {'REGISTER'}
-
-    def execute(self, context):
-        # Save the state of the scene before the run script was executed
-        bpy.ops.wm.save_mainfile()
-        try:
-            zpy.blender.use_gpu()
-            zpy.blender.parse_config(LoadGinConfigOperator.DEFAULT_TEXT_NAME)
-            zpy.blender.run_text(LoadRunpyOperator.DEFAULT_TEXT_NAME)
-        except Exception as e:
-            log.error(f'Executing script failed with exception {e}')
-        # Return to the state of the scene before the run script was executed
-        bpy.ops.wm.revert_mainfile()
-        return {'FINISHED'}
-
-
 class LoadGinConfigOperator(bpy.types.Operator):
     """ Load gin config from file. """
     bl_idname = "scene.zpy_load_gin_config"
@@ -132,28 +110,23 @@ class PushRunpyOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ScriptPanel(bpy.types.Panel):
+class SCENE_PT_ScriptPanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
     bl_idname="SCENE_PT_ScriptPanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Script"
     bl_category = "ZPY"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
         scene = context.scene
 
         row = layout.row()
-        row.operator(
-            'scene.zpy_run',
-            text='Run',
-            icon='TRIA_RIGHT',
-        )
-        row = layout.row()
         row.label(text="Run.py Path")
         row = layout.row()
-        row.prop(scene, "zpy_runpy_path")
+        row.prop(scene, "zpy_runpy_path", expand=True)
         row = layout.row()
         row.operator(
             'scene.zpy_load_runpy',

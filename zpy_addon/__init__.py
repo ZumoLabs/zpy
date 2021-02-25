@@ -56,11 +56,13 @@ except ModuleNotFoundError as e:
 if "bpy" in locals():
     log.warning('Reloading zpy_addon files.')
     from . import export_panel
-    from . import render_panel
+    from . import output_panel
+    from . import execute_panel
     from . import script_panel
     from . import segment_panel
     importlib.reload(export_panel)
-    importlib.reload(render_panel)
+    importlib.reload(output_panel)
+    importlib.reload(execute_panel)
     importlib.reload(script_panel)
     importlib.reload(segment_panel)
     importlib.reload(zpy)
@@ -78,9 +80,10 @@ classes = (
     segment_panel.VisualizeCategory,
     segment_panel.CategoriesFromText,
     segment_panel.CategoriesFromZUMOJSON,
-    render_panel.RenderOperator,
-    render_panel.OpenOutputDirOperator,
-    render_panel.CleanOutputDirOperator,
+    output_panel.OpenOutputDirOperator,
+    output_panel.CleanOutputDirOperator,
+    execute_panel.RenderOperator,
+    execute_panel.RunOperator,
     export_panel.ExportOperator,
     export_panel.OpenExportDirOperator,
     export_panel.CleanUpDirOperator,
@@ -88,12 +91,12 @@ classes = (
     script_panel.PushGinConfigOperator,
     script_panel.LoadRunpyOperator,
     script_panel.PushRunpyOperator,
-    script_panel.RunOperator,
     # Panels
-    segment_panel.SegmentPanel,
-    render_panel.RenderPanel,
-    script_panel.ScriptPanel,
-    export_panel.ExportPanel,
+    output_panel.SCENE_PT_OutputPanel,
+    execute_panel.SCENE_PT_ExecutePanel,
+    segment_panel.SCENE_PT_SegmentPanel,
+    script_panel.SCENE_PT_ScriptPanel,
+    export_panel.SCENE_PT_ExportPanel,
 )
 
 
@@ -107,7 +110,7 @@ def register():
             log.warning(f'Exception when registering {cls.__name__}: {e}')
     segment_panel.registerObjectProperties()
     segment_panel.registerSceneProperties()
-    render_panel.registerSceneProperties()
+    output_panel.registerSceneProperties()
     export_panel.registerSceneProperties()
     script_panel.registerSceneProperties()
 

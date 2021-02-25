@@ -301,13 +301,14 @@ class CategoriesFromZUMOJSON(Operator, ImportHelper):
         return {'FINISHED'}
 
 
-class SegmentPanel(bpy.types.Panel):
+class SCENE_PT_SegmentPanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
     bl_idname="SCENE_PT_SegmentPanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Segment"
     bl_category = "ZPY"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout

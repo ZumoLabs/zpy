@@ -173,13 +173,14 @@ class ExportOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ExportPanel(bpy.types.Panel):
+class SCENE_PT_ExportPanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
     bl_idname="SCENE_PT_ExportPanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Export"
     bl_category = "ZPY"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
