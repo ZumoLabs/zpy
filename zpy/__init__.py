@@ -37,8 +37,8 @@ try:
     from zpy import objects
     from zpy import render
 except ModuleNotFoundError:
-    log.warn('Could not load blender utilities.')
+    log.debug('Could not load blender utilities.')
 try:
     from zpy import viz
 except ModuleNotFoundError:
-    log.warn('Could not load viz utilities.')
+    log.debug('Could not load viz utilities.')

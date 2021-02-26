@@ -28,8 +28,8 @@ class RunOperator(Operator):
         bpy.ops.wm.save_mainfile()
         try:
             zpy.blender.use_gpu()
-            zpy.blender.parse_config(LoadGinConfigOperator.DEFAULT_TEXT_NAME)
-            zpy.blender.run_text(LoadRunpyOperator.DEFAULT_TEXT_NAME)
+            zpy.blender.parse_config('config')
+            zpy.blender.run_text('run')
         except Exception as e:
             log.error(f'Executing script failed with exception {e}')
         # Return to the state of the scene before the run script was executed
