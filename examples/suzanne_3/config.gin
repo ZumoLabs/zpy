@@ -1,0 +1,20 @@
+#
+#  Default configuration for run script
+#
+#  This is a gin-config file (https://github.com/google/gin-config)
+#
+
+import zpy
+
+# ----------- STEPS
+
+zpy.blender.step.num_steps = 10
+
+# ----------- IMAGE
+
+image_size_width/macro.value = 320
+image_size_height/macro.value = 240
+zpy.saver_image.add_image.width = @image_size_width/macro()
+zpy.saver_image.add_image.height = @image_size_height/macro()
+zpy.render.render_aov.width = @image_size_width/macro()
+zpy.render.render_aov.height = @image_size_height/macro()
