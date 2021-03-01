@@ -31,14 +31,15 @@ def make_aov_pass(
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
     # Go through existing passes and make sure it doesn't exist before creating
-    if bpy.context.view_layer['cycles'].get('aovs', None) is not None:
-        for aov in bpy.context.view_layer['cycles']['aovs']:
+    view_layer = zpy.blender.verify_view_layer()
+    if view_layer.get('aovs', None) is not None:
+        for aov in view_layer['aovs']:
             if aov['name'] == style:
                 log.info(f'AOV pass for {style} already exists.')
                 return
     bpy.ops.cycles.add_aov()
-    bpy.context.view_layer['cycles']['aovs'][-1]['name'] = style
-    bpy.context.view_layer.update()
+    view_layer['aovs'][-1]['name'] = style
+    view_layer.update()
     log.info(f'Created AOV pass for {style}.')
 
 
@@ -209,9 +210,12 @@ def render_aov(
                 if hsv is not None:
                     hsv_node = scene.node_tree.nodes.get('hsv', None)
                     if hsv_node is not None:
-                        hsv_node.inputs[1].default_value = max(0, min(hsv[0], 1))
-                        hsv_node.inputs[2].default_value = max(0, min(hsv[1], 2))
-                        hsv_node.inputs[3].default_value = max(0, min(hsv[2], 2))
+                        hsv_node.inputs[1].default_value = max(
+                            0, min(hsv[0], 1))
+                        hsv_node.inputs[2].default_value = max(
+                            0, min(hsv[1], 2))
+                        hsv_node.inputs[3].default_value = max(
+                            0, min(hsv[2], 2))
                     else:
                         log.warn('Render given HSV but no HSV node found.')
             if style in ['depth']:
@@ -283,7 +287,8 @@ def _rgb_render_settings():
     scene.cycles.diffuse_bounces = 4
     scene.cycles.diffuse_samples = 12
 
-    scene.view_layers[0].pass_alpha_threshold = 0.5
+    view_layer = zpy.blender.verify_view_layer()
+    view_layer.pass_alpha_threshold = 0.5
 
     scene.cycles.max_bounces = 4
     scene.cycles.bake_type = 'COMBINED'
@@ -316,7 +321,8 @@ def _seg_render_settings():
     scene.cycles.diffuse_bounces = 0
     scene.cycles.diffuse_samples = 0
 
-    scene.view_layers[0].pass_alpha_threshold = 0.0
+    view_layer = zpy.blender.verify_view_layer()
+    view_layer.pass_alpha_threshold = 0.0
 
     scene.cycles.max_bounces = 0
     scene.cycles.bake_type = 'EMIT'
