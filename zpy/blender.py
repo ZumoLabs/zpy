@@ -120,6 +120,7 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
             log.debug(f'You have {timeout - sec} seconds to connect!')
             time.sleep(1)
 
+
 @gin.configurable
 def verify_view_layer(
     view_layer_name: str = 'prod',
@@ -133,7 +134,6 @@ def verify_view_layer(
     log.info(f'Setting view layer to {view_layer.name}')
     bpy.context.window.view_layer = view_layer
     return view_layer
-
 
 
 def parse_config(text_name: str = 'config') -> None:
@@ -191,8 +191,8 @@ def refresh_blender_ui() -> None:
 
 def load_scene(
     path: Union[str, Path],
-    auto_execute_scripts : bool = True,
-    ) -> None:
+    auto_execute_scripts: bool = True,
+) -> None:
     """ Load a scene from a *.blend file. """
     # HACK: Clear out scene of cameras and lights
     clear_scene(['CAMERA', 'LIGHT'])
@@ -209,7 +209,8 @@ def load_scene(
     # Allow execution of scripts inside loaded scene
     if auto_execute_scripts:
         log.warning('Allowing .blend file to run scripts automatically')
-        log.warning('   this is unsafe for blend files from an untrusted source')
+        log.warning(
+            '   this is unsafe for blend files from an untrusted source')
         bpy.context.preferences.filepaths.use_scripts_auto_execute = auto_execute_scripts
 
 
@@ -312,11 +313,13 @@ def load_hdri(
 
 @gin.configurable
 def random_hdri(
-    asset_dir: Union[str, Path] = '$ASSETS/lib/hdris/hdri_maker_lib/04k_Library',
+    asset_dir: Union[str,
+                     Path] = '$ASSETS/lib/hdris/hdri_maker_lib/04k_Library',
 ) -> Path:
     """ Generate a random HDRI from an asset path. """
     asset_directory = zpy.files.verify_path(
         asset_dir, make=False, check_dir=True)
-    hdri_path = random.choice([x for x in asset_directory.iterdir() if x.is_file()])
+    hdri_path = random.choice(
+        [x for x in asset_directory.iterdir() if x.is_file()])
     load_hdri(hdri_path)
     return hdri_path
