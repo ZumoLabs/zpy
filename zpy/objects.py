@@ -47,10 +47,11 @@ def load_blend_obj(
 def select(obj: Union[bpy.types.Object, str]) -> None:
     """ Select an object. """
     obj = verify(obj)
+    view_layer = zpy.render.verify_view_layer()
     # TODO: This sometimes does not work due to context issues
     log.debug(f'Selecting obj: {obj.name}')
     bpy.ops.object.select_all(action='DESELECT')
-    bpy.context.view_layer.objects.active = obj
+    view_layer.objects.active = obj
     bpy.data.objects[obj.name].select_set(True)
 
 
@@ -85,6 +86,7 @@ def is_inside(
 
 def for_obj_in_selected_objs(context) -> bpy.types.Object:
     """ Safe iterable for selected objects. """
+    zpy.render.verify_view_layer()
     for obj in context.selected_objects:
         # Only meshes or empty objects TODO: Why the empty objects
         if not (obj.type == 'MESH' or obj.type == 'EMPTY'):
@@ -264,6 +266,7 @@ def translate(
     obj = verify(obj)
     # select(obj)
     # bpy.ops.transform.translate(value=translation)
+    # zpy.render.verify_view_layer()
     # bpy.context.view_layer.update()
     mat_trans = mathutils.Matrix.Translation(translation)
     obj.matrix_world = mat_trans @ obj.matrix_world
@@ -278,6 +281,7 @@ def rotate(
     obj = verify(obj)
     # select(obj)
     # bpy.ops.transform.rotate(value=rotation, orient_axis=axis)
+    # zpy.render.verify_view_layer()
     # bpy.context.view_layer.update()
     mat_rot = mathutils.Matrix.Rotation(rotation, 4, axis)
     obj.matrix_world = mat_rot @ obj.matrix_world
@@ -291,6 +295,7 @@ def scale(
     obj = verify(obj)
     # select(obj)
     # bpy.ops.transform.resize(value=scale)
+    # zpy.render.verify_view_layer()
     # bpy.context.view_layer.update()
     mag = scale[0] + scale[1] + scale[2]
     norm_vector = (scale[0] / mag, scale[1] / mag, scale[2] / mag)
@@ -342,6 +347,7 @@ def jitter(
               random.uniform(scale_range[1][0], scale_range[1][1]),
               random.uniform(scale_range[2][0], scale_range[2][1]),
           ))
+    zpy.render.verify_view_layer()
     bpy.context.view_layer.update()
 
 

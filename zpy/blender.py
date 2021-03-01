@@ -170,7 +170,8 @@ def refresh_blender_ui() -> None:
     """
     log.debug(f'Refreshing Blender UI.')
     bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
-    bpy.context.view_layer.update()
+    view_layer = zpy.render.verify_view_layer()
+    view_layer.update()
 
 
 def load_scene(
