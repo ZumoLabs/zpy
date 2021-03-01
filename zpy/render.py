@@ -17,21 +17,6 @@ log = logging.getLogger(__name__)
 
 
 @gin.configurable
-def verify_view_layer(
-    view_layer_name: str = 'prod',
-) -> bpy.types.ViewLayer:
-    """ Get and set the view layer for a scene. """
-    view_layer = bpy.context.scene.view_layers.get(view_layer_name, None)
-    if view_layer is None:
-        log.warning(f'Could not find view layer {view_layer_name}')
-        # Default behavior is to use last view layer in view layer list
-        view_layer = bpy.context.scene.view_layers[-1]
-    log.info(f'Setting view layer to {view_layer.name}')
-    bpy.context.scene.view_layer = view_layer
-    return view_layer
-
-
-@gin.configurable
 def make_aov_pass(
     style: str = 'instance',
 ) -> None:
@@ -46,7 +31,7 @@ def make_aov_pass(
     assert style in valid_styles, \
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
     # Go through existing passes and make sure it doesn't exist before creating
-    view_layer = zpy.render.verify_view_layer()
+    view_layer = zpy.blender.verify_view_layer()
     if view_layer.get('aovs', None) is not None:
         for aov in view_layer['aovs']:
             if aov['name'] == style:
@@ -302,7 +287,7 @@ def _rgb_render_settings():
     scene.cycles.diffuse_bounces = 4
     scene.cycles.diffuse_samples = 12
 
-    view_layer = zpy.render.verify_view_layer()
+    view_layer = zpy.blender.verify_view_layer()
     view_layer.pass_alpha_threshold = 0.5
 
     scene.cycles.max_bounces = 4
@@ -336,7 +321,7 @@ def _seg_render_settings():
     scene.cycles.diffuse_bounces = 0
     scene.cycles.diffuse_samples = 0
 
-    view_layer = zpy.render.verify_view_layer()
+    view_layer = zpy.blender.verify_view_layer()
     view_layer.pass_alpha_threshold = 0.0
 
     scene.cycles.max_bounces = 0

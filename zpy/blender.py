@@ -120,6 +120,21 @@ def connect_debugger_vscode(timeout: int = 3) -> None:
             log.debug(f'You have {timeout - sec} seconds to connect!')
             time.sleep(1)
 
+@gin.configurable
+def verify_view_layer(
+    view_layer_name: str = 'prod',
+) -> bpy.types.ViewLayer:
+    """ Get and set the view layer for a scene. """
+    view_layer = bpy.context.scene.view_layers.get(view_layer_name, None)
+    if view_layer is None:
+        log.warning(f'Could not find view layer {view_layer_name}')
+        # Default behavior is to use last view layer in view layer list
+        view_layer = bpy.context.scene.view_layers[-1]
+    log.info(f'Setting view layer to {view_layer.name}')
+    bpy.context.window.view_layer = view_layer
+    return view_layer
+
+
 
 def parse_config(text_name: str = 'config') -> None:
     """ Load gin config for scene """
@@ -170,7 +185,7 @@ def refresh_blender_ui() -> None:
     """
     log.debug(f'Refreshing Blender UI.')
     bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
-    view_layer = zpy.render.verify_view_layer()
+    view_layer = zpy.blender.verify_view_layer()
     view_layer.update()
 
 
