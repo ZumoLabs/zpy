@@ -42,7 +42,7 @@ First download the latest [zip](https://github.com/ZumoLabs/zpy/releases) (you w
 ### Install: Linux: Using Install Script <a name="installscript_linux"></a>
 
 ``` 
-$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZumoLabs/zpy/main/install.sh?token=<token>)"
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZumoLabs/zpy/main/install.sh)"
 ```
 
 Set these environment variables for specific versions:
