@@ -192,3 +192,16 @@ def create_job(name, operation, datasets, filters, configfile, args):
     for dfilter in filters:
         datasets_list.extend(filter_dataset(dfilter, config['ENDPOINT'], config['TOKEN']))
     create_new_job(name, operation, job_config, datasets_list, config['ENDPOINT'], config['TOKEN'])
+
+@create.command('sweep')
+@click.argument('name')
+@click.argument('scene')
+@click.argument('number')
+@click.argument('args', nargs=-1)
+def create_sweep(name, scene, number, args):
+    config = read_config()
+    dataset_config = parse_args(args)
+    for i in range(int(number)):
+        dataset_name = f'{name} seed{i}'
+        dataset_config['seed'] = i
+        create_generated_dataset(dataset_name, scene, dataset_config, config['ENDPOINT'], config['TOKEN'])
