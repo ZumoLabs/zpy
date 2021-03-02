@@ -24,51 +24,46 @@ def run():
     saver.add_category(name='Suzanne', color=suzanne_seg_color)
 
     # Segment Suzzanne (make sure a material exists for the object!)
-    zpy.objects.segment(
-        bpy.data.objects["Suzanne"], name='Suzanne', color=suzanne_seg_color)
+    zpy.objects.segment('Suzanne', color=suzanne_seg_color)
 
-    # Save the current camera position so we can jitter it later
-    zpy.objects.save_pose(bpy.data.objects["Camera"], "cam_pose")
-
-    # Save the current suzanne position so we can jitter it later
-    zpy.objects.save_pose(bpy.data.objects["Suzanne"], "suzanne_pose")
+    # Save the positions of objects so we can jitter them later
+    zpy.objects.save_pose('Camera', "cam_pose")
+    zpy.objects.save_pose('Suzanne', "suzanne_pose")
 
     # Run the scene.
     for step_idx in zpy.blender.step():
-        
+
         # Example logging
         log.info('This is an info log')
         log.debug('This is a debug log')
 
         # Return camera and Suzanne to original positions
-        zpy.objects.restore_pose(bpy.data.objects["Camera"], "cam_pose")
-        zpy.objects.restore_pose(bpy.data.objects["Suzanne"], "suzanne_pose")
+        zpy.objects.restore_pose('Camera', "cam_pose")
+        zpy.objects.restore_pose('Suzanne', "suzanne_pose")
 
         # Jitter Suzane pose
-        zpy.objects.jitter(
-            bpy.data.objects["Suzanne"],
-            translate_range=(
-                (-5, 5),
-                (-5, 5),
-                (-5, 5)),
-            rotate_range=(
-                (-math.pi, math.pi),
-                (-math.pi, math.pi),
-                (-math.pi, math.pi),
-            ))
+        zpy.objects.jitter('Suzanne',
+                           translate_range=(
+                               (-5, 5),
+                               (-5, 5),
+                               (-5, 5)),
+                           rotate_range=(
+                               (-math.pi, math.pi),
+                               (-math.pi, math.pi),
+                               (-math.pi, math.pi),
+                           ))
 
         # Jitter the camera pose
-        zpy.objects.jitter(
-            bpy.data.objects["Camera"],
-            translate_range=(
-                (-5, 5),
-                (-5, 5),
-                (-5, 5),
-            ))
+        zpy.objects.jitter('Camera',
+                           translate_range=(
+                               (-5, 5),
+                               (-5, 5),
+                               (-5, 5),
+                           ))
 
         # Camera should be looking at Suzanne
-        zpy.camera.look_at(bpy.data.objects["Camera"], bpy.data.objects["Suzanne"].location)
-        
+        zpy.camera.look_at('Camera', bpy.data.objects["Suzanne"].location)
+
         # Name for each of the output images
         rgb_image_name = zpy.files.make_rgb_image_name(step_idx)
         iseg_image_name = zpy.files.make_iseg_image_name(step_idx)

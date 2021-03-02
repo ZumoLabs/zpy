@@ -18,8 +18,7 @@ def run(num_images: int = 5):
     saver.add_category(name='Suzanne', color=suzanne_seg_color)
 
     # Segment Suzzanne (make sure a material exists for the object!)
-    zpy.objects.segment(
-        bpy.data.objects["Suzanne"], name='Suzanne', color=suzanne_seg_color)
+    zpy.objects.segment('Suzanne', color=suzanne_seg_color)
 
     # Run the scene.
     for step_idx in zpy.blender.step(num_steps=num_images):

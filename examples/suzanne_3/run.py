@@ -30,7 +30,7 @@ def run():
     # Save the positions of objects so we can jitter them later
     zpy.objects.save_pose('Camera', "cam_pose")
     zpy.objects.save_pose('Suzanne', "suzanne_pose")
-    
+
     # Assets will be stored relative to the .blend filepath
     asset_dir = Path(bpy.data.filepath).parent
 
@@ -65,23 +65,23 @@ def run():
 
         # Jitter Suzane pose
         zpy.objects.jitter('Suzanne',
-            translate_range=(
-                (-5, 5),
-                (-5, 5),
-                (-5, 5)),
-            rotate_range=(
-                (-math.pi, math.pi),
-                (-math.pi, math.pi),
-                (-math.pi, math.pi),
-            ))
+                           translate_range=(
+                               (-5, 5),
+                               (-5, 5),
+                               (-5, 5)),
+                           rotate_range=(
+                               (-math.pi, math.pi),
+                               (-math.pi, math.pi),
+                               (-math.pi, math.pi),
+                           ))
 
         # Jitter the camera pose
         zpy.objects.jitter('Camera',
-            translate_range=(
-                (-5, 5),
-                (-5, 5),
-                (-5, 5),
-            ))
+                           translate_range=(
+                               (-5, 5),
+                               (-5, 5),
+                               (-5, 5),
+                           ))
 
         # Camera should be looking at Suzanne
         zpy.camera.look_at('Camera', bpy.data.objects["Suzanne"].location)
@@ -93,7 +93,7 @@ def run():
         texture_path = random.choice(texture_paths)
         new_mat = zpy.material.make_mat_from_texture(texture_path)
         zpy.material.set_mat('Suzanne', new_mat)
-        
+
         # Have to segment the new material
         zpy.objects.segment('Suzanne', color=suzanne_seg_color)
 
