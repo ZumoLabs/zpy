@@ -3,6 +3,7 @@
 import logging
 import math
 import random
+from pathlib import Path
 
 import bpy
 import gin
@@ -28,11 +29,30 @@ def run():
     zpy.objects.segment(
         bpy.data.objects["Suzanne"], name='Suzanne', color=suzanne_seg_color)
 
-    # Save the current camera position so we can jitter it later
+    # Save the positions of objects so we can jitter them later
     zpy.objects.save_pose(bpy.data.objects["Camera"], "cam_pose")
-
-    # Save the current suzanne position so we can jitter it later
     zpy.objects.save_pose(bpy.data.objects["Suzanne"], "suzanne_pose")
+    
+    # Assets will be stored relative to the .blend filepath
+    asset_dir = Path(bpy.data.filepath).parent
+
+    # HDRIs are like a pre-made background with lighting
+    HDRI_paths = [
+        asset_dir / Path("hdris/abandoned_church_1k.hdr"),
+        asset_dir / Path("hdris/autumn_crossing_1k.hdr"),
+        asset_dir / Path("hdris/cambridge_1k.hdr"),
+        asset_dir / Path("hdris/circus_maximus_2_1k.hdr"),
+        asset_dir / Path("hdris/dresden_station_night_1k.hdr"),
+    ]
+
+    # Textures are images that we will map onto a material
+    texture_paths = [
+        asset_dir / Path("textures/Wood103.jpg"),
+        asset_dir / Path("textures/022.jpg"),
+        asset_dir / Path("textures/019.jpg"),
+        asset_dir / Path("textures/007.jpg"),
+        asset_dir / Path("textures/076.jpg"),
+    ]
 
     # Run the scene.
     for step_idx in zpy.blender.step():
@@ -71,8 +91,13 @@ def run():
         zpy.camera.look_at(
             bpy.data.objects["Camera"], bpy.data.objects["Suzanne"].location)
 
-        # # Randomize the hdri
-        # zpy.blender.load_hdri(zpy.blender.random_hdri())
+        # Pick and load a random HDRI
+        zpy.blender.load_hdri(random.choice(HDRI_paths))
+
+        # Pick a random texture for suzanne
+        texture_path = random.choice(texture_paths)
+        new_mat = zpy.material.make_mat_from_texture(texture_path=texture_path)
+        zpy.material.set_mat(bpy.data.objects["Suzanne"], new_mat)
 
         # Jitter the Suzanne material
         zpy.material.jitter(bpy.data.objects["Suzanne"].active_material)
