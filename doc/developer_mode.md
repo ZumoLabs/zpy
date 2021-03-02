@@ -1,7 +1,7 @@
 
 # Developer Mode
 
-More nuanced instructions for isntalling zpy if you want to contribute.
+More nuanced instructions for installing zpy if you want to contribute.
 
 ## Install: Linux: Developer Environment <a name="developermode_linux"></a>
 
