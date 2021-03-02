@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="doc/zl_tile_logo.png" width="100px">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/doc/zl_tile_logo.png" width="100px">
 
 **`zpy`: Synthetic data in Blender.**
 
@@ -37,7 +37,7 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 
 First download the latest [zip](https://github.com/ZumoLabs/zpy/releases) (you want the one called `zpy_addon-v*.zip`). Then open up Blender. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there.
 
-![Enabling the addon](./doc/install_zpy.png)
+![Enabling the addon](https://github.com/ZumoLabs/zpy/raw/main/doc/install_zpy.png)
 
 ### Install: Linux: Using Install Script <a name="installscript_linux"></a>
 
