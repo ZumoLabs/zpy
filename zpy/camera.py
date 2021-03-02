@@ -16,9 +16,11 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def look_at(obj: bpy.types.Object,
-            target: Union[Tuple[float], mathutils.Vector],
-            roll: float = 0) -> None:
+def look_at(
+    obj: Union[bpy.types.Object, str],
+    target: Union[Tuple[float], mathutils.Vector],
+    roll: float = 0,
+) -> None:
     """
     Rotate obj to look at target
 
@@ -28,6 +30,7 @@ def look_at(obj: bpy.types.Object,
 
     Based on: https://blender.stackexchange.com/a/5220/12947 (ideasman42)
     """
+    obj = zpy.objects.verify(obj)
     if not isinstance(target, mathutils.Vector):
         target = mathutils.Vector(target)
     loc = obj.location

@@ -67,7 +67,7 @@ def set_mat_props(
 ) -> None:
     """ Set (some of the) material properties. """
     mat = verify(mat)
-    bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
+    bsdf_node = mat.node_tree.nodes.get('Principled BSDF', None)
     if bsdf_node is None:
         log.warning(f'No BSDF node in {mat.name}')
         return
@@ -100,38 +100,50 @@ def jitter(
 
 @gin.configurable
 def make_mat_from_texture(
+    texture_path: Union[str, Path],
     name: str = None,
-    texture_path: Union[str, Path] = None,
-    color: Tuple[float] = None,
 ) -> bpy.types.Material:
     """ Makes a material from a texture or color."""
-    mat = bpy.data.materials.get(name)
-    if mat is not None:
-        log.debug(f'Material {name} already exists')
-        return mat
-    mat = bpy.data.materials.new(name=name)
+    texture_path = zpy.files.verify_path(texture_path, make=False)
+    if name is None:
+        name = texture_path.stem
+    mat = bpy.data.materials.get(name, None)
+    if mat is None:
+        log.debug(f'Material {name} does not exist, creating it.')
+        mat = bpy.data.materials.new(name=name)
     mat.use_nodes = True
     bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
     out_node = mat.node_tree.nodes.get('Material Output')
-    if color is not None:
-        mat.node_tree.nodes.remove(bsdf_node)
-        bsdf_node = mat.node_tree.nodes.new('ShaderNodeBsdfDiffuse')
-        bsdf_node.inputs['Color'].default_value = color + (1.,)
-        mat.node_tree.links.new(out_node.inputs[0], bsdf_node.outputs[0])
-    elif texture_path is not None:
-        assert texture_path is not None, 'Must provide texture path.'
-        tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
-        tex_node.name = 'ImageTexture'
-        coord_node = mat.node_tree.nodes.new('ShaderNodeTexCoord')
-        texture_path = zpy.files.verify_path(texture_path, make=False)
-        bpy.ops.image.open(filepath=str(texture_path))
-        tex_node.image = bpy.data.images[texture_path.name]
-        tex_node.image.colorspace_settings.name = 'Filmic Log'
-        mat.node_tree.links.new(tex_node.outputs[0], bsdf_node.inputs[0])
-        mat.node_tree.links.new(coord_node.outputs[0], tex_node.inputs[0])
-        tex_node.image.reload()
-    else:
-        raise ValueError('make_mat requries either color or texture path.')
+    tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
+    tex_node.name = 'ImageTexture'
+    coord_node = mat.node_tree.nodes.new('ShaderNodeTexCoord')
+    bpy.ops.image.open(filepath=str(texture_path))
+    tex_node.image = bpy.data.images[texture_path.name]
+    tex_node.image.colorspace_settings.name = 'Filmic Log'
+    mat.node_tree.links.new(tex_node.outputs[0], bsdf_node.inputs[0])
+    mat.node_tree.links.new(coord_node.outputs[0], tex_node.inputs[0])
+    tex_node.image.reload()
+    return mat
+
+@gin.configurable
+def make_mat_from_color(
+    color: Tuple[float],
+    name: str = None,
+) -> bpy.types.Material:
+    """ Makes a material from a texture or color."""
+    if name is None:
+        name = str(color)
+    mat = bpy.data.materials.get(name, None)
+    if mat is None:
+        log.debug(f'Material {name} does not exist, creating it.')
+        mat = bpy.data.materials.new(name=name)
+    mat.use_nodes = True
+    bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
+    out_node = mat.node_tree.nodes.get('Material Output')
+    mat.node_tree.nodes.remove(bsdf_node)
+    bsdf_node = mat.node_tree.nodes.new('ShaderNodeBsdfDiffuse')
+    bsdf_node.inputs['Color'].default_value = color + (1.,)
+    mat.node_tree.links.new(out_node.inputs[0], bsdf_node.outputs[0])
     return mat
 
 

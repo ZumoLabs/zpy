@@ -18,20 +18,18 @@ def run():
     zpy.blender.set_seed()
 
     # Create the saver object
-    saver = zpy.saver_image.ImageSaver(
-        description='Suzannes from a camera view')
+    saver = zpy.saver_image.ImageSaver(description='Domain randomized Suzanne')
 
     # Add the Suzanne category
     suzanne_seg_color = zpy.color.random_color(output_style='frgb')
     saver.add_category(name='Suzanne', color=suzanne_seg_color)
 
     # Segment Suzzanne (make sure a material exists for the object!)
-    zpy.objects.segment(
-        bpy.data.objects["Suzanne"], name='Suzanne', color=suzanne_seg_color)
+    zpy.objects.segment('Suzanne', color=suzanne_seg_color)
 
     # Save the positions of objects so we can jitter them later
-    zpy.objects.save_pose(bpy.data.objects["Camera"], "cam_pose")
-    zpy.objects.save_pose(bpy.data.objects["Suzanne"], "suzanne_pose")
+    zpy.objects.save_pose('Camera', "cam_pose")
+    zpy.objects.save_pose('Suzanne', "suzanne_pose")
     
     # Assets will be stored relative to the .blend filepath
     asset_dir = Path(bpy.data.filepath).parent
@@ -62,12 +60,11 @@ def run():
         log.debug('This is a debug log')
 
         # Return camera and Suzanne to original positions
-        zpy.objects.restore_pose(bpy.data.objects["Camera"], "cam_pose")
-        zpy.objects.restore_pose(bpy.data.objects["Suzanne"], "suzanne_pose")
+        zpy.objects.restore_pose('Camera', "cam_pose")
+        zpy.objects.restore_pose('Suzanne', "suzanne_pose")
 
         # Jitter Suzane pose
-        zpy.objects.jitter(
-            bpy.data.objects["Suzanne"],
+        zpy.objects.jitter('Suzanne',
             translate_range=(
                 (-5, 5),
                 (-5, 5),
@@ -79,8 +76,7 @@ def run():
             ))
 
         # Jitter the camera pose
-        zpy.objects.jitter(
-            bpy.data.objects["Camera"],
+        zpy.objects.jitter('Camera',
             translate_range=(
                 (-5, 5),
                 (-5, 5),
@@ -88,16 +84,18 @@ def run():
             ))
 
         # Camera should be looking at Suzanne
-        zpy.camera.look_at(
-            bpy.data.objects["Camera"], bpy.data.objects["Suzanne"].location)
+        zpy.camera.look_at('Camera', bpy.data.objects["Suzanne"].location)
 
         # Pick and load a random HDRI
         zpy.blender.load_hdri(random.choice(HDRI_paths))
 
         # Pick a random texture for suzanne
         texture_path = random.choice(texture_paths)
-        new_mat = zpy.material.make_mat_from_texture(texture_path=texture_path)
-        zpy.material.set_mat(bpy.data.objects["Suzanne"], new_mat)
+        new_mat = zpy.material.make_mat_from_texture(texture_path)
+        zpy.material.set_mat('Suzanne', new_mat)
+        
+        # Have to segment the new material
+        zpy.objects.segment('Suzanne', color=suzanne_seg_color)
 
         # Jitter the Suzanne material
         zpy.material.jitter(bpy.data.objects["Suzanne"].active_material)
@@ -164,7 +162,7 @@ def run():
 if __name__ == "__main__":
 
     # Set the logger levels
-    zpy.logging.set_log_levels('debug')
+    zpy.logging.set_log_levels('info')
 
     # Parse the gin-config text block
     zpy.blender.parse_config('config')
