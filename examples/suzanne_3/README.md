@@ -8,4 +8,4 @@ If you are new we recommend [Part 2 of this tutorial](https://github.com/ZumoLab
 
 # Video
 
-You can watch this tutorial as a [video on YouTube]().
+You can watch this tutorial as a [video on YouTube](https://youtu.be/plbbdRMJwHk).
