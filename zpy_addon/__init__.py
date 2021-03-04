@@ -17,7 +17,7 @@ bl_info = {
     # TODO: Keep up to date with $ZPY_VERSION
     "version": (1, 0, 0),
     # TODO: Keep up to date with $BLENDER_VERSION
-    "blender": (2, 91, 0),
+    "blender": (2, 92, 0),
     "location": "View3D > Properties > zpy",
     "description": "Synthetic data creation tools for Blender.",
     "warning": "",
