@@ -44,19 +44,6 @@ def load_blend_obj(
     return bpy.data.objects[name]
 
 
-def makeLinkedLocal(obj: bpy.types.Object, 
-                    coll:bpy.types.Collection=bpy.context.scene.collection, 
-                    name:str="duplicated" 
-                    ) -> bpy.types.Object:
-    """ Makes the given object into a local clone"""
-    #We need to make sure this object is actually a linked object.
-    if obj and obj.library:
-        linked_obj = bpy.data.objects[obj.name]
-        local_obj = bpy.data.objects.new(name, l.data)
-        coll.objects.link(local_obj)
-        return local_obj
-    else:
-        return None
 
 
 def select(obj: Union[bpy.types.Object, str]) -> None:
@@ -271,6 +258,20 @@ def copy(
     if collection is not None:
         collection.objects.link(new_obj)
     return new_obj
+
+
+def copy_to_local(obj: bpy.types.Object,
+                  coll: bpy.types.Collection = bpy.context.scene.collection,
+                  name: str = None,
+                  ) -> bpy.types.Object:
+    """ Makes the given object into a local clone. 
+    It will link the new object to the default master collection"""
+    #We need to make sure this object is actually a linked object.
+    if obj and obj.library:
+        local_obj = copy(obj, name, coll)
+        return local_obj
+    else:
+        return None
 
 
 def translate(
