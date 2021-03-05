@@ -44,6 +44,22 @@ def load_blend_obj(
     return bpy.data.objects[name]
 
 
+def makeLinkedLocal(obj: bpy.types.Object, 
+                    coll:bpy.types.Collection=bpy.context.scene.collection, 
+                    name:str="duplicated" 
+                    ) -> bpy.types.Object:
+
+    if obj and obj.library:
+        linked_obj = bpy.data.objects[obj.name]
+        local_obj = bpy.data.objects.new(name, l.data)
+        coll.objects.link(local_obj)
+
+        return local_obj
+
+    else:
+        return None
+
+
 def select(obj: Union[bpy.types.Object, str]) -> None:
     """ Select an object. """
     obj = verify(obj)
