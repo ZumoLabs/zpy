@@ -48,14 +48,13 @@ def makeLinkedLocal(obj: bpy.types.Object,
                     coll:bpy.types.Collection=bpy.context.scene.collection, 
                     name:str="duplicated" 
                     ) -> bpy.types.Object:
-
+    """ Makes the given object into a local clone"""
+    #We need to make sure this object is actually a linked object.
     if obj and obj.library:
         linked_obj = bpy.data.objects[obj.name]
         local_obj = bpy.data.objects.new(name, l.data)
         coll.objects.link(local_obj)
-
         return local_obj
-
     else:
         return None
 
