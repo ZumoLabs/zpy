@@ -265,7 +265,7 @@ def copy_to_local(obj: bpy.types.Object,
                   name: str = None,
                   ) -> bpy.types.Object:
     """ Makes the given object into a local clone. 
-    It will link the new object to the default master collection"""
+    It will link the new object to the default master collection if no collection is provided"""
     #We need to make sure this object is actually a linked object.
     if obj and obj.library:
         local_obj = copy(obj, name, coll)
