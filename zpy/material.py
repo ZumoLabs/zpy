@@ -67,6 +67,8 @@ def set_mat_props(
 ) -> None:
     """ Set (some of the) material properties. """
     mat = verify(mat)
+    # TODO: Work backwards from Material output node instead of
+    #       assuming a 'Principled BSDF' node
     bsdf_node = mat.node_tree.nodes.get('Principled BSDF', None)
     if bsdf_node is None:
         log.warning(f'No BSDF node in {mat.name}')
