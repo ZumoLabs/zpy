@@ -16,7 +16,7 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def verify(obj: Union[str, bpy.types.Object], check_none = True) -> bpy.types.Object:
+def verify(obj: Union[str, bpy.types.Object], check_none=True) -> bpy.types.Object:
     """ Return object given name or Object type object. """
     if isinstance(obj, str):
         obj = bpy.data.objects.get(obj)
@@ -64,7 +64,6 @@ def delete_obj(obj: Union[bpy.types.Object, str]) -> None:
     # bpy.data.objects.remove(obj, do_unlink=True)
 
 
-@gin.configurable
 def is_inside(
     point: mathutils.Vector,
     obj: bpy.types.Object,
@@ -243,33 +242,24 @@ def random_position_within_constraints(
         )
 
 
+@gin.configurable
 def copy(
     obj: Union[bpy.types.Object, str],
     name: str = None,
     collection: bpy.types.Collection = None,
+    check_library: bool = False,
 ) -> bpy.types.Object:
     """ Create a copy of the object. """
     obj = verify(obj)
+    if check_library and not obj.library:
+        # TODO: Library Overriding functions
+        log.warning(f'Coping object where obj.library is False')
     new_obj = bpy.data.objects.new(obj.name, obj.data)
     if name is not None:
         new_obj.name = name
     if collection is not None:
         collection.objects.link(new_obj)
     return new_obj
-
-
-def copy_to_local(obj: bpy.types.Object,
-                  coll: bpy.types.Collection = bpy.context.scene.collection,
-                  name: str = None,
-                  ) -> bpy.types.Object:
-    """ Makes the given object into a local clone. 
-    It will link the new object to the default master collection if no collection is provided"""
-    #We need to make sure this object is actually a linked object.
-    if obj and obj.library:
-        local_obj = copy(obj, name, coll)
-        return local_obj
-    else:
-        return None
 
 
 def translate(
