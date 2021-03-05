@@ -44,8 +44,6 @@ def load_blend_obj(
     return bpy.data.objects[name]
 
 
-
-
 def select(obj: Union[bpy.types.Object, str]) -> None:
     """ Select an object. """
     obj = verify(obj)
