@@ -87,7 +87,7 @@ def run():
         zpy.camera.look_at('Camera', bpy.data.objects["Suzanne"].location)
 
         # Pick and load a random HDRI
-        zpy.blender.load_hdri(random.choice(HDRI_paths))
+        zpy.hdris.load_hdri(random.choice(HDRI_paths))
 
         # Pick a random texture for suzanne
         texture_path = random.choice(texture_paths)

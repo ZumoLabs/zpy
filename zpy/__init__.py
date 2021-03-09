@@ -30,6 +30,7 @@ from zpy import saver_video
 # system, make sure to wrap it in a try-catch
 try:
     from zpy import blender
+    from zpy import hdris
     from zpy import kdtree
     from zpy import keypoints
     from zpy import camera
