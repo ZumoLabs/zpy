@@ -33,7 +33,7 @@ def load_hdri(
     # Background node
     bg_node = _tree.nodes.get('(zpy) Background', None)
     if bg_node is None:
-        bg_node = _tree.nodes.new('Background')
+        bg_node = _tree.nodes.new('ShaderNodeBackground')
         bg_node.name = '(zpy) Background'
     # Texture node
     env_node = _tree.nodes.get('(zpy) Environment Texture', None)
