@@ -52,7 +52,7 @@ def select(obj: Union[bpy.types.Object, str]) -> None:
     log.debug(f'Selecting obj: {obj.name}')
     bpy.ops.object.select_all(action='DESELECT')
     view_layer.objects.active = obj
-    bpy.data.objects[obj.name].select_set(True)
+    bpy.data.objects[obj.name].select_set(True, view_layer=view_layer)
 
 
 def delete_obj(obj: Union[bpy.types.Object, str]) -> None:
@@ -199,7 +199,8 @@ def populate_vertex_colors(
     if not obj.type == 'MESH':
         log.warning(f'Object {obj.name} is not a mesh, has no vertices.')
         return
-    select(obj)
+    # TODO: Is this select needed?
+    # select(obj)
     # Remove any existing vertex color data
     if len(obj.data.sculpt_vertex_colors):
         for vcol in obj.data.sculpt_vertex_colors.keys():
@@ -247,18 +248,24 @@ def copy(
     obj: Union[bpy.types.Object, str],
     name: str = None,
     collection: bpy.types.Collection = None,
-    check_library: bool = False,
+    is_library_object: bool = False,
 ) -> bpy.types.Object:
     """ Create a copy of the object. """
     obj = verify(obj)
-    if check_library and not obj.library:
-        # TODO: Library Overriding functions
-        log.warning(f'Coping object where obj.library is False')
     new_obj = bpy.data.objects.new(obj.name, obj.data)
     if name is not None:
         new_obj.name = name
     if collection is not None:
         collection.objects.link(new_obj)
+    # TODO: Library Overriding functions
+    if is_library_object:
+        log.warning(
+            f'Making mesh and material data local for obj {new_obj.name}')
+        new_obj.data.make_local()
+        for i in range(len(new_obj.material_slots)):
+            bpy.data.objects[new_obj.name].material_slots[i].material.make_local()
+        # Original object reference is lost if local copies are made
+        new_obj = bpy.data.objects[new_obj.name]
     return new_obj
 
 
@@ -268,12 +275,11 @@ def translate(
 ) -> None:
     """ Translate an object (in blender units). """
     obj = verify(obj)
-    # select(obj)
-    # bpy.ops.transform.translate(value=translation)
-    # zpy.blender.verify_view_layer()
-    # bpy.context.view_layer.update()
-    mat_trans = mathutils.Matrix.Translation(translation)
-    obj.matrix_world = mat_trans @ obj.matrix_world
+    log.debug(f'Translating object {obj.name} by {translation}')
+    log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
+    select(obj)
+    bpy.ops.transform.translate(value=translation)
+    log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
 def rotate(
@@ -283,12 +289,11 @@ def rotate(
 ) -> None:
     """ Rotate an object (in radians) """
     obj = verify(obj)
-    # select(obj)
-    # bpy.ops.transform.rotate(value=rotation, orient_axis=axis)
-    # zpy.blender.verify_view_layer()
-    # bpy.context.view_layer.update()
-    mat_rot = mathutils.Matrix.Rotation(rotation, 4, axis)
-    obj.matrix_world = mat_rot @ obj.matrix_world
+    log.info(f'Rotating object {obj.name} by {rotation} radians around {axis} axis. ')
+    log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
+    select(obj)
+    bpy.ops.transform.rotate(value=rotation, orient_axis=axis)
+    log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
 def scale(
@@ -297,14 +302,11 @@ def scale(
 ) -> None:
     """ Scale an object """
     obj = verify(obj)
-    # select(obj)
-    # bpy.ops.transform.resize(value=scale)
-    # zpy.blender.verify_view_layer()
-    # bpy.context.view_layer.update()
-    mag = scale[0] + scale[1] + scale[2]
-    norm_vector = (scale[0] / mag, scale[1] / mag, scale[2] / mag)
-    mat_scale = mathutils.Matrix.Scale(mag / 3.0, 4, norm_vector)
-    obj.matrix_world = mat_scale @ obj.matrix_world
+    log.info(f'Scaling object {obj.name} by {scale}')
+    log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
+    select(obj)
+    bpy.ops.transform.resize(value=scale)
+    log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
 def jitter(
