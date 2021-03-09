@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/ZumoLabs/zpy/raw/main/doc/zl_tile_logo.png" width="100px">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/zl_tile_logo.png" width="100px">
 
 **`zpy`: Synthetic data in Blender.**
 
@@ -22,7 +22,7 @@
 
 </div>
 
-![Synthetic raspberry pi](https://github.com/ZumoLabs/zpy/raw/main/doc/promo_image.png)
+![Synthetic raspberry pi](https://github.com/ZumoLabs/zpy/raw/main/docs/promo_image.png)
 
 ## Abstract
 
@@ -32,14 +32,14 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 
 - [Install from .zip within Blender UI **(Windows/Mac/Linux)**](#installzip).
 - [Install from script **(Mac/Linux)**](#installscript_linux)
-- [Developer mode **(Linux)**](https://github.com/ZumoLabs/zpy/tree/main/doc/developer_mode.md#install-linux-developer-environment-)
-- [Developer mode **(Windows)**](https://github.com/ZumoLabs/zpy/tree/main/doc/developer_mode.md#install-windows-developer-environment-)
+- [Developer mode **(Linux)**](https://github.com/ZumoLabs/zpy/tree/main/docs/developer_mode.md#install-linux-developer-environment-)
+- [Developer mode **(Windows)**](https://github.com/ZumoLabs/zpy/tree/main/docs/developer_mode.md#install-windows-developer-environment-)
 
 ### Install: Using Blender GUI <a name="installzip"></a>
 
 First download the latest [zip](https://github.com/ZumoLabs/zpy/releases) (you want the one called `zpy_addon-v*.zip`). Then open up Blender. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there.
 
-![Enabling the addon](https://github.com/ZumoLabs/zpy/raw/main/doc/install_zpy.png)
+![Enabling the addon](https://github.com/ZumoLabs/zpy/raw/main/docs/install_zpy.png)
 
 ### Install: Linux: Using Install Script <a name="installscript_linux"></a>
 
@@ -55,6 +55,10 @@ export BLENDER_VERSION_FULL="2.91.0"
 export ZPY_VERSION="v1.0.0"
 ```
 
+## Documentation
+
+More documentation can be found [here](https://zumo-zpy.readthedocs.io/en/latest/)
+
 ## Examples
 
 **Tutorials**
@@ -69,9 +73,9 @@ export ZPY_VERSION="v1.0.0"
 
 ## CLI
 
-We provide a simple CLI, you can find documentation [here](https://github.com/ZumoLabs/zpy/tree/main/doc/cli/README.md).
+We provide a simple CLI, you can find documentation [here](https://github.com/ZumoLabs/zpy/tree/main/docs/cli/README.md).
 
-<p align="center"><img src="doc/cli/gif/createdataset.gif?raw=true"/></p>
+<p align="center"><img src="docs/cli/gif/createdataset.gif?raw=true"/></p>
 
 ## Contributing
 
