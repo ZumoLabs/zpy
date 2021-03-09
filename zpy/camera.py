@@ -61,7 +61,7 @@ def camera_xyz(
     - A negative ‘z’ value means the point is behind the camera.
 
     """
-    scene = bpy.context.scene
+    scene = zpy.blender.verify_blender_scene()
     if camera is None:
         camera = scene.camera
     point = bpy_extras.object_utils.world_to_camera_view(scene, camera, loc)
@@ -124,7 +124,7 @@ def is_visible(
     camera: bpy.types.Camera = None,
 ) -> bool:
     """ Cast a ray to determine if object is visible from camera. """
-    scene = bpy.context.scene
+    scene = zpy.blender.verify_blender_scene()
     if camera is None:
         camera = scene.camera
     view_layer = zpy.blender.verify_view_layer()

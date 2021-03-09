@@ -179,10 +179,11 @@ def make_aov_material_output_node(
     style: str = 'instance',
 ) -> None:
     """ Make AOV Output nodes in Composition Graph. """
+    scene = zpy.blender.verify_blender_scene()
     # Make sure engine is set to Cycles
-    if not (bpy.context.scene.render.engine == "CYCLES"):
+    if not (scene.render.engine == "CYCLES"):
         log.warning(' Setting render engine to CYCLES to use AOV')
-        bpy.context.scene.render.engine == "CYCLES"
+        scene.render.engine == "CYCLES"
     # Only certain styles are available
     valid_styles = ['instance', 'category']
     assert style in valid_styles, \

@@ -32,6 +32,7 @@ def load_blend_obj(
 ) -> bpy.types.Object:
     """ Load object from blend file. """
     path = zpy.files.verify_path(path, make=False)
+    scene = zpy.blender.verify_blender_scene()
     with bpy.data.libraries.load(str(path), link=link) as (data_from, data_to):
         for from_obj in data_from.objects:
             if from_obj.startswith(name):
@@ -39,7 +40,7 @@ def load_blend_obj(
                 data_to.objects.append(from_obj)
     # Copy objects over to the current scene
     for obj in data_to.objects:
-        bpy.context.scene.collection.objects.link(obj)
+        scene.collection.objects.link(obj)
     bpy.ops.file.find_missing_files(directory=str(path.parent / 'TEX'))
     return bpy.data.objects[name]
 

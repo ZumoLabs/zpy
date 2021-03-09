@@ -74,10 +74,11 @@ def step(
     """ Step logic helper for the scene. """
     assert num_steps is not None, 'Invalid num_steps'
     assert num_steps > 0, 'Invalid num_steps'
+    scene = zpy.blender.verify_blender_scene()
     step_idx = 0
     if framerate > 0:
-        start = bpy.context.scene.frame_start
-        stop = bpy.context.scene.frame_end
+        start = scene.frame_start
+        stop = scene.frame_end
         log.info(f'Animation enabled. Min frames: {start}. Max frames: {stop}')
     while step_idx < num_steps:
         log.info('-----------------------------------------')
@@ -87,8 +88,8 @@ def step(
         start_time = time.time()
         if framerate > 0:
             current_frame = start_frame + step_idx * framerate
-            bpy.context.scene.frame_set(current_frame)
-            log.info(f'Animation frame {bpy.context.scene.frame_current}')
+            scene.frame_set(current_frame)
+            log.info(f'Animation frame {scene.frame_current}')
         # # Update the step_idx for all RandomEvent and Animator instances
         # RandomEvent.step_idx = step_idx
         yield step_idx
@@ -126,14 +127,30 @@ def verify_view_layer(
     view_layer_name: str = 'prod',
 ) -> bpy.types.ViewLayer:
     """ Get and set the view layer for a scene. """
-    view_layer = bpy.context.scene.view_layers.get(view_layer_name, None)
+    scene = zpy.blender.verify_blender_scene()
+    view_layer = scene.view_layers.get(view_layer_name, None)
     if view_layer is None:
         log.warning(f'Could not find view layer {view_layer_name}')
         # Default behavior is to use last view layer in view layer list
-        view_layer = bpy.context.scene.view_layers[-1]
+        view_layer = scene.view_layers[-1]
     log.info(f'Setting view layer to {view_layer.name}')
     bpy.context.window.view_layer = view_layer
     return view_layer
+
+
+@gin.configurable
+def verify_blender_scene(
+    blender_scene_name: str = 'Prod',
+) -> bpy.types.Scene:
+    """ Get and set the main scene. """
+    scene = bpy.data.scenes.get(blender_scene_name, None)
+    if scene is None:
+        log.warning(f'Could not find scene {blender_scene_name}')
+        # Default behavior is to use the first scene
+        scene = bpy.data.scenes[0]
+    log.info(f'Setting scene to {scene.name}')
+    bpy.context.window.scene = scene
+    return scene
 
 
 def parse_config(text_name: str = 'config') -> None:
@@ -263,9 +280,10 @@ def scene_information() -> Dict:
         _kwarg['default'] = param.default
         run_kwargs.append(_kwarg)
 
+    scene = zpy.blender.verify_blender_scene()
     _ = {
-        'name': bpy.context.scene.zpy_scene_name,
-        'version': bpy.context.scene.zpy_scene_version,
+        'name': scene.zpy_scene_name,
+        'version': scene.zpy_scene_version,
         'description': scene_doc,
         'run_kwargs': run_kwargs,
         'export_date':  time.strftime("%m%d%Y_%H%M_%S"),
@@ -291,7 +309,8 @@ def load_hdri(
     """
     log.info(f'Loading HDRI at {path}')
     path = zpy.files.verify_path(path, make=False)
-    world = bpy.context.scene.world
+    scene = zpy.blender.verify_blender_scene()
+    world = scene.world
     world.use_nodes = True
     out_node = world.node_tree.nodes.get('World Output', None)
     if out_node is None:

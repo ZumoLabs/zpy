@@ -21,11 +21,12 @@ def make_aov_pass(
     style: str = 'instance',
 ) -> None:
     """ Make AOV pass in Cycles. """
+    scene = zpy.blender.verify_blender_scene()
     # Make sure engine is set to Cycles
-    if not (bpy.context.scene.render.engine == "CYCLES"):
+    if not (scene.render.engine == "CYCLES"):
         log.warning(' Setting render engine to CYCLES to use AOV')
-        bpy.context.scene.render.engine = "CYCLES"
-        bpy.context.scene.render.use_compositing = True
+        scene.render.engine = "CYCLES"
+        scene.render.use_compositing = True
     # Only certain styles are available
     valid_styles = ['instance', 'category']
     assert style in valid_styles, \
@@ -58,9 +59,10 @@ def make_aov_file_output_node(
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
 
     # Make sure scene composition is using nodes
-    if not bpy.context.scene.use_nodes:
-        bpy.context.scene.use_nodes = True
-    _tree = bpy.context.scene.node_tree
+    scene = zpy.blender.verify_blender_scene()
+    if not scene.use_nodes:
+        scene.use_nodes = True
+    _tree = scene.node_tree
 
     # Get or create render layer node
     if _tree.nodes.get('Render Layers', None) is None:
@@ -170,7 +172,7 @@ def render_aov(
     hsv: Tuple[float] = None,
 ):
     """ Render images using AOV nodes. """
-    scene = bpy.context.scene
+    scene = zpy.blender.verify_blender_scene()
     scene.render.resolution_x = width
     scene.render.resolution_y = height
     scene.cycles.resolution_x = width
@@ -269,7 +271,7 @@ def render_aov(
 def _mute_aov_file_output_node(style: str, mute: bool = True):
     """ Mute (or un-mute) an AOV output node for a style. """
     log.debug(f'Muting AOV node for {style}')
-    scene = bpy.context.scene
+    scene = zpy.blender.verify_blender_scene()
     _output_node = scene.node_tree.nodes.get(f'{style} output', None)
     if _output_node is not None:
         _output_node.mute = mute
@@ -277,7 +279,7 @@ def _mute_aov_file_output_node(style: str, mute: bool = True):
 
 def _rgb_render_settings():
     """ Render settings for normal color images. """
-    scene = bpy.context.scene
+    scene = zpy.blender.verify_blender_scene()
     scene.render.engine = "CYCLES"
     scene.render.film_transparent = False
     scene.render.dither_intensity = 1.0
@@ -296,8 +298,8 @@ def _rgb_render_settings():
     scene.cycles.use_denoising = True
     scene.cycles.denoising_radius = 8
 
-    bpy.context.scene.cycles.use_denoising = True
-    bpy.context.scene.cycles.denoiser = 'OPENIMAGEDENOISE'
+    scene.cycles.use_denoising = True
+    scene.cycles.denoiser = 'OPENIMAGEDENOISE'
 
     scene.view_settings.view_transform = 'Filmic'
     # scene.sequencer_colorspace_settings.name = 'Filmic Log'
@@ -311,7 +313,7 @@ def _rgb_render_settings():
 
 def _seg_render_settings():
     """ Render settings for segmentation images. """
-    scene = bpy.context.scene
+    scene = zpy.blender.verify_blender_scene()
     scene.render.engine = "CYCLES"
     scene.render.film_transparent = True
     scene.render.dither_intensity = 0.
@@ -348,7 +350,8 @@ def _render(threads: int = 4,
             ):
     """ Render in Blender. """
     start_time = time.time()
-    bpy.context.scene.render.threads = threads
+    scene = zpy.blender.verify_blender_scene()
+    scene.render.threads = threads
     # TODO: The commented out code here only works on Linux (fails on Windows)
     # try:
     #     # HACK: This disables the blender log by redirecting output to log file
