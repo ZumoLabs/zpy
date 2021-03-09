@@ -7,6 +7,7 @@
 <p align="center">
   <a href="https://zumolabs.ai/">Website</a> •
   <a href="#Install">Install</a> •
+  <a href="#Documentation">Docs</a> •
   <a href="#Examples">Examples</a> •
   <a href="#CLI">CLI</a> •
   <a href="#Contribute">Contribute</a> •
@@ -18,6 +19,7 @@
   <a href="https://twitter.com/ZumoLabs"><img alt="Twitter" title="Twitter" src="https://img.shields.io/badge/-@ZumoLabs-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white"/></a>
   <a href="https://www.youtube.com/channel/UCcU2Z8ArljfDzfq7SOz-ytQ"><img alt="Youtube" title="Youtube" src="https://img.shields.io/badge/-ZumoLabs-red?style=for-the-badge&logo=youtube&logoColor=white"/></a>
   <a href="https://pypi.org/project/zpy-zumo/"><img alt="PyPI" title="PyPI" src="https://img.shields.io/badge/-PyPI-yellow?style=for-the-badge&logo=PyPI&logoColor=white"/></a>
+  <a href="https://zumo-zpy.readthedocs.io/en/latest/index.html"><img alt="Docs" title="Docs" src="https://img.shields.io/badge/-Docs-black?style=for-the-badge&logo=Read%20the%20docs&logoColor=white"/></a>
 </p>
 
 </div>
