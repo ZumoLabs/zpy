@@ -123,6 +123,7 @@ class ExportOperator(bpy.types.Operator):
             bpy.ops.wm.save_as_mainfile(
                 filepath=str(export_path / 'main.blend'),
                 compress=False,
+                relative_remap=True,
             )
             log.info('Export Step 2 of 4: Packing files into .blend.')
             bpy.context.window_manager.progress_update(30)
@@ -133,6 +134,7 @@ class ExportOperator(bpy.types.Operator):
             bpy.ops.wm.save_as_mainfile(
                 filepath=str(export_path / 'main.blend'),
                 compress=False,
+                relative_remap=True,
             )
         except Exception as e:
             self.report({'ERROR'}, str(e))
