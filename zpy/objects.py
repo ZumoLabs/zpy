@@ -259,6 +259,10 @@ def copy(
     if collection is not None:
         collection.objects.link(new_obj)
     # TODO: Library Overriding functions
+    else:
+        # The object is still created if the collection is not provided the object wont be visible
+        # Add the object to the master colection
+        bpy.context.scene.collection.objects.link(obj)
     if is_library_object:
         log.warning(
             f'Making mesh and material data local for obj {new_obj.name}')
