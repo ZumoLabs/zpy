@@ -54,11 +54,13 @@ def load_hdri(
 
 @gin.configurable
 def random_hdri(
-    hdri_dir: Union[str, Path] = '$ASSETS/lib/hdris/1k',
+    hdri_dir: Union[str, Path] = '$ASSETS/lib/hdris',
     apply_to_scene: bool = True,
+    resolution: str = "1k",
 ) -> Path:
     """ Generate a random HDRI from an asset path. """
-    hdri_dir = zpy.files.verify_path(hdri_dir, make=False, check_dir=True)
+    hdri_path=Path(hdri_dir).joinpath(resolution)
+    hdri_dir = zpy.files.verify_path(hdri_path, make=False, check_dir=True)
     # Create list of HDRIs in directory
     hdris = []
     for _path in hdri_dir.iterdir():
