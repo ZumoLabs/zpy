@@ -41,7 +41,14 @@ def load_blend_obj(
     # Copy objects over to the current scene
     for obj in data_to.objects:
         scene.collection.objects.link(obj)
-    bpy.ops.file.find_missing_files(directory=str(path.parent / 'TEX'))
+    #This check is enough for Windows (textures vs Textures ) since the folder names are case agnostic
+    if path.parent.joinpath("texture").exists():
+        bpy.ops.file.find_missing_files(
+            directory=str(path.parent.joinpath("texture")))
+    #This check is needed for Linux 
+    elif path.parent.joinpath("Texture").exists():
+        bpy.ops.file.find_missing_files(
+            directory=str(path.parent.joinpath("Texture")))
     return bpy.data.objects[name]
 
 
