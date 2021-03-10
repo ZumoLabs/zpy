@@ -127,6 +127,7 @@ def make_mat_from_texture(
     tex_node.image.reload()
     return mat
 
+
 @gin.configurable
 def make_mat_from_color(
     color: Tuple[float],

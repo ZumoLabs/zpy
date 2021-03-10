@@ -35,6 +35,7 @@ try:
     from zpy import keypoints
     from zpy import camera
     from zpy import material
+    from zpy import nodes
     from zpy import objects
     from zpy import render
 except ModuleNotFoundError:
