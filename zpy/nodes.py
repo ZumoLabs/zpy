@@ -17,14 +17,14 @@ log = logging.getLogger(__name__)
 def get_or_make(
     name: str,
     node_type: str,
-    tree: bpy.types.NodeTree,
+    node_tree: bpy.types.NodeTree,
     name_tag: str = '(zpy) ',
     pos: Tuple[float] = None,
 ) -> bpy.types.Node:
     """ Verify existence or create a node. """
-    node = tree.nodes.get(name, None)
+    node = node_tree.nodes.get(name, None)
     if node is None:
-        node = tree.nodes.new(node_type)
+        node = node_tree.nodes.new(node_type)
         node.name = name
     # Name tag identifies nodes created through zpy
     node.label = f'{name_tag}{name}' 
