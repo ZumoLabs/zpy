@@ -22,7 +22,13 @@ def load_hdri(
     scale: Tuple[float] = (1.0, 1.0, 1.0),
     random_z_rot: bool = True,
 ) -> None:
-    """ Load an HDRI from path. """
+    """ Load an HDRI from path.
+
+    Args:
+        path (Union[str, Path]): Path to the HDRI.
+        scale (Tuple[float], optional): Scale in (x, y, z). Defaults to (1.0, 1.0, 1.0).
+        random_z_rot (bool, optional): Randomly rotate HDRI around Z axis. Defaults to True.
+    """
     scene = zpy.blender.verify_blender_scene()
     scene.world.use_nodes = True
     tree = scene.world.node_tree
@@ -57,12 +63,20 @@ def random_hdri(
     hdri_dir: Union[str, Path] = '$ASSETS/lib/hdris/1k',
     apply_to_scene: bool = True,
 ) -> Path:
-    """ Generate a random HDRI from an asset path. """
+    """ Generate a random HDRI from an asset path.
+
+    Args:
+        hdri_dir (Union[str, Path], optional): Path to directory with HDRIs.
+        apply_to_scene (bool, optional): Load the HDRI into the active scene. Defaults to True.
+
+    Returns:
+        Path: Path to the random HDRI.
+    """
     hdri_dir = zpy.files.verify_path(hdri_dir, make=False, check_dir=True)
     # Create list of HDRIs in directory
     hdris = []
     for _path in hdri_dir.iterdir():
-        if _path.is_file() and _path.suffix == '.hdri':
+        if _path.is_file() and _path.suffix in ['.hdri', '.hdr']:
             hdris.append(_path)
     hdri_path = random.choice(hdris)
     log.info(f'Found {len(hdris)} HDRIs, randomly chose {hdri_path.stem}')
