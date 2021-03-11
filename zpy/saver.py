@@ -16,7 +16,16 @@ log = logging.getLogger(__name__)
 
 @gin.configurable
 class Saver:
-    """Holds the logic for saving annotations at runtime."""
+    """ Stores annotations and categories throughout a run script.
+
+    Provides functions for outputing annotation files and meta files.
+
+    Raises:
+        ValueError: Incorrect function arguments.
+
+    Returns:
+        Saver: The Saver object.
+    """
 
     # Names for annotation files, folders, configs, datasheets, etc
     HIDDEN_METAFOLDER_FILENAME = Path('.zumometa')
@@ -32,6 +41,14 @@ class Saver:
                  description: str = 'Description of dataset.',
                  clean_dir: bool = True,
                  ):
+        """ Creates a Saver object.
+
+        Args:
+            output_dir (Union[str, Path], optional): Directory where files will be dumped.
+            annotation_path (Union[str, Path], optional): Path where annotation file will be dumped.
+            description (str, optional): A couple sentences describing the dataset. Defaults to 'Description of dataset.'.
+            clean_dir (bool, optional): Whether to empty/clean the output directory on object creation. Defaults to True.
+        """
         # the output dir
         if output_dir is None:
             output_dir = zpy.files.default_temp_path()
@@ -67,19 +84,30 @@ class Saver:
                        subcategory_zero_indexed: bool = True,
                        **kwargs,
                        ) -> Dict:
-        """ Add annotation. """
-        assert category is not None, 'Must provide a category for annotation.'
-        category_id = self.category_name_to_id.get(category, None)
-        assert category_id is not None, f'Could not find id for category {category}'
-        self.categories[category_id]['count'] += 1
+        """ Add a new annotation to the Saver object.
+
+        Pass any additional keys you want in the annotation dict as kwargs.
+
+        Args:
+            category (str, optional): The category that this annotation belongs to. Defaults to None.
+            subcategory (str, optional): The sub-category that this annotation belongs to. Defaults to None.
+            subcategory_zero_indexed (bool, optional): Whether sub-categories are zero indexed. Defaults to True.
+
+        Returns:
+            Dict: The annotation dictionary.
+        """
+        annotation = {'id': len(self.annotations)}
+        if category is not None:
+            category_id = self.category_name_to_id.get(category, None)
+            assert category_id is not None, f'Could not find id for category {category}'
+            self.categories[category_id]['count'] += 1
+            annotation['category_id'] = category_id
         if subcategory is not None:
             subcategory_id = self.categories[category_id]['subcategories'].index(
                 subcategory)
             self.categories[category_id]['subcategory_count'][subcategory_id] += 1
             subcategory_id += 0 if subcategory_zero_indexed else 1
             annotation['subcategory_id'] = subcategory_id
-        annotation['category_id'] = category_id
-        annotation['id'] = len(self.annotations)
         return annotation
 
     @gin.configurable
@@ -91,7 +119,20 @@ class Saver:
                      zero_indexed: bool = True,
                      **kwargs,
                      ) -> Dict:
-        """ Add category. """
+        """ Add a new category (also known as classes) to the Saver object.
+
+        Pass any additional keys you want in the category dict as kwargs.
+
+        Args:
+            name (str, optional): Name of the category. Defaults to 'default'.
+            supercategories (List[str], optional): Names of any supercategories. Defaults to None.
+            subcategories (List[str], optional): Names of any subcategories. Defaults to None.
+            color (Tuple[float], optional): Color of the category in segmentation images. Defaults to (0., 0., 0.).
+            zero_indexed (bool, optional): Whether categories are zero-indexed. Defaults to True.
+
+        Returns:
+            Dict: The category dictionary.
+        """
         # Default for super- and sub- categories is empty list
         supercategories = supercategories or []
         subcategories = subcategories or []
@@ -115,7 +156,16 @@ class Saver:
     def remap_filter_categories(self,
                                 category_remap: Dict = None,
                                 ) -> None:
-        """ Remap and filter category ids and names. """
+        """Re-map the categories (name and id correspondence).
+
+        This will also filter out any categories not in the category_remap dict.
+
+        Args:
+            category_remap (Dict, optional): Mapping of categorie names to id in {id : name}. Defaults to None.
+
+        Raises:
+            ValueError: Incorrect format for category remap dictionary.
+        """
         if category_remap is None:
             log.warning(
                 'Attempted to remap categories with no category remap.')
@@ -180,7 +230,14 @@ class Saver:
     def write_datasheet(
         datasheet_path: str = None,
         info: Dict = None
-    ) -> None:
+    ):
+        """ Writes datasheet dict to file.
+
+        Args:
+            datasheet_path (str, optional): Path where datasheet will be written.
+            info (Dict, optional): Information to include in datasheet.
+
+        """
         with datasheet_path.open('w') as f:
             for k, v in info.items():
                 f.write(f'{k},{v}\n')
@@ -192,7 +249,17 @@ class Saver:
         width: Union[int, float] = None,
         normalized: bool = False,
     ) -> List[Union[int, float]]:
-        """ Clip a list of coordinates (e.g. segmentation polygon) """
+        """ Clip a list of pixel coordinates (e.g. segmentation polygon).
+
+        Args:
+            annotation (List[Union[int, float]], optional): List of pixel coordinates.
+            height (Union[int, float], optional): Height used for clipping.
+            width (Union[int, float], optional): Width used for clipping.
+            normalized (bool, optional): Whether coordinates are normalized (0, 1) or integer pixel values. Defaults to False.
+
+        Returns:
+            List[Union[int, float]]: Clipped list of pixel coordniates.
+        """
         if any(isinstance(i, list) for i in annotation):
             return [zpy.saver.Saver.clip_coordinate_list(height=height,
                                                          width=width,
@@ -227,7 +294,17 @@ class Saver:
         width: Union[int, float] = None,
         normalized: bool = False,
     ) -> List[Union[int, float]]:
-        """ Clip a bounding box in [x, y, width, height] format. """
+        """ Clip a bounding box in [x, y, width, height] format.
+
+        Args:
+            bbox (List[Union[int, float]], optional): Bounding box in [x, y, width, height] format.
+            height (Union[int, float], optional): Height used for clipping.
+            width (Union[int, float], optional): Width used for clipping.
+            normalized (bool, optional): Whether bounding box values are normalized (0, 1) or integer pixel values. Defaults to False.
+
+        Returns:
+            List[Union[int, float]]: [description]
+        """
         if normalized:
             # Coordinates are in (0, 1)
             max_x, max_y = 1.0, 1.0
