@@ -18,29 +18,28 @@ log = logging.getLogger(__name__)
 
 def look_at(
     obj: Union[bpy.types.Object, str],
-    target: Union[Tuple[float], mathutils.Vector],
+    location: Union[Tuple[float], mathutils.Vector],
     roll: float = 0,
 ) -> None:
-    """
-    Rotate obj to look at target
+    """ Rotate obj to look at target.
 
-    :arg obj: the object to be rotated. Usually the camera
-    :arg target: the location (3-tuple or Vector) to be looked at
-    :arg roll: The angle of rotation about the axis from obj to target in degrees.
+    Based on: https://blender.stackexchange.com/a/5220/12947
 
-    Based on: https://blender.stackexchange.com/a/5220/12947 (ideasman42)
+    Args:
+        obj (Union[bpy.types.Object, str]): Object that does the looking (usually a camera)
+        location (Union[Tuple[float], mathutils.Vector]): Location (3-tuple or Vector) to be looked at.
+        roll (float, optional): The angle of rotation about the axis from obj to target in radians. Defaults to 0.
     """
     obj = zpy.objects.verify(obj)
-    if not isinstance(target, mathutils.Vector):
-        target = mathutils.Vector(target)
+    if not isinstance(location, mathutils.Vector):
+        location = mathutils.Vector(location)
     loc = obj.location
     # direction points from the object to the target
-    direction = target - obj.location
+    direction = location - obj.location
     quat = direction.to_track_quat('-Z', 'Y')
-    # /usr/share/blender/scripts/addons/add_advanced_objects_menu/arrange_on_curve.py
     quat = quat.to_matrix().to_4x4()
     # convert roll from radians to degrees
-    roll_matrix = mathutils.Matrix.Rotation(math.radians(roll), 4, 'Z')
+    roll_matrix = mathutils.Matrix.Rotation(roll, 4, 'Z')
     # remember the current location, since assigning to obj.matrix_world changes it
     loc = loc.to_tuple()
     obj.matrix_world = quat @ roll_matrix
@@ -49,22 +48,32 @@ def look_at(
 
 @gin.configurable
 def camera_xyz(
-    loc: mathutils.Vector,
+    location: Union[Tuple[float], mathutils.Vector],
     camera: bpy.types.Object = None,
     fisheye_lens: bool = False,
 ) -> Tuple[float]:
-    """ Get camera image xy coordinates of point in scene.
+    """ Get pixel coordinates of point in camera space.
 
     - (0, 0) is the bottom left of the camera frame.
     - (1, 1) is the top right of the camera frame.
     - Values outside 0-1 are also supported.
     - A negative ‘z’ value means the point is behind the camera.
 
+    Args:
+        location (mathutils.Vector): Location (3-tuple or Vector) of point in 3D space.
+        camera (bpy.types.Object, optional): Camera in which pixel space exists.
+        fisheye_lens (bool, optional): Whether to use fisheye distortion. Defaults to False.
+
+    Returns:
+        Tuple[float]: Pixel coordinates of location.
     """
     scene = zpy.blender.verify_blender_scene()
     if camera is None:
         camera = scene.camera
-    point = bpy_extras.object_utils.world_to_camera_view(scene, camera, loc)
+    if not isinstance(location, mathutils.Vector):
+        location = mathutils.Vector(location)
+    point = bpy_extras.object_utils.world_to_camera_view(
+        scene, camera, location)
     if point[2] < 0:
         log.debug('Point is behind camera')
 
@@ -76,14 +85,14 @@ def camera_xyz(
         bpy.data.cameras[0].lens_unit = 'FOV'
         bpy.data.cameras[0].lens = 18.
 
-        # Based on https://blender.stackexchange.com/questions/40702/how-can-i-get-the-projection-matrix-of-a-panoramic-camera-with-a-fisheye-equisol?noredirect=1&lq=1
+        # https://blender.stackexchange.com/questions/40702/how-can-i-get-the-projection-matrix-of-a-panoramic-camera-with-a-fisheye-equisol?noredirect=1&lq=1
         # Note this assumes 180 degree FOV
         cam = bpy.data.cameras[camera.name]
         f = cam.lens
         w = cam.sensor_width
         h = cam.sensor_height
 
-        p = camera.matrix_world.inverted() @ loc
+        p = camera.matrix_world.inverted() @ location
         p.normalize()
 
         # Calculate our angles
@@ -106,8 +115,21 @@ def camera_xyz(
         return point[0], point[1], point[2]
 
 
-def is_child_hit(obj: bpy.types.Object, hit_obj: bpy.types.Object) -> bool:
-    """ Recursive function to check if child is the hit object. """
+def is_child_hit(
+    obj: Union[bpy.types.Object, str],
+    hit_obj: Union[bpy.types.Object, str],
+) -> bool:
+    """ Recursive function to check if a child object is the hit object.
+
+    Args:
+        obj (Union[bpy.types.Object, str]): Object that might contain a hit child.
+        hit_obj (Union[bpy.types.Object, str]): The hit object.
+
+    Returns:
+        bool: If the hit object is a child object.
+    """
+    obj = zpy.objects.verify(obj)
+    hit_obj = zpy.objects.verify(hit_obj)
     if obj == hit_obj:
         return True
     else:
@@ -117,20 +139,30 @@ def is_child_hit(obj: bpy.types.Object, hit_obj: bpy.types.Object) -> bool:
         return False
 
 
-@gin.configurable
 def is_visible(
-    loc: mathutils.Vector,
-    obj_to_hit: bpy.types.Object,
+    location: Union[Tuple[float], mathutils.Vector],
+    obj_to_hit: Union[bpy.types.Object, str],
     camera: bpy.types.Camera = None,
 ) -> bool:
-    """ Cast a ray to determine if object is visible from camera. """
+    """ Cast a ray to determine if object is visible from camera.
+
+    Args:
+        location (Union[Tuple[float], mathutils.Vector]): Location to shoot out ray towards.
+        obj_to_hit (Union[bpy.types.Object, str]): Object that should be hit by ray.
+        camera (bpy.types.Camera, optional): Camera where ray originates from.
+
+    Returns:
+        bool: Whether the casted ray has hit the object.
+    """
     scene = zpy.blender.verify_blender_scene()
     if camera is None:
         camera = scene.camera
+    if not isinstance(location, mathutils.Vector):
+        location = mathutils.Vector(location)
     view_layer = zpy.blender.verify_view_layer()
     result = scene.ray_cast(depsgraph=view_layer.depsgraph,
                             origin=camera.location,
-                            direction=(loc - camera.location))
+                            direction=(location - camera.location))
     # Whether a hit occured
     is_hit = result[0]
     # Object hit by raycast
@@ -148,12 +180,23 @@ def is_visible(
 
 @gin.configurable
 def is_in_view(
-    loc: mathutils.Vector,
+    location: Union[Tuple[float], mathutils.Vector],
     camera: bpy.types.Camera = None,
     epsilon: float = 0.05,
 ) -> bool:
-    """ Is a point visible to camera? Within some epsilon. """
-    x, y, z = camera_xyz(loc, camera=camera)
+    """ Is a location visible from a camera (within some epsilon).
+
+    Args:
+        location (Union[Tuple[float], mathutils.Vector]): Location that is visible or not.
+        camera (bpy.types.Camera, optional): [description]. Camera that wants to see the location.
+        epsilon (float, optional): How far outside the view box the point is allowed to be. Defaults to 0.05.
+
+    Returns:
+        bool: Whether the location is visible.
+    """
+    if not isinstance(location, mathutils.Vector):
+        location = mathutils.Vector(location)
+    x, y, z = camera_xyz(location, camera=camera)
     if z < 0:
         return False
     if x < (0-epsilon) or x > (1 + epsilon):
@@ -165,8 +208,8 @@ def is_in_view(
 
 @gin.configurable
 def camera_xyv(
-    loc: mathutils.Vector,
-    obj: bpy.types.Object,
+    location: Union[Tuple[float], mathutils.Vector],
+    obj: Union[bpy.types.Object, str],
     camera: bpy.types.Camera = None,
     image_width: int = 640,
     image_height: int = 480,
@@ -181,13 +224,25 @@ def camera_xyv(
         v=1: labeled but not visible
         v=2: labeled and visible
 
+    Args:
+        location (Union[Tuple[float], mathutils.Vector]): Location (3-tuple or Vector) of point in 3D space.
+        obj (Union[bpy.types.Object, str]): Object to check for visibility.
+        camera (bpy.types.Camera, optional): Camera in which pixel space exists.
+        image_width (int, optional): Width of image. Defaults to 640.
+        image_height (int, optional): Height of image. Defaults to 480.
+
+    Returns:
+        Tuple[int]: (X, Y, V)
     """
-    x, y, z = camera_xyz(loc, camera=camera)
+    obj = zpy.objects.verify(obj)
+    if not isinstance(location, mathutils.Vector):
+        location = mathutils.Vector(location)
+    x, y, z = camera_xyz(location, camera=camera)
     # visibility
     v = 2
     if x < 0 or y < 0 or z < 0:
         v = 1
-    if not is_visible(loc, obj_to_hit=obj, camera=camera):
+    if not is_visible(location, obj_to_hit=obj, camera=camera):
         v = 1
     # bottom-left to top-left
     y = 1 - y
