@@ -133,8 +133,8 @@ def parse_zumo_annotations(
             if not isinstance(name, str):
                 raise ZUMOParseError(f'name {name} must be str.')
             if frame is not None and \
-                (not zpy.files.frame_from_image_name(name) == frame) and \
-                    (not zpy.files.frame_from_image_name(name) == image_id):
+                (not zpy.files.id_from_image_name(name) == frame) and \
+                    (not zpy.files.id_from_image_name(name) == image_id):
                 raise ZUMOParseError(f'name {name} does not correspond to'
                                      f' frame {frame} or image_id {image_id}.')
         # Output path
