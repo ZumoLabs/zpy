@@ -51,15 +51,17 @@ def filter_dataset(dfilter, url, token):
 def filter_dataset_url(field, pattern, regex, url, token):
     """ filter generated dataset """
     endpoint = f'{url}?{field}__{pattern}={regex}'
-    r = requests.get(endpoint, headers=auth_headers(token))
-    if r.status_code != 200:
-        log.warning(f"Unable to filter {url}")
-        return []
-    response = json.loads(r.text)
     datasets, names = [], []
-    for d in response['results']:
-        names.append(d['name'])
-        datasets.append(d['id'])
+    while endpoint is not None:
+        r = requests.get(endpoint, headers=auth_headers(token))
+        if r.status_code != 200:
+            log.warning(f"Unable to filter {endpoint}")
+            return []
+        response = json.loads(r.text)
+        for d in response['results']:
+            names.append(d['name'])
+            datasets.append(d['id'])
+        endpoint = response['next']
     log.info(f'filter <{endpoint}> found {names}')
     return datasets
 
