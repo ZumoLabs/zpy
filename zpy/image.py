@@ -21,8 +21,17 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def open_image(image_path: Union[str, Path]) -> np.ndarray:
-    """Open image from path to ndarray."""
+def open_image(
+    image_path: Union[str, Path],
+) -> np.ndarray:
+    """ Open image from path to ndarray.
+
+    Args:
+        image_path (Union[str, Path]): Path to image.
+
+    Returns:
+        np.ndarray: Image as numpy array.
+    """
     image_path = zpy.files.verify_path(image_path, make=False)
     img = None
     try:
@@ -40,7 +49,11 @@ def open_image(image_path: Union[str, Path]) -> np.ndarray:
 def remove_alpha_channel(
     image_path: Union[str, Path]
 ) -> None:
-    """Remove the alpha channel in an image."""
+    """ Remove the alpha channel in an image (overwrites image).
+
+    Args:
+        image_path (Union[str, Path]): Path to image.
+    """
     img = open_image(image_path)
     io.imsave(image_path, img)
     log.info(f'Saving image with no alpha channel at {image_path}')
@@ -51,7 +64,15 @@ def jpeg_compression(
     image_path: Union[str, Path],
     quality : int = 40,    
 ) -> Path:
-    """Add jpeg compression to an image."""
+    """ Add jpeg compression to an image (overwrites image).
+
+    Args:
+        image_path (Union[str, Path]): Path to image.
+        quality (int, optional): Compression quality. Defaults to 40.
+
+    Returns:
+        Path: Path to image.
+    """
     image_path = zpy.files.verify_path(image_path, make=False)
     img = io.imread(image_path)
     # Make sure image is jpeg
@@ -67,15 +88,33 @@ def resize_image(
     image_path: Union[str, Path],
     width: int = 640,
     height: int = 480,
-) -> None:
-    """Change the size of the image."""
+) -> Path:
+    """ Resize an image (overwrites image).
+
+    Args:
+        image_path (Union[str, Path]): Path to image.
+        width (int, optional): Width of image. Defaults to 640.
+        height (int, optional): Height of image. Defaults to 480.
+
+    Returns:
+        Path: Path to image.
+    """
     img = open_image(image_path)
     resized_img = resize(img, (height, width), anti_aliasing=True)
     io.imsave(image_path, resized_img)
 
 
-def pixel_mean_std(flat_images: List[np.ndarray]) -> Dict:
-    """ Return the pixel mean and std (as floats and in 256 mode from a flattened images array. """
+def pixel_mean_std(
+    flat_images: List[np.ndarray],
+) -> Dict:
+    """ Return the pixel mean and std from a flattened images array.
+
+    Args:
+        flat_images (List[np.ndarray]): Image pixels in a flattened array
+
+    Returns:
+        Dict: Pixel means and std as floats and integers (256) 
+    """
     # HACK: Incorrect type assumption
     flat_images = flat_images[0]
     if np.amax(flat_images) > 1:
@@ -100,7 +139,15 @@ def flatten_images(
     images: List[np.ndarray],
     max_pixels: int = 500000,
 ) -> List[np.ndarray]:
-    """ Flatten out images in a list. """
+    """ Flatten a list of images in ndarray form.
+
+    Args:
+        images (List[np.ndarray]): List of images in ndarray form.
+        max_pixels (int, optional): Maximum number of pixels in the flattened array. Defaults to 500000.
+
+    Returns:
+        List[np.ndarray]: List of flattened images.
+    """
     flat_images = []
     for image in images:
         dims = np.shape(image)
@@ -114,8 +161,9 @@ def flatten_images(
 
 
 def pad_with(vector, pad_width, iaxis, kwargs):
-    """
-        https://numpy.org/doc/stable/reference/generated/numpy.pad.html
+    """ Pad a vector.
+
+    https://numpy.org/doc/stable/reference/generated/numpy.pad.html
     """
     pad_value = kwargs.get('padder', 10)
     vector[:pad_width[0]] = pad_value
@@ -125,9 +173,7 @@ def pad_with(vector, pad_width, iaxis, kwargs):
 def binary_mask_to_rle(binary_mask) -> Dict:
     """ Converts a binary mask to a RLE (run-length-encoded) dictionary.
 
-    From:
     https://stackoverflow.com/questions/49494337/encode-numpy-array-using-uncompressed-rle-for-coco-dataset
-
     """
     binary_mask = np.asfortranarray(binary_mask)
     rle = {'counts': [], 'size': list(binary_mask.shape)}
@@ -141,12 +187,27 @@ def binary_mask_to_rle(binary_mask) -> Dict:
 
 @gin.configurable
 def seg_to_annotations(
-        image_path: Path,
+        image_path: Union[str, Path],
         remove_salt: bool = True,
         rle_segmentations: bool = False,
         float_annotations: bool = False,
-        max_categories: int = 1000):
-    """ Convert a segmentation image and bounding box to polygon segmentations. """
+        max_categories: int = 1000
+) -> List[Dict]:
+    """ Convert a segmentation image into bounding boxes and polygon segmentations.
+
+    Args:
+        image_path (Union[str, Path]): Path to image.
+        remove_salt (bool, optional): Remove salt when calculating bounding box and polygons. Defaults to True.
+        rle_segmentations (bool, optional): Include RLE polygons in annotation dictionaries. Defaults to False.
+        float_annotations (bool, optional): Include float (0, 1) bboxes/polygons in annotation dictionaries. Defaults to False.
+        max_categories (int, optional): Maximum number of categories allowed in an image. Defaults to 1000.
+
+    Raises:
+        ValueError: Too many categories (usually means segmentation image is not single colors)
+
+    Returns:
+        List[Dict]: List of annotation dictionaries.
+    """
     log.info(f'Extracting annotations from segmentation: {image_path}')
     image_path = zpy.files.verify_path(image_path, make=False)
     img = open_image(image_path)
