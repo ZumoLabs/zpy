@@ -11,13 +11,18 @@ def set_log_levels(
     level: str = None,
     modules: List[str] = [
         'zpy',
-        # Addon modules
         'zpy_addon',
         'bpy.zpy_addon'
         'neuralyzer',
-    ]
+        'bender',
+    ],
 ) -> None:
-    """ Set logger levels for all zpy modules. """
+    """ Set logger levels for all zpy modules.
+
+    Args:
+        level (str, optional): log level in [info, debug, warning]. Defaults to logging.Info.
+        modules (List[str], optional): Modules to set logging for. Defaults to [ 'zpy', 'zpy_addon', 'bpy.zpy_addon' 'neuralyzer', ].
+    """
     if level is None:
         log_level = logging.INFO
     elif level == 'info':
@@ -40,8 +45,16 @@ def set_log_levels(
             pass
 
 
-def linebreaker_log(message: str, line_length: int = 80):
-    """ Good looking line-breaker log message. """
+def linebreaker_log(
+    message: str,
+    line_length: int = 80,
+):
+    """ Good looking line-breaker log message.
+
+    Args:
+        message (str): Message to put in the log.
+        line_length (int, optional): Length of line breakers ----. Defaults to 80.
+    """
     # Clip the message
     message = message[:line_length]
     whitespace = ' ' * int((line_length - len(message)) / 2)

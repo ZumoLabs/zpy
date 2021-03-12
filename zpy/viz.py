@@ -32,7 +32,7 @@ def pretty_axes(ax: matplotlib.axes.Axes) -> matplotlib.axes.Axes:
 def plotter(func):
     """ Decorator for plotting images. """
 
-    def wrapped(output_path: Union[str, Path] = None,
+    def wrapped(output_path: Union[Path, str] = None,
                 show: bool = False,
                 **kwargs,
                 ) -> matplotlib.figure.Figure:
@@ -188,7 +188,7 @@ def category_barplot(
 
 @plotter
 def draw_annotations(
-    image_path: Union[str, Path] = None,
+    image_path: Union[Path, str] = None,
     annotations: List = None,
     categories: Dict[str, Dict] = None,
 ) -> None:

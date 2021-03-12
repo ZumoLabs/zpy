@@ -15,8 +15,22 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def verify(mat: Union[str, bpy.types.Material], check_none=True) -> bpy.types.Material:
-    """ Return material given name or Material type object. """
+def verify(
+    mat: Union[bpy.types.Material, str],
+    check_none: bool = True,
+) -> bpy.types.Material:
+    """ Get a material given either its name or the object itself.
+
+    Args:
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
+        check_none (bool, optional): Check to make sure material exists. Defaults to True.
+
+    Raises:
+        ValueError: Material does not exist.
+
+    Returns:
+        bpy.types.Material: Material object.
+    """
     if isinstance(mat, str):
         mat = bpy.data.materials.get(mat)
     if check_none and mat is None:
@@ -27,14 +41,26 @@ def verify(mat: Union[str, bpy.types.Material], check_none=True) -> bpy.types.Ma
 _SAVED_MATERIALS = {}
 
 
-def save_material_props(mat: Union[str, bpy.types.Material]) -> None:
-    """ Save a pose (rot and pos) to dict. """
+def save_material_props(
+    mat: Union[bpy.types.Material, str],
+) -> None:
+    """ Save a pose (rot and pos) to dict.
+
+    Args:
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
+    """
     log.info(f'Saving material properties for {mat.name}')
     _SAVED_MATERIALS[mat.name] = get_mat_props(mat)
 
 
-def restore_material_props(mat: Union[str, bpy.types.Material]) -> None:
-    """ Restore an object to a position. """
+def restore_material_props(
+    mat: Union[bpy.types.Material, str],
+) -> None:
+    """ Restore an object to a position.
+
+    Args:
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
+    """
     log.info(f'Restoring material properties for {mat.name}')
     set_mat_props(mat, _SAVED_MATERIALS[mat.name])
 
@@ -46,9 +72,16 @@ def restore_all_material_props() -> None:
 
 
 def get_mat_props(
-    mat: Union[str, bpy.types.Material],
+    mat: Union[bpy.types.Material, str],
 ) -> Tuple[float]:
-    """ Get (some of the) material properties. """
+    """ Get (some of the) material properties.
+
+    Args:
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
+
+    Returns:
+        Tuple[float]: Material property values (roughness, metallic, specular).
+    """
     mat = verify(mat)
     bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
     if bsdf_node is None:
@@ -62,10 +95,15 @@ def get_mat_props(
 
 
 def set_mat_props(
-    mat: Union[str, bpy.types.Material],
-    prop_tuple: Tuple[float]
+    mat: Union[bpy.types.Material, str],
+    prop_tuple: Tuple[float],
 ) -> None:
-    """ Set (some of the) material properties. """
+    """ Set (some of the) material properties.
+
+    Args:
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
+        prop_tuple (Tuple[float]): Material property values (roughness, metallic, specular).
+    """
     mat = verify(mat)
     # TODO: Work backwards from Material output node instead of
     #       assuming a 'Principled BSDF' node
@@ -80,14 +118,18 @@ def set_mat_props(
 
 @gin.configurable
 def jitter(
-    mat: Union[str, bpy.types.Material],
+    mat: Union[bpy.types.Material, str],
     std: float = 0.2,
     save_first_time: bool = True,
 ) -> None:
-    """ Randomize an existing material a little. """
+    """ Randomize an existing material a little.
+
+    Args:
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
+        std (float, optional): Standard deviation of gaussian noise over material property. Defaults to 0.2.
+        save_first_time (bool, optional): Save the material props first time jitter is called and restore before jittering every subsequent time. Defaults to True.
+    """
     mat = verify(mat)
-    # Save the material props first time jitter is called
-    # and restore before jittering every subsequent time
     if save_first_time:
         if _SAVED_MATERIALS.get(mat.name, None) is None:
             save_material_props(mat)
@@ -102,10 +144,18 @@ def jitter(
 
 @gin.configurable
 def make_mat_from_texture(
-    texture_path: Union[str, Path],
+    texture_path: Union[Path, str],
     name: str = None,
 ) -> bpy.types.Material:
-    """ Makes a material from a texture or color."""
+    """ Makes a material from a texture image.
+
+    Args:
+        texture_path (Union[Path, str]): Path to texture image.
+        name (str, optional): Name of new material.
+
+    Returns:
+        bpy.types.Material: The newly created material.
+    """
     texture_path = zpy.files.verify_path(texture_path, make=False)
     if name is None:
         name = texture_path.stem
@@ -133,7 +183,15 @@ def make_mat_from_color(
     color: Tuple[float],
     name: str = None,
 ) -> bpy.types.Material:
-    """ Makes a material from a texture or color."""
+    """ Makes a material given a color.
+
+    Args:
+        color (Tuple[float]): Color tuple (RGB).
+        name (str, optional): Name of new material.
+
+    Returns:
+        bpy.types.Material: The newly created material.
+    """
     if name is None:
         name = str(color)
     mat = bpy.data.materials.get(name, None)
@@ -151,13 +209,16 @@ def make_mat_from_color(
 
 
 def set_mat(
-    obj: Union[str, bpy.types.Object],
-    mat: Union[str, bpy.types.Material],
+    obj: Union[bpy.types.Object, str],
+    mat: Union[bpy.types.Material, str],
     recursive: bool = True,
 ) -> None:
-    """ Recursively sets object material.
+    """ Set the material for an object.
 
-    Allows string material and object names as input.
+    Args:
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name) with an active material.
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
+        recursive (bool, optional): Recursively set material for child objects. Defaults to True.
     """
     obj = zpy.objects.verify(obj)
     mat = zpy.material.verify(mat)
@@ -179,12 +240,24 @@ def make_aov_material_output_node(
     obj: bpy.types.Object = None,
     style: str = 'instance',
 ) -> None:
-    """ Make AOV Output nodes in Composition Graph. """
+    """ Make AOV Output nodes in Composition Graph.
+
+    Args:
+        mat (bpy.types.Material, optional): A blender material (either it's name or the object itself).
+        obj (bpy.types.Object, optional): A blender object (either it's name or the object itself).
+        style (str, optional): Type of segmentation in [instance, category]. Defaults to 'instance'.
+
+    Raises:
+        ValueError: Invalid style, no object or material given.
+    """
     scene = zpy.blender.verify_blender_scene()
     # Make sure engine is set to Cycles
     if not (scene.render.engine == "CYCLES"):
         log.warning(' Setting render engine to CYCLES to use AOV')
         scene.render.engine == "CYCLES"
+
+    # TODO: Refactor this legacy "styles" code
+    
     # Only certain styles are available
     valid_styles = ['instance', 'category']
     assert style in valid_styles, \
