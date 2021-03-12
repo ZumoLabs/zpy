@@ -6,10 +6,7 @@ from pathlib import Path
 from typing import Dict, Union
 
 import gin
-
 import zpy
-from zpy.output import Output
-from zpy.saver_image import Saver, ImageSaver
 
 log = logging.getLogger(__name__)
 
@@ -20,7 +17,7 @@ class ZUMOParseError(Exception):
 
 
 @gin.configurable
-class OutputZUMO(Output):
+class OutputZUMO(zpy.output.Output):
     """ Output class for ZUMO style annotations.
 
     The ZUMO format is basically a serialized version of zpy.saver.Saver.

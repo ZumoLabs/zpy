@@ -35,7 +35,20 @@ class VideoSaver(zpy.saver.Saver):
                   zero_indexed: bool = True,
                   **kwargs,
                   ) -> Dict:
-        """ Add image to save object. """
+        """ Add a new annotation to the Saver object.
+
+        Args:
+            name (str, optional): [description]. Defaults to 'default video'.
+            style (str, optional): [description]. Defaults to 'default'.
+            output_path (Union[Path, str], optional): [description]. Defaults to '/tmp/test.avi'.
+            width (int, optional): [description]. Defaults to 0.
+            height (int, optional): [description]. Defaults to 0.
+            length (timedelta, optional): [description]. Defaults to 0.
+            zero_indexed (bool, optional): [description]. Defaults to True.
+
+        Returns:
+            Dict: The video annotation dictionary.
+        """
         video = {
             'name': name,
             'style': style,
@@ -59,7 +72,14 @@ class VideoSaver(zpy.saver.Saver):
                        video: str = 'default video',
                        **kwargs,
                        ) -> Dict:
-        """ Add annotation. """
+        """ Add a new annotation to the Saver object.
+
+        Args:
+            video (str, optional): [description]. Defaults to 'default video'.
+
+        Returns:
+            Dict: The annotation dictionary.
+        """
         annotation = super().add_annotation(*args, **kwargs)
         video_id = self.video_name_to_id.get(video, None)
         assert video_id is not None, f'Could not find id for video {video}'
@@ -71,4 +91,5 @@ class VideoSaver(zpy.saver.Saver):
     @gin.configurable
     def output_meta_analysis(self):
         """ Perform a full meta analysis.  """
-        log.warning('TODO: implement meta-analysis for video datasets')
+        # TODO: implement meta-analysis for video datasets
+        pass

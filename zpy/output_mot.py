@@ -9,9 +9,7 @@ from pathlib import Path
 from typing import List, Union
 
 import gin
-
 import zpy
-from zpy.output import Output
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +20,7 @@ class MOTParseError(Exception):
 
 
 @gin.configurable
-class OutputMOT(Output):
+class OutputMOT(zpy.output.Output):
     """ Output class for MOT (Multi-Object Tracking) style annotations.
     
     https://motchallenge.net/faq/

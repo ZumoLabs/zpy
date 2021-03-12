@@ -3,12 +3,10 @@
 """
 import logging
 from pathlib import Path
-from typing import List, Union, Callable
+from typing import Callable, List, Union
 
 import gin
-
 import zpy
-from zpy.output import Output
 
 log = logging.getLogger(__name__)
 
@@ -19,7 +17,7 @@ class CSVParseError(Exception):
 
 
 @gin.configurable
-class OutputCSV(Output):
+class OutputCSV(zpy.output.Output):
     """ Output class for CSV (comma separated value) style annotations."""
 
     ANNOTATION_FILENAME = Path('annotations.csv')

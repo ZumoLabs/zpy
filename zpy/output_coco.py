@@ -7,9 +7,7 @@ from pathlib import Path
 from typing import List, Union
 
 import gin
-
 import zpy
-from zpy.output import Output
 
 log = logging.getLogger(__name__)
 
@@ -20,7 +18,7 @@ class COCOParseError(Exception):
 
 
 @gin.configurable
-class OutputCOCO(Output):
+class OutputCOCO(zpy.output.Output):
     """ Output class for COCO style annotations.
 
     https://cocodataset.org/#home

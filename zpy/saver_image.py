@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 @gin.configurable
 class ImageSaver(zpy.saver.Saver):
-    """Holds the logic for saving image annotations at runtime."""
+    """ Saver class for Image based datasets. """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,7 +35,22 @@ class ImageSaver(zpy.saver.Saver):
                   zero_indexed: bool = True,
                   **kwargs,
                   ) -> Dict:
-        """ Add image to save object. """
+        """ Add a new image annotation to the Saver object.
+
+        Pass any additional keys you want in the image annotation dict as kwargs.
+
+        Args:
+            name (str, optional): [description]. Defaults to 'default image'.
+            style (str, optional): [description]. Defaults to 'default'.
+            output_path (Union[Path, str], optional): [description]. Defaults to '/tmp/test.png'.
+            frame (int, optional): [description]. Defaults to 0.
+            width (int, optional): [description]. Defaults to 0.
+            height (int, optional): [description]. Defaults to 0.
+            zero_indexed (bool, optional): [description]. Defaults to True.
+
+        Returns:
+            Dict: The image annotation dictionary.
+        """
         image = {
             'name': name,
             'style': style,
@@ -64,7 +79,22 @@ class ImageSaver(zpy.saver.Saver):
                        parse_on_add: bool = True,
                        **kwargs,
                        ) -> Dict:
-        """ Add annotation. """
+        """ Add a new annotation to the Saver object.
+
+        Pass any additional keys you want in the annotation dict as kwargs.
+
+        Args:
+            image (str, optional): [description]. Defaults to 'default image'.
+            category (str, optional): [description]. Defaults to None.
+            subcategory (str, optional): [description]. Defaults to None.
+            subcategory_zero_indexed (bool, optional): [description]. Defaults to True.
+            seg_image (str, optional): [description]. Defaults to None.
+            seg_color (Tuple[float], optional): [description]. Defaults to None.
+            parse_on_add (bool, optional): [description]. Defaults to True.
+
+        Returns:
+            Dict: The annotation dictionary.
+        """
         image_id = self.image_name_to_id.get(image, None)
         assert image_id is not None, f'Could not find id for image {image}'
         assert category is not None, 'Must provide a category for annotation.'
@@ -102,8 +132,15 @@ class ImageSaver(zpy.saver.Saver):
 
     def parse_annotations_from_seg_image(self,
                                          image_name: str,
-                                         ) -> Dict:
-        """ Populate annotation field based on segmentation image. """
+                                         ) -> None:
+        """ Populate annotation field based on segmentation image.
+
+        Args:
+            image_name (str): Name of image in which to put parse out segmentations.
+
+        Raises:
+            ValueError: Image is not a segmentation image.
+        """
         # Verify that file is segmentation image
         is_iseg = zpy.files.file_is_of_type(
             image_name, 'instance segmentation image')
@@ -140,7 +177,11 @@ class ImageSaver(zpy.saver.Saver):
     def output_annotated_images(self,
                                 num_annotated_images: int = 10,
                                 ) -> None:
-        """ Dump annotated sampled images to the meta folder. """
+        """ Dump annotated sampled images to the meta folder.
+
+        Args:
+            num_annotated_images (int, optional): Number of annotation images to output. Defaults to 10.
+        """
         log.info('Output annotated images...')
         import zpy.viz
         output_path = self.output_dir / self.HIDDEN_METAFOLDER_FILENAME
@@ -162,8 +203,13 @@ class ImageSaver(zpy.saver.Saver):
 
     @gin.configurable
     def output_meta_analysis(self,
-                             image_sample_size: int = 50):
-        """ Perform a full meta analysis.  """
+                             image_sample_size: int = 50,
+                             ) -> None:
+        """ Perform a full meta analysis, outputting some meta files.
+
+        Args:
+            image_sample_size (int, optional): How many images to sample for meta analysis. Defaults to 50.
+        """
         log.info(
             f'perform meta analysis image_sample_size:{image_sample_size}...')
 
