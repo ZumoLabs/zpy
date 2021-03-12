@@ -26,7 +26,7 @@ def look_at(
     Based on: https://blender.stackexchange.com/a/5220/12947
 
     Args:
-        obj (Union[bpy.types.Object, str]): Object that does the looking (usually a camera)
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name) that does the looking (usually a camera)
         location (Union[Tuple[float], mathutils.Vector]): Location (3-tuple or Vector) to be looked at.
         roll (float, optional): The angle of rotation about the axis from obj to target in radians. Defaults to 0.
     """
@@ -122,8 +122,8 @@ def is_child_hit(
     """ Recursive function to check if a child object is the hit object.
 
     Args:
-        obj (Union[bpy.types.Object, str]): Object that might contain a hit child.
-        hit_obj (Union[bpy.types.Object, str]): The hit object.
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name) that might contain a hit child.
+        hit_obj (Union[bpy.types.Object, str]): Scene object (or it's name) that was hit
 
     Returns:
         bool: If the hit object is a child object.
@@ -226,7 +226,7 @@ def camera_xyv(
 
     Args:
         location (Union[Tuple[float], mathutils.Vector]): Location (3-tuple or Vector) of point in 3D space.
-        obj (Union[bpy.types.Object, str]): Object to check for visibility.
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name) to check for visibility.
         camera (bpy.types.Camera, optional): Camera in which pixel space exists.
         image_width (int, optional): Width of image. Defaults to 640.
         image_height (int, optional): Height of image. Defaults to 480.

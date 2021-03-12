@@ -30,7 +30,19 @@ def verify_key(
     key: str,
     key_type: type = None
 ) -> Any:
-    """ Check request dict for key, raise error if not present, or if wrong type. """
+    """ Check a request dict for key, raise error if not present or wrong type.
+
+    Args:
+        request (Dict): Request dictionary.
+        key (str): Key to look for in dictionary.
+        key_type (type, optional): The datatype that the value to the corresponding key should be.
+
+    Raises:
+        InvalidRequest: Key is not present, or value is of wrong type.
+
+    Returns:
+        Any: Value at the key.
+    """
     value = request.get(key, None)
     if value is None:
         raise InvalidRequest(f'Required key {key} not found.')
@@ -65,7 +77,14 @@ class Process(multiprocessing.Process):
 
 
 def request_as_process(request_func):
-    """ Decorator for running a request as a separate process. """
+    """ Decorator for running a request as seperate processes.
+
+    Args:
+        run_func (callable): function to be decorated.
+
+    Returns:
+        [callable]: Wrapped function.
+    """
     @wraps(request_func)
     def wrapped_request_func(request: Dict) -> None:
         _reply = multiprocessing.Manager().dict()
@@ -97,10 +116,17 @@ def handle_signal(signum, frame) -> None:
 
 
 def accept_requests(run_func):
-    """ Decorator for accepting requests as seperate processes. """
+    """ Decorator for accepting requests as seperate processes.
+
+    Args:
+        run_func (callable): function to be decorated.
+
+    Returns:
+        [callable]: Wrapped function.
+    """
     @wraps(run_func)
     def wrapped_run_func(bind_uri: str) -> None:
-        """ Main entrypoint for request based communication. """
+        # This is the main entrypoint for request based communication
         log.info('Configuring zmq socket...')
         context = zmq.Context()
         socket = context.socket(zmq.REP)
@@ -164,7 +190,16 @@ def send_request(
     ip: str = '127.0.0.1',
     port: str = '5555',
 ) -> Dict:
-    """ Send a request over a uri. """
+    """ Send a request over a uri.
+
+    Args:
+        request (Dict): Request dictionary sent over the socket.
+        ip (str, optional): ip address. Defaults to '127.0.0.1'.
+        port (str, optional): port on ip address. Defaults to '5555'.
+
+    Returns:
+        Dict: Reply dictionary.
+    """
     log.info(f'Connecting to {ip}:{port} ...')
     context = zmq.Context()
     socket = context.socket(zmq.REQ)

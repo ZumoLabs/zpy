@@ -16,13 +16,13 @@ log = logging.getLogger(__name__)
 
 
 def verify(
-    mat: Union[str, bpy.types.Material],
+    mat: Union[bpy.types.Material, str],
     check_none: bool = True,
 ) -> bpy.types.Material:
     """ Get a material given either its name or the object itself.
 
     Args:
-        mat (Union[str, bpy.types.Material]): A material (either it's name or the object itself).
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
         check_none (bool, optional): Check to make sure material exists. Defaults to True.
 
     Raises:
@@ -42,24 +42,24 @@ _SAVED_MATERIALS = {}
 
 
 def save_material_props(
-    mat: Union[str, bpy.types.Material],
+    mat: Union[bpy.types.Material, str],
 ) -> None:
     """ Save a pose (rot and pos) to dict.
 
     Args:
-        mat (Union[str, bpy.types.Material]): A material (either it's name or the object itself).
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
     """
     log.info(f'Saving material properties for {mat.name}')
     _SAVED_MATERIALS[mat.name] = get_mat_props(mat)
 
 
 def restore_material_props(
-    mat: Union[str, bpy.types.Material],
+    mat: Union[bpy.types.Material, str],
 ) -> None:
     """ Restore an object to a position.
 
     Args:
-        mat (Union[str, bpy.types.Material]): A material (either it's name or the object itself).
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
     """
     log.info(f'Restoring material properties for {mat.name}')
     set_mat_props(mat, _SAVED_MATERIALS[mat.name])
@@ -72,12 +72,12 @@ def restore_all_material_props() -> None:
 
 
 def get_mat_props(
-    mat: Union[str, bpy.types.Material],
+    mat: Union[bpy.types.Material, str],
 ) -> Tuple[float]:
     """ Get (some of the) material properties.
 
     Args:
-        mat (Union[str, bpy.types.Material]): A material (either it's name or the object itself).
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
 
     Returns:
         Tuple[float]: Material property values (roughness, metallic, specular).
@@ -95,13 +95,13 @@ def get_mat_props(
 
 
 def set_mat_props(
-    mat: Union[str, bpy.types.Material],
+    mat: Union[bpy.types.Material, str],
     prop_tuple: Tuple[float],
 ) -> None:
     """ Set (some of the) material properties.
 
     Args:
-        mat (Union[str, bpy.types.Material]): A material (either it's name or the object itself).
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
         prop_tuple (Tuple[float]): Material property values (roughness, metallic, specular).
     """
     mat = verify(mat)
@@ -118,14 +118,14 @@ def set_mat_props(
 
 @gin.configurable
 def jitter(
-    mat: Union[str, bpy.types.Material],
+    mat: Union[bpy.types.Material, str],
     std: float = 0.2,
     save_first_time: bool = True,
 ) -> None:
     """ Randomize an existing material a little.
 
     Args:
-        mat (Union[str, bpy.types.Material]): A material (either it's name or the object itself).
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
         std (float, optional): Standard deviation of gaussian noise over material property. Defaults to 0.2.
         save_first_time (bool, optional): Save the material props first time jitter is called and restore before jittering every subsequent time. Defaults to True.
     """
@@ -209,15 +209,15 @@ def make_mat_from_color(
 
 
 def set_mat(
-    obj: Union[str, bpy.types.Object],
-    mat: Union[str, bpy.types.Material],
+    obj: Union[bpy.types.Object, str],
+    mat: Union[bpy.types.Material, str],
     recursive: bool = True,
 ) -> None:
     """ Set the material for an object.
 
     Args:
-        obj (Union[str, bpy.types.Object]): A blender object (either it's name or the object itself).
-        mat (Union[str, bpy.types.Material]): A blender material (either it's name or the object itself).
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name) with an active material.
+        mat (Union[bpy.types.Material, str]):  Material (or it's name)
         recursive (bool, optional): Recursively set material for child objects. Defaults to True.
     """
     obj = zpy.objects.verify(obj)
