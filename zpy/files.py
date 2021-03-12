@@ -91,11 +91,11 @@ def file_is_of_type(
     Returns:
         bool: File is that type.
     """
-    if isinstance(filename, Path):
-        filename = str(filename)
+    if isinstance(path, Path):
+        path = str(path)
     assert FILE_REGEX.get(filetype, None) is not None, \
         f'{filetype} must be in {FILE_REGEX.keys()}'
-    if re.search(FILE_REGEX[filetype], filename):
+    if re.search(FILE_REGEX[filetype], path):
         return True
     return False
 
@@ -335,7 +335,7 @@ def read_json(
         Union[Dict, List]: Data in the json.
     """
     path = to_pathlib_path(path)
-    if not path.suffix() == '.json':
+    if not path.suffix == '.json':
         raise ValueError(f'{path} is not a JSON file.')
     log.info(f'Reading JSON file at {path}')
     with path.open() as f:

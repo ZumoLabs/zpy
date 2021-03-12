@@ -14,16 +14,16 @@ from zpy import gin
 from zpy import image
 from zpy import logging
 from zpy import requests
+# Saver object (recording annotations at runtime)
+from zpy import saver
+from zpy import saver_image
+from zpy import saver_video
 # Output class (outputting annotations to file)
 from zpy import output
 from zpy import output_coco
 from zpy import output_mot
 from zpy import output_zumo
 from zpy import output_csv
-# Saver object (recording annotations at runtime)
-from zpy import saver
-from zpy import saver_image
-from zpy import saver_video
 
 # If your zpy library has an extra dependency
 # which may or may not be installed on a user's

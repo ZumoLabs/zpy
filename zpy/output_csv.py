@@ -41,6 +41,7 @@ class OutputCSV(zpy.output.Output):
         Returns:
             Path: Path to annotation file.
         """
+        annotation_path = super().output_annotations(annotation_path=annotation_path)
         if annotation_dict_to_csv_row_func is None:
             raise CSVParseError(
                 'Output CSV annotations requires a annotation_dict_to_csv_row_func')

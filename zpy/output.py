@@ -29,9 +29,10 @@ class Output:
             # Try and deduce the annotation path from the saver object
             if self.saver.annotation_path is not None:
                 self.annotation_path = self.saver.annotation_path
-            elif self.saver.output_dir is None:
+            elif self.saver.output_dir is not None:
                 self.annotation_path = self.saver.output_dir / annotation_filename
             else:
+                self.annotation_path = None
                 log.warning(
                     'No annotation path could be deduced from Saver object.')
 
