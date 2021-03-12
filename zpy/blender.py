@@ -179,13 +179,13 @@ def run_text(
 
 
 def load_text_from_file(
-    path: Union[str, Path],
+    path: Union[Path, str],
     text_name: str = '',
 ) -> None:
     """ Load a file into Blender's internal text UI.
 
     Args:
-        path (Union[str, Path]): Filesystem path.
+        path (Union[Path, str]): Filesystem path.
         text_name (str, optional): Name of Blender text to write to.
     """
     path = zpy.files.verify_path(path)
@@ -199,13 +199,13 @@ def load_text_from_file(
 @gin.configurable
 def connect_addon(
     name: str = 'zpy_addon',
-    addon_dir: Union[str, Path] = '$BLENDERADDONS'
+    addon_dir: Union[Path, str] = '$BLENDERADDONS'
 ) -> None:
     """ Connects a Blender Addon.
 
     Args:
         name (str, optional): Name of Addon. Defaults to 'zpy_addon'.
-        addon_dir (Union[str, Path], optional): Directory of addons. Defaults to '$BLENDERADDONS'.
+        addon_dir (Union[Path, str], optional): Directory of addons. Defaults to '$BLENDERADDONS'.
     """
     log.debug(f'Connecting Addon {name}.')
     path = f'$BLENDERADDONS/{name}/__init__.py'
@@ -235,12 +235,12 @@ def connect_debugger_vscode(
 
 
 def output_intermediate_scene(
-    path: Union[str, Path] = None,
+    path: Union[Path, str] = None,
 ) -> None:
     """ Saves an intermediate scene for debugging purposes.
 
     Args:
-        path (Union[str, Path], optional): Output directory path.
+        path (Union[Path, str], optional): Output directory path.
     """
     if path is None:
         path = zpy.files.default_temp_path() / 'blender-debug-scene-tmp.blend'
@@ -261,13 +261,13 @@ def refresh_blender_ui() -> None:
 
 
 def load_scene(
-    path: Union[str, Path],
+    path: Union[Path, str],
     auto_execute_scripts: bool = True,
 ) -> None:
     """ Load a scene from a path to a *.blend file.
 
     Args:
-        path (Union[str, Path]): [description]
+        path (Union[Path, str]): [description]
         auto_execute_scripts (bool, optional): [description]. Defaults to True.
     """
     # HACK: Clear out scene of cameras and lights

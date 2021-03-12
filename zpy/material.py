@@ -144,13 +144,13 @@ def jitter(
 
 @gin.configurable
 def make_mat_from_texture(
-    texture_path: Union[str, Path],
+    texture_path: Union[Path, str],
     name: str = None,
 ) -> bpy.types.Material:
     """ Makes a material from a texture image.
 
     Args:
-        texture_path (Union[str, Path]): Path to texture image.
+        texture_path (Union[Path, str]): Path to texture image.
         name (str, optional): Name of new material.
 
     Returns:

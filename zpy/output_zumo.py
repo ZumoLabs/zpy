@@ -9,7 +9,7 @@ import gin
 
 import zpy
 from zpy.output import Output
-from zpy.saver_image import ImageSaver
+from zpy.saver_image import Saver, ImageSaver
 
 log = logging.getLogger(__name__)
 
@@ -21,47 +21,62 @@ class ZUMOParseError(Exception):
 
 @gin.configurable
 class OutputZUMO(Output):
-    """Holds the logic for outputting ZUMO annotations to file."""
+    """ Output class for ZUMO style annotations.
+
+    The ZUMO format is basically a serialized version of zpy.saver.Saver.
+
+    """
 
     ANNOTATION_FILENAME = Path('ZUMO_META.json')
 
+    def __init__(self, *args, **kwargs) -> Path:
+        super().__init__(*args, annotation_filename=self.ANNOTATION_FILENAME, **kwargs)
+
     def output_annotations(self,
-                           annotation_path: Union[str, Path] = None,
-                           ):
-        """ Output ZUMO_META annotations.
+                           annotation_path: Union[Path, str] = None,
+                           ) -> Path:
+        """ Output annotations to file.
 
-        The ZUMO format is meant to be as close to
-        a serialized version of this class as possbile.
+        Args:
+            annotation_path (Union[Path, str], optional): Output path for annotation file.
 
+        Returns:
+            Path: Path to annotation file.
         """
-        log.info('output zumo annotations...')
+        annotation_path = super().output_annotations(annotation_path=annotation_path)
         zumo_dict = {
             'metadata': self.saver.metadata,
             'categories': self.saver.categories,
             'images': self.saver.images,
             'annotations': self.saver.annotations,
         }
-        # Get the correct annotation path
-        if annotation_path is not None:
-            annotation_path = annotation_path
-        elif self.saver.annotation_path is None:
-            annotation_path = self.saver.output_dir / self.ANNOTATION_FILENAME
-        else:
-            annotation_path = self.saver.annotation_path
         # Write out annotations to file
         zpy.files.write_json(annotation_path, zumo_dict)
         # Verify annotations
         parse_zumo_annotations(
             annotation_file=annotation_path, data_dir=self.saver.output_dir)
+        return annotation_path
 
 
 @gin.configurable
 def parse_zumo_annotations(
-    annotation_file: Union[str, Path],
-    data_dir: Union[str, Path] = None,
+    annotation_file: Union[Path, str],
+    data_dir: Union[Path, str] = None,
     output_saver: bool = False,
-) -> None:
-    """ Parse Zumo annotations. """
+) -> zpy.saver_image.ImageSaver:
+    """ Parse COCO annotations, optionally output a ImageSaver object.
+
+    Args:
+        annotation_file (Union[Path, str]): Path to annotation file.
+        data_dir (Union[Path, str], optional): Directory containing data (images, video, etc).
+        output_saver (bool, optional): Whether to return a Saver object or not. Defaults to False.
+
+    Raises:
+        ZUMOParseError: Various checks on annotations, categories, images
+
+    Returns:
+        zpy.saver.Saver: Saver object.
+    """
     log.info(f'Parsing ZUMO annotations at {annotation_file}...')
 
     # Check annotation file path
@@ -88,11 +103,11 @@ def parse_zumo_annotations(
 
     # Optionally output a saver object.
     if output_saver:
-        saver = ImageSaver(output_dir=data_dir,
-                           annotation_path=annotation_file,
-                           description=zumo_metadata['metadata']['description'],
-                           clean_dir=False,
-                           )
+        saver = zpy.saver_image.ImageSaver(output_dir=data_dir,
+                                           annotation_path=annotation_file,
+                                           description=zumo_metadata['metadata']['description'],
+                                           clean_dir=False,
+                                           )
 
     # Check Images
     log.info('Parsing images...')

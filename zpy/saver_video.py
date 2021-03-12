@@ -28,7 +28,7 @@ class VideoSaver(zpy.saver.Saver):
     def add_video(self,
                   name: str = 'default video',
                   style: str = 'default',
-                  output_path: Union[str, Path] = '/tmp/test.avi',
+                  output_path: Union[Path, str] = '/tmp/test.avi',
                   width: int = 0,
                   height: int = 0,
                   length: timedelta = 0,

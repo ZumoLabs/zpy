@@ -41,14 +41,14 @@ def verify(
 
 def load_blend_obj(
         name: str,
-        path: Union[str, Path],
+        path: Union[Path, str],
         link: bool = False,
 ) -> bpy.types.Object:
     """ Load object from blend file.
 
     Args:
         name (str): [description]
-        path (Union[str, Path]): [description]
+        path (Union[Path, str]): [description]
         link (bool, optional): [description]. Defaults to False.
 
     Returns:

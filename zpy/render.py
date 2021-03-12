@@ -163,10 +163,10 @@ def hsv_node(
 
 @gin.configurable
 def render_aov(
-    rgb_path: Union[str, Path] = None,
-    depth_path: Union[str, Path] = None,
-    iseg_path: Union[str, Path] = None,
-    cseg_path: Union[str, Path] = None,
+    rgb_path: Union[Path, str] = None,
+    depth_path: Union[Path, str] = None,
+    iseg_path: Union[Path, str] = None,
+    cseg_path: Union[Path, str] = None,
     width: int = 640,
     height: int = 480,
     hsv: Tuple[float] = None,
@@ -345,12 +345,19 @@ def _seg_render_settings():
     scene.display.shading.show_specular_highlight = False
 
 
-def _render(threads: int = 4,
-            logfile: str = 'blender_render.log',
-            ):
-    """ Render in Blender. """
+def _render(
+    threads: int = 4,
+    logfile_path: Union[Path, str] = 'blender_render.log',
+) -> None:
+    """ The actual call to render a frame in Blender.
+
+    Args:
+        threads (int, optional): Number of threads to render on. Defaults to 4.
+        logfile_path (Union[Path, str]): Path to save render logfile.
+    """
     start_time = time.time()
     scene = zpy.blender.verify_blender_scene()
+    # TODO: Get a better default number based on number of available cores
     scene.render.threads = threads
     # TODO: The commented out code here only works on Linux (fails on Windows)
     # try:

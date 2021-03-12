@@ -22,12 +22,12 @@ log = logging.getLogger(__name__)
 
 
 def open_image(
-    image_path: Union[str, Path],
+    image_path: Union[Path, str],
 ) -> np.ndarray:
     """ Open image from path to ndarray.
 
     Args:
-        image_path (Union[str, Path]): Path to image.
+        image_path (Union[Path, str]): Path to image.
 
     Returns:
         np.ndarray: Image as numpy array.
@@ -47,12 +47,12 @@ def open_image(
 
 
 def remove_alpha_channel(
-    image_path: Union[str, Path]
+    image_path: Union[Path, str]
 ) -> None:
     """ Remove the alpha channel in an image (overwrites image).
 
     Args:
-        image_path (Union[str, Path]): Path to image.
+        image_path (Union[Path, str]): Path to image.
     """
     img = open_image(image_path)
     io.imsave(image_path, img)
@@ -61,13 +61,13 @@ def remove_alpha_channel(
 
 @gin.configurable
 def jpeg_compression(
-    image_path: Union[str, Path],
+    image_path: Union[Path, str],
     quality : int = 40,    
 ) -> Path:
     """ Add jpeg compression to an image (overwrites image).
 
     Args:
-        image_path (Union[str, Path]): Path to image.
+        image_path (Union[Path, str]): Path to image.
         quality (int, optional): Compression quality. Defaults to 40.
 
     Returns:
@@ -85,14 +85,14 @@ def jpeg_compression(
 
 @gin.configurable
 def resize_image(
-    image_path: Union[str, Path],
+    image_path: Union[Path, str],
     width: int = 640,
     height: int = 480,
 ) -> Path:
     """ Resize an image (overwrites image).
 
     Args:
-        image_path (Union[str, Path]): Path to image.
+        image_path (Union[Path, str]): Path to image.
         width (int, optional): Width of image. Defaults to 640.
         height (int, optional): Height of image. Defaults to 480.
 
@@ -187,7 +187,7 @@ def binary_mask_to_rle(binary_mask) -> Dict:
 
 @gin.configurable
 def seg_to_annotations(
-        image_path: Union[str, Path],
+        image_path: Union[Path, str],
         remove_salt: bool = True,
         rle_segmentations: bool = False,
         float_annotations: bool = False,
@@ -196,7 +196,7 @@ def seg_to_annotations(
     """ Convert a segmentation image into bounding boxes and polygon segmentations.
 
     Args:
-        image_path (Union[str, Path]): Path to image.
+        image_path (Union[Path, str]): Path to image.
         remove_salt (bool, optional): Remove salt when calculating bounding box and polygons. Defaults to True.
         rle_segmentations (bool, optional): Include RLE polygons in annotation dictionaries. Defaults to False.
         float_annotations (bool, optional): Include float (0, 1) bboxes/polygons in annotation dictionaries. Defaults to False.

@@ -67,13 +67,13 @@ def parse_gin_bindings(
 
 def parse_gin_config(
     gin_config: str = None,
-    gin_config_dir: Union[str, Path] = '$CONFIG',
+    gin_config_dir: Union[Path, str] = '$CONFIG',
 ) -> None:
     """ Parse a gin config file by path.
 
     Args:
         gin_config (str, optional): Name of gin config.
-        gin_config_dir (Union[str, Path], optional): Directory with gin configs.
+        gin_config_dir (Union[Path, str], optional): Directory with gin configs.
 
     Raises:
         zpy.requests.InvalidRequest: Cannot find gin config at path.

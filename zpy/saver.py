@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 class Saver:
     """ Stores annotations and categories throughout a run script.
 
-    Provides functions for outputing annotation files and meta files.
+    Provides functions for some additional meta files.
 
     Raises:
         ValueError: Incorrect function arguments.
@@ -36,16 +36,16 @@ class Saver:
     DATETIME_YEAR_FORMAT = '20%y'
 
     def __init__(self,
-                 output_dir: Union[str, Path] = None,
-                 annotation_path: Union[str, Path] = None,
+                 output_dir: Union[Path, str] = None,
+                 annotation_path: Union[Path, str] = None,
                  description: str = 'Description of dataset.',
                  clean_dir: bool = True,
                  ):
         """ Creates a Saver object.
 
         Args:
-            output_dir (Union[str, Path], optional): Directory where files will be dumped.
-            annotation_path (Union[str, Path], optional): Path where annotation file will be dumped.
+            output_dir (Union[Path, str], optional): Directory where files will be dumped.
+            annotation_path (Union[Path, str], optional): Path where annotation file will be dumped.
             description (str, optional): A couple sentences describing the dataset. Defaults to 'Description of dataset.'.
             clean_dir (bool, optional): Whether to empty/clean the output directory on object creation. Defaults to True.
         """

@@ -50,13 +50,13 @@ FILE_REGEX = {
 
 
 def dataset_contents(
-    path: Union[str, Path],
+    path: Union[Path, str],
     filetype_regex: Dict = FILE_REGEX,
 ) -> Dict:
     """ Use regex to search inside a data directory.
 
     Args:
-        path (Union[str, Path]): Directory filepath.
+        path (Union[Path, str]): Directory filepath.
         filetype_regex (Dict, optional): dictionary of {filetype : regex}
 
     Returns:
@@ -79,13 +79,13 @@ def dataset_contents(
 
 
 def file_is_of_type(
-    path: Union[str, Path],
+    path: Union[Path, str],
     filetype: str,
 ) -> bool:
     """ Check to if file is of type given.
 
     Args:
-        path (Union[str, Path]): A filesystem path.
+        path (Union[Path, str]): A filesystem path.
         filetype (str): Type of file (see FILE_REGEX dict in zpy.files)
 
     Returns:
@@ -192,11 +192,11 @@ def replace_id_in_image_name(image_name: str, new_id: int) -> str:
     return image_name[:4] + '%08d' % new_id + image_name[12:]
 
 
-def make_underscore_path(path: Union[str, Path], name: str) -> Path:
+def make_underscore_path(path: Union[Path, str], name: str) -> Path:
     """ Make an underscore path: foo.txt -> foo_new.txt
 
     Args:
-        path (Union[str, Path]): A filesystem path.
+        path (Union[Path, str]): A filesystem path.
         name (str): Name to append to file name.
 
     Returns:
@@ -207,11 +207,11 @@ def make_underscore_path(path: Union[str, Path], name: str) -> Path:
     return path.parent / Path(underscore_filename)
 
 
-def to_pathlib_path(path: Union[str, Path]) -> Path:
+def to_pathlib_path(path: Union[Path, str]) -> Path:
     """ Convert string path to pathlib.Path if needed.
 
     Args:
-        path (Union[str, Path]): A filesystem path.
+        path (Union[Path, str]): A filesystem path.
 
     Returns:
         Path: Path in pathlib.Path format.
@@ -231,13 +231,13 @@ def default_temp_path() -> Path:
 
 
 def clean_dir(
-    path: Union[str, Path],
+    path: Union[Path, str],
     keep_dir: bool = True,
 ) -> None:
     """ Delete everything at the provided directory.
 
     Args:
-        path (Union[str, Path]): Path to directory.
+        path (Union[Path, str]): Path to directory.
         keep_dir (bool, optional): Whether to keep (or delete) the directory itself. Defaults to True.
     """
     path = verify_path(path, make=False, check_dir=True)
@@ -269,14 +269,14 @@ def pretty_print(d: Dict) -> str:
 
 
 def verify_path(
-    path: Union[str, Path],
+    path: Union[Path, str],
     make: bool = False,
     check_dir: bool = False,
 ) -> Path:
     """ Checks to make sure Path exists and optionally creates it.
 
     Args:
-        path (Union[str, Path]): A filesystem path.
+        path (Union[Path, str]): A filesystem path.
         make (bool, optional): Make the path if it does not exist. Defaults to False.
         check_dir (bool, optional): Throw error is path is not a directory. Defaults to False.
 
@@ -300,13 +300,13 @@ def verify_path(
 
 
 def write_json(
-    path: Union[str, Path],
+    path: Union[Path, str],
     data: Union[Dict, List],
 ) -> None:
     """ Save data to json file.
 
     Args:
-        path (Union[str, Path]): Path to output json.
+        path (Union[Path, str]): Path to output json.
         data (Union[Dict, List]): Data to save.
 
     Raises:
@@ -321,12 +321,12 @@ def write_json(
 
 
 def read_json(
-    path: Union[str, Path],
+    path: Union[Path, str],
 ) -> Union[Dict, List]:
     """ Read a json from a path.
 
     Args:
-        path (Union[str, Path]): A filesystem path.
+        path (Union[Path, str]): A filesystem path.
 
     Raises:
         ValueError: Path is not a json file.
@@ -344,7 +344,7 @@ def read_json(
 
 
 def write_csv(
-    path: Union[str, Path],
+    path: Union[Path, str],
     data: List[List[Any]],
     delimiter: str = ',',
     **kwargs
@@ -354,7 +354,7 @@ def write_csv(
     Pass in additional kwargs to the csv writer.
 
     Args:
-        path (Union[str, Path]): A filesystem path.
+        path (Union[Path, str]): A filesystem path.
         data (List[List[Any]]): Data to save.
         delimiter (str, optional): Delimiter for each row of csv. Defaults to ','.
 
@@ -371,7 +371,7 @@ def write_csv(
 
 
 def read_csv(
-    path: Union[str, Path],
+    path: Union[Path, str],
     delimiter: str = ',',
     **kwargs
 ) -> List[List[Any]]:
@@ -380,7 +380,7 @@ def read_csv(
     Pass in additional kwargs to the csv reader.
 
     Args:
-        path (Union[str, Path]): A filesystem path.
+        path (Union[Path, str]): A filesystem path.
         delimiter (str, optional): Delimiter for each row of csv. Defaults to ','.
 
     Raises:
@@ -424,14 +424,14 @@ def sample(
 
 
 def filecopy(
-    src_path: Union[str, Path],
-    dst_path: Union[str, Path],
+    src_path: Union[Path, str],
+    dst_path: Union[Path, str],
 ) -> None:
     """ Copy file from source (src) to destination (dst).
 
     Args:
-        src_path (Union[str, Path]): Source filesystem path.
-        dst_path (Union[str, Path]): Destination filesystem path.
+        src_path (Union[Path, str]): Source filesystem path.
+        dst_path (Union[Path, str]): Destination filesystem path.
     """
     src_path = verify_path(src_path)
     dst_path = verify_path(dst_path)
@@ -440,13 +440,13 @@ def filecopy(
 
 
 def open_folder_in_explorer(
-    path: Union[str, Path],
+    path: Union[Path, str],
     make: bool = False,
 ) -> None:
     """ Opens a directory in the fileexplorer of your OS.
 
     Args:
-        path (Union[str, Path]): Filesystem path.
+        path (Union[Path, str]): Filesystem path.
         make (bool, optional): Make directory if it doesn't exist. Defaults to False.
     """
     path = verify_path(path, check_dir=True, make=make)
@@ -459,13 +459,13 @@ def open_folder_in_explorer(
 
 
 def remove_files_with_suffix(
-    path: Union[str, Path],
+    path: Union[Path, str],
     exts: List[str],
 ) -> None:
     """ Remove file in a path with certain extension.
 
     Args:
-        path (Union[str, Path]): Directory path.
+        path (Union[Path, str]): Directory path.
         exts (List[str]): List of extensions to remove
     """
     path = verify_path(path, check_dir=True)
@@ -476,14 +476,14 @@ def remove_files_with_suffix(
 
 
 def unzip_file(
-    zip_path: Union[str, Path],
-    out_path: Union[str, Path],
+    zip_path: Union[Path, str],
+    out_path: Union[Path, str],
 ) -> None:
     """ Unzip a file to an output path.
 
     Args:
-        zip_path (Union[str, Path]): Path to zip file.
-        out_path (Union[str, Path]): Path to output directory.
+        zip_path (Union[Path, str]): Path to zip file.
+        out_path (Union[Path, str]): Path to output directory.
 
     Raises:
         ValueError: Path isn't a zip.
@@ -504,14 +504,14 @@ def unzip_file(
 
 
 def zip_file(
-    in_path: Union[str, Path],
-    zip_path: Union[str, Path],
+    in_path: Union[Path, str],
+    zip_path: Union[Path, str],
 ) -> None:
     """ Zip a directory to a path.
 
     Args:
-        in_path (Union[str, Path]): Path to input directory.
-        zip_path (Union[str, Path]): Path to zip file.
+        in_path (Union[Path, str]): Path to input directory.
+        zip_path (Union[Path, str]): Path to zip file.
 
     Raises:
         ValueError: Path isn't a zip.

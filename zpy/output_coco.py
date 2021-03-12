@@ -10,7 +10,6 @@ import gin
 
 import zpy
 from zpy.output import Output
-from zpy.saver_image import ImageSaver
 
 log = logging.getLogger(__name__)
 
@@ -22,9 +21,54 @@ class COCOParseError(Exception):
 
 @gin.configurable
 class OutputCOCO(Output):
-    """Holds the logic for outputting COCO annotations to file."""
+    """ Output class for COCO style annotations.
+
+    https://cocodataset.org/#home
+
+    """
 
     ANNOTATION_FILENAME = Path('coco_annotations.json')
+
+    def __init__(self, *args, **kwargs) -> Path:
+        super().__init__(*args, annotation_filename=self.ANNOTATION_FILENAME, **kwargs)
+
+    @gin.configurable
+    def output_annotations(self,
+                           annotation_path: Union[Path, str] = None,
+                           splitseg: bool = False,
+                           ) -> Path:
+        """ Output COCO annotations to file.
+
+        Args:
+            annotation_path (Union[Path, str], optional): Output path for annotation file.
+            splitseg (bool, optional): Optionally output split-segmentation annotations. Defaults to False.
+
+        Returns:
+            Path: Path to annotation file.
+        """
+        annotation_path = super().output_annotations(annotation_path=annotation_path)
+        coco_dict = {
+            'info': self.coco_info(),
+            'licenses': self.coco_license(),
+            'categories': self.coco_categories(),
+            'images': self.coco_images(),
+            'annotations': self.coco_annotations(),
+        }
+        # Write out annotations to file
+        zpy.files.write_json(annotation_path, coco_dict)
+        parse_coco_annotations(annotation_path, data_dir=self.saver.output_dir)
+        # Output split-segmentation annotations
+        if splitseg:
+            log.info('Outputting COCO annotations with multi-part' +
+                     'segmentation split into seperate annotations')
+            coco_dict['annotations'] = self.coco_split_segmentation_annotations()
+            annotation_path = zpy.files.make_underscore_path(
+                annotation_path, 'splitseg')
+            # Write out annotations to file
+            zpy.files.write_json(annotation_path, coco_dict)
+            parse_coco_annotations(
+                annotation_path, data_dir=self.saver.output_dir)
+        return annotation_path
 
     @gin.configurable
     def coco_info(self,
@@ -289,56 +333,29 @@ class OutputCOCO(Output):
 
         return coco_annotations
 
-    @gin.configurable
-    def output_annotations(self,
-                           splitseg: bool = False,
-                           annotation_path: Union[str, Path] = None,
-                           ):
-        """ Output COCO annotations. """
-        coco_dict = {
-            'info': self.coco_info(),
-            'licenses': self.coco_license(),
-            'categories': self.coco_categories(),
-            'images': self.coco_images(),
-            'annotations': self.coco_annotations(),
-        }
-
-        # Get the correct annotation path
-        if annotation_path is not None:
-            annotation_path = annotation_path
-        elif self.saver.annotation_path is None:
-            annotation_path = self.saver.output_dir / self.ANNOTATION_FILENAME
-        else:
-            annotation_path = self.saver.annotation_path
-
-        # Write out annotations to file
-        zpy.files.write_json(annotation_path, coco_dict)
-        parse_coco_annotations(
-            annotation_file=annotation_path, data_dir=self.saver.output_dir)
-
-        # Output split-segmentation annotations
-        if splitseg:
-            log.info('Outputting COCO annotations with multi-part' +
-                     'segmentation split into seperate annotations')
-            coco_dict['annotations'] = self.coco_split_segmentation_annotations()
-            annotation_path = zpy.files.make_underscore_path(
-                annotation_path, 'splitseg')
-
-            # Write out annotations to file
-            zpy.files.write_json(annotation_path, coco_dict)
-            parse_coco_annotations(
-                annotation_file=annotation_path, data_dir=self.saver.output_dir)
-
 
 @gin.configurable
 def parse_coco_annotations(
-    annotation_file: Union[str, Path] = None,
-    data_dir: Union[str, Path] = None,
+    annotation_file: Union[Path, str],
+    data_dir: Union[Path, str] = None,
     output_saver: bool = False,
     # Specify which keys to add to ImageSaver
     image_keys_to_add: List[str] = None,
-) -> ImageSaver:
-    """ Parse COCO annotations, optionally output a ImageSaver object. """
+) -> zpy.saver_image.ImageSaver:
+    """ Parse COCO annotations, optionally output a ImageSaver object.
+
+    Args:
+        annotation_file (Union[Path, str]): Path to annotation file.
+        data_dir (Union[Path, str], optional): Directory containing data (images, video, etc).
+        output_saver (bool, optional): Whether to return a Saver object or not. Defaults to False.
+        image_keys_to_add (List[str], optional): Image dictionary keys to include when parsing COCO dict.
+
+    Raises:
+        COCOParseError: Various checks on annotations, categories, images
+
+    Returns:
+        zpy.saver_image.ImageSaver: Saver object for Image datasets.
+    """
     log.info(f'Parsing COCO annotations at {annotation_file}...')
     # Check annotation file path
     annotation_file = zpy.files.verify_path(annotation_file)
@@ -366,11 +383,11 @@ def parse_coco_annotations(
 
     # Optionally output a saver object.
     if output_saver:
-        saver = ImageSaver(output_dir=data_dir,
-                           annotation_path=annotation_file,
-                           description=coco_annotations['info']['description'],
-                           clean_dir=False,
-                           )
+        saver = zpy.saver_image.ImageSaver(output_dir=data_dir,
+                                           annotation_path=annotation_file,
+                                           description=coco_annotations['info']['description'],
+                                           clean_dir=False,
+                                           )
 
     # Check Images
     log.info('Parsing images...')

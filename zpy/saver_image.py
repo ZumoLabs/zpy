@@ -28,7 +28,7 @@ class ImageSaver(zpy.saver.Saver):
     def add_image(self,
                   name: str = 'default image',
                   style: str = 'default',
-                  output_path: Union[str, Path] = '/tmp/test.png',
+                  output_path: Union[Path, str] = '/tmp/test.png',
                   frame: int = 0,
                   width: int = 0,
                   height: int = 0,
