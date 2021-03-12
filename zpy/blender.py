@@ -37,7 +37,6 @@ def use_gpu(device_type='CUDA', use_cpus=True) -> None:
             device.use = use_cpus
         else:
             device.use = True
-            activated_gpus.append(device.name)
 
     cycles_preferences.compute_device_type = device_type
     bpy.context.scene.cycles.device = "GPU"
