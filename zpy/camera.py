@@ -188,7 +188,7 @@ def is_in_view(
 
     Args:
         location (Union[Tuple[float], mathutils.Vector]): Location that is visible or not.
-        camera (bpy.types.Camera, optional): [description]. Camera that wants to see the location.
+        camera (bpy.types.Camera, optional): Camera that wants to see the location.
         epsilon (float, optional): How far outside the view box the point is allowed to be. Defaults to 0.05.
 
     Returns:

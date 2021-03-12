@@ -40,13 +40,13 @@ class ImageSaver(zpy.saver.Saver):
         Pass any additional keys you want in the image annotation dict as kwargs.
 
         Args:
-            name (str, optional): [description]. Defaults to 'default image'.
-            style (str, optional): [description]. Defaults to 'default'.
-            output_path (Union[Path, str], optional): [description]. Defaults to '/tmp/test.png'.
-            frame (int, optional): [description]. Defaults to 0.
-            width (int, optional): [description]. Defaults to 0.
-            height (int, optional): [description]. Defaults to 0.
-            zero_indexed (bool, optional): [description]. Defaults to True.
+            name (str, optional): Unique image name. Defaults to 'default image'.
+            style (str, optional): Type of image in [default, segmenation, depth]. Defaults to 'default'.
+            output_path (Union[Path, str], optional): Path to image file. Defaults to '/tmp/test.png'.
+            frame (int, optional): Frame is used to link images taken at the same moment in time. Defaults to 0.
+            width (int, optional): Width of image. Defaults to 0.
+            height (int, optional): Height of image. Defaults to 0.
+            zero_indexed (bool, optional): Whether image id is zero indexed. Defaults to True.
 
         Returns:
             Dict: The image annotation dictionary.
@@ -84,13 +84,13 @@ class ImageSaver(zpy.saver.Saver):
         Pass any additional keys you want in the annotation dict as kwargs.
 
         Args:
-            image (str, optional): [description]. Defaults to 'default image'.
-            category (str, optional): [description]. Defaults to None.
-            subcategory (str, optional): [description]. Defaults to None.
-            subcategory_zero_indexed (bool, optional): [description]. Defaults to True.
-            seg_image (str, optional): [description]. Defaults to None.
-            seg_color (Tuple[float], optional): [description]. Defaults to None.
-            parse_on_add (bool, optional): [description]. Defaults to True.
+            image (str, optional): Unique image name. Defaults to 'default image'.
+            category (str, optional): Name of category. Defaults to None.
+            subcategory (str, optional): Name of subcategory. Defaults to None.
+            subcategory_zero_indexed (bool, optional): Whether subcategories are zero-indexed. Defaults to True.
+            seg_image (str, optional): Name of segmentation image that corresponds to this image. Defaults to None.
+            seg_color (Tuple[float], optional): Segmentation color of entity in this annotation. Defaults to None.
+            parse_on_add (bool, optional): Calculate bounding box and polygons and populate segmenation fields. Defaults to True.
 
         Returns:
             Dict: The annotation dictionary.

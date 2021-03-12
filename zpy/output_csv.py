@@ -35,8 +35,8 @@ class OutputCSV(zpy.output.Output):
 
         Args:
             annotation_path (Union[Path, str], optional): Output path for annotation file.
-            annotation_dict_to_csv_row_func (Callable, optional): [description]. Defaults to None.
-            header (List[str], optional): [description]. Defaults to None.
+            annotation_dict_to_csv_row_func (Callable, optional): Function that converts an annotation dict to a csv row. Defaults to None.
+            header (List[str], optional): Column headers. Defaults to None.
 
         Returns:
             Path: Path to annotation file.

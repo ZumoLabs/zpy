@@ -245,10 +245,10 @@ def make_aov_material_output_node(
     Args:
         mat (bpy.types.Material, optional): A blender material (either it's name or the object itself).
         obj (bpy.types.Object, optional): A blender object (either it's name or the object itself).
-        style (str, optional): [description]. Defaults to 'instance'.
+        style (str, optional): Type of segmentation in [instance, category]. Defaults to 'instance'.
 
     Raises:
-        ValueError: [description]
+        ValueError: Invalid style, no object or material given.
     """
     scene = zpy.blender.verify_blender_scene()
     # Make sure engine is set to Cycles

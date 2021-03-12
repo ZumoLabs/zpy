@@ -303,7 +303,7 @@ class Saver:
             normalized (bool, optional): Whether bounding box values are normalized (0, 1) or integer pixel values. Defaults to False.
 
         Returns:
-            List[Union[int, float]]: [description]
+            List[Union[int, float]]: Clipped bounding box in [x, y, width, height] format.
         """
         if normalized:
             # Coordinates are in (0, 1)

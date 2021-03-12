@@ -235,7 +235,7 @@ def render_aov(
         _mute_aov_file_output_node('instance', mute=True)
         _mute_aov_file_output_node('depth', mute=True)
         _mute_aov_file_output_node('rgb', mute=False)
-        _rgb_render_settings()
+        default_render_settings()
         _render()
 
     cseg_is_on = (render_outputs.get('category', None) is not None)
@@ -247,7 +247,7 @@ def render_aov(
         _mute_aov_file_output_node('instance', mute=(not iseg_is_on))
         _mute_aov_file_output_node('depth', mute=(not depth_is_on))
         _mute_aov_file_output_node('rgb', mute=True)
-        _seg_render_settings()
+        segmentation_render_settings()
         _render()
 
     # Save intermediate scene
@@ -277,7 +277,7 @@ def _mute_aov_file_output_node(style: str, mute: bool = True):
         _output_node.mute = mute
 
 
-def _rgb_render_settings():
+def default_render_settings():
     """ Render settings for normal color images. """
     scene = zpy.blender.verify_blender_scene()
     scene.render.engine = "CYCLES"
@@ -311,7 +311,7 @@ def _rgb_render_settings():
     scene.display.shading.show_specular_highlight = True
 
 
-def _seg_render_settings():
+def segmentation_render_settings():
     """ Render settings for segmentation images. """
     scene = zpy.blender.verify_blender_scene()
     scene.render.engine = "CYCLES"

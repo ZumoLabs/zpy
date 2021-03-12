@@ -38,13 +38,13 @@ class VideoSaver(zpy.saver.Saver):
         """ Add a new annotation to the Saver object.
 
         Args:
-            name (str, optional): [description]. Defaults to 'default video'.
-            style (str, optional): [description]. Defaults to 'default'.
-            output_path (Union[Path, str], optional): [description]. Defaults to '/tmp/test.avi'.
-            width (int, optional): [description]. Defaults to 0.
-            height (int, optional): [description]. Defaults to 0.
-            length (timedelta, optional): [description]. Defaults to 0.
-            zero_indexed (bool, optional): [description]. Defaults to True.
+            name (str, optional): Unique video name. Defaults to 'default video'.
+            style (str, optional): Type of image in [default, segmenation, depth]. Defaults to 'default'.
+            output_path (Union[Path, str], optional): Path to video file. Defaults to '/tmp/test.avi'.
+            width (int, optional): Width of video frame. Defaults to 0.
+            height (int, optional): Height of video frame. Defaults to 0.
+            length (timedelta, optional): Length of video in seconds. Defaults to 0.
+            zero_indexed (bool, optional): Whether video id is zero indexed. Defaults to True.
 
         Returns:
             Dict: The video annotation dictionary.
@@ -75,7 +75,7 @@ class VideoSaver(zpy.saver.Saver):
         """ Add a new annotation to the Saver object.
 
         Args:
-            video (str, optional): [description]. Defaults to 'default video'.
+            video (str, optional): Unique video name. Defaults to 'default video'.
 
         Returns:
             Dict: The annotation dictionary.
@@ -90,6 +90,6 @@ class VideoSaver(zpy.saver.Saver):
 
     @gin.configurable
     def output_meta_analysis(self):
-        """ Perform a full meta analysis.  """
+        """ Perform a full meta analysis, outputting some meta files. """
         # TODO: implement meta-analysis for video datasets
         pass

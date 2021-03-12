@@ -278,8 +278,8 @@ def load_scene(
     """ Load a scene from a path to a *.blend file.
 
     Args:
-        path (Union[Path, str]): [description]
-        auto_execute_scripts (bool, optional): [description]. Defaults to True.
+        path (Union[Path, str]): Path to .blend file.
+        auto_execute_scripts (bool, optional): Whether to allow auto execution of scripts. Defaults to True.
     """
     # HACK: Clear out scene of cameras and lights
     clear_scene(['CAMERA', 'LIGHT'])
