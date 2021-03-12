@@ -19,17 +19,28 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def use_gpu() -> None:
+def use_gpu(device_type='CUDA', use_cpus=True) -> None:
     """ Use GPU for rendering. """
-    devices = list(
-        bpy.context.preferences.addons['cycles'].preferences.devices)
-    log.debug(f'Devices available {devices}')
-    prefs = bpy.context.preferences.addons['cycles'].preferences
-    prefs.compute_device_type = 'CUDA'
-    devices = prefs.get_devices()
-    for device in devices[0]:
-        device.use = True
-    log.debug(f'Devices available {devices}')
+    preferences = bpy.context.preferences
+    cycles_preferences = preferences.addons["cycles"].preferences
+    cuda_devices, opencl_devices = cycles_preferences.get_devices()
+
+    if device_type == "CUDA":
+        devices = cuda_devices
+    elif device_type == "OPENCL":
+        devices = opencl_devices
+    else:
+        raise RuntimeError("Unsupported device type")
+
+    for device in devices:
+        if device.type == "CPU":
+            device.use = use_cpus
+        else:
+            device.use = True
+
+    cycles_preferences.compute_device_type = device_type
+    bpy.context.scene.cycles.device = "GPU"
+    log.info(f'using devices {devices}')
 
 
 @gin.configurable
