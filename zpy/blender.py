@@ -45,14 +45,11 @@ def use_gpu(device_type='CUDA', use_cpus=True) -> None:
 
 def use_render_devices(compute_device_type='CUDA', use_cpu=True) -> None:
     """ Choose the rendering devices for rendering. Possible compute devices are NONE,CUDA,OPTIX,OPENCL  
-        Hybrid render device options (GPU+CPU) are possible for CUDA and OPTIX"""
-    log = logging.getLogger(__name__)
+        The hybrid render device options (GPU+CPU) are possible for CUDA and OPTIX"""
     C=bpy.context
     preferences = bpy.context.preferences
     cycles_preferences = preferences.addons["cycles"].preferences
-    compute_devices = []
-    for d in cycles_preferences.get_device_types(C):
-        compute_devices.append(d[0])
+    compute_devices=[d[0] for d in C.preferences.addons['cycles'].preferences.get_device_types(C) ]
     if compute_device_type not in compute_devices:
         raise RuntimeError("Non-existing device type")
     else:
