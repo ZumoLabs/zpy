@@ -33,13 +33,13 @@ def make_aov_pass(
         f'Invalid style {style} for AOV Output Node, must be in {valid_styles}.'
     # Go through existing passes and make sure it doesn't exist before creating
     view_layer = zpy.blender.verify_view_layer()
-    if view_layer.get('aovs', None) is not None:
-        for aov in view_layer['aovs']:
+    if view_layer.cycles.get('aovs', None) is not None:
+        for aov in view_layer.cycles.aovs.values():
             if aov['name'] == style:
                 log.info(f'AOV pass for {style} already exists.')
                 return
     bpy.ops.cycles.add_aov()
-    view_layer['aovs'][-1]['name'] = style
+    view_layer.cycles.aovs[-1]['name'] = style
     view_layer.update()
     log.info(f'Created AOV pass for {style}.')
 
