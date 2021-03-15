@@ -404,7 +404,7 @@ def rotate(
 
 def rotate_euler(
     obj: Union[bpy.types.Object, str],
-    rotation: Euler = (0.0, 0.0, 0.0),
+    rotation: Vector = (0.0, 0.0, 0.0),
     axes: str = 'XYZ'
 ) -> None:
     """
