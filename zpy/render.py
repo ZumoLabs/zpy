@@ -190,6 +190,7 @@ def render_aov(
     scene.frame_start = scene.frame_current
     scene.render.use_file_extension = False
     scene.render.use_stamp_frame = False
+    scene.render.filepath = ''
 
     # Create AOV output nodes
     render_outputs = {
@@ -377,7 +378,7 @@ def _render(
     #     log.warning(f'Render log removal raised exception {e}')
     try:
         # This is the actual render call
-        bpy.ops.render.render(write_still=True)
+        bpy.ops.render.render()
     except Exception as e:
         log.warning(f'Render raised exception {e}')
     # try:
