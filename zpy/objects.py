@@ -404,19 +404,20 @@ def rotate(
 
 def rotate_euler(
     obj: Union[bpy.types.Object, str],
-    rotation: Vector = (0.0, 0.0, 0.0),
+    rotation: mathutils.Vector = (0.0, 0.0, 0.0),
     axes: str = 'XYZ'
 ) -> None:
-    """
-    Rotate the object with Euler angles. Euler values are in radians.
-    Set 45 degree rotation on Z axis
-    rotation=(radians(0),radians(0),radians(45))
-    rotate_euler(obj, rotation, axes='XYZ' )
+    """ Rotate the given object with Euler angles.
+
+    Args:
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name)
+        rotation (Vector): Rotation values in radians
+        axes (str, optional): Axis order of rotatiion
     """
     obj = verify(obj)
     log.info(f'Rotating object {obj.name} by {rotation} radians around {axes} axis. ')
     log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
-    obj.rotation_euler = Euler(rotation, axes)
+    obj.rotation_euler = mathutils.Euler(rotation, axes)
     log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
