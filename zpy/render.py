@@ -38,7 +38,12 @@ def make_aov_pass(
             if aov['name'] == style:
                 log.info(f'AOV pass for {style} already exists.')
                 return
-    bpy.ops.cycles.add_aov()
+    if int(bpy.app.version_string.split('.')[1]) >= 92:
+        # This call works in 2.92
+        bpy.ops.scene.view_layer_add_aov()
+    else:
+        # This call works in 2.91
+        bpy.ops.cycles.add_aov()
     view_layer.cycles.aovs[-1]['name'] = style
     view_layer.update()
     log.info(f'Created AOV pass for {style}.')
