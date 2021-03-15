@@ -10,7 +10,7 @@ import bpy
 import gin
 import mathutils
 import numpy as np
-
+from mathutils import Euler
 import zpy
 
 log = logging.getLogger(__name__)
@@ -399,6 +399,24 @@ def rotate(
     log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
     select(obj)
     bpy.ops.transform.rotate(value=rotation, orient_axis=axis)
+    log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
+
+
+def rotate_euler(
+    obj: Union[bpy.types.Object, str],
+    rotation: Euler = (0.0, 0.0, 0.0),
+    axes: str = 'XYZ'
+) -> None:
+    """
+    Rotate the object with Euler angles. Euler values are in radians.
+    Set 45 degree rotation on Z axis
+    rotation=(radians(0),radians(0),radians(45))
+    rotate_euler(obj, rotation, axes='XYZ' )
+    """
+    obj = verify(obj)
+    log.info(f'Rotating object {obj.name} by {rotation} radians around {axes} axis. ')
+    log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
+    obj.rotation_euler = Euler(rotation, axes)
     log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
