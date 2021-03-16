@@ -10,7 +10,6 @@ import bpy
 import gin
 import mathutils
 import numpy as np
-from mathutils import Euler
 import zpy
 
 log = logging.getLogger(__name__)
@@ -64,7 +63,7 @@ def load_blend_obj(
     # Copy objects over to the current scene
     for obj in data_to.objects:
         scene.collection.objects.link(obj)
-    for texture_folder_name in ['Textures', 'textures','TEX']:
+    for texture_folder_name in ['Textures', 'textures', 'TEX']:
         texture_dir = path.parent / texture_folder_name
         if texture_dir.exists():
             bpy.ops.file.find_missing_files(directory=str(texture_dir))
@@ -134,7 +133,7 @@ def for_obj_in_selected_objs(context) -> bpy.types.Object:
 
     Yields:
         bpy.types.Object: Objects in selected objects.
-    """    
+    """
     zpy.blender.verify_view_layer()
     for obj in context.selected_objects:
         # Only meshes or empty objects TODO: Why the empty objects
@@ -154,7 +153,7 @@ def for_obj_in_collections(
 
     Yields:
         bpy.types.Object: Object in collection.
-    """    
+    """
     for collection in collections:
         for obj in collection.all_objects:
             if obj.type == 'MESH':
@@ -366,58 +365,50 @@ def copy(
 
 def translate(
     obj: Union[bpy.types.Object, str],
-    translation: Tuple[float] = (0, 0, 0),
+    translation: Union[Tuple[float], mathutils.Vector] = (0, 0, 0),
 ) -> None:
     """ Translate an object (in blender units).
 
     Args:
         obj (Union[bpy.types.Object, str]): Scene object (or it's name)
-        translation (Tuple[float], optional): Translation vector (x, y, z). Defaults to (0, 0, 0).
+        translation (Union[Tuple[float], mathutils.Vector], optional): Translation vector (x, y, z). Defaults to (0, 0, 0).
     """
     obj = verify(obj)
+    view_layer = zpy.blender.verify_view_layer()
+    select(obj)
     log.debug(f'Translating object {obj.name} by {translation}')
     log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
-    select(obj)
-    bpy.ops.transform.translate(value=translation)
+    if not isinstance(translation, mathutils.Vector):
+        translation = mathutils.Vector(translation)
+    obj.location = obj.location + translation
+    view_layer.update()
     log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
 def rotate(
     obj: Union[bpy.types.Object, str],
-    rotation: float = 0,
-    axis: str = 'Z'
-) -> None:
-    """ Rotate an object (in radians).
-
-    Args:
-        obj (Union[bpy.types.Object, str]): Scene object (or it's name)
-        rotation (float, optional): Rotation amount in radians. Defaults to 0.
-        axis (str, optional): Rotation axis, one of [X, Y, Z]. Defaults to 'Z'.
-    """
-    obj = verify(obj)
-    log.info(f'Rotating object {obj.name} by {rotation} radians around {axis} axis. ')
-    log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
-    select(obj)
-    bpy.ops.transform.rotate(value=rotation, orient_axis=axis)
-    log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
-
-
-def rotate_euler(
-    obj: Union[bpy.types.Object, str],
-    rotation: mathutils.Vector = (0.0, 0.0, 0.0),
-    axes: str = 'XYZ'
+    rotation: Union[Tuple[float], mathutils.Euler] = (0.0, 0.0, 0.0),
+    axis_order: str = 'XYZ'
 ) -> None:
     """ Rotate the given object with Euler angles.
 
     Args:
         obj (Union[bpy.types.Object, str]): Scene object (or it's name)
-        rotation (Vector): Rotation values in radians
-        axes (str, optional): Axis order of rotatiion
+        rotation (Union[Tuple[float], mathutils.Euler]): Rotation values in radians
+        axis_order (str, optional): Axis order of rotation
     """
     obj = verify(obj)
-    log.info(f'Rotating object {obj.name} by {rotation} radians around {axes} axis. ')
+    view_layer = zpy.blender.verify_view_layer()
+    select(obj)
+    log.info(
+        f'Rotating object {obj.name} by {rotation} radians in {axis_order}. ')
     log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
-    obj.rotation_euler = mathutils.Euler(rotation, axes)
+    if not isinstance(rotation, mathutils.Euler):
+        rotation = mathutils.Euler(rotation)
+    new_rotation_mat = rotation.to_matrix() @ obj.rotation_euler.to_matrix()
+    new_rotation = new_rotation_mat.to_euler(axis_order)
+    obj.rotation_euler = mathutils.Euler(new_rotation, axis_order)
+    view_layer.update()
     log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
@@ -432,24 +423,26 @@ def scale(
         scale (Tuple[float], optional): Scale for each axis (x, y, z). Defaults to (1.0, 1.0, 1.0).
     """
     obj = verify(obj)
+    view_layer = zpy.blender.verify_view_layer()
+    select(obj)
     log.info(f'Scaling object {obj.name} by {scale}')
     log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
-    select(obj)
     bpy.ops.transform.resize(value=scale)
+    view_layer.update()
     log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
 def jitter(
     obj: Union[bpy.types.Object, str],
     translate_range: Tuple[Tuple[float]] = (
-        (-0.05, 0.05),
-        (-0.05, 0.05),
-        (-0.05, 0.05),
+        (0, 0),
+        (0, 0),
+        (0, 0),
     ),
     rotate_range: Tuple[Tuple[float]] = (
-        (-0.05, 0.05),
-        (-0.05, 0.05),
-        (-0.05, 0.05),
+        (0, 0),
+        (0, 0),
+        (0, 0),
     ),
     scale_range: Tuple[Tuple[float]] = (
         (1.0, 1.0),
@@ -473,25 +466,17 @@ def jitter(
                   random.uniform(translate_range[2][0], translate_range[2][1]),
               ))
     rotate(obj,
-           rotation=random.uniform(rotate_range[0][0], rotate_range[0][1]),
-           axis='X',
-           )
-    rotate(obj,
-           rotation=random.uniform(rotate_range[1][0], rotate_range[1][1]),
-           axis='Y',
-           )
-    rotate(obj,
-           rotation=random.uniform(rotate_range[2][0], rotate_range[2][1]),
-           axis='Z',
-           )
+           rotation=(
+               random.uniform(rotate_range[0][0], rotate_range[0][1]),
+               random.uniform(rotate_range[1][0], rotate_range[1][1]),
+               random.uniform(rotate_range[2][0], rotate_range[2][1]),
+           ))
     scale(obj,
           scale=(
               random.uniform(scale_range[0][0], scale_range[0][1]),
               random.uniform(scale_range[1][0], scale_range[1][1]),
               random.uniform(scale_range[2][0], scale_range[2][1]),
           ))
-    zpy.blender.verify_view_layer()
-    bpy.context.view_layer.update()
 
 
 _SAVED_POSES = {}
