@@ -24,16 +24,22 @@ class RunOperator(Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        # Save the state of the scene before the run script was executed
-        bpy.ops.wm.save_mainfile()
+        try:
+            # Save the state of the scene before the run script was executed
+            bpy.ops.wm.save_mainfile()
+        except RuntimeError as e:
+            log.warning(f'When saving scene before run: {e}')
         try:
             zpy.blender.use_gpu()
             zpy.blender.parse_config('config')
             zpy.blender.run_text('run')
         except Exception as e:
             log.error(f'Executing script failed with exception {e}')
-        # Return to the state of the scene before the run script was executed
-        bpy.ops.wm.revert_mainfile()
+        try:
+            # Return to the state of the scene before the run script was executed
+            bpy.ops.wm.revert_mainfile()
+        except RuntimeError as e:
+            log.warning(f'When saving scene before run: {e}')
         return {'FINISHED'}
 
 
