@@ -13,7 +13,7 @@ END_STATES=(READY GENERATING_FAILED)
 
 # CLI Login + Create the Test Dataset
 zpy login ${ZPY_USER} ${ZPY_PASS}
-zpy create dataset ${DATASET_NAME} ${SCENE_NAME}
+zpy create dataset '${DATASET_NAME}' '${SCENE_NAME}'
 
 # Loop until failure or success
 while ! [[ ${END_STATES[*]} =~ "$DATASET_STATE" ]]; do
