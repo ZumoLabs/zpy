@@ -17,7 +17,7 @@ zpy create dataset ${DATASET_NAME} ${SCENE_NAME}
 
 # Loop until failure or success
 while ! [[ ${END_STATES[*]} =~ "$DATASET_STATE" ]]; do
-DATASET_STATE=$(zpy list datasets | grep ${DATASET_NAME:0:20} | awk '{print $2}')
+DATASET_STATE=$(zpy list datasets | grep '${DATASET_NAME:0:20}' | awk '{print $2}')
 echo "dataset '${DATASET_NAME}' :: ${DATASET_STATE}"
 sleep ${SLEEP_TIME}
 done
