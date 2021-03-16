@@ -2,6 +2,24 @@ version: 2.1
 
 jobs:
 
+  test:
+    working_directory: ~/repo
+    docker:
+      - image: python:3.7
+    steps:
+      - checkout
+      - run:
+          name: run integration tests
+          command: |
+            set -eo pipefail
+
+            pip install -e .
+            ./run_test.sh
+            STATUS="$?"
+            if [ "$STATUS" -neq 0 ]; then
+                exit 1
+            fi
+
   tag:
     working_directory: ~/repo
     docker:
@@ -74,6 +92,7 @@ workflows:
   version: 2
   build-publish:
     jobs:
+      - test
       - tag:
           filters:
             branches:
