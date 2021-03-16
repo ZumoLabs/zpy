@@ -13,7 +13,9 @@ jobs:
           command: |
             set -eo pipefail
 
+            pip install -r requirements.txt
             pip install -e .
+
             ./run_test.sh
             STATUS="$?"
             if [ "$STATUS" -neq 0 ]; then
