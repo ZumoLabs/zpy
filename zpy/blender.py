@@ -19,13 +19,25 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def use_gpu(compute_device_type='CUDA', use_cpu=True) -> None:
-    """ Choose the rendering devices for rendering. Possible compute devices are NONE,CUDA,OPTIX,OPENCL  
-        The hybrid render device options (GPU+CPU) are possible for CUDA and OPTIX"""
-    C=bpy.context
+def use_gpu(
+    compute_device_type='CUDA',
+    use_cpu=True,
+) -> None:
+    """ Choose the rendering devices for rendering.
+
+    The hybrid render device options (GPU+CPU) are possible for CUDA and OPTIX
+
+    Args:
+        compute_device_type (str, optional): One of [NONE, CUDA, OPTIX, OPENCL]. Defaults to 'CUDA'.
+        use_cpu (bool, optional): Use CPU with compute device. Defaults to True.
+
+    Raises:
+        RuntimeError: Compute device is not a valid choice.
+    """
+    C = bpy.context
     preferences = bpy.context.preferences
     cycles_preferences = preferences.addons["cycles"].preferences
-    compute_devices=[d[0] for d in C.preferences.addons['cycles'].preferences.get_device_types(C) ]
+    compute_devices = [d[0] for d in cycles_preferences.get_device_types(C)]
     if compute_device_type not in compute_devices:
         raise RuntimeError("Non-existing device type")
     else:
@@ -36,10 +48,10 @@ def use_gpu(compute_device_type='CUDA', use_cpu=True) -> None:
                 c.use = True
                 if c.type == 'CPU':
                     c.use = use_cpu
-                log.info(f'using devices {c} {c.type} {c.use}')
+                log.info(f'Using devices {c} {c.type} {c.use}')
 
     C.scene.cycles.device = "GPU"
-    log.info(f'using gpu type:{compute_device_type} cpu:{use_cpu}')
+    log.info(f'Using gpu type:{compute_device_type} cpu:{use_cpu}')
 
 
 @gin.configurable
