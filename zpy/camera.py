@@ -16,6 +16,33 @@ import zpy
 log = logging.getLogger(__name__)
 
 
+def verify(
+    camera: Union[bpy.types.Object, bpy.types.Camera, str],
+    check_none=True,
+) -> bpy.types.Camera:
+    """ Return camera given name or typed object.
+
+    Args:
+        camera (Union[bpy.types.Object, bpy.types.Camera, str]): Camera object (or it's name)
+        check_none (bool, optional): Raise error if object does not exist. Defaults to True.
+
+    Raises:
+        ValueError: Object does not exist.
+
+    Returns:
+        bpy.types.Camera: Camera object.
+    """
+    if isinstance(camera, str):
+        camera = bpy.data.cameras.get(camera)
+    if check_none and camera is None:
+        raise ValueError(f'Could not find camera {camera}.')
+    if camera is None:
+        log.info(f'No camera chosen, using default scene camera \"{camera}\".')
+        scene = zpy.blender.verify_blender_scene()
+        camera = scene.camera
+    return camera
+
+
 def look_at(
     obj: Union[bpy.types.Object, str],
     location: Union[Tuple[float], mathutils.Vector],
@@ -49,7 +76,7 @@ def look_at(
 @gin.configurable
 def camera_xyz(
     location: Union[Tuple[float], mathutils.Vector],
-    camera: bpy.types.Object = None,
+    camera: Union[bpy.types.Object, bpy.types.Camera, str] = None,
     fisheye_lens: bool = False,
 ) -> Tuple[float]:
     """ Get pixel coordinates of point in camera space.
@@ -61,19 +88,20 @@ def camera_xyz(
 
     Args:
         location (mathutils.Vector): Location (3-tuple or Vector) of point in 3D space.
-        camera (bpy.types.Object, optional): Camera in which pixel space exists.
+        camera (Union[bpy.types.Object, bpy.types.Camera, str]): Camera in which pixel space exists.
         fisheye_lens (bool, optional): Whether to use fisheye distortion. Defaults to False.
 
     Returns:
         Tuple[float]: Pixel coordinates of location.
     """
-    scene = zpy.blender.verify_blender_scene()
-    if camera is None:
-        camera = scene.camera
+    camera = zpy.camera.verify(camera)
     if not isinstance(location, mathutils.Vector):
         location = mathutils.Vector(location)
+    scene = zpy.blender.verify_blender_scene()
     point = bpy_extras.object_utils.world_to_camera_view(
         scene, camera, location)
+    # TODO: The z point here is incorrect?
+    log.debug(F'Point {point}')
     if point[2] < 0:
         log.debug('Point is behind camera')
 
@@ -142,24 +170,24 @@ def is_child_hit(
 def is_visible(
     location: Union[Tuple[float], mathutils.Vector],
     obj_to_hit: Union[bpy.types.Object, str],
-    camera: bpy.types.Camera = None,
+    camera: Union[bpy.types.Object, bpy.types.Camera, str] = None,
 ) -> bool:
     """ Cast a ray to determine if object is visible from camera.
 
     Args:
         location (Union[Tuple[float], mathutils.Vector]): Location to shoot out ray towards.
         obj_to_hit (Union[bpy.types.Object, str]): Object that should be hit by ray.
-        camera (bpy.types.Camera, optional): Camera where ray originates from.
+        camera (Union[bpy.types.Object, bpy.types.Camera, str]): Camera where ray originates from.
 
     Returns:
         bool: Whether the casted ray has hit the object.
     """
-    scene = zpy.blender.verify_blender_scene()
-    if camera is None:
-        camera = scene.camera
+    camera = zpy.camera.verify(camera)
+    obj_to_hit = zpy.objects.verify(obj_to_hit)
     if not isinstance(location, mathutils.Vector):
         location = mathutils.Vector(location)
     view_layer = zpy.blender.verify_view_layer()
+    scene = zpy.blender.verify_blender_scene()
     result = scene.ray_cast(depsgraph=view_layer.depsgraph,
                             origin=camera.location,
                             direction=(location - camera.location))
@@ -181,19 +209,20 @@ def is_visible(
 @gin.configurable
 def is_in_view(
     location: Union[Tuple[float], mathutils.Vector],
-    camera: bpy.types.Camera = None,
+    camera: Union[bpy.types.Object, bpy.types.Camera, str] = None,
     epsilon: float = 0.05,
 ) -> bool:
     """ Is a location visible from a camera (within some epsilon).
 
     Args:
         location (Union[Tuple[float], mathutils.Vector]): Location that is visible or not.
-        camera (bpy.types.Camera, optional): Camera that wants to see the location.
+        camera (Union[bpy.types.Object, bpy.types.Camera, str]): Camera that wants to see the location.
         epsilon (float, optional): How far outside the view box the point is allowed to be. Defaults to 0.05.
 
     Returns:
         bool: Whether the location is visible.
     """
+    camera = zpy.camera.verify(camera)
     if not isinstance(location, mathutils.Vector):
         location = mathutils.Vector(location)
     x, y, z = camera_xyz(location, camera=camera)
@@ -210,9 +239,9 @@ def is_in_view(
 def camera_xyv(
     location: Union[Tuple[float], mathutils.Vector],
     obj: Union[bpy.types.Object, str],
-    camera: bpy.types.Camera = None,
-    image_width: int = 640,
-    image_height: int = 480,
+    camera: Union[bpy.types.Object, bpy.types.Camera, str] = None,
+    width: int = 640,
+    height: int = 480,
 ) -> Tuple[int]:
     """ Get camera image xyv coordinates of point in scene.
 
@@ -227,13 +256,14 @@ def camera_xyv(
     Args:
         location (Union[Tuple[float], mathutils.Vector]): Location (3-tuple or Vector) of point in 3D space.
         obj (Union[bpy.types.Object, str]): Scene object (or it's name) to check for visibility.
-        camera (bpy.types.Camera, optional): Camera in which pixel space exists.
-        image_width (int, optional): Width of image. Defaults to 640.
-        image_height (int, optional): Height of image. Defaults to 480.
+        camera (Union[bpy.types.Object, bpy.types.Camera, str]): Camera in which pixel space exists.
+        width (int, optional): Width of image. Defaults to 640.
+        height (int, optional): Height of image. Defaults to 480.
 
     Returns:
         Tuple[int]: (X, Y, V)
     """
+    camera = zpy.camera.verify(camera)
     obj = zpy.objects.verify(obj)
     if not isinstance(location, mathutils.Vector):
         location = mathutils.Vector(location)
@@ -247,6 +277,7 @@ def camera_xyv(
     # bottom-left to top-left
     y = 1 - y
     # float (0, 1) to pixel int (0, pixel size)
-    x = int(x * image_width)
-    y = int(y * image_height)
+    x = int(x * width)
+    y = int(y * height)
+    log.debug(f'(x, y, v) {(x, y, v)}')
     return x, y, v
