@@ -2,14 +2,15 @@
     Utilities for Materials in Blender.
 """
 import logging
+import os
 import random
 from pathlib import Path
 from typing import Tuple, Union
 
 import bpy
-import gin
 import numpy as np
 
+import gin
 import zpy
 
 log = logging.getLogger(__name__)
@@ -144,7 +145,8 @@ def jitter(
 
 @gin.configurable
 def random_texture_mat(
-    texture_dir: Union[Path, str] = '$ASSETS/lib/textures/random',
+    texture_dir: Union[Path, str] = \
+        Path(os.environ.get('ASSETS')) / Path('lib/textures/random'),
 ) -> bpy.types.Material:
     """ Generate a random material from a directory of random texture images.
 

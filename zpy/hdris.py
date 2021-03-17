@@ -2,15 +2,16 @@
     HDRI utilities. You can find lots of free HDRIs at https://hdrihaven.com/
 """
 import logging
-import random
 import math
+import os
+import random
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 import bpy
-import gin
 import mathutils
 
+import gin
 import zpy
 
 log = logging.getLogger(__name__)
@@ -60,7 +61,8 @@ def load_hdri(
 
 @gin.configurable
 def random_hdri(
-    hdri_dir: Union[Path, str] = '$ASSETS/lib/hdris/1k',
+    hdri_dir: Union[Path, str] = \
+        Path(os.environ.get('ASSETS')) / Path('lib/hdris/1k'),
     apply_to_scene: bool = True,
 ) -> Path:
     """ Generate a random HDRI from an asset path.
