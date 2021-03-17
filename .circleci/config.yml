@@ -6,6 +6,9 @@ jobs:
     working_directory: /bender
     docker:
       - image: zumolabs/bender:v1.11.5
+        auth:
+          username: nponte
+          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - run:
