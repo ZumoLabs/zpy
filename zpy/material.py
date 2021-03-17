@@ -2,14 +2,15 @@
     Utilities for Materials in Blender.
 """
 import logging
+import os
 import random
 from pathlib import Path
 from typing import Tuple, Union
 
 import bpy
-import gin
 import numpy as np
 
+import gin
 import zpy
 
 log = logging.getLogger(__name__)
@@ -143,6 +144,32 @@ def jitter(
 
 
 @gin.configurable
+def random_texture_mat(
+    texture_dir: Union[Path, str] = \
+        Path(os.environ.get('ASSETS')) / Path('lib/textures/random'),
+) -> bpy.types.Material:
+    """ Generate a random material from a directory of random texture images.
+
+    Args:
+        texture_dir (Union[Path, str], optional): Path to directory with texture images.
+
+    Returns:
+        bpy.types.Material: The newly created material.
+    """
+    texture_dir = zpy.files.verify_path(
+        texture_dir, make=False, check_dir=True)
+    # Create list of texture images in directory
+    texture_paths = []
+    for _path in texture_dir.iterdir():
+        if _path.is_file() and _path.suffix in ['.jpg', '.png']:
+            texture_paths.append(_path)
+    texture_path = random.choice(texture_paths)
+    log.info(f'Found {len(texture_paths)} Textures at {texture_dir}')
+    log.info(f'Randomly picked {texture_path.stem}')
+    return make_mat_from_texture(texture_path, name=texture_path.stem)
+
+
+@gin.configurable
 def make_mat_from_texture(
     texture_path: Union[Path, str],
     name: str = None,
@@ -257,7 +284,7 @@ def make_aov_material_output_node(
         scene.render.engine == "CYCLES"
 
     # TODO: Refactor this legacy "styles" code
-    
+
     # Only certain styles are available
     valid_styles = ['instance', 'category']
     assert style in valid_styles, \
