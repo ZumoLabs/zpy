@@ -3,7 +3,7 @@ version: 2.1
 jobs:
 
   test:
-    working_directory: /bender
+    working_directory: /bender/zpy
     docker:
       - image: zumolabs/bender:v1.11.5
         auth:
