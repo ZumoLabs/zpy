@@ -9,8 +9,8 @@ apt-get update
 apt-get install
 
 # pip setup
-pip install -r requirements.txt
-pip install .
+${BLENDERPIP} install -r requirements.txt
+${BLENDERPIP} install .
 
 # CLI Login + Create the Test Dataset
 zpy login ${ZPY_USER} ${ZPY_PASS}
