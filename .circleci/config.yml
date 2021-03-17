@@ -84,11 +84,8 @@ workflows:
   version: 2
   build-publish:
     jobs:
+      - test
       - tag:
-          filters:
-            branches:
-              only: /release-v.*/
-      - test:
           filters:
             branches:
               only: /release-v.*/
