@@ -41,10 +41,11 @@ def make_aov_pass(
     if int(bpy.app.version_string.split('.')[1]) >= 92:
         # This call works in 2.92
         bpy.ops.scene.view_layer_add_aov()
+        view_layer.aovs[-1].name = style
     else:
         # This call works in 2.91
         bpy.ops.cycles.add_aov()
-    view_layer.cycles.aovs[-1]['name'] = style
+        view_layer.cycles.aovs[-1]['name'] = style
     view_layer.update()
     log.info(f'Created AOV pass for {style}.')
 
@@ -65,82 +66,65 @@ def make_aov_file_output_node(
 
     # Make sure scene composition is using nodes
     scene = zpy.blender.verify_blender_scene()
-    if not scene.use_nodes:
-        scene.use_nodes = True
-    _tree = scene.node_tree
-
-    # Get or create render layer node
-    if _tree.nodes.get('Render Layers', None) is None:
-        rl_node = _tree.nodes.new('CompositorNodeRLayers')
-    else:
-        rl_node = _tree.nodes['Render Layers']
-    # assert rl_node.outputs.get(style, None) is not None, \
-    #     f'Render Layer output {style} does not exist.'
+    scene.use_nodes = True
+    tree = scene.node_tree
 
     # Remove Composite Node if it exists
-    composite_node = _tree.nodes.get('Composite')
+    composite_node = tree.nodes.get('Composite')
     if composite_node is not None:
-        _tree.nodes.remove(composite_node)
+        tree.nodes.remove(composite_node)
+
+    rl_node = zpy.nodes.get_or_make(
+        'Render Layers', 'CompositorNodeRLayers', tree)
 
     # Instance and category require an AOV pass
     if style in ['instance', 'category']:
         zpy.render.make_aov_pass(style)
 
     # Visualize node shows image in workspace
-    _name = f'{style} viewer'
-    view_node = _tree.nodes.get(_name)
-    if view_node is None:
-        view_node = _tree.nodes.new('CompositorNodeViewer')
-    view_node.name = _name
+    view_node = zpy.nodes.get_or_make(
+        f'{style} Viewer', 'CompositorNodeViewer', tree)
 
     # File output node renders out image
-    _name = f'{style} output'
-    fileout_node = _tree.nodes.get(_name)
-    if fileout_node is None:
-        fileout_node = _tree.nodes.new('CompositorNodeOutputFile')
-    fileout_node.name = _name
+    fileout_node = zpy.nodes.get_or_make(
+        f'{style} Output', 'CompositorNodeOutputFile', tree)
     fileout_node.mute = False
 
     # HACK: Depth requires normalization node between layer and output
     if style == 'depth':
+
         # Normalization node
-        _name = f'{style} normalize'
-        norm_node = _tree.nodes.get(_name)
-        if norm_node is None:
-            norm_node = _tree.nodes.new('CompositorNodeNormalize')
-        norm_node.name = _name
+        norm_node = zpy.nodes.get_or_make(
+            f'{style} Normalize', 'CompositorNodeNormalize', tree)
 
         # Negative inversion
-        _name = f'{style} negate'
-        invert_node = _tree.nodes.get(_name)
-        if invert_node is None:
-            invert_node = _tree.nodes.new('CompositorNodeInvert')
-        invert_node.name = _name
+        invert_node = zpy.nodes.get_or_make(
+            f'{style} Negate', 'CompositorNodeInvert', tree)
 
         # Link up the nodes
-        _tree.links.new(rl_node.outputs['Depth'], norm_node.inputs[0])
-        _tree.links.new(norm_node.outputs[0], invert_node.inputs['Color'])
-        _tree.links.new(invert_node.outputs[0], view_node.inputs['Image'])
-        _tree.links.new(invert_node.outputs[0], fileout_node.inputs['Image'])
+        tree.links.new(rl_node.outputs['Depth'], norm_node.inputs[0])
+        tree.links.new(norm_node.outputs[0], invert_node.inputs['Color'])
+        tree.links.new(invert_node.outputs[0], view_node.inputs['Image'])
+        tree.links.new(invert_node.outputs[0], fileout_node.inputs['Image'])
     elif style == 'rgb':
         _node = rl_node
         if add_lens_dirt:
             _node = lens_dirt_node(
-                node_tree=_tree,
+                node_tree=tree,
                 input_node=rl_node
             )
-            _tree.links.new(rl_node.outputs['Image'], _node.inputs['Image'])
+            tree.links.new(rl_node.outputs['Image'], _node.inputs['Image'])
         if add_hsv:
             _node = hsv_node(
-                node_tree=_tree,
+                node_tree=tree,
                 input_node=rl_node
             )
-            _tree.links.new(rl_node.outputs['Image'], _node.inputs['Image'])
-        _tree.links.new(_node.outputs['Image'], view_node.inputs['Image'])
-        _tree.links.new(_node.outputs['Image'], fileout_node.inputs['Image'])
+            tree.links.new(rl_node.outputs['Image'], _node.inputs['Image'])
+        tree.links.new(_node.outputs['Image'], view_node.inputs['Image'])
+        tree.links.new(_node.outputs['Image'], fileout_node.inputs['Image'])
     else:  # category and instance segmentation
-        _tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
-        _tree.links.new(rl_node.outputs[style], fileout_node.inputs['Image'])
+        tree.links.new(rl_node.outputs[style], view_node.inputs['Image'])
+        tree.links.new(rl_node.outputs[style], fileout_node.inputs['Image'])
 
     return fileout_node
 
@@ -160,8 +144,7 @@ def hsv_node(
     input_node: bpy.types.Node,
 ) -> bpy.types.Node:
     """ Adds a Hue-Saturation-Value Node."""
-    hsv_node = node_tree.nodes.new('CompositorNodeHueSat')
-    hsv_node.name = 'hsv'
+    hsv_node = zpy.nodes.get_or_make('HSV', 'CompositorNodeHueSat', node_tree)
     node_tree.links.new(input_node.outputs['Image'], hsv_node.inputs['Image'])
     return hsv_node
 
@@ -205,7 +188,7 @@ def render_aov(
             if not scene.use_nodes:
                 scene.use_nodes = True
             output_node = scene.node_tree.nodes.get(
-                f'{style} output', None)
+                f'{style} Output', None)
             if output_node is None:
                 output_node = make_aov_file_output_node(style=style)
             output_node.base_path = str(output_path.parent)
@@ -278,15 +261,20 @@ def _mute_aov_file_output_node(style: str, mute: bool = True):
     """ Mute (or un-mute) an AOV output node for a style. """
     log.debug(f'Muting AOV node for {style}')
     scene = zpy.blender.verify_blender_scene()
-    _output_node = scene.node_tree.nodes.get(f'{style} output', None)
-    if _output_node is not None:
-        _output_node.mute = mute
+    node = scene.node_tree.nodes.get(f'{style} Output', None)
+    if node is not None:
+        node.mute = mute
 
 
 def default_render_settings():
     """ Render settings for normal color images. """
     scene = zpy.blender.verify_blender_scene()
-    scene.render.engine = "CYCLES"
+
+    # Make sure engine is set to Cycles
+    if not (scene.render.engine == "CYCLES"):
+        log.warning(' Setting render engine to CYCLES')
+        scene.render.engine == "CYCLES"
+        
     scene.render.film_transparent = False
     scene.render.dither_intensity = 1.0
     scene.render.filter_size = 1.5
@@ -308,7 +296,6 @@ def default_render_settings():
     scene.cycles.denoiser = 'OPENIMAGEDENOISE'
 
     scene.view_settings.view_transform = 'Filmic'
-    # scene.sequencer_colorspace_settings.name = 'Filmic Log'
 
     scene.display.render_aa = '8'
     scene.display.viewport_aa = 'FXAA'
@@ -320,7 +307,12 @@ def default_render_settings():
 def segmentation_render_settings():
     """ Render settings for segmentation images. """
     scene = zpy.blender.verify_blender_scene()
-    scene.render.engine = "CYCLES"
+
+    # Make sure engine is set to Cycles
+    if not (scene.render.engine == "CYCLES"):
+        log.warning(' Setting render engine to CYCLES')
+        scene.render.engine == "CYCLES"
+
     scene.render.film_transparent = True
     scene.render.dither_intensity = 0.
     scene.render.filter_size = 0.
@@ -339,10 +331,6 @@ def segmentation_render_settings():
     scene.cycles.denoising_radius = 0
 
     scene.view_settings.view_transform = 'Raw'
-    # scene.sequencer_colorspace_settings.name = 'Raw'
-
-    # scene.world.use_nodes=False
-    # scene.display_settings.display_device = 'None'
 
     scene.display.render_aa = 'OFF'
     scene.display.viewport_aa = 'OFF'

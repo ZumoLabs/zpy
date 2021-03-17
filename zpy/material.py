@@ -42,7 +42,7 @@ def verify(
 _SAVED_MATERIALS = {}
 
 
-def save_material_props(
+def save_mat_props(
     mat: Union[bpy.types.Material, str],
 ) -> None:
     """ Save a pose (rot and pos) to dict.
@@ -54,7 +54,7 @@ def save_material_props(
     _SAVED_MATERIALS[mat.name] = get_mat_props(mat)
 
 
-def restore_material_props(
+def restore_mat_props(
     mat: Union[bpy.types.Material, str],
 ) -> None:
     """ Restore an object to a position.
@@ -66,7 +66,7 @@ def restore_material_props(
     set_mat_props(mat, _SAVED_MATERIALS[mat.name])
 
 
-def restore_all_material_props() -> None:
+def restore_all_mat_props() -> None:
     """ Restore all jittered materials to original look. """
     for mat_name, mat_props in _SAVED_MATERIALS.items():
         set_mat_props(mat_name, mat_props)
@@ -133,9 +133,9 @@ def jitter(
     mat = verify(mat)
     if save_first_time:
         if _SAVED_MATERIALS.get(mat.name, None) is None:
-            save_material_props(mat)
+            save_mat_props(mat)
         else:
-            restore_material_props(mat)
+            restore_mat_props(mat)
     log.info(f'Jittering material {mat.name}')
     mat_props = get_mat_props(mat)
     jittered_mat_props = tuple(
@@ -145,7 +145,7 @@ def jitter(
 
 @gin.configurable
 def random_texture_mat(
-    texture_dir: Union[Path, str] = \
+    texture_dir: Union[Path, str] =
         Path(os.environ.get('ASSETS')) / Path('lib/textures/random'),
 ) -> bpy.types.Material:
     """ Generate a random material from a directory of random texture images.
@@ -201,6 +201,7 @@ def make_mat_from_texture(
     tex_node.image.colorspace_settings.name = 'Filmic Log'
     mat.node_tree.links.new(tex_node.outputs[0], bsdf_node.inputs[0])
     mat.node_tree.links.new(coord_node.outputs[0], tex_node.inputs[0])
+    mat.node_tree.links.new(out_node.inputs[0], bsdf_node.outputs[0])
     tex_node.image.reload()
     return mat
 
@@ -277,8 +278,8 @@ def make_aov_material_output_node(
     Raises:
         ValueError: Invalid style, no object or material given.
     """
-    scene = zpy.blender.verify_blender_scene()
     # Make sure engine is set to Cycles
+    scene = zpy.blender.verify_blender_scene()
     if not (scene.render.engine == "CYCLES"):
         log.warning(' Setting render engine to CYCLES to use AOV')
         scene.render.engine == "CYCLES"
@@ -315,25 +316,13 @@ def make_aov_material_output_node(
         # Make sure material is using nodes
         if not mat.use_nodes:
             mat.use_nodes = True
-        _tree = mat.node_tree
+        tree = mat.node_tree
 
         # Vertex Color Node
-        _name = f'{style} Vertex Color'
-        vertexcolor_node = _tree.nodes.get(_name)
-        if vertexcolor_node is None:
-            vertexcolor_node = _tree.nodes.new('ShaderNodeVertexColor')
-        vertexcolor_node.layer_name = style
-        vertexcolor_node.name = _name
+        vcol_node = zpy.nodes.get_or_make(f'{style} Vertex Color', 'ShaderNodeVertexColor', tree)
+        vcol_node.layer_name = style
 
         # AOV Output Node
-        _name = style
-        # HACK: property "name" of ShaderNodeOutputAOV behaves strangely with .get()
-        aovoutput_node = None
-        for _node in _tree.nodes:
-            if _node.name == _name:
-                aovoutput_node = _node
-        if aovoutput_node is None:
-            aovoutput_node = _tree.nodes.new('ShaderNodeOutputAOV')
-        aovoutput_node.name = style
-        _tree.links.new(vertexcolor_node.outputs['Color'],
-                        aovoutput_node.inputs['Color'])
+        aovout_node = zpy.nodes.get_or_make(style, 'ShaderNodeOutputAOV', tree)
+
+        tree.links.new(vcol_node.outputs['Color'], aovout_node.inputs['Color'])
