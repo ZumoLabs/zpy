@@ -134,10 +134,10 @@ def verify_view_layer(
     scene = zpy.blender.verify_blender_scene()
     view_layer = scene.view_layers.get(view_layer_name, None)
     if view_layer is None:
-        log.info(f'Could not find view layer {view_layer_name}')
+        log.debug(f'Could not find view layer {view_layer_name}')
         # Default behavior is to use first view layer
         view_layer = scene.view_layers[0]
-    log.info(f'Setting view layer to {view_layer.name}')
+    log.debug(f'Setting view layer to {view_layer.name}')
     bpy.context.window.view_layer = view_layer
     return view_layer
 
@@ -156,10 +156,10 @@ def verify_blender_scene(
     """
     scene = bpy.data.scenes.get(blender_scene_name, None)
     if scene is None:
-        log.info(f'Could not find scene {blender_scene_name}')
+        log.debug(f'Could not find scene {blender_scene_name}')
         # Default behavior is to use the first scene
         scene = bpy.data.scenes[0]
-    log.info(f'Setting scene to {scene.name}')
+    log.debug(f'Setting scene to {scene.name}')
     bpy.context.window.scene = scene
     return scene
 
