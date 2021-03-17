@@ -268,7 +268,12 @@ def _mute_aov_file_output_node(style: str, mute: bool = True):
 def default_render_settings():
     """ Render settings for normal color images. """
     scene = zpy.blender.verify_blender_scene()
-    scene.render.engine = "CYCLES"
+
+    # Make sure engine is set to Cycles
+    if not (scene.render.engine == "CYCLES"):
+        log.warning(' Setting render engine to CYCLES')
+        scene.render.engine == "CYCLES"
+        
     scene.render.film_transparent = False
     scene.render.dither_intensity = 1.0
     scene.render.filter_size = 1.5
@@ -301,7 +306,12 @@ def default_render_settings():
 def segmentation_render_settings():
     """ Render settings for segmentation images. """
     scene = zpy.blender.verify_blender_scene()
-    scene.render.engine = "CYCLES"
+
+    # Make sure engine is set to Cycles
+    if not (scene.render.engine == "CYCLES"):
+        log.warning(' Setting render engine to CYCLES')
+        scene.render.engine == "CYCLES"
+
     scene.render.film_transparent = True
     scene.render.dither_intensity = 0.
     scene.render.filter_size = 0.
