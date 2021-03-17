@@ -50,10 +50,18 @@ FILE_REGEX = {
 
 
 def dataset_contents(
-    path: Union[str, Path],
+    path: Union[Path, str],
     filetype_regex: Dict = FILE_REGEX,
 ) -> Dict:
-    """Use regex to search inside a data directory."""
+    """ Use regex to search inside a data directory.
+
+    Args:
+        path (Union[Path, str]): Directory filepath.
+        filetype_regex (Dict, optional): dictionary of {filetype : regex}
+
+    Returns:
+        Dict: Contents of directory.
+    """
     path = verify_path(path, check_dir=True, make=False)
     contents = {
         'dirs': [],
@@ -70,77 +78,168 @@ def dataset_contents(
     return contents
 
 
-def file_is_of_type(filename: Union[str, Path], filetype: str) -> bool:
-    """ Check to see if file is of type given by regex."""
-    if isinstance(filename, Path):
-        filename = str(filename)
+def file_is_of_type(
+    path: Union[Path, str],
+    filetype: str,
+) -> bool:
+    """ Check to if file is of type given.
+
+    Args:
+        path (Union[Path, str]): A filesystem path.
+        filetype (str): Type of file (see FILE_REGEX dict in zpy.files)
+
+    Returns:
+        bool: File is that type.
+    """
+    if isinstance(path, Path):
+        path = str(path)
     assert FILE_REGEX.get(filetype, None) is not None, \
         f'{filetype} must be in {FILE_REGEX.keys()}'
-    if re.search(FILE_REGEX[filetype], filename):
+    if re.search(FILE_REGEX[filetype], path):
         return True
     return False
 
 
-def make_rgb_image_name(idx: int, extension: str = '.png') -> str:
-    """ Return rgb image name from image id. """
-    return 'IMG_%08d_rgb' % idx + extension
+def make_rgb_image_name(id: int, extension: str = '.png') -> str:
+    """ Creates a RGB image name given an integer id.
+
+    Args:
+        id (int): Integer id used in name creation.
+        extension (str, optional): Extension for image. Defaults to '.png'.
+
+    Returns:
+        str: Image name.
+    """
+    return 'IMG_%08d_rgb' % id + extension
 
 
-def make_custom_image_name(idx: int, name: str, extension: str = '.png') -> str:
-    """ Return rgb image name from image id. """
-    return 'IMG_%08d_%s' % (idx, name) + extension
+def make_cseg_image_name(id: int, extension: str = '.png') -> str:
+    """ Return category (class) segmentation image name from integer id.
+
+    Args:
+        id (int): Integer id used in name creation.
+        extension (str, optional): Extension for image. Defaults to '.png'.
+
+    Returns:
+        str: Image name.
+    """
+    return 'IMG_%08d_cseg' % id + extension
 
 
-def make_cseg_image_name(idx: int, extension: str = '.png') -> str:
-    """ Return class segmentation image name from image id. """
-    return 'IMG_%08d_cseg' % idx + extension
+def make_iseg_image_name(id: int, extension: str = '.png') -> str:
+    """ Return instance segmentation image name from integer id.
+
+    Args:
+        id (int): Integer id used in name creation.
+        extension (str, optional): Extension for image. Defaults to '.png'.
+
+    Returns:
+        str: Image name.
+    """
+    return 'IMG_%08d_iseg' % id + extension
 
 
-def make_iseg_image_name(idx: int, extension: str = '.png') -> str:
-    """ Return instance segmentation image name from image id. """
-    return 'IMG_%08d_iseg' % idx + extension
+def make_depth_image_name(id: int, extension: str = '.png') -> str:
+    """ Return depth image name from integer id.
+
+    Args:
+        id (int): Integer id used in name creation.
+        extension (str, optional): Extension for image. Defaults to '.png'.
+
+    Returns:
+        str: Image name.
+    """
+    return 'IMG_%08d_depth' % id + extension
 
 
-def make_depth_image_name(idx: int, extension: str = '.png') -> str:
-    """ Return instance segmentation image name from image id. """
-    return 'IMG_%08d_depth' % idx + extension
+def make_custom_image_name(id: int, name: str, extension: str = '.png') -> str:
+    """ Creates a custom image name given integer id and name.
+
+    Args:
+        id (int): Integer id used in name creation.
+        name (str): Custom string which will be appended to the end of the image name.
+        extension (str, optional): Extension for image. Defaults to '.png'.
+
+    Returns:
+        str: Image name.
+    """
+    return 'IMG_%08d_%s' % (id, name) + extension
 
 
-def frame_from_image_name(image_name: str) -> int:
-    """ Extract frame id from image name. """
+def id_from_image_name(image_name: str) -> int:
+    """ Extract integer id from image name.
+
+    Args:
+        image_name (str): Name of image to extract integer from.
+
+    Returns:
+        int: Integer id.
+    """
     return int(''.join([s for s in image_name if s.isdigit()]))
 
 
-def replace_index_in_image_name(image_name: str, new_idx : int) -> str:
-    """ Replace the id in an image name. """
+def replace_id_in_image_name(image_name: str, new_id: int) -> str:
+    """ Replace the integer id in an image name.
+
+    Args:
+        image_name (str): Name of the image.
+        new_id (int): New id to replace old id with.
+
+    Returns:
+        str: New image name.
+    """
     # HACK: This will break for image names without 8-digit indices
-    return image_name[:4] + '%08d' % new_idx + image_name[12:]
+    return image_name[:4] + '%08d' % new_id + image_name[12:]
 
 
-def make_underscore_path(path: Union[str, Path], name: str) -> Path:
-    """ Make an underscore path: foo.txt -> foo_new.txt """
+def make_underscore_path(path: Union[Path, str], name: str) -> Path:
+    """ Make an underscore path: foo.txt -> foo_new.txt
+
+    Args:
+        path (Union[Path, str]): A filesystem path.
+        name (str): Name to append to file name.
+
+    Returns:
+        Path: New path.
+    """
     path = to_pathlib_path(path)
     underscore_filename = path.stem + '_' + name + path.suffix
     return path.parent / Path(underscore_filename)
 
 
-def to_pathlib_path(path: Union[str, Path]) -> Path:
-    """Convert string path to pathlib.Path if needed."""
+def to_pathlib_path(path: Union[Path, str]) -> Path:
+    """ Convert string path to pathlib.Path if needed.
+
+    Args:
+        path (Union[Path, str]): A filesystem path.
+
+    Returns:
+        Path: Path in pathlib.Path format.
+    """
     if not isinstance(path, Path):
         path = Path(os.path.expandvars(path)).resolve()
     return path
 
 
 def default_temp_path() -> Path:
-    """ Temporary directory agnostic to OS """
+    """ Default temporary path agnostic to OS.
+
+    Returns:
+        Path: Path to a new output folder in the temp path.
+    """
     return Path(tempfile.gettempdir()) / 'output'
 
 
 def clean_dir(
-    path: Union[str, Path],
+    path: Union[Path, str],
     keep_dir: bool = True,
 ) -> None:
-    """Delete everything at the provided directory."""
+    """ Delete everything at the provided directory.
+
+    Args:
+        path (Union[Path, str]): Path to directory.
+        keep_dir (bool, optional): Whether to keep (or delete) the directory itself. Defaults to True.
+    """
     path = verify_path(path, make=False, check_dir=True)
     if keep_dir:
         # Delete the contents, but keep the directory
@@ -157,17 +256,36 @@ def clean_dir(
         shutil.rmtree(path)
 
 
-def pretty_print(_d: Dict) -> str:
-    """ Pretty print default formatting """
-    return pformat(_d, indent=2, width=120)
+def pretty_print(d: Dict) -> str:
+    """ Pretty formatted dictionary.
+
+    Args:
+        d (Dict): Dictionary to be pretty printed
+
+    Returns:
+        str: Dictionary in pretty format.
+    """
+    return pformat(d, indent=2, width=120)
 
 
 def verify_path(
-    path: Union[str, Path],
+    path: Union[Path, str],
     make: bool = False,
     check_dir: bool = False,
 ) -> Path:
-    """Verifies (or creates) directory at path."""
+    """ Checks to make sure Path exists and optionally creates it.
+
+    Args:
+        path (Union[Path, str]): A filesystem path.
+        make (bool, optional): Make the path if it does not exist. Defaults to False.
+        check_dir (bool, optional): Throw error is path is not a directory. Defaults to False.
+
+    Raises:
+        ValueError: Path is not a directory (only if check_dir is set to True)
+
+    Returns:
+        Path: The same path.
+    """
     path = to_pathlib_path(path)
     if not path.exists():
         log.warning(f'Could not find path at {path}')
@@ -181,17 +299,44 @@ def verify_path(
     return path
 
 
-def write_json(path: Union[str, Path], data: Union[Dict, List]) -> None:
-    """ Save data to path """
+def write_json(
+    path: Union[Path, str],
+    data: Union[Dict, List],
+) -> None:
+    """ Save data to json file.
+
+    Args:
+        path (Union[Path, str]): Path to output json.
+        data (Union[Dict, List]): Data to save.
+
+    Raises:
+        ValueError: Path is not a json file.
+    """
     path = to_pathlib_path(path)
+    if not path.suffix == '.json':
+        raise ValueError(f'{path} is not a JSON file.')
     log.info(f'Writing JSON to file {path}')
     with path.open('w') as f:
         json.dump(data, f, indent=4)
 
 
-def read_json(path: Union[str, Path]) -> Union[Dict, List]:
-    """ Read data from path """
+def read_json(
+    path: Union[Path, str],
+) -> Union[Dict, List]:
+    """ Read a json from a path.
+
+    Args:
+        path (Union[Path, str]): A filesystem path.
+
+    Raises:
+        ValueError: Path is not a json file.
+
+    Returns:
+        Union[Dict, List]: Data in the json.
+    """
     path = to_pathlib_path(path)
+    if not path.suffix == '.json':
+        raise ValueError(f'{path} is not a JSON file.')
     log.info(f'Reading JSON file at {path}')
     with path.open() as f:
         data = json.load(f)
@@ -199,13 +344,26 @@ def read_json(path: Union[str, Path]) -> Union[Dict, List]:
 
 
 def write_csv(
-    path: Union[str, Path],
+    path: Union[Path, str],
     data: List[List[Any]],
     delimiter: str = ',',
     **kwargs
 ) -> None:
-    """ Save data to path """
+    """ Write data to csv.
+
+    Pass in additional kwargs to the csv writer.
+
+    Args:
+        path (Union[Path, str]): A filesystem path.
+        data (List[List[Any]]): Data to save.
+        delimiter (str, optional): Delimiter for each row of csv. Defaults to ','.
+
+    Raises:
+        ValueError: Path is not a csv or txt file.
+    """
     path = to_pathlib_path(path)
+    if not path.suffix in ['.csv', '.txt']:
+        raise ValueError(f'{path} is not a CSV file.')
     log.info(f'Writing CSV to file {path}')
     with path.open('w') as f:
         writer = csv.writer(f, delimiter=delimiter, **kwargs)
@@ -213,12 +371,27 @@ def write_csv(
 
 
 def read_csv(
-    path: Union[str, Path],
+    path: Union[Path, str],
     delimiter: str = ',',
     **kwargs
 ) -> List[List[Any]]:
-    """ Read data from path """
+    """ Read csv data from a path.
+
+    Pass in additional kwargs to the csv reader.
+
+    Args:
+        path (Union[Path, str]): A filesystem path.
+        delimiter (str, optional): Delimiter for each row of csv. Defaults to ','.
+
+    Raises:
+        ValueError: Path is not a csv or txt file.
+
+    Returns:
+        List[List[Any]]: Data in the csv.
+    """
     path = to_pathlib_path(path)
+    if not path.suffix in ['.csv', '.txt']:
+        raise ValueError(f'{path} is not a CSV file.')
     log.info(f'Reading CSV file at {path}')
     data = []
     with path.open() as f:
@@ -227,8 +400,19 @@ def read_csv(
     return data
 
 
-def sample(things: List, sample_size: int = None) -> List:
-    """ Return a sample of things. """
+def sample(
+    things: List,
+    sample_size: int = None,
+) -> List:
+    """ Sample N things from a list.
+
+    Args:
+        things (List): List of things.
+        sample_size (int, optional): Sample size N. Defaults to length of things.
+
+    Returns:
+        List: New sample of things.
+    """
     random_sample_size = len(things)
     if sample_size is not None:
         random_sample_size = min(sample_size, len(things))
@@ -240,27 +424,31 @@ def sample(things: List, sample_size: int = None) -> List:
 
 
 def filecopy(
-    src_dir: Union[str, Path] = None,
-    dst_dir: Union[str, Path] = None,
-    src_name: str = None,
-    dst_name: str = None,
+    src_path: Union[Path, str],
+    dst_path: Union[Path, str],
 ) -> None:
-    """ Copy over a file. """
-    src_dir = verify_path(src_dir, check_dir=True)
-    dst_dir = verify_path(dst_dir, check_dir=True)
-    src = src_dir / src_name
-    dst = dst_dir / dst_name
-    src = verify_path(src)
-    dst = verify_path(dst)
-    log.debug(f'Copying over file from {src} to {dst}')
-    shutil.copy(src, dst)
+    """ Copy file from source (src) to destination (dst).
+
+    Args:
+        src_path (Union[Path, str]): Source filesystem path.
+        dst_path (Union[Path, str]): Destination filesystem path.
+    """
+    src_path = verify_path(src_path)
+    dst_path = verify_path(dst_path)
+    log.debug(f'Copying over file from {src_path} to {dst_path}')
+    shutil.copy(src_path, dst_path)
 
 
 def open_folder_in_explorer(
-    path: Union[str, Path],
+    path: Union[Path, str],
     make: bool = False,
 ) -> None:
-    """ Opens a directory in the fileexplorer of your OS. """
+    """ Opens a directory in the fileexplorer of your OS.
+
+    Args:
+        path (Union[Path, str]): Filesystem path.
+        make (bool, optional): Make directory if it doesn't exist. Defaults to False.
+    """
     path = verify_path(path, check_dir=True, make=make)
     if sys.platform.startswith('darwin'):
         subprocess.call(('open', path))
@@ -271,10 +459,15 @@ def open_folder_in_explorer(
 
 
 def remove_files_with_suffix(
-    path: Union[str, Path],
+    path: Union[Path, str],
     exts: List[str],
 ) -> None:
-    """Remove file in a path with certain extension """
+    """ Remove file in a path with certain extension.
+
+    Args:
+        path (Union[Path, str]): Directory path.
+        exts (List[str]): List of extensions to remove
+    """
     path = verify_path(path, check_dir=True)
     for _path in path.glob("*"):
         if _path.suffix in exts:
@@ -283,16 +476,23 @@ def remove_files_with_suffix(
 
 
 def unzip_file(
-    zip_path: Union[str, Path],
-    out_path: Union[str, Path],
+    zip_path: Union[Path, str],
+    out_path: Union[Path, str],
 ) -> None:
-    """ Unzip a file at a local path. """
+    """ Unzip a file to an output path.
+
+    Args:
+        zip_path (Union[Path, str]): Path to zip file.
+        out_path (Union[Path, str]): Path to output directory.
+
+    Raises:
+        ValueError: Path isn't a zip.
+    """
     log.info(f'Unzipping {zip_path} to {out_path}...')
     zip_path = verify_path(zip_path)
     out_path = verify_path(out_path, check_dir=True)
     if not zip_path.suffix == '.zip':
         raise ValueError(f'{zip_path} is not a zip file')
-
     zf = zipfile.ZipFile(str(zip_path))
     zipped_size_mb = round(
         sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)
@@ -304,22 +504,28 @@ def unzip_file(
 
 
 def zip_file(
-    in_path: Union[str, Path],
-    zip_path: Union[str, Path],
+    in_path: Union[Path, str],
+    zip_path: Union[Path, str],
 ) -> None:
-    """ Zip a file at a local path. """
+    """ Zip a directory to a path.
+
+    Args:
+        in_path (Union[Path, str]): Path to input directory.
+        zip_path (Union[Path, str]): Path to zip file.
+
+    Raises:
+        ValueError: Path isn't a zip.
+    """
     log.info(f'Zipping {in_path} to {zip_path}...')
     in_path = verify_path(in_path)
     zip_path = verify_path(zip_path)
     if not zip_path.suffix == '.zip':
         raise ValueError(f'{zip_path} is not a zip file')
-
     shutil.make_archive(
         base_name=zip_path.parent / zip_path.stem,
         format='zip',
         root_dir=in_path)
     log.info(f'Done zipping to {zip_path}.')
-
     zf = zipfile.ZipFile(str(zip_path))
     zipped_size_mb = round(
         sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)

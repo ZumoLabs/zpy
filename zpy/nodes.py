@@ -17,17 +17,27 @@ log = logging.getLogger(__name__)
 def get_or_make(
     name: str,
     node_type: str,
-    node_tree: bpy.types.NodeTree,
-    name_tag: str = '(zpy) ',
+    tree: bpy.types.NodeTree,
+    label_tag: str = '(zpy) ',
     pos: Tuple[float] = None,
 ) -> bpy.types.Node:
-    """ Verify existence or create a node. """
-    node = node_tree.nodes.get(name, None)
+    """ Verify existence or create a node.
+
+    Args:
+        name (str): Name of the node.
+        node_type (str): Node type e.g. "ShaderNodeBackground"
+        tree (bpy.types.NodeTree): Node tree where this node will be added.
+        label_tag (str, optional): Node label will include this tag to make it easier to identify within Blender. Defaults to '(zpy) '.
+        pos (Tuple[float], optional): Location of the node in node editor. Defaults to None.
+
+    Returns:
+        bpy.types.Node: The newly created (or already existing) node.
+    """
+    node = tree.nodes.get(name, None)
     if node is None:
-        node = node_tree.nodes.new(node_type)
+        node = tree.nodes.new(node_type)
         node.name = name
-    # Name tag identifies nodes created through zpy
-    node.label = f'{name_tag}{name}' 
+    node.label = f'{label_tag}{name}'
     node.bl_description = 'This node has been created and/or modified by zpy'
     if pos is not None:
         node.location = pos

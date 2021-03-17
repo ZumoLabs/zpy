@@ -1,15 +1,15 @@
 """
-    MOT (Multi Object Tracking) dataset format.
+    MOT (Multi-Object Tracking) dataset format.
+
+    https://motchallenge.net/faq/
+
 """
 import logging
 from pathlib import Path
 from typing import List, Union
 
 import gin
-
 import zpy
-from zpy.output import Output
-from zpy.saver_image import ImageSaver
 
 log = logging.getLogger(__name__)
 
@@ -20,20 +20,31 @@ class MOTParseError(Exception):
 
 
 @gin.configurable
-class OutputMOT(Output):
-    """Holds the logic for outputting MOT annotations to file."""
+class OutputMOT(zpy.output.Output):
+    """ Output class for MOT (Multi-Object Tracking) style annotations.
+    
+    https://motchallenge.net/faq/
+    
+    """
 
     ANNOTATION_FILENAME = Path('mot.csv')
 
+    def __init__(self, *args, **kwargs) -> Path:
+        super().__init__(*args, annotation_filename=self.ANNOTATION_FILENAME, **kwargs)
+
     @gin.configurable
     def output_annotations(self,
-                           annotation_path: Union[str, Path] = None,
-                           ):
-        """ Ouput MOT (Multi-Object Tracking) annotations.
+                           annotation_path: Union[Path, str] = None,
+                           ) -> Path:
+        """ Output MOT (Multi-Object Tracking) annotations to file.
 
-        https://motchallenge.net/faq/
+        Args:
+            annotation_path (Union[Path, str], optional): Output path for annotation file.
 
+        Returns:
+            Path: Path to annotation file.
         """
+        annotation_path = super().output_annotations(annotation_path=annotation_path)
         mot = []
         for annotation in self.saver.annotations:
             if self.saver.images[annotation['image_id']]['style'] != 'default':
@@ -82,28 +93,29 @@ class OutputMOT(Output):
                 row[8] = 1.0
                 # Add to mot list
                 mot.append(row)
-        # Get the correct annotation path
-        if annotation_path is not None:
-            annotation_path = annotation_path
-        elif self.saver.annotation_path is None:
-            annotation_path = self.saver.output_dir / self.ANNOTATION_FILENAME
-        else:
-            annotation_path = self.saver.annotation_path
         # Write out annotations to file
         zpy.files.write_csv(annotation_path, mot)
         # Verify annotations
         parse_mot_annotations(annotation_path)
+        return annotation_path
 
 
 @gin.configurable
 def parse_mot_annotations(
-    annotation_file: Union[str, Path],
+    annotation_file: Union[Path, str],
 ) -> None:
-    """ Parse MOT annotations """
+    """ Parse MOT annotations.
+
+    Args:
+        annotation_file (Union[Path, str]): Path to annotation file.
+
+    Raises:
+        MOTParseError: Rows are not length 9.
+    """
     log.info(f'Verifying MOT annotations at {annotation_file}...')
     mot = zpy.files.read_csv(annotation_file)
     for row in mot:
         if not len(row) == 9:
             raise MOTParseError(
                 f'Each row in MOT csv must have len 9, found len {len(row)}')
-    pass
+    # TODO: Return Saver object.

@@ -19,41 +19,81 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def use_gpu() -> None:
-    """ Use GPU for rendering. """
-    devices = list(
-        bpy.context.preferences.addons['cycles'].preferences.devices)
-    log.debug(f'Devices available {devices}')
-    prefs = bpy.context.preferences.addons['cycles'].preferences
-    prefs.compute_device_type = 'CUDA'
-    devices = prefs.get_devices()
-    for device in devices[0]:
-        device.use = True
-    log.debug(f'Devices available {devices}')
+def use_gpu(
+    compute_device_type='CUDA',
+    use_cpu=True,
+) -> None:
+    """ Choose the rendering devices for rendering.
+
+    The hybrid render device options (GPU+CPU) are possible for CUDA and OPTIX
+
+    Args:
+        compute_device_type (str, optional): One of [NONE, CUDA, OPTIX, OPENCL]. Defaults to 'CUDA'.
+        use_cpu (bool, optional): Use CPU with compute device. Defaults to True.
+
+    Raises:
+        RuntimeError: Compute device is not a valid choice.
+    """
+    C = bpy.context
+    preferences = bpy.context.preferences
+    cycles_preferences = preferences.addons["cycles"].preferences
+    compute_devices = [d[0] for d in cycles_preferences.get_device_types(C)]
+    if compute_device_type not in compute_devices:
+        raise RuntimeError("Non-existing device type")
+    else:
+        cycles_preferences.compute_device_type = compute_device_type
+        devices = cycles_preferences.get_devices_for_type(compute_device_type)
+        if len(devices) > 0:
+            for c in devices:
+                c.use = True
+                if c.type == 'CPU':
+                    c.use = use_cpu
+                log.info(f'Using devices {c} {c.type} {c.use}')
+
+    C.scene.cycles.device = "GPU"
+    log.info(f'Using gpu type:{compute_device_type} cpu:{use_cpu}')
 
 
 @gin.configurable
-def set_seed(seed: int = 0) -> None:
-    """ Set the random seed. """
-    log.info(f'Setting random seed to {seed}')
+def set_seed(
+    seed: int = 0,
+) -> None:
+    """ Set the random seed (sets the python and numpy seed).
+
+    Args:
+        seed (int, optional): Integer seed. Defaults to 0.
+    """
     if log.getEffectiveLevel() == logging.DEBUG:
         # When debugging you want to run into errors related
         # to specific permutations of the random variables, so
         # you need to vary the seed to run into them.
         seed = random.randint(1, 100)
-        log.debug(f'Choosing a random random seed of {seed}')
+    log.info(f'Setting random seed to {seed}')
     random.seed(seed)
     np.random.seed(seed)
 
 
 @gin.configurable
 def step(
-    num_steps: int = 16,
+    num_steps: int = 3,
     framerate: int = 0,
     start_frame: int = 1,
     refresh_ui: bool = False,
 ) -> int:
-    """ Step logic helper for the scene. """
+    """ Steps the scene forward (Blender frames).
+
+    Args:
+        num_steps (int, optional): Number of steps to take before the yield stops. Defaults to 16.
+        framerate (int, optional): How many Blender frames to move forward in each step. Defaults to 0.
+        start_frame (int, optional): Blender frame to start on. Defaults to 1.
+        refresh_ui (bool, optional): Refresh the Blender UI on every step. Defaults to False.
+
+    Returns:
+        int: step id
+
+    Yields:
+        Iterator[int]: Step id
+    """
     assert num_steps is not None, 'Invalid num_steps'
     assert num_steps > 0, 'Invalid num_steps'
     scene = zpy.blender.verify_blender_scene()
@@ -63,17 +103,13 @@ def step(
         stop = scene.frame_end
         log.info(f'Animation enabled. Min frames: {start}. Max frames: {stop}')
     while step_idx < num_steps:
-        log.info('-----------------------------------------')
-        log.info('                   STEP                  ')
-        log.info('-----------------------------------------')
+        zpy.logging.linebreaker_log('step')
         log.info(f'Simulation step {step_idx} of {num_steps}.')
         start_time = time.time()
         if framerate > 0:
             current_frame = start_frame + step_idx * framerate
             scene.frame_set(current_frame)
             log.info(f'Animation frame {scene.frame_current}')
-        # # Update the step_idx for all RandomEvent and Animator instances
-        # RandomEvent.step_idx = step_idx
         yield step_idx
         step_idx += 1
         duration = time.time() - start_time
@@ -83,39 +119,25 @@ def step(
             refresh_blender_ui()
 
 
-def connect_debugger_vscode(timeout: int = 3) -> None:
-    """ Connects to a VSCode debugger.
-
-    Based on:
-
-    https://github.com/AlansCodeLog/blender-debugger-for-vscode
-
-    """
-    if log.getEffectiveLevel() == logging.DEBUG:
-        log.debug('Starting VSCode debugger in Blender.')
-        # TODO: Can we assume the user will properly set up this environment variable?
-        path = '$BLENDERADDONS/blender-debugger-for-vscode/__init__.py'
-        path = zpy.files.verify_path(path, make=False)
-        bpy.ops.preferences.addon_install(filepath=str(path))
-        bpy.ops.preferences.addon_enable(module='blender-debugger-for-vscode')
-        bpy.ops.debug.connect_debugger_vscode()
-        for sec in range(timeout):
-            log.debug(f'You have {timeout - sec} seconds to connect!')
-            time.sleep(1)
-
-
 @gin.configurable
 def verify_view_layer(
     view_layer_name: str = 'prod',
 ) -> bpy.types.ViewLayer:
-    """ Get and set the view layer for a scene. """
+    """ Get and set the view layer in Blender.
+
+    Args:
+        view_layer_name (str, optional): Name for View Layer. Defaults to 'prod'.
+
+    Returns:
+        bpy.types.ViewLayer: View Layer that will be used at runtime.
+    """
     scene = zpy.blender.verify_blender_scene()
     view_layer = scene.view_layers.get(view_layer_name, None)
     if view_layer is None:
-        log.info(f'Could not find view layer {view_layer_name}')
-        # Default behavior is to use last view layer in view layer list
-        view_layer = scene.view_layers[-1]
-    log.info(f'Setting view layer to {view_layer.name}')
+        log.debug(f'Could not find view layer {view_layer_name}')
+        # Default behavior is to use first view layer
+        view_layer = scene.view_layers[0]
+    log.debug(f'Setting view layer to {view_layer.name}')
     bpy.context.window.view_layer = view_layer
     return view_layer
 
@@ -124,19 +146,32 @@ def verify_view_layer(
 def verify_blender_scene(
     blender_scene_name: str = 'Prod',
 ) -> bpy.types.Scene:
-    """ Get and set the main scene. """
+    """ Get and set the scene in Blender.
+
+    Args:
+        blender_scene_name (str, optional): Name for Scene. Defaults to 'Prod'.
+
+    Returns:
+        bpy.types.Scene: Scene that will be used at runtime.
+    """
     scene = bpy.data.scenes.get(blender_scene_name, None)
     if scene is None:
-        log.info(f'Could not find scene {blender_scene_name}')
+        log.debug(f'Could not find scene {blender_scene_name}')
         # Default behavior is to use the first scene
         scene = bpy.data.scenes[0]
-    log.info(f'Setting scene to {scene.name}')
+    log.debug(f'Setting scene to {scene.name}')
     bpy.context.window.scene = scene
     return scene
 
 
-def parse_config(text_name: str = 'config') -> None:
-    """ Load gin config for scene """
+def parse_config(
+    text_name: str = 'config',
+) -> None:
+    """ Parses the gin config text in Blender.
+
+    Args:
+        text_name (str, optional): Name of the config text. Defaults to 'config'.
+    """
     _text = bpy.data.texts.get(text_name, None)
     if _text is None:
         log.warning(f'Could not find {text_name} in texts.')
@@ -148,19 +183,52 @@ def parse_config(text_name: str = 'config') -> None:
         gin.finalize()
 
 
-def run_text(text_name: str = 'run') -> None:
-    """ Run a text script in Blender. """
-    _text = bpy.data.texts.get(text_name, None)
-    if _text is None:
+def run_text(
+    text_name: str = 'run',
+) -> None:
+    """ Executes a text in Blender.
+
+    Args:
+        text_name (str, optional): Name of text to execute. Defaults to 'run'.
+    """
+    text = bpy.data.texts.get(text_name, None)
+    if text is None:
         log.warning(f'Could not find {text_name} in texts.')
         return
     _ctx = bpy.context.copy()
-    _ctx['edit_text'] = _text
+    _ctx['edit_text'] = text
     bpy.ops.text.run_script(_ctx)
 
 
-def connect_addon(name: str = 'zpy_addon') -> None:
-    """ Connects a Blender AddOn. """
+def load_text_from_file(
+    path: Union[Path, str],
+    text_name: str = '',
+) -> None:
+    """ Load a file into Blender's internal text UI.
+
+    Args:
+        path (Union[Path, str]): Filesystem path.
+        text_name (str, optional): Name of Blender text to write to.
+    """
+    path = zpy.files.verify_path(path)
+    if bpy.data.texts.get(text_name, None) is None:
+        _text = bpy.data.texts.load(str(path), internal=True)
+        _text.name = text_name
+    else:
+        bpy.data.texts[text_name].from_string(path.read_text())
+
+
+@gin.configurable
+def connect_addon(
+    name: str = 'zpy_addon',
+    addon_dir: Union[Path, str] = '$BLENDERADDONS'
+) -> None:
+    """ Connects a Blender Addon.
+
+    Args:
+        name (str, optional): Name of Addon. Defaults to 'zpy_addon'.
+        addon_dir (Union[Path, str], optional): Directory of addons. Defaults to '$BLENDERADDONS'.
+    """
     log.debug(f'Connecting Addon {name}.')
     path = f'$BLENDERADDONS/{name}/__init__.py'
     path = zpy.files.verify_path(path, make=False)
@@ -168,8 +236,34 @@ def connect_addon(name: str = 'zpy_addon') -> None:
     bpy.ops.preferences.addon_enable(module=name)
 
 
-def output_intermediate_scene(path: Union[str, Path] = None) -> None:
-    """ Output intermediate saved scene. """
+@gin.configurable
+def connect_debugger_vscode(
+    timeout: int = 3,
+) -> None:
+    """ Connects to a VSCode debugger.
+
+    https://github.com/AlansCodeLog/blender-debugger-for-vscode
+
+    Args:
+        timeout (int, optional): Seconds to connect before timeout. Defaults to 3.
+    """
+    if log.getEffectiveLevel() == logging.DEBUG:
+        log.debug('Starting VSCode debugger in Blender.')
+        connect_addon('blender-debugger-for-vscode')
+        bpy.ops.debug.connect_debugger_vscode()
+        for sec in range(timeout):
+            log.debug(f'You have {timeout - sec} seconds to connect!')
+            time.sleep(1)
+
+
+def output_intermediate_scene(
+    path: Union[Path, str] = None,
+) -> None:
+    """ Saves an intermediate scene for debugging purposes.
+
+    Args:
+        path (Union[Path, str], optional): Output directory path.
+    """
     if path is None:
         path = zpy.files.default_temp_path() / 'blender-debug-scene-tmp.blend'
     path = zpy.files.verify_path(path, make=False)
@@ -178,7 +272,7 @@ def output_intermediate_scene(path: Union[str, Path] = None) -> None:
 
 
 def refresh_blender_ui() -> None:
-    """ Refresh blender in the middle of a script.
+    """ Refresh the Blender UI.
 
     Does not work on headless instances.
     """
@@ -189,10 +283,15 @@ def refresh_blender_ui() -> None:
 
 
 def load_scene(
-    path: Union[str, Path],
+    path: Union[Path, str],
     auto_execute_scripts: bool = True,
 ) -> None:
-    """ Load a scene from a *.blend file. """
+    """ Load a scene from a path to a *.blend file.
+
+    Args:
+        path (Union[Path, str]): Path to .blend file.
+        auto_execute_scripts (bool, optional): Whether to allow auto execution of scripts. Defaults to True.
+    """
     # HACK: Clear out scene of cameras and lights
     clear_scene(['CAMERA', 'LIGHT'])
     path = zpy.files.verify_path(path, make=False)
@@ -208,34 +307,33 @@ def load_scene(
     # Allow execution of scripts inside loaded scene
     if auto_execute_scripts:
         log.warning('Allowing .blend file to run scripts automatically')
-        log.warning(
-            '   this is unsafe for blend files from an untrusted source')
+        log.warning('   this is unsafe for untrusted files')
         bpy.context.preferences.filepaths.use_scripts_auto_execute = auto_execute_scripts
 
 
-def clear_scene(to_clear: List = ["MESH"]) -> None:
-    """ Empty out the scene. """
-    log.debug('Deleting all mesh objects in the scene.')
+def clear_scene(
+    to_clear: List = ["MESH"],
+) -> None:
+    """ Cleans objects in a scene based on the object type.
+
+    Args:
+        to_clear (List, optional): List of object types to clean. Defaults to ["MESH"].
+    """
+    log.debug(f'Deleting all objects of type {to_clear}')
     for obj in bpy.data.objects:
         if obj.type in to_clear:
             bpy.data.objects.remove(obj)
 
 
-def load_text_from_file(
-    path: Union[str, Path],
-    text_name: str = '',
-) -> None:
-    """ Load a file into Blender's internal text UI. """
-    path = zpy.files.verify_path(path)
-    if bpy.data.texts.get(text_name, None) is None:
-        _text = bpy.data.texts.load(str(path), internal=True)
-        _text.name = text_name
-    else:
-        bpy.data.texts[text_name].from_string(path.read_text())
-
-
 def scene_information() -> Dict:
-    """ Get the run() function kwargs. """
+    """ Returns information on the scene, such as the kwargs in the run text.
+
+    Raises:
+        ValueError: Lack of run text and issues with the run text.
+
+    Returns:
+        Dict: Scene information dictionary.
+    """
     log.info(f'Collecting scene information')
     run_script = bpy.data.texts.get('run', None)
     if run_script is None:

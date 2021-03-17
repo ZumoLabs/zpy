@@ -2,15 +2,16 @@
     HDRI utilities. You can find lots of free HDRIs at https://hdrihaven.com/
 """
 import logging
-import random
 import math
+import os
+import random
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 import bpy
-import gin
 import mathutils
 
+import gin
 import zpy
 
 log = logging.getLogger(__name__)
@@ -18,11 +19,17 @@ log = logging.getLogger(__name__)
 
 @gin.configurable
 def load_hdri(
-    path: Union[str, Path],
+    path: Union[Path, str],
     scale: Tuple[float] = (1.0, 1.0, 1.0),
     random_z_rot: bool = True,
 ) -> None:
-    """ Load an HDRI from path. """
+    """ Load an HDRI from path.
+
+    Args:
+        path (Union[Path, str]): Path to the HDRI.
+        scale (Tuple[float], optional): Scale in (x, y, z). Defaults to (1.0, 1.0, 1.0).
+        random_z_rot (bool, optional): Randomly rotate HDRI around Z axis. Defaults to True.
+    """
     scene = zpy.blender.verify_blender_scene()
     scene.world.use_nodes = True
     tree = scene.world.node_tree
@@ -54,18 +61,28 @@ def load_hdri(
 
 @gin.configurable
 def random_hdri(
-    hdri_dir: Union[str, Path] = '$ASSETS/lib/hdris/1k',
+    hdri_dir: Union[Path, str] = \
+        Path(os.environ.get('ASSETS')) / Path('lib/hdris/1k'),
     apply_to_scene: bool = True,
 ) -> Path:
-    """ Generate a random HDRI from an asset path. """
+    """ Generate a random HDRI from an asset path.
+
+    Args:
+        hdri_dir (Union[Path, str], optional): Path to directory with HDRIs.
+        apply_to_scene (bool, optional): Load the HDRI into the active scene. Defaults to True.
+
+    Returns:
+        Path: Path to the random HDRI.
+    """
     hdri_dir = zpy.files.verify_path(hdri_dir, make=False, check_dir=True)
     # Create list of HDRIs in directory
-    hdris = []
+    hdri_paths = []
     for _path in hdri_dir.iterdir():
-        if _path.is_file() and _path.suffix == '.hdri':
-            hdris.append(_path)
-    hdri_path = random.choice(hdris)
-    log.info(f'Found {len(hdris)} HDRIs, randomly chose {hdri_path.stem}')
+        if _path.is_file() and _path.suffix in ['.hdri', '.hdr']:
+            hdri_paths.append(_path)
+    hdri_path = random.choice(hdri_paths)
+    log.info(f'Found {len(hdri_paths)} HDRIs at {hdri_dir}')
+    log.info(f'Randomly picked {hdri_path.stem}')
     if apply_to_scene:
         load_hdri(hdri_path)
     return hdri_path
