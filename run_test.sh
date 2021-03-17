@@ -19,7 +19,9 @@ unzip test.zip -d /bender/scene
 
 # create fake assets dir
 export ASSETS="/tmp"
+mkdir -p /tmp/lib/hdris/1k
 cp /bender/scene/textures/test_hdri.hdr /tmp/lib/hdris/1k/test_hdri.hdr
+mkdir -p /tmp/lib/textures/random
 cp /bender/scene/textures/test_texture.jpg /tmp/lib/textures/random/test_texture.jpg
 
 /bin/blender-softwaregl --background --enable-autoexec --python /bender/launcher.py &
