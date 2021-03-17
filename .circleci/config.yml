@@ -3,24 +3,14 @@ version: 2.1
 jobs:
 
   test:
-    working_directory: ~/repo
+    working_directory: /bender
     docker:
-      - image: python:3.7
+      - image: zumolabs/bender:v1.11.5
     steps:
       - checkout
       - run:
           name: run integration tests
-          command: |
-            set -eo pipefail
-
-            pip install -r requirements.txt
-            pip install -e .
-
-            ./run_test.sh
-            STATUS="$?"
-            if [ "$STATUS" -neq 0 ]; then
-                exit 1
-            fi
+          command: /bender/zpy/run_test.sh
 
   tag:
     working_directory: ~/repo
@@ -94,8 +84,11 @@ workflows:
   version: 2
   build-publish:
     jobs:
-      - test
       - tag:
+          filters:
+            branches:
+              only: /release-v.*/
+      - test:
           filters:
             branches:
               only: /release-v.*/
