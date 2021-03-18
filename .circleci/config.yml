@@ -2,6 +2,45 @@ version: 2.1
 
 jobs:
 
+  test:
+    working_directory: /bender/zpy
+    environment:
+      SCENE_ID: daae77f9-3e6d-4190-9ef4-c25dcd336db8
+      ASSETS: /tmp
+    docker:
+      - image: zumolabs/bender:latest
+        auth:
+          username: nponte
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - run:
+          name: fetch scene
+          command: |
+            apt-get update
+            apt-get install -qy awscli
+
+            aws s3 cp s3://zumo-labs/prod/ragnarok-scenes/$SCENE_ID.zip test.zip
+            mkdir /bender/scene
+            unzip test.zip -d /bender/scene
+      - run:
+          name: pip install new zpy
+          command: ${BLENDERPIP} install .
+      - run:
+          name: fake assets dir
+          command: |
+            mkdir -p /tmp/lib/hdris/1k
+            cp /bender/scene/textures/test_hdri.hdr /tmp/lib/hdris/1k/test_hdri.hdr
+            mkdir -p /tmp/lib/textures/random
+            cp /bender/scene/textures/test_texture.jpg /tmp/lib/textures/random/test_texture.jpg
+      - run:
+          name: run test scene
+          command: |
+            set -eo pipefail
+
+            /bin/blender-softwaregl --background --enable-autoexec --python /bender/launcher.py &
+            ${BLENDERPY} /bender/launcher_helper.py --generate --scene_dir /bender/scene
+
   tag:
     working_directory: ~/repo
     docker:
@@ -74,7 +113,13 @@ workflows:
   version: 2
   build-publish:
     jobs:
+      - test:
+          filters:
+            branches:
+              only: /release-v.*/
       - tag:
+          requires:
+            - test
           filters:
             branches:
               only: /release-v.*/
