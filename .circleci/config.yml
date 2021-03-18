@@ -5,7 +5,7 @@ jobs:
   test:
     working_directory: /bender/zpy
     environment:
-      SCENE_ID: fac16daa-6c55-499e-aee6-dcf97ce75a43
+      SCENE_ID: daae77f9-3e6d-4190-9ef4-c25dcd336db8
       ASSETS: /tmp
     docker:
       - image: zumolabs/bender:v1.11.5
