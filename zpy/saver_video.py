@@ -29,8 +29,8 @@ class VideoSaver(zpy.saver.Saver):
                   name: str = 'default video',
                   style: str = 'default',
                   output_path: Union[Path, str] = '/tmp/test.avi',
-                  width: int = 0,
-                  height: int = 0,
+                  width: int = 640,
+                  height: int = 480,
                   length: timedelta = 0,
                   zero_indexed: bool = True,
                   **kwargs,
@@ -41,8 +41,8 @@ class VideoSaver(zpy.saver.Saver):
             name (str, optional): Unique video name. Defaults to 'default video'.
             style (str, optional): Type of image in [default, segmenation, depth]. Defaults to 'default'.
             output_path (Union[Path, str], optional): Path to video file. Defaults to '/tmp/test.avi'.
-            width (int, optional): Width of video frame. Defaults to 0.
-            height (int, optional): Height of video frame. Defaults to 0.
+            width (int, optional): Width of video frame. Defaults to 640.
+            height (int, optional): Height of video frame. Defaults to 480.
             length (timedelta, optional): Length of video in seconds. Defaults to 0.
             zero_indexed (bool, optional): Whether video id is zero indexed. Defaults to True.
 

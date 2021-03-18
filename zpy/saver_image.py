@@ -30,8 +30,8 @@ class ImageSaver(zpy.saver.Saver):
                   style: str = 'default',
                   output_path: Union[Path, str] = '/tmp/test.png',
                   frame: int = 0,
-                  width: int = 0,
-                  height: int = 0,
+                  width: int = 640,
+                  height: int = 480,
                   zero_indexed: bool = True,
                   **kwargs,
                   ) -> Dict:
@@ -44,8 +44,8 @@ class ImageSaver(zpy.saver.Saver):
             style (str, optional): Type of image in [default, segmenation, depth]. Defaults to 'default'.
             output_path (Union[Path, str], optional): Path to image file. Defaults to '/tmp/test.png'.
             frame (int, optional): Frame is used to link images taken at the same moment in time. Defaults to 0.
-            width (int, optional): Width of image. Defaults to 0.
-            height (int, optional): Height of image. Defaults to 0.
+            width (int, optional): Width of image. Defaults to 640.
+            height (int, optional): Height of image. Defaults to 480.
             zero_indexed (bool, optional): Whether image id is zero indexed. Defaults to True.
 
         Returns:
