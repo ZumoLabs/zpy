@@ -36,7 +36,7 @@ jobs:
       - run:
           name: background run bender
           command: |
-            /bin/blender-softwaregl --background --enable-autoexec --python /bender/launcher.py
+            /bin/blender-softwaregl --background --enable-autoexec --python /bender/launcher.py &
       - run:
           name: run test scene
           command: |
