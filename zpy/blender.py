@@ -4,16 +4,17 @@
 import inspect
 import logging
 import math
+import os
 import random
 import time
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 import bpy
-import gin
 import mathutils
 import numpy as np
 
+import gin
 import zpy
 
 log = logging.getLogger(__name__)
@@ -104,7 +105,7 @@ def step(
         log.info(f'Animation enabled. Min frames: {start}. Max frames: {stop}')
     while step_idx < num_steps:
         zpy.logging.linebreaker_log('step')
-        log.info(f'Simulation step {step_idx} of {num_steps}.')
+        log.info(f'Simulation step {step_idx + 1} of {num_steps}.')
         start_time = time.time()
         if framerate > 0:
             current_frame = start_frame + step_idx * framerate
@@ -117,6 +118,27 @@ def step(
         # TODO: This call is not needed in headless instances, makes loop faster
         if refresh_ui:
             refresh_blender_ui()
+
+
+def get_asset_lib_path() -> Path:
+    """ Returns path to asset library location.
+
+    Defaults to the directory of the blenderfile.
+
+    Returns:
+        Path: pathlib.Path object to library location.
+    """
+
+    assets_env_path = os.environ.get('ASSETS', None)
+    if assets_env_path is None:
+        log.warning('Could not find environment variable $ASSETS')
+        blendfile_path = bpy.path.abspath(bpy.data.filepath)
+        return Path(blendfile_path).parent
+    else:
+        assets_env_path = zpy.files.verify_path(
+            assets_env_path, check_dir=True)
+        log.debug(f'Found assets path at {assets_env_path}')
+        return assets_env_path
 
 
 @gin.configurable

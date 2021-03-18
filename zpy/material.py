@@ -145,19 +145,21 @@ def jitter(
 
 @gin.configurable
 def random_texture_mat(
-    texture_dir: Union[Path, str] =
-        Path(os.environ.get('ASSETS')) / Path('lib/textures/random'),
+    texture_dir: Union[Path, str] = 'lib/textures/random',
+    relative_to_assets_dir : bool = True,
 ) -> bpy.types.Material:
     """ Generate a random material from a directory of random texture images.
 
     Args:
         texture_dir (Union[Path, str], optional): Path to directory with texture images.
+        relative_to_assets_dir (bool, optional): Path is relative to the $ASSETS directory. Defaults to False.
 
     Returns:
         bpy.types.Material: The newly created material.
     """
-    texture_dir = zpy.files.verify_path(
-        texture_dir, make=False, check_dir=True)
+    if relative_to_assets_dir:
+        texture_dir = zpy.blender.get_asset_lib_path().joinpath(texture_dir)
+    texture_dir = zpy.files.verify_path(texture_dir, check_dir=True)
     # Create list of texture images in directory
     texture_paths = []
     for _path in texture_dir.iterdir():

@@ -61,20 +61,23 @@ def load_hdri(
 
 @gin.configurable
 def random_hdri(
-    hdri_dir: Union[Path, str] = \
-        Path(os.environ.get('ASSETS')) / Path('lib/hdris/1k'),
+    hdri_dir: Union[Path, str] = 'lib/hdris/1k',
+    relative_to_assets_dir : bool = True,
     apply_to_scene: bool = True,
 ) -> Path:
     """ Generate a random HDRI from an asset path.
 
     Args:
         hdri_dir (Union[Path, str], optional): Path to directory with HDRIs.
+        relative_to_assets_dir (bool, optional): Path is relative to the $ASSETS directory. Defaults to False.
         apply_to_scene (bool, optional): Load the HDRI into the active scene. Defaults to True.
 
     Returns:
         Path: Path to the random HDRI.
     """
-    hdri_dir = zpy.files.verify_path(hdri_dir, make=False, check_dir=True)
+    if relative_to_assets_dir:
+        hdri_dir = zpy.blender.get_asset_lib_path().joinpath(hdri_dir)
+    hdri_dir = zpy.files.verify_path(hdri_dir, check_dir=True)
     # Create list of HDRIs in directory
     hdri_paths = []
     for _path in hdri_dir.iterdir():

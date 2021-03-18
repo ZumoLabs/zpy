@@ -2,6 +2,7 @@
 
 import logging
 import math
+import os
 import random
 from pathlib import Path
 
@@ -31,26 +32,8 @@ def run():
     zpy.objects.save_pose('Camera', "cam_pose")
     zpy.objects.save_pose('Suzanne', "suzanne_pose")
 
-    # Assets will be stored relative to the .blend filepath
-    asset_dir = Path(bpy.data.filepath).parent
-
-    # HDRIs are like a pre-made background with lighting
-    HDRI_paths = [
-        asset_dir / Path("hdris/abandoned_church_1k.hdr"),
-        asset_dir / Path("hdris/autumn_crossing_1k.hdr"),
-        asset_dir / Path("hdris/cambridge_1k.hdr"),
-        asset_dir / Path("hdris/circus_maximus_2_1k.hdr"),
-        asset_dir / Path("hdris/dresden_station_night_1k.hdr"),
-    ]
-
-    # Textures are images that we will map onto a material
-    texture_paths = [
-        asset_dir / Path("textures/Wood103.jpg"),
-        asset_dir / Path("textures/022.jpg"),
-        asset_dir / Path("textures/019.jpg"),
-        asset_dir / Path("textures/007.jpg"),
-        asset_dir / Path("textures/076.jpg"),
-    ]
+    # Set the asset directory (location of textures and hdris)
+    os.environ['ASSETS'] = str(Path(bpy.data.filepath).parent)
 
     # Run the scene.
     for step_idx in zpy.blender.step():
@@ -86,12 +69,13 @@ def run():
         # Camera should be looking at Suzanne
         zpy.camera.look_at('Camera', bpy.data.objects["Suzanne"].location)
 
-        # Pick and load a random HDRI
-        zpy.hdris.load_hdri(random.choice(HDRI_paths))
+        # Pick and load a random HDRI from the 'hdri' folder (relative to blendfile)
+        # HDRIs are like a pre-made background with lighting
+        zpy.hdris.random_hdri(hdri_dir='hdris')
 
-        # Pick a random texture for suzanne
-        texture_path = random.choice(texture_paths)
-        new_mat = zpy.material.make_mat_from_texture(texture_path)
+        # Pick a random texture from the 'textures' folder (relative to blendfile)
+        # Textures are images that we will map onto a material
+        new_mat = zpy.material.random_texture_mat(texture_dir='textures')
         zpy.material.set_mat('Suzanne', new_mat)
 
         # Have to segment the new material
