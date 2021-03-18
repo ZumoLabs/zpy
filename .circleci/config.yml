@@ -8,7 +8,7 @@ jobs:
       SCENE_ID: daae77f9-3e6d-4190-9ef4-c25dcd336db8
       ASSETS: /tmp
     docker:
-      - image: zumolabs/bender:v1.11.5
+      - image: zumolabs/bender:v1.11.6
         auth:
           username: nponte
           password: $DOCKERHUB_PASSWORD
@@ -34,13 +34,11 @@ jobs:
             mkdir -p /tmp/lib/textures/random
             cp /bender/scene/textures/test_texture.jpg /tmp/lib/textures/random/test_texture.jpg
       - run:
-          name: background run bender
-          command: |
-            /bin/blender-softwaregl --background --enable-autoexec --python /bender/launcher.py &
-      - run:
           name: run test scene
           command: |
             set -eo pipefail
+
+            /bin/blender-softwaregl --background --enable-autoexec --python /bender/launcher.py &
             ${BLENDERPY} /bender/launcher_helper.py --generate --scene_dir /bender/scene
 
   tag:
