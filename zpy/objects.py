@@ -432,6 +432,25 @@ def scale(
     log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
+def jitter_mesh(obj: Union[bpy.types.Object, str], scaler: float = 100.0
+) -> None:
+    """ Randomize the vertex coordinates of a mesh object.
+
+    Args:
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name)
+        scaler (float, optional): Scaler for the applied jitter amount, higher numbers produces smaller jitters
+    """
+    obj = verify(obj)
+    if obj.type=='MESH':
+        def randvec():
+            x=1-2*random.random()
+            y=1-2*random.random()
+            z=1-2*random.random()
+            return( mathutils.Vector( ( x,y,z))  )
+        for v in obj.data.vertices:
+            v.co+=( randvec()*(np.array(obj.dimensions).max()/scaler) )
+
+
 def jitter(
     obj: Union[bpy.types.Object, str],
     translate_range: Tuple[Tuple[float]] = (
