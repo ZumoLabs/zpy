@@ -515,6 +515,18 @@ def get_versions():
     except NotThisMethod:
         pass
 
+    try:
+        root = os.path.dirname(__file__)
+        version_file = os.path.join(root, '_version.txt')
+        with open(version_file, 'r') as f:
+            version = f.readline().rstrip()
+        return {"version": version, "full-revisionid": None,
+                "dirty": None,
+                "error": "unable to find custom zumolabs version file",
+                "date": None}
+    except:
+        pass
+
     return {"version": "0+unknown", "full-revisionid": None,
             "dirty": None,
             "error": "unable to compute version", "date": None}
