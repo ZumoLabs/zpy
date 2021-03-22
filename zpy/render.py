@@ -34,7 +34,14 @@ def make_aov_pass(
     # Go through existing passes and make sure it doesn't exist before creating
     view_layer = zpy.blender.verify_view_layer()
     if view_layer.cycles.get('aovs', None) is not None:
-        for aov in view_layer.cycles.aovs.values():
+        # HACK: View layer AOVs changes depending on Blender Version
+        if int(bpy.app.version_string.split('.')[1]) >= 92:
+            # This call works in 2.92
+            view_layer_aovs = view_layer.aovs
+        else:
+            # This call works in 2.91
+            view_layer_aovs = view_layer.cycles.aovs
+        for aov in view_layer_aovs.values():
             if aov['name'] == style:
                 log.info(f'AOV pass for {style} already exists.')
                 return
