@@ -283,14 +283,7 @@ def populate_vertex_colors(
             if seg_type in vcol:
                 obj.data.sculpt_vertex_colors.remove(
                     obj.data.sculpt_vertex_colors[seg_type])
-    # Remove any existing vertex color data
-    if len(obj.data.vertex_colors):
-        for vcol in obj.data.vertex_colors.keys():
-            if seg_type in vcol:
-                obj.data.vertex_colors.remove(
-                    obj.data.vertex_colors[seg_type])
     # Add new vertex color data
-    obj.data.vertex_colors.new(name=seg_type)
     obj.data.sculpt_vertex_colors.new(name=seg_type)
     # Iterate through each vertex in the mesh
     for i, _ in enumerate(obj.data.vertices):

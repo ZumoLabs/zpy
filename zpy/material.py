@@ -325,6 +325,16 @@ def make_aov_material_output_node(
         vcol_node.layer_name = style
 
         # AOV Output Node
-        aovout_node = zpy.nodes.get_or_make(style, 'ShaderNodeOutputAOV', tree)
+        # HACK: This type of node has a "name" property which prevents using the
+        # normal zpy.nodes code due to a scope conflict with the bpy.types.Node.name property
+        # See: https://docs.blender.org/api/current/bpy.types.ShaderNodeOutputAOV.html
+        _name = style
+        aovout_node = None
+        for _node in tree.nodes:
+            if _node.name == _name:
+                aovout_node = _node
+        if aovout_node is None:
+            aovout_node = tree.nodes.new('ShaderNodeOutputAOV')
+        aovout_node.name = style
 
         tree.links.new(vcol_node.outputs['Color'], aovout_node.inputs['Color'])
