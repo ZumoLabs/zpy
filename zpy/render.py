@@ -313,6 +313,7 @@ def default_render_settings(
     scene.render.tile_y = tile_size
     scene.cycles.debug_use_spatial_splits = False
 
+
 def segmentation_render_settings():
     """ Render settings for segmentation images. """
     scene = zpy.blender.verify_blender_scene()
