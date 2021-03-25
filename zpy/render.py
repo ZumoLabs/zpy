@@ -285,7 +285,7 @@ def default_render_settings():
     scene.cycles.use_denoising = True
     scene.cycles.denoising_radius = 8
 
-    scene.cycles.use_denoising = True
+    scene.cycles.use_denoising = False
     scene.cycles.denoiser = 'OPENIMAGEDENOISE'
 
     scene.view_settings.view_transform = 'Filmic'
@@ -295,6 +295,8 @@ def default_render_settings():
     scene.display.shading.color_type = 'TEXTURE'
     scene.display.shading.light = 'STUDIO'
     scene.display.shading.show_specular_highlight = True
+
+    scene.render.use_single_layer = True
 
     scene.render.tile_x = 48
     scene.render.tile_y = 48
