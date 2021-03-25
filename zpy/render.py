@@ -311,7 +311,7 @@ def default_render_settings(
 
     scene.render.tile_x = tile_size
     scene.render.tile_y = tile_size
-    scene.cycles.debug_use_spatial_splits = False
+    scene.cycles.debug_use_spatial_splits = spatial_splits
 
 
 def segmentation_render_settings():
