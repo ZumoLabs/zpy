@@ -268,7 +268,7 @@ def default_render_settings():
         log.warning(' Setting render engine to CYCLES')
         scene.render.engine == "CYCLES"
         
-    scene.render.film_transparent = False
+    scene.render.film_transparent = True
     scene.render.dither_intensity = 1.0
     scene.render.filter_size = 1.5
 
