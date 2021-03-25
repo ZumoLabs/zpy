@@ -296,6 +296,8 @@ def default_render_settings():
     scene.display.shading.light = 'STUDIO'
     scene.display.shading.show_specular_highlight = True
 
+    scene.render.tile_x = '48'
+    scene.render.tile_y = '48'
 
 def segmentation_render_settings():
     """ Render settings for segmentation images. """
