@@ -259,47 +259,59 @@ def _mute_aov_file_output_node(style: str, mute: bool = True):
         node.mute = mute
 
 
-def default_render_settings():
-    """ Render settings for normal color images. """
+def default_render_settings(
+    samples: int = 96,
+    tile_size: int = 48,
+    spatial_splits: bool = False
+) -> None:
+    """ Render settings for normal color images. 
+    
+    Args:
+        samples (int, optional): Number of Cycles samples per frame
+        tile_size (int, optional): Rendering tile size in pixel dimensions
+        spatial_splits (bool, optional): Toogle for BVH split acceleration
+    """
     scene = zpy.blender.verify_blender_scene()
-
     # Make sure engine is set to Cycles
     if not (scene.render.engine == "CYCLES"):
         log.warning(' Setting render engine to CYCLES')
         scene.render.engine == "CYCLES"
-        
-    scene.render.film_transparent = True
+
+    scene.cycles.samples = samples
+    scene.cycles.use_adaptive_sampling = True
+    scene.cycles.use_denoising = False
+    scene.cycles.denoiser = 'OPENIMAGEDENOISE'
+    
+    scene.render.film_transparent = False
     scene.render.dither_intensity = 1.0
     scene.render.filter_size = 1.5
 
-    scene.cycles.samples = 128
-    scene.cycles.diffuse_bounces = 4
-    scene.cycles.diffuse_samples = 12
-
     view_layer = zpy.blender.verify_view_layer()
+    scene.render.use_single_layer = True
     view_layer.pass_alpha_threshold = 0.5
 
-    scene.cycles.max_bounces = 4
-    scene.cycles.bake_type = 'COMBINED'
-    scene.cycles.use_adaptive_sampling = True
-    scene.cycles.use_denoising = True
-    scene.cycles.denoising_radius = 8
+    scene.cycles.max_bounces = 12
+    scene.cycles.diffuse_bounces = 4
+    scene.cycles.glossy_bounces = 4
+    scene.cycles.transparent_max_bounces = 4
+    scene.cycles.transmission_bounces = 12
 
-    scene.cycles.use_denoising = False
-    scene.cycles.denoiser = 'OPENIMAGEDENOISE'
+    scene.cycles.sample_clamp_indirect = 2.5
+    scene.cycles.sample_clamp_direct = 2.5
+    scene.cycles.blur_glossy = 1
+    scene.cycles.caustics_reflective = False
+    scene.cycles.caustics_refractive = False
 
     scene.view_settings.view_transform = 'Filmic'
-
     scene.display.render_aa = '8'
     scene.display.viewport_aa = 'FXAA'
     scene.display.shading.color_type = 'TEXTURE'
     scene.display.shading.light = 'STUDIO'
     scene.display.shading.show_specular_highlight = True
 
-    scene.render.use_single_layer = True
-
-    scene.render.tile_x = 48
-    scene.render.tile_y = 48
+    scene.render.tile_x = tile_size
+    scene.render.tile_y = tile_size
+    scene.cycles.debug_use_spatial_splits = False
 
 def segmentation_render_settings():
     """ Render settings for segmentation images. """
