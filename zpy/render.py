@@ -121,16 +121,18 @@ def make_aov_file_output_node(
 
     return fileout_node
 
-
-def lens_dirt_node(
+def toggle_nodegroup(
     node_tree: bpy.types.NodeTree,
-    input_node: bpy.types.Node,
-) -> bpy.types.Node:
-    """ Add lens dirt effect to a compositor node. """
-    # TODO: @kursad code to create dirt effect here.
-    log.warn("NotImplemented: lens dirt ")
-    return input_node
-
+    state: bool = False
+) -> None:
+    """ Change the state of all the nodes inside a node group 
+    
+    Args:
+        node_tree (bpy.types.NodeTree): Top level node group
+        state: (bool): Toggle state
+    """
+    for n in node_tree.nodes:
+        n.mute=state
 
 def hsv_node(
     node_tree: bpy.types.NodeTree,
