@@ -313,6 +313,12 @@ def default_render_settings(
     scene.render.tile_y = tile_size
     scene.cycles.debug_use_spatial_splits = spatial_splits
 
+    render.use_simplify = True
+    scene.cycles.ao_bounces_render = 1
+    scene.world.light_settings.use_ambient_occlusion = True
+    scene.world.light_settings.distance = 40
+    scene.world.light_settings.ao_factor = 0.5
+
 
 def segmentation_render_settings():
     """ Render settings for segmentation images. """
