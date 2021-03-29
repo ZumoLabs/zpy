@@ -46,7 +46,7 @@ You can install `zpy` with pip:
 pip install zpy-zumo
 ```
 
-Note that Blender has it's own python, seperate from your system (or venve/conda) python. You will have to install it into both.
+Note that Blender has it's own python, seperate from your system/venv/conda python. You will have to install it into both.
 
 ### Install: Blender Addon <a name="installzip"></a>
 
