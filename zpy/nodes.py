@@ -42,3 +42,16 @@ def get_or_make(
     if pos is not None:
         node.location = pos
     return node
+
+def toggle_nodegroup(
+    node_tree: bpy.types.NodeTree,
+    state: bool = False
+) -> None:
+    """ Change the state of all the nodes inside a node group 
+    
+    Args:
+        node_tree (bpy.types.NodeTree): Top level node group
+        state: (bool): Toggle state
+    """
+    for n in node_tree.nodes:
+        n.mute=state
