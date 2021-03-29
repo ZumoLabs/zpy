@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-BLENDER_VERSION=${BLENDER_VERSION:-"2.91"}
-BLENDER_VERSION_FULL=${BLENDER_VERSION_FULL:-"2.91.0"}
-ZPY_VERSION=${ZPY_VERSION:-"0.9.6"}
+BLENDER_VERSION=${BLENDER_VERSION:-"2.92"}
+BLENDER_VERSION_FULL=${BLENDER_VERSION_FULL:-"2.92.0"}
+ZPY_VERSION=${ZPY_VERSION:-"0.9.13"}
 
 if [ "$(uname)" == "Darwin" ]; then
     # Do something under Mac OS X platform        
