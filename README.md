@@ -32,14 +32,25 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 
 ## Install
 
-- [Install from .zip within Blender UI **(Windows/Mac/Linux)**](#installzip).
+- [Install using pip **(Windows/Mac/Linux)**](#installpip).
+- [Install Blender Addon from .zip **(Windows/Mac/Linux)**](#installzip).
 - [Install from script **(Mac/Linux)**](#installscript_linux)
 - [Developer mode **(Linux)**](https://github.com/ZumoLabs/zpy/tree/main/docs/developer_mode.md#install-linux-developer-environment-)
 - [Developer mode **(Windows)**](https://github.com/ZumoLabs/zpy/tree/main/docs/developer_mode.md#install-windows-developer-environment-)
 
-### Install: Using Blender GUI <a name="installzip"></a>
+### Install: Using Pip <a name="installpip"></a>
 
-First download the latest [zip](https://github.com/ZumoLabs/zpy/releases) (you want the one called `zpy_addon-v*.zip`). Then open up Blender. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there.
+You can install `zpy` with pip:
+
+``` 
+pip install zpy-zumo
+```
+
+Note that Blender has it's own python, seperate from your system/venv/conda python. You will have to install it into both.
+
+### Install: Blender Addon <a name="installzip"></a>
+
+Once you have installed the `zpy` module into Blender's python, download the latest [zip](https://github.com/ZumoLabs/zpy/releases) (you want the one called `zpy_addon-v*.zip`). Then open up Blender. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there.
 
 ![Enabling the addon](https://github.com/ZumoLabs/zpy/raw/main/docs/install_zpy.png)
 
