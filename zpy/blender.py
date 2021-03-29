@@ -72,6 +72,7 @@ def set_seed(
     log.info(f'Setting random seed to {seed}')
     random.seed(seed)
     np.random.seed(seed)
+    mathutils.noise.seed_set(seed)
 
 
 @gin.configurable
