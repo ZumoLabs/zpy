@@ -43,8 +43,8 @@ def filter_dataset(dfilter, url, token):
     endpoint = f'{url}/api/v1/generated-data-sets/'
     dset.extend(filter_dataset_url(field, pattern, regex, endpoint, token))
     # TODO figure out a way to have the user ask which set to query
-    #endpoint = f'{url}/api/v1/job-data-sets/'
-    #dset.extend(filter_dataset_url(field, pattern, regex, endpoint, token))
+    endpoint = f'{url}/api/v1/job-data-sets/'
+    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, token))
     return dset
 
 
