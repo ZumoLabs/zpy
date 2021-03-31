@@ -7,6 +7,8 @@ from zpy.files import read_json, to_pathlib_path
 
 import logging
 import click
+from itertools import product
+from copy import deepcopy
 
 log = logging.getLogger(__name__)
 
@@ -178,20 +180,32 @@ def create_dataset(name, scene, args):
 @create.command('job')
 @click.argument('name')
 @click.argument('operation')
-@click.option('datasets', '-d', multiple=True)
 @click.option('filters', '-f', multiple=True)
 @click.option('configfile', '-configfile')
+@click.option('sweepfile', '-sweepfile')
 @click.argument('args', nargs=-1)
-def create_job(name, operation, datasets, filters, configfile, args):
+def create_job(name, operation, filters, configfile, sweepfile, args):
     config = read_config()
+    datasets_list = []
+    for dfilter in filters:
+        datasets_list.extend(filter_dataset(dfilter, config['ENDPOINT'], config['TOKEN']))
+    if sweepfile:
+        sweep_config = read_json(sweepfile)
+        bindings = sweep_config['gin_bindings']
+        count = 0
+        for random_binding in [dict(zip(bindings, v)) for v in product(*bindings.values())]:
+            job_name = f'{name} {count}'
+            job_config = deepcopy(sweep_config)
+            job_config['gin_bindings'] = random_binding
+            create_new_job(job_name, operation, job_config, datasets_list, config['ENDPOINT'], config['TOKEN'])
+            count += 1
+        return
     if configfile:
         job_config = read_json(configfile)
     else:
         job_config = parse_args(args)
-    datasets_list = [x for x in datasets]
-    for dfilter in filters:
-        datasets_list.extend(filter_dataset(dfilter, config['ENDPOINT'], config['TOKEN']))
     create_new_job(name, operation, job_config, datasets_list, config['ENDPOINT'], config['TOKEN'])
+
 
 @create.command('sweep')
 @click.argument('name')
