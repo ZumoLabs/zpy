@@ -18,12 +18,12 @@ if "bpy" in locals():
 def registerSceneProperties():
     """ Properties applied to scenes."""
     bpy.types.Scene.zpy_scene_name = bpy.props.StringProperty(
-        name="Scene Name",
+        name="Sim Name",
         description="Name of the scene, must match data portal.",
         default="default",
     )
     bpy.types.Scene.zpy_scene_version = bpy.props.StringProperty(
-        name="Scene Version",
+        name="Sim Version",
         description="Version of the scene, must match data portal.",
         default="0",
     )
@@ -171,7 +171,7 @@ class SCENE_PT_ExportPanel(bpy.types.Panel):
         row = layout.row()
         row.operator(
             'scene.zpy_export_scene',
-            text='Export Scene',
+            text='Export Sim',
             icon='EXPORT',
         )
         row = layout.row()

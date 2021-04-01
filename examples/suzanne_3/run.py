@@ -1,4 +1,4 @@
-""" Suzanne Tutorial Scene: Part 3. """
+""" Suzanne Tutorial Sim: Part 3. """
 
 import logging
 import math

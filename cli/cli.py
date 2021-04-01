@@ -1,6 +1,6 @@
 from cli.config import login, initialize_config, switch_env, read_config
 from cli.datasets import fetch_datasets, fetch_dataset, create_uploaded_dataset, create_generated_dataset, filter_dataset
-from cli.scenes import fetch_scenes, fetch_scene, create_scene
+from cli.sims import fetch_sims, fetch_sim, create_sim
 from cli.jobs import fetch_jobs, create_new_job
 from cli.utils import parse_args
 from zpy.files import read_json, to_pathlib_path
@@ -69,10 +69,10 @@ def list_datasets():
     fetch_datasets(config['ENDPOINT'], config['TOKEN'])
 
 
-@list.command('scenes')
-def list_scenes():
+@list.command('sims')
+def list_sims():
     config = read_config()
-    fetch_scenes(config['ENDPOINT'], config['TOKEN'])
+    fetch_sims(config['ENDPOINT'], config['TOKEN'])
 
 
 @list.command('jobs')
@@ -105,16 +105,16 @@ def get_dataset(name, dtype, path):
     fetch_dataset(name, path, dtype, config['ENDPOINT'], config['TOKEN'])
 
 
-@get.command('scene')
+@get.command('sim')
 @click.argument('name')
 @click.argument('path')
-def get_scene(name, path):
+def get_sim(name, path):
     config = read_config()
     dir_path = to_pathlib_path(path)
     if not dir_path.exists():
         log.info(f'output path {dir_path} does not exist')
         return
-    fetch_scene(name, path, config['ENDPOINT'], config['TOKEN'])
+    fetch_sim(name, path, config['ENDPOINT'], config['TOKEN'])
 
 ##############
 ### UPLOAD ###
@@ -126,10 +126,10 @@ def upload():
     pass
 
 
-@upload.command('scene')
+@upload.command('sim')
 @click.argument('name')
 @click.argument('path')
-def upload_scene(name, path):
+def upload_sim(name, path):
     config = read_config()
     input_path = to_pathlib_path(path)
     if not input_path.exists():
@@ -137,7 +137,7 @@ def upload_scene(name, path):
         return
     if input_path.suffix != '.zip':
         log.warning(f'input path {input_path} not a zip file')
-    create_scene(name, path, config['ENDPOINT'], config['TOKEN'])
+    create_sim(name, path, config['ENDPOINT'], config['TOKEN'])
 
 
 @upload.command('dataset')
@@ -167,12 +167,12 @@ def create():
 
 @create.command('dataset')
 @click.argument('name')
-@click.argument('scene')
+@click.argument('sim')
 @click.argument('args', nargs=-1)
-def create_dataset(name, scene, args):
+def create_dataset(name, sim, args):
     config = read_config()
     dataset_config = parse_args(args)
-    create_generated_dataset(name, scene, dataset_config, config['ENDPOINT'], config['TOKEN'])
+    create_generated_dataset(name, sim, dataset_config, config['ENDPOINT'], config['TOKEN'])
 
 
 @create.command('job')
@@ -195,13 +195,13 @@ def create_job(name, operation, datasets, filters, configfile, args):
 
 @create.command('sweep')
 @click.argument('name')
-@click.argument('scene')
+@click.argument('sim')
 @click.argument('number')
 @click.argument('args', nargs=-1)
-def create_sweep(name, scene, number, args):
+def create_sweep(name, sim, number, args):
     config = read_config()
     dataset_config = parse_args(args)
     for i in range(int(number)):
         dataset_name = f'{name} seed{i}'
         dataset_config['seed'] = i
-        create_generated_dataset(dataset_name, scene, dataset_config, config['ENDPOINT'], config['TOKEN'])
+        create_generated_dataset(dataset_name, sim, dataset_config, config['ENDPOINT'], config['TOKEN'])

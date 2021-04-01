@@ -1,4 +1,4 @@
-""" Suzanne Tutorial Scene. """
+""" Suzanne Tutorial Sim. """
 
 import bpy
 import zpy

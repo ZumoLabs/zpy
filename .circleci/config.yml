@@ -15,14 +15,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: fetch scene
+          name: fetch sim
           command: |
             apt-get update
             apt-get install -qy awscli
 
-            aws s3 cp s3://zumo-labs/prod/ragnarok-scenes/$SCENE_ID.zip test.zip
-            mkdir /bender/scene
-            unzip test.zip -d /bender/scene
+            aws s3 cp s3://zumo-labs/prod/ragnarok-sims/$SCENE_ID.zip test.zip
+            mkdir /bender/sim
+            unzip test.zip -d /bender/sim
       - run:
           name: pip install new zpy
           command: ${BLENDERPIP} install .
@@ -30,16 +30,16 @@ jobs:
           name: fake assets dir
           command: |
             mkdir -p /tmp/lib/hdris/1k
-            cp /bender/scene/textures/test_hdri.hdr /tmp/lib/hdris/1k/test_hdri.hdr
+            cp /bender/sim/textures/test_hdri.hdr /tmp/lib/hdris/1k/test_hdri.hdr
             mkdir -p /tmp/lib/textures/random
-            cp /bender/scene/textures/test_texture.jpg /tmp/lib/textures/random/test_texture.jpg
+            cp /bender/sim/textures/test_texture.jpg /tmp/lib/textures/random/test_texture.jpg
       - run:
-          name: run test scene
+          name: run test sim
           command: |
             set -eo pipefail
 
             /bin/blender-softwaregl --background --enable-autoexec --python /bender/launcher.py &
-            ${BLENDERPY} /bender/launcher_helper.py --generate --scene_dir /bender/scene
+            ${BLENDERPY} /bender/launcher_helper.py --generate --sim_dir /bender/sim
 
   tag:
     working_directory: ~/repo

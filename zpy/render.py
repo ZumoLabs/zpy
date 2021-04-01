@@ -239,7 +239,7 @@ def render_aov(
                 break
         _filename = f'blender-debug-scene-post-aov-{output_path.stem}.blend'
         _path = output_path.parent / _filename
-        zpy.blender.output_intermediate_scene(_path)
+        zpy.blender.save_debug_blenderfile(_path)
 
     # HACK: Rename image outputs due to stupid Blender reasons
     for style, output_path in render_outputs.items():

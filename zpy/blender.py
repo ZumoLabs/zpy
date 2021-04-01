@@ -82,7 +82,7 @@ def step(
     start_frame: int = 1,
     refresh_ui: bool = False,
 ) -> int:
-    """ Steps the scene forward (Blender frames).
+    """ Steps the sim forward (Blender frames).
 
     Args:
         num_steps (int, optional): Number of steps to take before the yield stops. Defaults to 16.
@@ -279,7 +279,7 @@ def connect_debugger_vscode(
             time.sleep(1)
 
 
-def output_intermediate_scene(
+def save_debug_blenderfile(
     path: Union[Path, str] = None,
 ) -> None:
     """ Saves an intermediate scene for debugging purposes.
@@ -355,7 +355,7 @@ def scene_information() -> Dict:
         ValueError: Lack of run text and issues with the run text.
 
     Returns:
-        Dict: Scene information dictionary.
+        Dict: Sim information dictionary.
     """
     log.info(f'Collecting scene information')
     run_script = bpy.data.texts.get('run', None)

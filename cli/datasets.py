@@ -8,30 +8,30 @@ import json
 log = logging.getLogger(__name__)
 
 
-def create_generated_dataset(name, scene_name, config, url, token):
+def create_generated_dataset(name, sim_name, config, url, token):
     """ create a dataset on ragnarok """
-    endpoint = f'{url}/api/v1/scenes/'
-    params = {'name': scene_name}
+    endpoint = f'{url}/api/v1/sims/'
+    params = {'name': sim_name}
     r = requests.get(endpoint, params=params, headers=auth_headers(token))
     if r.status_code != 200:
-        log.warning(f'unable to fetch scenes')
+        log.warning(f'unable to fetch sims')
         return
     response = json.loads(r.text)
     if response['count'] != 1:
-        log.warning(f'unable to find scene with name {scene_name}')
+        log.warning(f'unable to find sim with name {sim_name}')
         return
-    scene = response['results'][0]
+    sim = response['results'][0]
     endpoint = f'{url}/api/v1/generated-data-sets/'
     data = {
-        'scene': scene['id'],
+        'sim': sim['id'],
         'config': json.dumps(config),
         'name': name
     }
     r = requests.post(endpoint, data=data, headers=auth_headers(token))
     if r.status_code != 201:
-        log.warning(f'Unable to create dataset {name} for scene {scene_name} with config {config}')
+        log.warning(f'Unable to create dataset {name} for sim {sim_name} with config {config}')
         return
-    log.info(f'created dataset {name} for scene {scene_name} with config {config}')
+    log.info(f'created dataset {name} for sim {sim_name} with config {config}')
 
 
 def filter_dataset(dfilter, url, token):
