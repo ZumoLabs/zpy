@@ -1,5 +1,5 @@
 """
-    Base Saver object for storing annotations, categories, etc during scene runtime.
+    Base Saver object for storing annotations, categories, etc during sim runtime.
 """
 import logging
 from datetime import date

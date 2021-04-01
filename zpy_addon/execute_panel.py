@@ -25,10 +25,10 @@ class RunOperator(Operator):
 
     def execute(self, context):
         try:
-            # Save the state of the scene before the run script was executed
+            # Save the state of the sim before the run script was executed
             bpy.ops.wm.save_mainfile()
         except RuntimeError as e:
-            log.warning(f'When saving scene before run: {e}')
+            log.warning(f'When saving sim before run: {e}')
         try:
             zpy.blender.use_gpu()
             zpy.blender.parse_config('config')
@@ -36,10 +36,10 @@ class RunOperator(Operator):
         except Exception as e:
             log.error(f'Executing script failed with exception {e}')
         try:
-            # Return to the state of the scene before the run script was executed
+            # Return to the state of the sim before the run script was executed
             bpy.ops.wm.revert_mainfile()
         except RuntimeError as e:
-            log.warning(f'When saving scene before run: {e}')
+            log.warning(f'When saving sim before run: {e}')
         return {'FINISHED'}
 
 
@@ -53,7 +53,7 @@ class RenderOperator(Operator):
 
     @classmethod
     def poll(cls, context):
-        # TODO: Make sure scene is good to render?
+        # TODO: Make sure sim is good to render?
         return True
 
     def execute(self, context):

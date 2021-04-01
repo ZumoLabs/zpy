@@ -34,7 +34,7 @@ List Datasets : ```zpy list datasets```
 
 <p align="center"><img src="gif/listdataset.gif?raw=true"/></p>
 
-List Scenes : ```zpy list scenes```
+List Scenes : ```zpy list sims```
 
 <p align="center"><img src="gif/listscene.gif?raw=true"/></p>
 

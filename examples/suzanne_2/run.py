@@ -30,7 +30,7 @@ def run():
     zpy.objects.save_pose('Camera', "cam_pose")
     zpy.objects.save_pose('Suzanne', "suzanne_pose")
 
-    # Run the scene.
+    # Run the sim.
     for step_idx in zpy.blender.step():
 
         # Example logging
@@ -123,5 +123,5 @@ if __name__ == "__main__":
     # Parse the gin-config text block
     zpy.blender.parse_config('config')
 
-    # Run the scene
+    # Run the sim
     run()
