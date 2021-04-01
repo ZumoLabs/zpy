@@ -121,6 +121,7 @@ def make_aov_file_output_node(
 
     return fileout_node
 
+
 def hsv_node(
     node_tree: bpy.types.NodeTree,
     input_node: bpy.types.Node,
@@ -129,6 +130,15 @@ def hsv_node(
     hsv_node = zpy.nodes.get_or_make('HSV', 'CompositorNodeHueSat', node_tree)
     node_tree.links.new(input_node.outputs['Image'], hsv_node.inputs['Image'])
     return hsv_node
+
+
+def lens_dirt_node(
+    node_tree: bpy.types.NodeTree,
+    input_node: bpy.types.Node,
+) -> bpy.types.Node:
+    """ TODO: Add lens dirt effect to a compositor node. """
+    log.warn("NotImplemented: lens dirt ")
+    return input_node
 
 
 @gin.configurable
@@ -254,7 +264,7 @@ def default_render_settings(
     spatial_splits: bool = False
 ) -> None:
     """ Render settings for normal color images. 
-    
+
     Args:
         samples (int, optional): Number of Cycles samples per frame
         tile_size (int, optional): Rendering tile size in pixel dimensions
@@ -270,7 +280,7 @@ def default_render_settings(
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.use_denoising = False
     scene.cycles.denoiser = 'OPENIMAGEDENOISE'
-    
+
     scene.render.film_transparent = False
     scene.render.dither_intensity = 1.0
     scene.render.filter_size = 1.5
@@ -309,6 +319,7 @@ def default_render_settings(
     # scene.world.light_settings.use_ambient_occlusion = True
     # scene.world.light_settings.distance = 40
     # scene.world.light_settings.ao_factor = 0.5
+
 
 def segmentation_render_settings():
     """ Render settings for segmentation images. """
