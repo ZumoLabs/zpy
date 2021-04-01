@@ -5,7 +5,7 @@ jobs:
   test:
     working_directory: /bender/zpy
     environment:
-      SCENE_ID: daae77f9-3e6d-4190-9ef4-c25dcd336db8
+      SIM_ID: daae77f9-3e6d-4190-9ef4-c25dcd336db8
       ASSETS: /tmp
     docker:
       - image: zumolabs/bender:latest
@@ -20,7 +20,7 @@ jobs:
             apt-get update
             apt-get install -qy awscli
 
-            aws s3 cp s3://zumo-labs/prod/ragnarok-sims/$SCENE_ID.zip test.zip
+            aws s3 cp s3://zumo-labs/prod/ragnarok-sims/$SIM_ID.zip test.zip
             mkdir /bender/sim
             unzip test.zip -d /bender/sim
       - run:
