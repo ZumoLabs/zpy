@@ -35,20 +35,20 @@ def create_generated_dataset(name, scene_name, config, url, auth_headers):
     log.info(f'created dataset {name} for scene {scene_name} with config {config}')
 
 
-def filter_dataset(dfilter):
+@fetch_auth
+def filter_dataset(dfilter, url, auth_headers):
     """ filter dataset """
     dset = []
     field, pattern, regex = parse_dataset_filter(dfilter)
     endpoint = f'{url}/api/v1/uploaded-data-sets/'
-    dset.extend(filter_dataset_url(field, pattern, regex))
+    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, auth_headers))
     endpoint = f'{url}/api/v1/generated-data-sets/'
-    dset.extend(filter_dataset_url(field, pattern, regex))
+    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, auth_headers))
     endpoint = f'{url}/api/v1/job-data-sets/'
-    dset.extend(filter_dataset_url(field, pattern, regex))
+    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, auth_headers))
     return dset
 
 
-@fetch_auth
 def filter_dataset_url(field, pattern, regex, url, auth_headers):
     """ filter generated dataset """
     endpoint = f'{url}?{field}__{pattern}={regex}'
@@ -63,7 +63,7 @@ def filter_dataset_url(field, pattern, regex, url, auth_headers):
             names.append(d['name'])
             datasets.append(d['id'])
         endpoint = response['next']
-    log.info(f'filter <{endpoint}> found {names}')
+    log.info(f'filter <{url}> found {names}')
     return datasets
 
 
