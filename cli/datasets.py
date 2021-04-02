@@ -1,4 +1,4 @@
-from cli.utils import auth_headers, download_url, parse_dataset_filter
+from cli.utils import download_url, parse_dataset_filter, fetch_auth
 from zpy.files import to_pathlib_path
 from table_logger import TableLogger
 import requests
@@ -8,11 +8,12 @@ import json
 log = logging.getLogger(__name__)
 
 
-def create_generated_dataset(name, scene_name, config, url, token):
+@fetch_auth
+def create_generated_dataset(name, scene_name, config, url, auth_headers):
     """ create a dataset on ragnarok """
     endpoint = f'{url}/api/v1/scenes/'
     params = {'name': scene_name}
-    r = requests.get(endpoint, params=params, headers=auth_headers(token))
+    r = requests.get(endpoint, params=params, headers=auth_headers)
     if r.status_code != 200:
         log.warning(f'unable to fetch scenes')
         return
@@ -27,33 +28,33 @@ def create_generated_dataset(name, scene_name, config, url, token):
         'config': json.dumps(config),
         'name': name
     }
-    r = requests.post(endpoint, data=data, headers=auth_headers(token))
+    r = requests.post(endpoint, data=data, headers=auth_headers)
     if r.status_code != 201:
         log.warning(f'Unable to create dataset {name} for scene {scene_name} with config {config}')
         return
     log.info(f'created dataset {name} for scene {scene_name} with config {config}')
 
 
-def filter_dataset(dfilter, url, token):
+def filter_dataset(dfilter):
     """ filter dataset """
     dset = []
     field, pattern, regex = parse_dataset_filter(dfilter)
     endpoint = f'{url}/api/v1/uploaded-data-sets/'
-    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, token))
+    dset.extend(filter_dataset_url(field, pattern, regex))
     endpoint = f'{url}/api/v1/generated-data-sets/'
-    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, token))
-    # TODO figure out a way to have the user ask which set to query
+    dset.extend(filter_dataset_url(field, pattern, regex))
     endpoint = f'{url}/api/v1/job-data-sets/'
-    dset.extend(filter_dataset_url(field, pattern, regex, endpoint, token))
+    dset.extend(filter_dataset_url(field, pattern, regex))
     return dset
 
 
-def filter_dataset_url(field, pattern, regex, url, token):
+@fetch_auth
+def filter_dataset_url(field, pattern, regex, url, auth_headers):
     """ filter generated dataset """
     endpoint = f'{url}?{field}__{pattern}={regex}'
     datasets, names = [], []
     while endpoint is not None:
-        r = requests.get(endpoint, headers=auth_headers(token))
+        r = requests.get(endpoint, headers=auth_headers)
         if r.status_code != 200:
             log.warning(f"Unable to filter {endpoint}")
             return []
@@ -66,23 +67,25 @@ def filter_dataset_url(field, pattern, regex, url, token):
     return datasets
 
 
-def create_uploaded_dataset(name, path, url, token):
+@fetch_auth
+def create_uploaded_dataset(name, path, url, auth_headers):
     """ uploaded a dataset to ragnarok """
     endpoint = f'{url}/api/v1/uploaded-data-sets/'
     data = {'name': name}
     files = {'file': open(path, 'rb')}
-    r = requests.post(endpoint, data=data, headers=auth_headers(token), files=files)
+    r = requests.post(endpoint, data=data, headers=auth_headers, files=files)
     if r.status_code != 201:
         log.warning(f'unable to create dataset {name} from {path}')
         return
     log.info(f'created dataset {name} from {path}')
 
 
-def fetch_dataset(name, path, dataset_type, url, token):
+@fetch_auth
+def fetch_dataset(name, path, dataset_type, url, auth_headers):
     """ fetch a dataset from ragnarok """
     endpoint = f'{url}/api/v1/{dataset_type}-data-sets/'
     params = {'name': name}
-    r = requests.get(endpoint, params=params, headers=auth_headers(token))
+    r = requests.get(endpoint, params=params, headers=auth_headers)
     if r.status_code != 200:
         log.warning(f'Unable to fetch {dataset_type} datasets')
         return
@@ -92,7 +95,7 @@ def fetch_dataset(name, path, dataset_type, url, token):
         return
     dataset = response['results'][0]
     endpoint = f"{url}/api/v1/{dataset['dataset_type']}-data-sets/{dataset['id']}/download"
-    r = requests.get(endpoint, headers=auth_headers(token))
+    r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         log.warning(f"Unable to get download link for dataset {dataset['id']}")
         return
@@ -102,11 +105,11 @@ def fetch_dataset(name, path, dataset_type, url, token):
     download_url(response['redirect_link'], output_path)
 
 
-def fetch_datasets(endpoint, token):
+def fetch_datasets():
     """ fetch all datasets in ragnarok """
-    u_datasets = fetch_uploaded_datasets(endpoint, token)
-    g_datasets = fetch_generated_datasets(endpoint, token)
-    j_datasets = fetch_job_datasets(endpoint, token)
+    u_datasets = fetch_uploaded_datasets()
+    g_datasets = fetch_generated_datasets()
+    j_datasets = fetch_job_datasets()
     tbl = TableLogger(columns='state,type,name,timestamp,id',default_colwidth=30)
     for d in u_datasets:
         tbl(d['state'], 'UPLOADED', d['name'], d['created_at'], d['id'])
@@ -116,27 +119,30 @@ def fetch_datasets(endpoint, token):
         tbl(d['state'], 'JOB', d['name'], d['created_at'], d['id'])
 
 
-def fetch_uploaded_datasets(endpoint, token):
-    endpoint = f'{endpoint}/api/v1/uploaded-data-sets/'
-    r = requests.get(endpoint, headers=auth_headers(token))
+@fetch_auth
+def fetch_uploaded_datasets(url, auth_headers):
+    endpoint = f'{url}/api/v1/uploaded-data-sets/'
+    r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         log.warning('Unable to fetch uploaded datasets')
         return []
     return json.loads(r.text)['results']
 
 
-def fetch_generated_datasets(endpoint, token):
-    endpoint = f'{endpoint}/api/v1/generated-data-sets/'
-    r = requests.get(endpoint, headers=auth_headers(token))
+@fetch_auth
+def fetch_generated_datasets(url, auth_headers):
+    endpoint = f'{url}/api/v1/generated-data-sets/'
+    r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         log.warning('Unable to fetch generated datasets')
         return []
     return json.loads(r.text)['results']
 
 
-def fetch_job_datasets(endpoint, token):
-    endpoint = f'{endpoint}/api/v1/job-data-sets/'
-    r = requests.get(endpoint, headers=auth_headers(token))
+@fetch_auth
+def fetch_job_datasets(url, auth_headers):
+    endpoint = f'{url}/api/v1/job-data-sets/'
+    r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         log.warning('Unable to fetch job datasets')
         return []

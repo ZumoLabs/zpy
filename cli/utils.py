@@ -1,10 +1,12 @@
 from pathlib import Path
-from typing import Union
-import os
 from tqdm import tqdm
-from urllib.request import urlopen
+from typing import Union
 from urllib.parse import urlparse
+from urllib.request import urlopen
+from cli.config import read_config
+import functools
 import logging
+import os
 import random
 
 log = logging.getLogger(__name__)
@@ -61,3 +63,21 @@ def download_url(url, output_path):
 
 def auth_headers(token):
     return {'Authorization': 'token {}'.format(token)}
+
+
+def fetch_auth(func):
+    """ Decorator to fetch info for cli from config
+
+    Args:
+        func: function to wrap
+
+    Returns:
+        wrapped function
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        config = read_config()
+        endpoint = config['ENDPOINT']
+        auth_header = auth_headers(config['TOKEN'])
+        return func(*args, **kwargs, url=endpoint, auth_headers=auth_header)
+    return wrapper
