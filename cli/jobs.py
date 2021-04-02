@@ -11,7 +11,7 @@ def create_new_job(name, operation, config, datasets, url, token):
     """ create job on ragnarok """
     endpoint = f'{url}/api/v1/jobs/'
     data = {
-        'operation': operation,
+        'operation': operation.upper(),
         'name': name,
         'input_data_sets': datasets,
         'config': json.dumps(config)
