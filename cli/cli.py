@@ -7,6 +7,8 @@ from zpy.files import read_json, to_pathlib_path
 
 import logging
 import click
+from itertools import product
+from copy import deepcopy
 
 log = logging.getLogger(__name__)
 
@@ -65,20 +67,17 @@ def list():
 
 @list.command('datasets')
 def list_datasets():
-    config = read_config()
-    fetch_datasets(config['ENDPOINT'], config['TOKEN'])
+    fetch_datasets()
 
 
 @list.command('scenes')
 def list_scenes():
-    config = read_config()
-    fetch_scenes(config['ENDPOINT'], config['TOKEN'])
+    fetch_scenes()
 
 
 @list.command('jobs')
 def list_jobs():
-    config = read_config()
-    fetch_jobs(config['ENDPOINT'], config['TOKEN'])
+    fetch_jobs()
 
 
 ###########
@@ -97,24 +96,22 @@ def get():
 @click.argument('dtype', type=click.Choice(['job', 'generated', 'uploaded']))
 @click.argument('path')
 def get_dataset(name, dtype, path):
-    config = read_config()
     dir_path = to_pathlib_path(path)
     if not dir_path.exists():
         log.info(f'output path {dir_path} does not exist')
         return
-    fetch_dataset(name, path, dtype, config['ENDPOINT'], config['TOKEN'])
+    fetch_dataset(name, path, dtype)
 
 
 @get.command('scene')
 @click.argument('name')
 @click.argument('path')
 def get_scene(name, path):
-    config = read_config()
     dir_path = to_pathlib_path(path)
     if not dir_path.exists():
         log.info(f'output path {dir_path} does not exist')
         return
-    fetch_scene(name, path, config['ENDPOINT'], config['TOKEN'])
+    fetch_scene(name, path)
 
 ##############
 ### UPLOAD ###
@@ -130,28 +127,26 @@ def upload():
 @click.argument('name')
 @click.argument('path')
 def upload_scene(name, path):
-    config = read_config()
     input_path = to_pathlib_path(path)
     if not input_path.exists():
         log.warning(f'input path {input_path} does not exist')
         return
     if input_path.suffix != '.zip':
         log.warning(f'input path {input_path} not a zip file')
-    create_scene(name, path, config['ENDPOINT'], config['TOKEN'])
+    create_scene(name, path)
 
 
 @upload.command('dataset')
 @click.argument('name')
 @click.argument('path')
 def upload_dataset(name, path):
-    config = read_config()
     input_path = to_pathlib_path(path)
     if not input_path.exists():
         log.info(f'input path {input_path} does not exist')
         return
     if input_path.suffix != '.zip':
         log.warning(f'input path {input_path} not a zip file')
-    create_uploaded_dataset(name, path, config['ENDPOINT'], config['TOKEN'])
+    create_uploaded_dataset(name, path)
 
 
 ##############
@@ -170,28 +165,38 @@ def create():
 @click.argument('scene')
 @click.argument('args', nargs=-1)
 def create_dataset(name, scene, args):
-    config = read_config()
     dataset_config = parse_args(args)
-    create_generated_dataset(name, scene, dataset_config, config['ENDPOINT'], config['TOKEN'])
+    create_generated_dataset(name, scene, dataset_config)
 
 
 @create.command('job')
 @click.argument('name')
 @click.argument('operation')
-@click.option('datasets', '-d', multiple=True)
 @click.option('filters', '-f', multiple=True)
 @click.option('configfile', '-configfile')
+@click.option('sweepfile', '-sweepfile')
 @click.argument('args', nargs=-1)
-def create_job(name, operation, datasets, filters, configfile, args):
-    config = read_config()
+def create_job(name, operation, filters, configfile, sweepfile, args):
+    datasets_list = []
+    for dfilter in filters:
+        datasets_list.extend(filter_dataset(dfilter))
+
+    if sweepfile:
+        sweep_config = read_json(sweepfile)
+        bindings = sweep_config['gin_bindings']
+        for c, random_binding in enumerate([dict(zip(bindings, v)) for v in product(*bindings.values())]):
+            job_name = f'{name} {c}'
+            job_config = deepcopy(sweep_config)
+            job_config['gin_bindings'] = random_binding
+            create_new_job(job_name, operation, job_config, datasets_list)
+        return
+
     if configfile:
         job_config = read_json(configfile)
     else:
         job_config = parse_args(args)
-    datasets_list = [x for x in datasets]
-    for dfilter in filters:
-        datasets_list.extend(filter_dataset(dfilter, config['ENDPOINT'], config['TOKEN']))
-    create_new_job(name, operation, job_config, datasets_list, config['ENDPOINT'], config['TOKEN'])
+    create_new_job(name, operation, job_config, datasets_list)
+
 
 @create.command('sweep')
 @click.argument('name')
@@ -199,9 +204,8 @@ def create_job(name, operation, datasets, filters, configfile, args):
 @click.argument('number')
 @click.argument('args', nargs=-1)
 def create_sweep(name, scene, number, args):
-    config = read_config()
     dataset_config = parse_args(args)
     for i in range(int(number)):
         dataset_name = f'{name} seed{i}'
         dataset_config['seed'] = i
-        create_generated_dataset(dataset_name, scene, dataset_config, config['ENDPOINT'], config['TOKEN'])
+        create_generated_dataset(dataset_name, scene, dataset_config)

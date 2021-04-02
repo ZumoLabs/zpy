@@ -1,9 +1,9 @@
-import os
-import yaml
-import logging
 from requests.auth import HTTPBasicAuth
 from zpy.files import to_pathlib_path
+import logging
+import os
 import requests
+import yaml
 
 log = logging.getLogger(__name__)
 
