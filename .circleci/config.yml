@@ -8,7 +8,7 @@ jobs:
       SIM_ID: daae77f9-3e6d-4190-9ef4-c25dcd336db8
       ASSETS: /tmp
     docker:
-      - image: zumolabs/bender:latest
+      - image: zumolabs/bender:v2.0.0-rc0
         auth:
           username: nponte
           password: $DOCKERHUB_PASSWORD
