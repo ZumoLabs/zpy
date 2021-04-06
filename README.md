@@ -5,7 +5,7 @@
 **`zpy`: Synthetic data in Blender.**
 
 <p align="center">
-  <a href="https://zumolabs.ai/">Website</a> •
+  <a href="https://www.zumolabs.ai/?utm_source=github.com&utm_medium=referral&utm_campaign=zpy">Website</a> •
   <a href="#Install">Install</a> •
   <a href="#Documentation">Docs</a> •
   <a href="#Examples">Examples</a> •
