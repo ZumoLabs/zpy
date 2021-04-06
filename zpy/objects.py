@@ -339,7 +339,7 @@ def copy(
     obj_data=obj.data
     if is_copy:
         obj_data=obj.data.copy()
-    new_obj = bpy.data.objects.new(obj.name, obj.data)
+    new_obj = bpy.data.objects.new(obj.name, obj_data)
     if name is not None:
         new_obj.name = name
     if collection is not None:
