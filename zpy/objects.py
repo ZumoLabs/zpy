@@ -322,6 +322,7 @@ def copy(
     name: str = None,
     collection: bpy.types.Collection = None,
     is_library_object: bool = False,
+    is_copy: bool = True,
 ) -> bpy.types.Object:
     """ Create a copy of the object.
 
@@ -330,11 +331,14 @@ def copy(
         name (str, optional): New name for the copied object. Defaults to None.
         collection (bpy.types.Collection, optional): Optional collection to put new object inside of. Defaults to None.
         is_library_object (bool, optional): Whether object is part of a linked library. Defaults to False.
-
+        is_copy (bool, optional): Make a deep copy of the mesh data block
     Returns:
         bpy.types.Object: The newly created scene object.
     """
     obj = verify(obj)
+    obj_data=obj.data
+    if is_copy:
+        obj_data=obj.data.copy()
     new_obj = bpy.data.objects.new(obj.name, obj.data)
     if name is not None:
         new_obj.name = name
