@@ -31,8 +31,8 @@ jobs:
           command: |
             mkdir -p /tmp/lib/hdris/1k
             cp /bender/sim/textures/test_hdri.hdr /tmp/lib/hdris/1k/test_hdri.hdr
-            mkdir -p /tmp/lib/textures/random
-            cp /bender/sim/textures/test_texture.jpg /tmp/lib/textures/random/test_texture.jpg
+            mkdir -p /tmp/lib/textures/random_512p
+            cp /bender/sim/textures/test_texture.jpg /tmp/lib/textures/random_512p/test_texture.jpg
       - run:
           name: run test sim
           command: |
