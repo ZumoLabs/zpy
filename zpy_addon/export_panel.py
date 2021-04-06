@@ -17,12 +17,12 @@ if "bpy" in locals():
 
 def registerSceneProperties():
     """ Properties applied to scenes."""
-    bpy.types.Scene.zpy_scene_name = bpy.props.StringProperty(
+    bpy.types.Scene.zpy_sim_name = bpy.props.StringProperty(
         name="Sim Name",
         description="Name of the scene, must match data portal.",
         default="default",
     )
-    bpy.types.Scene.zpy_scene_version = bpy.props.StringProperty(
+    bpy.types.Scene.zpy_sim_version = bpy.props.StringProperty(
         name="Sim Version",
         description="Version of the scene, must match data portal.",
         default="0",
@@ -55,8 +55,8 @@ class OpenExportDirOperator(bpy.types.Operator):
 
 
 class CleanUpDirOperator(bpy.types.Operator):
-    """ Clean up and package scene into export dir. """
-    bl_idname = "scene.zpy_cleanup_scene"
+    """ Clean up and package sim into export dir. """
+    bl_idname = "scene.zpy_cleanup_sim"
     bl_label = "Clean Up Export Dir"
     bl_description = "Clean up export dir."
     bl_category = "ZPY"
@@ -75,10 +75,10 @@ class CleanUpDirOperator(bpy.types.Operator):
 
 
 class ExportOperator(bpy.types.Operator):
-    """ Export scene for ingest to Data Portal. """
-    bl_idname = "scene.zpy_export_scene"
-    bl_label = "Export scene"
-    bl_description = "Export scene for ingest to Data Portal."
+    """ Export sim for ingest to Data Portal. """
+    bl_idname = "scene.zpy_export_sim"
+    bl_label = "Export sim"
+    bl_description = "Export sim for ingest to Data Portal."
     bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
@@ -88,10 +88,10 @@ class ExportOperator(bpy.types.Operator):
         bpy.context.window_manager.progress_begin(0, 100)
 
         # Clean scene before every export
-        bpy.ops.scene.zpy_cleanup_scene()
+        bpy.ops.scene.zpy_cleanup_sim()
 
         # Create export directory in the Blender filepath
-        export_dir_name = f'{context.scene.zpy_scene_name}_v{context.scene.zpy_scene_version}'
+        export_dir_name = f'{context.scene.zpy_sim_name}_v{context.scene.zpy_sim_version}'
         export_path = Path(context.scene.zpy_export_dir) / export_dir_name
         zpy.files.verify_path(export_path, make=True)
 
@@ -140,7 +140,7 @@ class ExportOperator(bpy.types.Operator):
         # TODO: Export glTF into zip directory
 
         # Clean up scene before zipping up
-        bpy.ops.scene.zpy_cleanup_scene()
+        bpy.ops.scene.zpy_cleanup_sim()
 
         # Zip up the exported directory for easy upload
         log.info('Export Step 4 of 4: Zipping up package.')
@@ -170,14 +170,14 @@ class SCENE_PT_ExportPanel(bpy.types.Panel):
         scene = context.scene
         row = layout.row()
         row.operator(
-            'scene.zpy_export_scene',
+            'scene.zpy_export_sim',
             text='Export Sim',
             icon='EXPORT',
         )
         row = layout.row()
-        row.prop(scene, "zpy_scene_name", text="Name")
+        row.prop(scene, "zpy_sim_name", text="Name")
         row = layout.row()
-        row.prop(scene, "zpy_scene_version", text="Version")
+        row.prop(scene, "zpy_sim_version", text="Version")
         row = layout.row()
         row.label(text="Export Path")
         row = layout.row()
@@ -189,7 +189,7 @@ class SCENE_PT_ExportPanel(bpy.types.Panel):
             icon='FILEBROWSER',
         )
         row.operator(
-            'scene.zpy_cleanup_scene',
+            'scene.zpy_cleanup_sim',
             text='Clean',
             icon='PACKAGE',
         )
