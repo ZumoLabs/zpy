@@ -1,9 +1,10 @@
 """
     Logging utilities.
 """
-import logging
-from typing import List, Union
 from pathlib import Path
+from typing import List, Union
+import logging
+import shutil
 
 log = logging.getLogger(__name__)
 
@@ -105,6 +106,7 @@ def  save_log_files(
         log_dir: directory where logs exist
     """
     for log in ['info.log', 'debug.log', 'error.log']:
-        log_file = Path(log_dir) / log
-        if log_file.exists():
-            log_file.rename(f"{output_dir}/{log}")
+        src = Path(log_dir) / log
+        dst = Path(output_dir) / log
+        if src.exists():
+            shutil.copy(src, dst)
