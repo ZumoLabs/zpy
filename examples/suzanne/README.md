@@ -2,8 +2,8 @@
 
 Welcome to the first `zpy` tutorial! In this tutorial we will introduce the following concepts:
 
-- Create a Blender scene
-- Script the scene with python and zpy
+- Create a Blender sim
+- Script the sim with python and zpy
 - Generate synthetic data
 
 # Video

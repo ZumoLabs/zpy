@@ -172,7 +172,7 @@ def jitter(
 
 @gin.configurable
 def random_texture_mat(
-    texture_dir: Union[Path, str] = 'lib/textures/random',
+    texture_dir: Union[Path, str] = 'lib/textures/random_512p',
     relative_to_assets_dir: bool = True,
 ) -> bpy.types.Material:
     """ Generate a random material from a directory of random texture images.

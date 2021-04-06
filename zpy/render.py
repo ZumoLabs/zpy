@@ -231,15 +231,15 @@ def render_aov(
         segmentation_render_settings()
         _render()
 
-    # Save intermediate scene
+    # Save intermediate blenderfile
     if log.getEffectiveLevel() == logging.DEBUG:
         # HACK: Use whatever output path is not None
         for style, output_path in render_outputs.items():
             if output_path is not None:
                 break
-        _filename = f'blender-debug-scene-post-aov-{output_path.stem}.blend'
+        _filename = f'blender-debug-post-{output_path.stem}.blend'
         _path = output_path.parent / _filename
-        zpy.blender.output_intermediate_scene(_path)
+        zpy.blender.save_debug_blenderfile(_path)
 
     # HACK: Rename image outputs due to stupid Blender reasons
     for style, output_path in render_outputs.items():

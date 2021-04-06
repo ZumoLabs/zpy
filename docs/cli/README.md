@@ -34,9 +34,9 @@ List Datasets : ```zpy list datasets```
 
 <p align="center"><img src="gif/listdataset.gif?raw=true"/></p>
 
-List Scenes : ```zpy list scenes```
+List Sims : ```zpy list sims```
 
-<p align="center"><img src="gif/listscene.gif?raw=true"/></p>
+<p align="center"><img src="gif/listsim.gif?raw=true"/></p>
 
 List Jobs : ```zpy list jobs```
 
@@ -48,15 +48,15 @@ Download Dataset : ```zpy get dataset <name> <dataset_type> /output/directory```
 
 <p align="center"><img src="gif/getdataset.gif?raw=true"/></p>
 
-Download Scene : ```zpy get scene <name> /output/directory```
+Download Sim : ```zpy get sim <name> /output/directory```
 
-<p align="center"><img src="gif/getscene.gif?raw=true"/></p>
+<p align="center"><img src="gif/getsim.gif?raw=true"/></p>
 
 ## Upload
 
-Upload Scene : ```zpy upload scene <name> /path/to/scene```
+Upload Sim : ```zpy upload sim <name> /path/to/sim```
 
-<p align="center"><img src="gif/uploadscene.gif?raw=true"/></p>
+<p align="center"><img src="gif/uploadsim.gif?raw=true"/></p>
 
 Upload Dataset : ```zpy upload dataset <name> /path/to/dataset```
 
@@ -64,11 +64,11 @@ Upload Dataset : ```zpy upload dataset <name> /path/to/dataset```
 
 ## Create
 
-Create Dataset : ```zpy create dataset <name> <scene_name> kwargs```
+Create Dataset : ```zpy create dataset <name> <sim_name> kwargs```
 
 <p align="center"><img src="gif/createdataset.gif?raw=true"/></p>
 
-Create Sweep : ```zpy create sweep <name> <scene_name> <number_of_datasets> kwargs```
+Create Sweep : ```zpy create sweep <name> <sim_name> <number_of_datasets> kwargs```
 
 <p align="center"><img src="gif/createsweep.gif?raw=true"/></p>
 

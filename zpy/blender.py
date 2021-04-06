@@ -82,7 +82,7 @@ def step(
     start_frame: int = 1,
     refresh_ui: bool = False,
 ) -> int:
-    """ Steps the scene forward (Blender frames).
+    """ Steps the sim forward (Blender frames).
 
     Args:
         num_steps (int, optional): Number of steps to take before the yield stops. Defaults to 16.
@@ -279,10 +279,10 @@ def connect_debugger_vscode(
             time.sleep(1)
 
 
-def output_intermediate_scene(
+def save_debug_blenderfile(
     path: Union[Path, str] = None,
 ) -> None:
-    """ Saves an intermediate scene for debugging purposes.
+    """ Saves an intermediate blenderfile for debugging purposes.
 
     Args:
         path (Union[Path, str], optional): Output directory path.
@@ -290,7 +290,7 @@ def output_intermediate_scene(
     if path is None:
         path = zpy.files.default_temp_path() / 'blender-debug-scene-tmp.blend'
     path = zpy.files.verify_path(path, make=False)
-    log.debug(f'Saving intermediate scene to {path}')
+    log.debug(f'Saving intermediate blenderfile to {path}')
     bpy.ops.wm.save_as_mainfile(filepath=str(path), compress=False, copy=True)
 
 
@@ -305,11 +305,11 @@ def refresh_blender_ui() -> None:
     view_layer.update()
 
 
-def load_scene(
+def load_sim(
     path: Union[Path, str],
     auto_execute_scripts: bool = True,
 ) -> None:
-    """ Load a scene from a path to a *.blend file.
+    """ Load a sim from a path to a *.blend file.
 
     Args:
         path (Union[Path, str]): Path to .blend file.
@@ -318,7 +318,7 @@ def load_scene(
     # HACK: Clear out scene of cameras and lights
     clear_scene(['CAMERA', 'LIGHT'])
     path = zpy.files.verify_path(path, make=False)
-    log.debug(f'Loading scene from {str(path)}.')
+    log.debug(f'Loading sim from {str(path)}.')
     with bpy.data.libraries.load(str(path)) as (data_from, data_to):
         for attr in dir(data_to):
             setattr(data_to, attr, getattr(data_from, attr))
@@ -327,7 +327,7 @@ def load_scene(
     # HACK: Delete extra workspaces that are created e.g. 'Animation.001'
     _workspaces = [ws for ws in bpy.data.workspaces if '.0' in ws.name]
     bpy.data.batch_remove(ids=_workspaces)
-    # Allow execution of scripts inside loaded scene
+    # Allow execution of scripts inside loaded sim
     if auto_execute_scripts:
         log.warning('Allowing .blend file to run scripts automatically')
         log.warning('   this is unsafe for untrusted files')
@@ -355,7 +355,7 @@ def scene_information() -> Dict:
         ValueError: Lack of run text and issues with the run text.
 
     Returns:
-        Dict: Scene information dictionary.
+        Dict: Sim information dictionary.
     """
     log.info(f'Collecting scene information')
     run_script = bpy.data.texts.get('run', None)
@@ -385,8 +385,8 @@ def scene_information() -> Dict:
 
     scene = zpy.blender.verify_blender_scene()
     _ = {
-        'name': scene.zpy_scene_name,
-        'version': scene.zpy_scene_version,
+        'name': scene.zpy_sim_name,
+        'version': scene.zpy_sim_version,
         'description': scene_doc,
         'run_kwargs': run_kwargs,
         'export_date':  time.strftime("%m%d%Y_%H%M_%S"),

@@ -1,14 +1,16 @@
-from cli.config import login, initialize_config, switch_env, read_config
-from cli.datasets import fetch_datasets, fetch_dataset, create_uploaded_dataset, create_generated_dataset, filter_dataset
-from cli.scenes import fetch_scenes, fetch_scene, create_scene
-from cli.jobs import fetch_jobs, create_new_job
-from cli.utils import parse_args
+import logging
+from copy import deepcopy
+from itertools import product
+
+import click
 from zpy.files import read_json, to_pathlib_path
 
-import logging
-import click
-from itertools import product
-from copy import deepcopy
+from cli.config import initialize_config, login, read_config, switch_env
+from cli.datasets import (create_generated_dataset, create_uploaded_dataset,
+                          fetch_dataset, fetch_datasets, filter_dataset)
+from cli.jobs import create_new_job, fetch_jobs
+from cli.sims import create_sim, fetch_sim, fetch_sims
+from cli.utils import parse_args
 
 log = logging.getLogger(__name__)
 
@@ -70,9 +72,9 @@ def list_datasets():
     fetch_datasets()
 
 
-@list.command('scenes')
-def list_scenes():
-    fetch_scenes()
+@list.command('sims')
+def list_sims():
+    fetch_sims()
 
 
 @list.command('jobs')
@@ -103,19 +105,20 @@ def get_dataset(name, dtype, path):
     fetch_dataset(name, path, dtype)
 
 
-@get.command('scene')
+@get.command('sim')
 @click.argument('name')
 @click.argument('path')
-def get_scene(name, path):
+def get_sim(name, path):
     dir_path = to_pathlib_path(path)
     if not dir_path.exists():
         log.info(f'output path {dir_path} does not exist')
         return
-    fetch_scene(name, path)
+    fetch_sim(name, path)
 
 ##############
 ### UPLOAD ###
 ##############
+
 
 @cli.group()
 def upload():
@@ -123,17 +126,17 @@ def upload():
     pass
 
 
-@upload.command('scene')
+@upload.command('sim')
 @click.argument('name')
 @click.argument('path')
-def upload_scene(name, path):
+def upload_sim(name, path):
     input_path = to_pathlib_path(path)
     if not input_path.exists():
         log.warning(f'input path {input_path} does not exist')
         return
     if input_path.suffix != '.zip':
         log.warning(f'input path {input_path} not a zip file')
-    create_scene(name, path)
+    create_sim(name, path)
 
 
 @upload.command('dataset')
@@ -162,11 +165,11 @@ def create():
 
 @create.command('dataset')
 @click.argument('name')
-@click.argument('scene')
+@click.argument('sim')
 @click.argument('args', nargs=-1)
-def create_dataset(name, scene, args):
+def create_dataset(name, sim, args):
     dataset_config = parse_args(args)
-    create_generated_dataset(name, scene, dataset_config)
+    create_generated_dataset(name, sim, dataset_config)
 
 
 @create.command('job')
@@ -200,12 +203,12 @@ def create_job(name, operation, filters, configfile, sweepfile, args):
 
 @create.command('sweep')
 @click.argument('name')
-@click.argument('scene')
+@click.argument('sim')
 @click.argument('number')
 @click.argument('args', nargs=-1)
-def create_sweep(name, scene, number, args):
+def create_sweep(name, sim, number, args):
     dataset_config = parse_args(args)
     for i in range(int(number)):
         dataset_name = f'{name} seed{i}'
         dataset_config['seed'] = i
-        create_generated_dataset(dataset_name, scene, dataset_config)
+        create_generated_dataset(dataset_name, sim, dataset_config)

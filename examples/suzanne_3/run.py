@@ -1,4 +1,4 @@
-""" Suzanne Tutorial Scene: Part 3. """
+""" Suzanne Tutorial Sim: Part 3. """
 
 import logging
 import math
@@ -35,7 +35,7 @@ def run():
     # Set the asset directory (location of textures and hdris)
     os.environ['ASSETS'] = str(Path(bpy.data.filepath).parent)
 
-    # Run the scene.
+    # Run the sim.
     for step_idx in zpy.blender.step():
 
         # Example logging
@@ -151,5 +151,5 @@ if __name__ == "__main__":
     # Parse the gin-config text block
     zpy.blender.parse_config('config')
 
-    # Run the scene
+    # Run the sim
     run()

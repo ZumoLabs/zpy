@@ -1,4 +1,4 @@
-""" Suzanne Tutorial Scene. """
+""" Suzanne Tutorial Sim. """
 
 import bpy
 import zpy
@@ -20,7 +20,7 @@ def run(num_images: int = 5):
     # Segment Suzzanne (make sure a material exists for the object!)
     zpy.objects.segment('Suzanne', color=suzanne_seg_color)
 
-    # Run the scene.
+    # Run the sim.
     for step_idx in zpy.blender.step(num_steps=num_images):
 
         # Name for each of the output images
@@ -74,5 +74,5 @@ def run(num_images: int = 5):
 
 if __name__ == "__main__":
 
-    # Run the scene
+    # Run the sim
     run()

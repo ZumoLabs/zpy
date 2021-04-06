@@ -28,7 +28,7 @@
 
 ## Abstract
 
-Collecting, labeling, and cleaning data for computer vision is a pain. Jump into the future and create your own data instead! Synthetic data is faster to develop with, effectively infinite, and gives you full control to prevent bias and privacy issues from creeping in. We created `zpy` to make synthetic data easy, by simplifying the scene creation process and providing an easy way to generate synthetic data at scale.
+Collecting, labeling, and cleaning data for computer vision is a pain. Jump into the future and create your own data instead! Synthetic data is faster to develop with, effectively infinite, and gives you full control to prevent bias and privacy issues from creeping in. We created `zpy` to make synthetic data easy, by simplifying the simulation (sim) creation process and providing an easy way to generate synthetic data at scale.
 
 ## Install
 
@@ -78,7 +78,7 @@ More documentation can be found [here](https://zumo-zpy.readthedocs.io/en/latest
 - [Suzanne: Part 1](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne)
 - [Suzanne: Part 2](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_2)
 - [Suzanne: Part 3](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_3)
-- [Uploading a Scene](https://github.com/ZumoLabs/zpy/tree/main/examples/uploading_a_scene)
+- [Uploading a Sim](https://github.com/ZumoLabs/zpy/tree/main/examples/uploading_a_sim)
 
 **Projects**
 - [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)

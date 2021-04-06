@@ -18,17 +18,17 @@ if "bpy" in locals():
 class RunOperator(Operator):
     """ Launch the run script in Blender's texts. """
     bl_idname = "scene.zpy_run"
-    bl_label = "Run"
+    bl_label = "Run Sim"
     bl_description = "Launch the run script in Blender's texts."
     bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
         try:
-            # Save the state of the scene before the run script was executed
+            # Save the state of the sim before the run script was executed
             bpy.ops.wm.save_mainfile()
         except RuntimeError as e:
-            log.warning(f'When saving scene before run: {e}')
+            log.warning(f'When saving sim before run: {e}')
         try:
             zpy.blender.use_gpu()
             zpy.blender.parse_config('config')
@@ -36,24 +36,24 @@ class RunOperator(Operator):
         except Exception as e:
             log.error(f'Executing script failed with exception {e}')
         try:
-            # Return to the state of the scene before the run script was executed
+            # Return to the state of the sim before the run script was executed
             bpy.ops.wm.revert_mainfile()
         except RuntimeError as e:
-            log.warning(f'When saving scene before run: {e}')
+            log.warning(f'When saving sim before run: {e}')
         return {'FINISHED'}
 
 
 class RenderOperator(Operator):
     """ Render out single image (rgb, segmented, depth). """
     bl_idname = "scene.zpy_render"
-    bl_label = "Render"
+    bl_label = "Render Frame"
     bl_description = "Render out segmented images."
     bl_category = "ZPY"
     bl_options = {'REGISTER'}
 
     @classmethod
     def poll(cls, context):
-        # TODO: Make sure scene is good to render?
+        # TODO: Make sure sim is good to render?
         return True
 
     def execute(self, context):

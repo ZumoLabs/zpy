@@ -1,3 +1,3 @@
-# Uploading a Scene
+# Uploading a Sim
 
 *Coming Soon!*
