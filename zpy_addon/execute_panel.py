@@ -18,7 +18,7 @@ if "bpy" in locals():
 class RunOperator(Operator):
     """ Launch the run script in Blender's texts. """
     bl_idname = "scene.zpy_run"
-    bl_label = "Run"
+    bl_label = "Run Sim"
     bl_description = "Launch the run script in Blender's texts."
     bl_category = "ZPY"
     bl_options = {'REGISTER'}
@@ -46,7 +46,7 @@ class RunOperator(Operator):
 class RenderOperator(Operator):
     """ Render out single image (rgb, segmented, depth). """
     bl_idname = "scene.zpy_render"
-    bl_label = "Render"
+    bl_label = "Render Frame"
     bl_description = "Render out segmented images."
     bl_category = "ZPY"
     bl_options = {'REGISTER'}
