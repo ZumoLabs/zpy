@@ -261,7 +261,8 @@ def _mute_aov_file_output_node(style: str, mute: bool = True):
 def default_render_settings(
     samples: int = 96,
     tile_size: int = 48,
-    spatial_splits: bool = False
+    spatial_splits: bool = False,
+    is_aggressive: bool = False
 ) -> None:
     """ Render settings for normal color images. 
 
@@ -269,6 +270,7 @@ def default_render_settings(
         samples (int, optional): Number of Cycles samples per frame
         tile_size (int, optional): Rendering tile size in pixel dimensions
         spatial_splits (bool, optional): Toogle for BVH split acceleration
+        is_aggressive (bool, optional): Toogles aggressive render time reduction settings
     """
     scene = zpy.blender.verify_blender_scene()
     # Make sure engine is set to Cycles
@@ -313,12 +315,12 @@ def default_render_settings(
     scene.cycles.debug_use_spatial_splits = spatial_splits
     scene.render.use_persistent_data = True
 
-    # Agressive settings
-    # render.use_simplify = True
-    # scene.cycles.ao_bounces_render = 1
-    # scene.world.light_settings.use_ambient_occlusion = True
-    # scene.world.light_settings.distance = 40
-    # scene.world.light_settings.ao_factor = 0.5
+    if is_aggressive:
+        scene.render.use_simplify = True
+        scene.cycles.ao_bounces_render = 1
+        scene.world.light_settings.use_ambient_occlusion = True
+        scene.world.light_settings.distance = 40
+        scene.world.light_settings.ao_factor = 0.5
 
 
 def segmentation_render_settings():

@@ -39,6 +39,33 @@ def verify(
     return mat
 
 
+def for_mat_in_obj(
+    obj: Union[bpy.types.Object, str],
+) -> bpy.types.Material:
+    """ Yield materials in scene object.
+
+    Args:
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name)
+
+    Raises:
+        ValueError: [description]
+
+    Returns:
+        bpy.types.Material: Material object.
+    """
+    obj = zpy.objects.verify(obj)
+    if len(obj.material_slots) > 1:
+        for mat in obj.material_slots:
+            yield mat.material
+    else:
+        if obj.active_material is not None:
+            return obj.active_material
+        else:
+            log.debug(
+                f'No active material or material slots found for {obj.name}')
+            return None
+
+
 _SAVED_MATERIALS = {}
 
 
@@ -146,7 +173,7 @@ def jitter(
 @gin.configurable
 def random_texture_mat(
     texture_dir: Union[Path, str] = 'lib/textures/random',
-    relative_to_assets_dir : bool = True,
+    relative_to_assets_dir: bool = True,
 ) -> bpy.types.Material:
     """ Generate a random material from a directory of random texture images.
 
@@ -321,7 +348,8 @@ def make_aov_material_output_node(
         tree = mat.node_tree
 
         # Vertex Color Node
-        vcol_node = zpy.nodes.get_or_make(f'{style} Vertex Color', 'ShaderNodeVertexColor', tree)
+        vcol_node = zpy.nodes.get_or_make(
+            f'{style} Vertex Color', 'ShaderNodeVertexColor', tree)
         vcol_node.layer_name = style
 
         # AOV Output Node
