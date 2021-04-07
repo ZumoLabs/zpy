@@ -191,7 +191,7 @@ def render_aov(
                 output_node.format.color_depth = '8'
                 output_node.format.view_settings.view_transform = 'Filmic'
                 if hsv is not None:
-                    hsv_node = scene.node_tree.nodes.get('hsv', None)
+                    hsv_node = scene.node_tree.nodes.get('HSV', None)
                     if hsv_node is not None:
                         hsv_node.inputs[1].default_value = max(
                             0, min(hsv[0], 1))
