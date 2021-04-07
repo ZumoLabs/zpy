@@ -230,7 +230,7 @@ def make_mat_from_texture(
     tex_node.image = bpy.data.images[texture_path.name]
     tex_node.image.colorspace_settings.name = 'Filmic Log'
     mat.node_tree.links.new(tex_node.outputs[0], bsdf_node.inputs[0])
-    mat.node_tree.links.new(coord_node.outputs[0], tex_node.inputs[0])
+    mat.node_tree.links.new(coord_node.outputs[2], tex_node.inputs[0])
     mat.node_tree.links.new(out_node.inputs[0], bsdf_node.outputs[0])
     tex_node.image.reload()
     return mat
