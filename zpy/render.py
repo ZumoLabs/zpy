@@ -258,6 +258,7 @@ def _mute_aov_file_output_node(style: str, mute: bool = True):
         node.mute = mute
 
 
+@gin.configurable
 def default_render_settings(
     samples: int = 96,
     tile_size: int = 48,
@@ -316,6 +317,14 @@ def default_render_settings(
     scene.render.use_persistent_data = True
 
     if is_aggressive:
+        scene.cycles.samples = 64
+        
+        scene.cycles.max_bounces = 8
+        scene.cycles.diffuse_bounces = 2
+        scene.cycles.glossy_bounces = 2
+        scene.cycles.transparent_max_bounces = 2
+        scene.cycles.transmission_bounces = 4
+        
         scene.render.use_simplify = True
         scene.cycles.ao_bounces_render = 1
         scene.world.light_settings.use_ambient_occlusion = True
