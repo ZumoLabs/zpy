@@ -3,6 +3,7 @@
 """
 import logging
 import os
+import copy
 import random
 from pathlib import Path
 from typing import Tuple, Union
@@ -139,9 +140,9 @@ def set_mat_props(
     if bsdf_node is None:
         log.warning(f'No BSDF node in {mat.name}')
         return
-    bsdf_node.inputs['Roughness'].default_value += prop_tuple[0]
-    bsdf_node.inputs['Metallic'].default_value += prop_tuple[1]
-    bsdf_node.inputs['Specular'].default_value += prop_tuple[2]
+    bsdf_node.inputs['Roughness'].default_value = copy.copy(prop_tuple[0])
+    bsdf_node.inputs['Metallic'].default_value = copy.copy(prop_tuple[1])
+    bsdf_node.inputs['Specular'].default_value = copy.copy(prop_tuple[2])
 
 
 @gin.configurable
