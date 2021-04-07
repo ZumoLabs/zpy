@@ -108,5 +108,5 @@ def  save_log_files(
     for log in ['info.log', 'debug.log', 'error.log']:
         src = Path(log_dir) / log
         dst = Path(output_dir) / log
-        if src.exists():
+        if src.exists() and src != dst:
             shutil.copy(src, dst)
