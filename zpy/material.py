@@ -182,7 +182,7 @@ def random_texture_mat(
     Args:
         texture_dir (Union[Path, str], optional): Path to directory with texture images.
         relative_to_assets_dir (bool, optional): Path is relative to the $ASSETS directory. Defaults to False.
-        coordinate (str, optional): type of the texture coordinates. Values are "generated", "normal", "uv", "object" 
+        coordinate (str, optional): Type of the texture coordinates. Values are "generated", "normal", "uv", "object" 
 
     Returns:
         bpy.types.Material: The newly created material.
@@ -212,7 +212,7 @@ def make_mat_from_texture(
     Args:
         texture_path (Union[Path, str]): Path to texture image.
         name (str, optional): Name of new material.
-        coord_type (str, optional): type of the texture coordinates. Values are "generated", "normal", "uv", "object" , defaults to "uv"
+        coord_type (str, optional): Type of the texture coordinates. Values are "generated", "normal", "uv", "object" , defaults to "uv"
 
     Returns:
         bpy.types.Material: The newly created material.
