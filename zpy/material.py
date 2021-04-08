@@ -175,12 +175,14 @@ def jitter(
 def random_texture_mat(
     texture_dir: Union[Path, str] = 'lib/textures/random_512p',
     relative_to_assets_dir: bool = True,
+    coordinate: str = "uv",
 ) -> bpy.types.Material:
     """ Generate a random material from a directory of random texture images.
 
     Args:
         texture_dir (Union[Path, str], optional): Path to directory with texture images.
         relative_to_assets_dir (bool, optional): Path is relative to the $ASSETS directory. Defaults to False.
+        coordinate (str, optional): type of the texture coordinates. Values are "generated", "normal", "uv", "object" 
 
     Returns:
         bpy.types.Material: The newly created material.
@@ -196,23 +198,36 @@ def random_texture_mat(
     texture_path = random.choice(texture_paths)
     log.info(f'Found {len(texture_paths)} Textures at {texture_dir}')
     log.info(f'Randomly picked {texture_path.stem}')
-    return make_mat_from_texture(texture_path, name=texture_path.stem)
+    return make_mat_from_texture(texture_path, name=texture_path.stem, coord_type=coordinate)
 
 
 @gin.configurable
 def make_mat_from_texture(
     texture_path: Union[Path, str],
     name: str = None,
+    coord_type: str = "uv",
 ) -> bpy.types.Material:
     """ Makes a material from a texture image.
 
     Args:
         texture_path (Union[Path, str]): Path to texture image.
         name (str, optional): Name of new material.
+        coord_type (str, optional): type of the texture coordinates. Values are "generated", "normal", "uv", "object" , defaults to "uv"
 
     Returns:
         bpy.types.Material: The newly created material.
     """
+
+    # tex_coord=["generated", "normal", "uv", "object"]
+    # [(i,u) for (i,u) in enumerate(tex_coord) if coord_type in u]
+    tex_coord = [(i,u) for (i,u) in enumerate(["generated", "normal", "uv", "object"]) if coord_type in u]
+    
+    if tex_coord:
+        coord = tex_coord[-1][0]
+    else:
+        log.info(f'defaulting to uv coordinates')
+        coord=2
+    
     texture_path = zpy.files.verify_path(texture_path, make=False)
     if name is None:
         name = texture_path.stem
@@ -230,7 +245,7 @@ def make_mat_from_texture(
     tex_node.image = bpy.data.images[texture_path.name]
     tex_node.image.colorspace_settings.name = 'Filmic Log'
     mat.node_tree.links.new(tex_node.outputs[0], bsdf_node.inputs[0])
-    mat.node_tree.links.new(coord_node.outputs[2], tex_node.inputs[0])
+    mat.node_tree.links.new(coord_node.outputs[coord], tex_node.inputs[0])
     mat.node_tree.links.new(out_node.inputs[0], bsdf_node.outputs[0])
     tex_node.image.reload()
     return mat
