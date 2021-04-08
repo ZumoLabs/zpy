@@ -217,17 +217,12 @@ def make_mat_from_texture(
     Returns:
         bpy.types.Material: The newly created material.
     """
-
-    # tex_coord=["generated", "normal", "uv", "object"]
-    # [(i,u) for (i,u) in enumerate(tex_coord) if coord_type in u]
     tex_coord = [(i,u) for (i,u) in enumerate(["generated", "normal", "uv", "object"]) if coord_type in u]
-    
     if tex_coord:
         coord = tex_coord[-1][0]
     else:
-        log.info(f'defaulting to uv coordinates')
+        log.info(f'defaulting to the uv coordinates')
         coord=2
-    
     texture_path = zpy.files.verify_path(texture_path, make=False)
     if name is None:
         name = texture_path.stem
