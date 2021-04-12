@@ -3,6 +3,7 @@
 """
 from pathlib import Path
 from typing import List, Union
+import numpy as np
 import logging
 import shutil
 
@@ -95,7 +96,7 @@ def setup_file_handlers(
         root.addHandler(debug_fh)
 
 
-def  save_log_files(
+def save_log_files(
     output_dir: Union[str, Path],
     log_dir: Union[str, Path] = '/tmp',
 ) -> None:
@@ -110,3 +111,27 @@ def  save_log_files(
         dst = Path(output_dir) / log
         if src.exists() and src != dst:
             shutil.copy(src, dst)
+
+
+def parse_log_file(
+    log_file: Union[str, Path]
+) -> None:
+    import re
+    step_times, render_times = [], []
+    with open(log_file, 'r') as f:
+        render_in_step = []
+        for l in f.readlines():
+            seconds = re.search('\d+\.\d+(?=s)', l)
+            if l.startswith('Rendering took'):
+                render_in_step.append(float(seconds.group(0)))
+            elif l.startswith('Simulation step took'):
+                render_times.append(render_in_step)
+                render_in_step = []
+                step_times.append(float(seconds.group(0)))
+
+    return {
+        'avg_step_time': sum(step_times) / len(step_times),
+        'avg_render_time': [v / len(render_times) for v in np.sum(render_times, axis=0)],
+        'step_times': step_times,
+        'render_times': render_times,
+    }
