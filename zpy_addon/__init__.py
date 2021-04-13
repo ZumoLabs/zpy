@@ -52,6 +52,21 @@ except ModuleNotFoundError as e:
     # install_pip_depenencies()
     # import zpy
 
+class TEXT_PT_open_zpy_template(bpy.types.Operator):
+    """Opens a zpy template"""
+    bl_idname = "text.open_zpy_template"
+    bl_label = "open zpy template"
+    def execute(self, context):
+        template_path=p=Path(bpy.utils.script_path_user())
+        template_path=p.joinpath("addons").joinpath("zpy_addon").joinpath("templates").joinpath("suzanne_run.py")
+        bpy.ops.text.open(filepath=str(template_path))
+        return {'FINISHED'}
+
+
+def zpy_template_menu_draw(self, context):
+    self.layout.separator()
+    self.layout.operator("text.open_zpy_template", text="zpy template")
+
 
 if "bpy" in locals():
     log.warning('Reloading zpy_addon files.')
@@ -97,7 +112,9 @@ classes = (
     segment_panel.SCENE_PT_SegmentPanel,
     script_panel.SCENE_PT_ScriptPanel,
     export_panel.SCENE_PT_ExportPanel,
-)
+    # Menus
+    TEXT_PT_open_zpy_template,
+    )
 
 
 def register():
@@ -113,7 +130,7 @@ def register():
     output_panel.registerSceneProperties()
     export_panel.registerSceneProperties()
     script_panel.registerSceneProperties()
-
+    bpy.types.TEXT_MT_templates_py.append(zpy_template_menu_draw)
 
 def unregister():
     """ Unregister any classes and properties. """
@@ -124,6 +141,7 @@ def unregister():
         except Exception as e:
             log.warning(f'Exception when un-registering {cls.__name__}: {e}')
 
+    bpy.types.TEXT_MT_templates_py.remove(zpy_template_menu_draw)    
 
 if __name__ == "__main__":
     register()
