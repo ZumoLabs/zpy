@@ -45,13 +45,12 @@ def install_pip_depenencies():
 try:
     import zpy
 except ModuleNotFoundError as e:
-    log.exception('No zpy module found, please follow developer ' + \
-        'install instructions at https://github.com/ZumoLabs/zpy#install')
+    log.exception('No zpy module found, please follow developer ' +
+                  'install instructions at https://github.com/ZumoLabs/zpy#install')
     # TODO: Automatic installation of pip dependencies
     #       waiting on https://developer.blender.org/T71420
     # install_pip_depenencies()
     # import zpy
-
 
 if "bpy" in locals():
     log.warning('Reloading zpy_addon files.')
@@ -91,12 +90,16 @@ classes = (
     script_panel.PushGinConfigOperator,
     script_panel.LoadRunpyOperator,
     script_panel.PushRunpyOperator,
+    script_panel.LoadTemplatesOperator,
     # Panels
     output_panel.SCENE_PT_OutputPanel,
     execute_panel.SCENE_PT_ExecutePanel,
     segment_panel.SCENE_PT_SegmentPanel,
     script_panel.SCENE_PT_ScriptPanel,
     export_panel.SCENE_PT_ExportPanel,
+    # Menus
+    script_panel.TEXT_PT_LoadRunPyTemplateOperator,
+    script_panel.TEXT_PT_LoadGinConfigTemplateOperator,
 )
 
 
@@ -113,6 +116,8 @@ def register():
     output_panel.registerSceneProperties()
     export_panel.registerSceneProperties()
     script_panel.registerSceneProperties()
+    # Script templates
+    bpy.types.TEXT_MT_templates_py.append(script_panel.script_template_menu)
 
 
 def unregister():
@@ -123,6 +128,8 @@ def unregister():
             bpy.utils.unregister_class(cls)
         except Exception as e:
             log.warning(f'Exception when un-registering {cls.__name__}: {e}')
+    # Script templates
+    bpy.types.TEXT_MT_templates_py.remove(script_panel.script_template_menu)
 
 
 if __name__ == "__main__":

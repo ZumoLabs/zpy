@@ -31,6 +31,12 @@ def registerSceneProperties():
         subtype='FILE_PATH',
         update=_load_runpy,
     )
+    bpy.types.Scene.zpy_template_dir = bpy.props.StringProperty(
+        name='',
+        description='Path to script template directory.',
+        default=str(zpy.blender.default_script_template_dir()),
+        subtype='DIR_PATH',
+    )
 
 
 def _load_gin_config(self, context) -> None:
@@ -112,7 +118,7 @@ class PushRunpyOperator(bpy.types.Operator):
 
 class SCENE_PT_ScriptPanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
-    bl_idname="SCENE_PT_ScriptPanel"
+    bl_idname = "SCENE_PT_ScriptPanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Script"
@@ -123,6 +129,12 @@ class SCENE_PT_ScriptPanel(bpy.types.Panel):
         layout = self.layout
         scene = context.scene
 
+        row = layout.row()
+        row.operator(
+            'scene.zpy_load_templates',
+            text='Load Templates',
+            icon='TEXT',
+        )
         row = layout.row()
         row.label(text="Run.py Path")
         row = layout.row()
@@ -153,3 +165,57 @@ class SCENE_PT_ScriptPanel(bpy.types.Panel):
             text='Push',
             icon='EXPORT',
         )
+
+
+class LoadTemplatesOperator(bpy.types.Operator):
+    """ Loads templates for run.py and gin config. """
+    bl_idname = "scene.zpy_load_templates"
+    bl_label = "Loads templates for run.py and gin config."
+    bl_description = "Loads templates for run.py and gin config."
+    bl_category = "ZPY"
+    bl_options = {'REGISTER'}
+
+    def execute(self, context):
+        bpy.ops.text.zpy_load_ginconfig_template()
+        bpy.ops.text.zpy_load_runpy_template()
+        return {'FINISHED'}
+
+
+class TEXT_PT_LoadRunPyTemplateOperator(bpy.types.Operator):
+    """ Opens the run.py template. """
+    bl_idname = "text.zpy_load_runpy_template"
+    bl_label = "Open zpy run.py template."
+
+    def execute(self, context):
+        template_dir = Path(bpy.path.abspath(context.scene.zpy_template_dir))
+        template_path = template_dir / 'run.py'
+        zpy.blender.load_text_from_file(
+            template_path,
+            text_name=LoadRunpyOperator.DEFAULT_TEXT_NAME,
+            open_text=True,
+        )
+        return {'FINISHED'}
+
+
+class TEXT_PT_LoadGinConfigTemplateOperator(bpy.types.Operator):
+    """ Opens the gin config template. """
+    bl_idname = "text.zpy_load_ginconfig_template"
+    bl_label = "Open gin config template."
+
+    def execute(self, context):
+        template_dir = Path(bpy.path.abspath(context.scene.zpy_template_dir))
+        template_path = template_dir / 'config.gin'
+        zpy.blender.load_text_from_file(
+            template_path,
+            text_name=LoadGinConfigOperator.DEFAULT_TEXT_NAME,
+            open_text=True,
+        )
+        return {'FINISHED'}
+
+
+def script_template_menu(self, context):
+    self.layout.separator()
+    self.layout.operator(
+        'text.zpy_load_runpy_template', text='(zpy) Run Script')
+    self.layout.operator(
+        'text.zpy_load_ginconfig_template', text='(zpy) Config Text')

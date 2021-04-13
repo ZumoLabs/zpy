@@ -226,6 +226,7 @@ def run_text(
 def load_text_from_file(
     path: Union[Path, str],
     text_name: str = '',
+    open_text: bool = False,
 ) -> None:
     """ Load a file into Blender's internal text UI.
 
@@ -239,6 +240,21 @@ def load_text_from_file(
         _text.name = text_name
     else:
         bpy.data.texts[text_name].from_string(path.read_text())
+    if open_text:
+        for area in bpy.context.screen.areas:
+            if area.type == 'TEXT_EDITOR':
+                area.spaces[0].text = bpy.data.texts[text_name]
+
+
+def default_script_template_dir() -> Path:
+    """ Path to the script templates for zpy addon.
+    
+    Returns:
+        pathlib.Path: Path to script templates for zpy addon.
+    """
+    script_path = Path(bpy.utils.script_path_user())
+    template_dir = script_path / 'addons' / 'zpy_addon' / 'templates'
+    return zpy.files.verify_path(template_dir, check_dir=True)
 
 
 @gin.configurable
