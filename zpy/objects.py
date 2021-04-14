@@ -99,8 +99,23 @@ def delete_obj(
     obj = verify(obj)
     select(obj)
     log.debug(f'Removing obj: {obj.name}')
-    bpy.ops.object.delete()
-    # bpy.data.objects.remove(obj, do_unlink=True)
+    # bpy.ops.object.delete()
+    bpy.data.objects.remove(obj, do_unlink=True)
+
+
+def delete_obj_context(
+    obj: Union[bpy.types.Object, str],
+) -> None:
+    """ Alternative way to delete an object.
+
+    Args:
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name)
+    """
+    obj = verify(obj)
+    log.debug(f'Removing obj: {obj.name}')
+    context_remove = bpy.context.copy()
+    context_remove['selected_objects'] = [obj]
+    bpy.ops.object.delete(context_remove)
 
 
 def is_inside(
