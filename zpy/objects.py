@@ -363,14 +363,14 @@ def copy(
 def translate(
     obj: Union[bpy.types.Object, str],
     translation: Union[Tuple[float], mathutils.Vector] = (0, 0, 0),
-    absolute: bool = False,
+    is_absolute: bool = False,
 ) -> None:
     """ Translate an object (in blender units).
 
     Args:
         obj (Union[bpy.types.Object, str]): Scene object (or it's name)
         translation (Union[Tuple[float], mathutils.Vector], optional): Translation vector (x, y, z). Defaults to (0, 0, 0).
-        absolute: (bool, optional): Tanslation is accepted as absolute world position
+        is_absolute: (bool, optional): The translation vector becomes the absolute world position
 
     """
     obj = verify(obj)
@@ -380,7 +380,7 @@ def translate(
     log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
     if not isinstance(translation, mathutils.Vector):
         translation = mathutils.Vector(translation)
-    if absolute:
+    if is_absolute:
         obj.location = translation
     else:
         obj.location = obj.location + translation
