@@ -67,28 +67,37 @@ export BLENDER_VERSION="2.92"
 export BLENDER_VERSION_FULL="2.92.0"
 export ZPY_VERSION="v1.0.0"
 ```
-
-## Documentation
-
-More documentation can be found [here](https://zumo-zpy.readthedocs.io/en/latest/)
-
-## Examples
-
-**Tutorials**
-- [Suzanne: Part 1](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne)
-- [Suzanne: Part 2](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_2)
-- [Suzanne: Part 3](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_3)
-- [Uploading a Sim](https://github.com/ZumoLabs/zpy/tree/main/examples/uploading_a_sim)
-
-**Projects**
-- [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
-- [Vote Counting](https://towardsdatascience.com/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data-d8e24eca114d)
-
 ## CLI
 
 We provide a simple CLI, you can find documentation [here](https://github.com/ZumoLabs/zpy/tree/main/docs/cli/README.md).
 
 <p align="center"><img src="docs/cli/gif/createdataset.gif?raw=true"/></p>
+
+## Examples
+
+**Video Tutorials**
+- [Loading the zpy Blender Add-On](https://youtu.be/xipj3jFsZyY)
+- [Run a Sim](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
+- [Using Script Templates](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
+- [Segmentation Images](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
+- [Depth Images](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
+- [Jittering Materials](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
+- [Jittering Object Pose](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
+- [Random HDRI Backgrounds](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
+- [Uploading a Sim](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
+
+**Projects**
+- [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
+- [Vote Counting](https://towardsdatascience.com/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data-d8e24eca114d)
+
+**Video Code-Alongs**
+- [Suzanne: Part 1](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne)
+- [Suzanne: Part 2](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_2)
+- [Suzanne: Part 3](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_3)
+
+## Documentation
+
+Code documentation can be found [here](https://zumo-zpy.readthedocs.io/en/latest/)
 
 ## Contributing
 
