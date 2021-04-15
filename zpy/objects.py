@@ -99,8 +99,43 @@ def delete_obj(
     obj = verify(obj)
     select(obj)
     log.debug(f'Removing obj: {obj.name}')
-    bpy.ops.object.delete()
-    # bpy.data.objects.remove(obj, do_unlink=True)
+    # bpy.ops.object.delete()
+    bpy.data.objects.remove(obj, do_unlink=True)
+
+
+def delete_obj_context(
+    obj: Union[bpy.types.Object, str],
+) -> None:
+    """ Alternative way to delete an object.
+
+    Args:
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name)
+    """
+    obj = verify(obj)
+    log.debug(f'Removing obj: {obj.name}')
+    context_remove = bpy.context.copy()
+    context_remove['selected_objects'] = [obj]
+    bpy.ops.object.delete(context_remove)
+
+
+def empty_collection(
+    collection: bpy.types.Collection = None,
+    method: str = "data",
+) -> None:
+    """ Delete all objects in a collection
+
+    Args:
+        collection (bpy.types.Collection, optional): Optional collection to put new object inside of. Defaults to None.
+        method (str, optional): Deletetion method, the values are data and context
+    """
+    if collection and  ( collection in list(bpy.data.collections)):
+        if method == 'data':
+            for obj in collection.all_objects:
+                bpy.data.objects.remove(obj, do_unlink=True)
+        elif method == 'context':
+            context_remove = bpy.context.copy()
+            context_remove['selected_objects'] = collection.all_objects
+            bpy.ops.object.delete(context_remove)
 
 
 def is_inside(
