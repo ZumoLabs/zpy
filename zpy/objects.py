@@ -409,8 +409,6 @@ def translate(
 
     """
     obj = verify(obj)
-    view_layer = zpy.blender.verify_view_layer()
-    select(obj)
     log.debug(f'Translating object {obj.name} by {translation}')
     log.debug(f'Before - obj.matrix_world\n{obj.matrix_world}')
     if not isinstance(translation, mathutils.Vector):
@@ -419,7 +417,6 @@ def translate(
         obj.location = translation
     else:
         obj.location = obj.location + translation
-    view_layer.update()
     log.debug(f'After - obj.matrix_world\n{obj.matrix_world}')
 
 
