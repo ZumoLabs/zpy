@@ -77,14 +77,13 @@ We provide a simple CLI, you can find documentation [here](https://github.com/Zu
 
 **Video Tutorials**
 - [Loading the zpy Blender Add-On](https://youtu.be/xipj3jFsZyY)
-- [Run a Sim](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
-- [Using Script Templates](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
-- [Segmentation Images](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
-- [Depth Images](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
-- [Jittering Materials](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
-- [Jittering Object Pose](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
-- [Random HDRI Backgrounds](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
-- [Uploading a Sim](https://youtube.com/playlist?list=PLyuV6OOvQENU90Dv_5AXYw3jc9UCVVrhn)
+- [Run a Sim](https://youtu.be/1_-6Vb2s10Y)
+- [Using Script Templates](https://youtu.be/ywaEhKGBUK0)
+- [Segmentation Images](https://youtu.be/NxFrY3EcIMA)
+- [Depth Images](https://youtu.be/G4Wa9aQSlOw)
+- [Jittering Materials](https://youtu.be/WbarQmJ9qlY)
+- [Jittering Object Pose](https://youtu.be/4Pe9B4auE1M)
+- [Random HDRI Backgrounds](https://youtu.be/QzJ6Y3jwr4w)
 
 **Projects**
 - [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
