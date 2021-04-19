@@ -36,7 +36,7 @@ List Datasets : ```zpy list datasets```
 
 List Sims : ```zpy list sims```
 
-<p align="center"><img src="gif/listsim.gif?raw=true"/></p>
+<p align="center"><img src="gif/listsim.svg?raw=true"/></p>
 
 List Jobs : ```zpy list jobs```
 
@@ -50,13 +50,13 @@ Download Dataset : ```zpy get dataset <name> <dataset_type> /output/directory```
 
 Download Sim : ```zpy get sim <name> /output/directory```
 
-<p align="center"><img src="gif/getsim.gif?raw=true"/></p>
+<p align="center"><img src="gif/getsim.svg?raw=true"/></p>
 
 ## Upload
 
 Upload Sim : ```zpy upload sim <name> /path/to/sim```
 
-<p align="center"><img src="gif/uploadsim.gif?raw=true"/></p>
+<p align="center"><img src="gif/uploadsim.svg?raw=true"/></p>
 
 Upload Dataset : ```zpy upload dataset <name> /path/to/dataset```
 
