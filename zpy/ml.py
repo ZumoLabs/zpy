@@ -7,16 +7,15 @@ import logging
 
 experiment = None
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger('zpyml')
 
 
 def init(
     name: str,
-    sim: str,
-    dataset: str,
-    config: Dict,
     api_key: str,
-    endpoint: str = 'https://ragnarok.zumok8s.org'
+    sim: str = None,
+    dataset: str = None,
+    config: Dict = None,
 ) -> None:
     """ Initialize a experiment run.
 
@@ -25,12 +24,11 @@ def init(
         sim (str. optional): identifier for simulation associated with experiment
         dataset (str, optional): identifier for dataset associated with experiment
         config (dict, optional): configuration details about experiment
-        endpoint (str, optional): endpoint for updates
-        
-    Raises:
-        idk
+        api_key (str, required): api_key to auth with backend
+    Returns:
+        experiment object
     """
-    exp = Experiment(name=name, sim=sim, dataset=dataset, config=config, api_token=api_token)
+    exp = Experiment(name=name, sim=sim, dataset=dataset, config=config, api_key=api_key)
     global experiment
     experiment = exp
     exp._create()
@@ -51,8 +49,11 @@ def log(
     """
     global experiment
     exp = experiment
-    file = Path(file_path)
-    file.resolve()
+    if file_path:
+        file = Path(file_path)
+        file.resolve()
+    if not isinstance(metrics, Dict):
+        raise Exception('{metrics} must be of type dict')
     exp._update(file_path=str(file), metrics=metrics)
 
 
@@ -65,36 +66,37 @@ class Experiment:
             sim: str = None,
             dataset: str = None,
             config: Dict = None,
-            api_token: str = None,
-            endpoint='https://ragnarok.zumok8s.org/api/v1/experiment'
+            api_key: str = None,
+            endpoint='http://localhost:8000/api/v1/experiment/'
+#            endpoint='https://ragnarok.zumok8s.org/api/v1/experiment/'
         ) -> None:
         self.name = name
         self.sim = sim
         self.dataset = dataset
         self.config = config
-        self.auth_headers = auth_headers(api_token)
+        self.auth_headers = auth_headers(api_key)
         self.endpoint = endpoint
 
-    def _post(data=None, files=None):
+    def _post(self, data=None, files=None):
         """ post to endpoint """
         r = requests.post(self.endpoint, data=data, files=files, headers=self.auth_headers)
         if r.status_code == 201:
-            log.info(f'created experiment : {self.name}')
+            logger.info(f'created experiment : {self.name}')
         if r.status_code == 200:
-            log.info(f'logged to experiment : {self.name}')
+            logger.info(f'logged to experiment : {self.name}')
         else:
-            log.warning(f'unable to update or create experiment : {self.name}')
+            r.raise_for_status()
         response = json.loads(r.text)
-        log.debug('{r.status_code} : {response}')
+        logger.debug('{r.status_code} : {response}')
 
     def _create(self):
         data = {'name': self.name}
-        if sim:
-            data['sim'] = self.sim
-        if dataset:
-            data['dataset'] = self.dataset
-        if config:
-            data['config'] = self.config
+        if self.sim:
+            data['sim_name'] = self.sim
+        if self.dataset:
+            data['data_set_name'] = self.dataset
+        if self.config:
+            data['config'] = json.dumps(self.config)
         self._post(data=data)
 
     def _update(
