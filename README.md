@@ -65,7 +65,7 @@ Set these environment variables for specific versions:
 ```
 export BLENDER_VERSION="2.92"
 export BLENDER_VERSION_FULL="2.92.0"
-export ZPY_VERSION="v1.0.1"
+export ZPY_VERSION="v1.0.2"
 ```
 ## CLI
 
