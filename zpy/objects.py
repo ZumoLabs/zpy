@@ -267,6 +267,7 @@ def segment(
         as_category (bool, optional): Segment as a category, if false will segment as instance. Defaults to False.
         as_single (bool, optional): Segment all child objects as well. Defaults to False.
     """
+    bpy.context.preferences.experimental.use_sculpt_vertex_colors = True
     obj = verify(obj)
     if color is None:
         color = zpy.color.random_color(output_style='frgb')
