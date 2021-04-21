@@ -118,6 +118,9 @@ def register():
     script_panel.registerSceneProperties()
     # Script templates
     bpy.types.TEXT_MT_templates_py.append(script_panel.script_template_menu)
+    if "use_sculpt_vertex_colors" in dir(bpy.context.preferences.experimental):
+        bpy.context.preferences.experimental.use_sculpt_vertex_colors = True
+
 
 
 def unregister():
