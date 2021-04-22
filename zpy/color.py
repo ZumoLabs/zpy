@@ -16,13 +16,13 @@ COLORS_FILE = 'colors.json'
 COLORS = None
 
 
-def reset():
+def reset(random_color_idx : int = 1):
     """ Load colors from file and reset random idx. """
     global COLORS, RANDOM_COLOR_IDX
     _path = Path(__file__).parent / COLORS_FILE
     zpy.files.verify_path(_path)
     COLORS = zpy.files.read_json(_path)
-    RANDOM_COLOR_IDX = 1
+    RANDOM_COLOR_IDX = random_color_idx
 
 
 def hex_to_irgb(hex_value: str) -> Tuple[int]:
