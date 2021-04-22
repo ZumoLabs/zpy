@@ -87,9 +87,7 @@ class Experiment:
     def _post(self, data=None):
         """ post to endpoint """
         r = requests.post(ENDPOINT, data=data, headers=self.auth_headers)
-        if r.status_code == 201:
-            logger.info(f'create - {self.name} - {data}')
-        else:
+        if r.status_code != 201:
             logger.debug(f'{r.text}')
             r.raise_for_status()
         self.id = json.loads(r.text)['id']
@@ -98,9 +96,7 @@ class Experiment:
     def _put(self, data=None, files=None):
         """ put to endpoint """
         r = requests.put(f'{ENDPOINT}{self.id}/', data=data, files=files, headers=self.auth_headers)
-        if r.status_code == 200:
-            logger.info(f'log - {self.name} - {data} - {files}')
-        else:
+        if r.status_code != 200:
             logger.debug(f'{r.text}')
             r.raise_for_status()
         logger.debug(f'{r.status_code}: {r.text}')
