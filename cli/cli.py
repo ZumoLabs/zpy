@@ -15,9 +15,8 @@ from cli.utils import parse_args
 log = logging.getLogger(__name__)
 
 
-@click.group()
+@click.group(context_settings=dict(token_normalize_func=str.lower))
 @click.option('--verbose', '-v', is_flag=True, help="Enables verbose mode.")
-@click.command(context_settings=dict(token_normalize_func=str.lower))
 def cli(verbose=False):
     ''' zpy cli is client side ragnarok '''
     # Set up logging
