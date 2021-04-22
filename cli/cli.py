@@ -208,8 +208,7 @@ def create_job(name, operation, filters, configfile, sweepfile, args):
 @click.argument('args', nargs=-1)
 def create_sweep(name, sim, number, args):
     dataset_config = parse_args(args)
-    offset = 600
-    for i in range(offset, int(number)+offset):
+    for i in range(int(number)):
         dataset_name = f'{name} seed{i}'
         dataset_config['seed'] = i
         create_generated_dataset(dataset_name, sim, dataset_config)
