@@ -3,7 +3,7 @@ set -e
 
 BLENDER_VERSION=${BLENDER_VERSION:-"2.92"}
 BLENDER_VERSION_FULL=${BLENDER_VERSION_FULL:-"2.92.0"}
-ZPY_VERSION=${ZPY_VERSION:-"1.0.2"}
+ZPY_VERSION=${ZPY_VERSION:-"1.1.0"}
 
 if [ "$(uname)" == "Darwin" ]; then
     # Do something under Mac OS X platform        
