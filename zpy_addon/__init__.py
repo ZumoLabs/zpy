@@ -83,6 +83,7 @@ classes = (
     output_panel.CleanOutputDirOperator,
     execute_panel.RenderOperator,
     execute_panel.RunOperator,
+    execute_panel.RunHeadlessOperator,
     export_panel.ExportOperator,
     export_panel.OpenExportDirOperator,
     export_panel.CleanUpDirOperator,

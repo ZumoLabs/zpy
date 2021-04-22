@@ -4,10 +4,12 @@
 import importlib
 import logging
 from pathlib import Path
+import subprocess
 
 import bpy
 import zpy
 from bpy.types import Operator
+
 
 log = logging.getLogger(__name__)
 
@@ -33,6 +35,7 @@ class RunOperator(Operator):
             zpy.blender.use_gpu()
             zpy.blender.parse_config('config')
             zpy.blender.run_text('run')
+
         except Exception as e:
             log.error(f'Executing script failed with exception {e}')
         try:
@@ -42,6 +45,34 @@ class RunOperator(Operator):
             log.warning(f'When saving sim before run: {e}')
         return {'FINISHED'}
 
+class RunHeadlessOperator(Operator):
+    """ Launch the run script in Blender's texts. """
+    bl_idname = "scene.zpy_run_headless"
+    bl_label = "Run Sim Headless"
+    bl_description = "Launch the run script in Blender's texts."
+    bl_category = "ZPY"
+    bl_options = {'REGISTER'}
+
+    def execute(self, context):
+        try:
+            # Save the state of the sim before the run script was executed
+            bpy.ops.wm.save_mainfile()
+        except RuntimeError as e:
+            log.warning(f'When saving sim before run: {e}')
+        try:
+            subprocess.Popen([bpy.app.binary_path, '-b',
+                              bpy.data.filepath, '--python-expr',
+                              "import bpy;import zpy;zpy.blender.use_gpu();zpy.blender.parse_config('config');bpy.ops.scene.zpy_run()"
+                             ])
+
+        except Exception as e:
+            log.error(f'Executing script failed with exception {e}')
+        try:
+            # Return to the state of the sim before the run script was executed
+            bpy.ops.wm.revert_mainfile()
+        except RuntimeError as e:
+            log.warning(f'When saving sim before run: {e}')
+        return {'FINISHED'}
 
 class RenderOperator(Operator):
     """ Render out single image (rgb, segmented, depth). """
@@ -92,7 +123,6 @@ class SCENE_PT_ExecutePanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-
         row = layout.row()
         row.operator(
             'scene.zpy_render',
@@ -103,5 +133,11 @@ class SCENE_PT_ExecutePanel(bpy.types.Panel):
         row.operator(
             'scene.zpy_run',
             text='Run',
+            icon='TRIA_RIGHT',
+        )
+        row = layout.row()
+        row.operator(
+            'scene.zpy_run_headless',
+            text='Run Headless',
             icon='TRIA_RIGHT',
         )
