@@ -1,21 +1,20 @@
-from typing import Dict
+from typing import Dict, Union
 from cli.utils import auth_headers
 from pathlib import Path
 import json
 import requests
 import logging
 
+ENDPOINT = 'https://ragnarok.zumok8s.org/api/v1/experiment/'
 experiment = None
-
-logger = logging.getLogger('zpyml')
-
+logger = None
 
 def init(
     name: str,
-    api_key: str,
     sim: str = None,
     dataset: str = None,
     config: Dict = None,
+    api_key: str = None,
 ) -> None:
     """ Initialize a experiment run.
 
@@ -28,6 +27,10 @@ def init(
     Returns:
         experiment object
     """
+    if api_key is None:
+        raise PermissionError('please input zpy api_key')
+    global logger
+    logger = logging.getLogger(__name__)
     exp = Experiment(name=name, sim=sim, dataset=dataset, config=config, api_key=api_key)
     global experiment
     experiment = exp
@@ -50,11 +53,8 @@ def log(
     global experiment
     exp = experiment
     if file_path:
-        file = Path(file_path)
-        file.resolve()
-    if not isinstance(metrics, Dict):
-        raise Exception('{metrics} must be of type dict')
-    exp._update(file_path=str(file), metrics=metrics)
+        file_path = Path(file_path).resolve()
+    exp._update(file_path=file_path, metrics=metrics)
 
 
 class Experiment:
@@ -66,30 +66,47 @@ class Experiment:
             sim: str = None,
             dataset: str = None,
             config: Dict = None,
-            api_key: str = None,
-            endpoint='http://localhost:8000/api/v1/experiment/'
-#            endpoint='https://ragnarok.zumok8s.org/api/v1/experiment/'
+            api_key: str = None
         ) -> None:
+        """ Experiment Class for ragnarok upload.
+
+        Args:
+            name (str): identifier for experiment
+            sim (str. optional): identifier for simulation associated with experiment
+            dataset (str, optional): identifier for dataset associated with experiment
+            config (dict, optional): configuration details about experiment
+            api_key (str, required): api_key to auth with backend
+        """
         self.name = name
         self.sim = sim
         self.dataset = dataset
         self.config = config
         self.auth_headers = auth_headers(api_key)
-        self.endpoint = endpoint
+        self.id = None
 
-    def _post(self, data=None, files=None):
+    def _post(self, data=None):
         """ post to endpoint """
-        r = requests.post(self.endpoint, data=data, files=files, headers=self.auth_headers)
+        r = requests.post(ENDPOINT, data=data, headers=self.auth_headers)
         if r.status_code == 201:
-            logger.info(f'created experiment : {self.name}')
-        if r.status_code == 200:
-            logger.info(f'logged to experiment : {self.name}')
+            logger.info(f'create - {self.name} - {data}')
         else:
+            logger.debug(f'{r.text}')
             r.raise_for_status()
-        response = json.loads(r.text)
-        logger.debug('{r.status_code} : {response}')
+        self.id = json.loads(r.text)['id']
+        logger.debug(f'{r.status_code}: {r.text}')
+
+    def _put(self, data=None, files=None):
+        """ put to endpoint """
+        r = requests.put(f'{ENDPOINT}{self.id}/', data=data, files=files, headers=self.auth_headers)
+        if r.status_code == 200:
+            logger.info(f'log - {self.name} - {data} - {files}')
+        else:
+            logger.debug(f'{r.text}')
+            r.raise_for_status()
+        logger.debug(f'{r.status_code}: {r.text}')
 
     def _create(self):
+        """ request to create experiment """
         data = {'name': self.name}
         if self.sim:
             data['sim_name'] = self.sim
@@ -101,13 +118,15 @@ class Experiment:
 
     def _update(
             self,
-            file_path: str = None,
+            file_path: Union[Path, str] = None,
             metrics: Dict = None
         ) -> None:
-        data = { 'name': self.name }
+        """ request to update experiment """
+        data = {'name': self.name}
         if metrics:
-            data['metrics'] = metrics
+            data['metrics'] = json.dumps(metrics)
         files = None
         if file_path:
             files = {'file': open(file_path, 'rb')}
-        self._post(data=data, files=files)
+            data['file_name'] = Path(file_path).name
+        self._put(data=data, files=files)
