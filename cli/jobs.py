@@ -26,15 +26,16 @@ def create_new_job(name, operation, config, datasets, url, auth_headers):
 
 @fetch_auth
 def fetch_jobs(url, auth_headers):
-    """ fetch all datasets in ragnarok """
+    """ fetch jobs
+
+    Fetch job objects from ZumoLabs backend.
+
+    Args:
+        url (str): backend endpoint
+        auth_headers: authentication for backend
+    """
     endpoint = f'{url}/api/v1/jobs/'
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
-        log.warning('Unable to fetch jobs')
-        return
-    jobs = json.loads(r.text)['results']
-    tbl = TableLogger(columns='state,name,operation,created',default_colwidth=30)
-    if len(jobs) == 0:
-        log.info(None)
-    for j in jobs:
-        tbl(j['state'], j['name'], j['operation'], j['created_at'])
+        r.raise_for_status()
+    return json.loads(r.text)['results']

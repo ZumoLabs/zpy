@@ -8,6 +8,7 @@ import functools
 import logging
 import os
 import random
+from cli.loader import Loader
 
 log = logging.getLogger(__name__)
 
