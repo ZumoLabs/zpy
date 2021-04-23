@@ -1,22 +1,12 @@
-from copy import deepcopy
-from itertools import product
-from requests.auth import HTTPBasicAuth
-import click
-import logging
-import requests
-import json
-
-from zpy.files import read_json, to_pathlib_path
-
-from cli.config import initialize_config, read_config, write_config
-from cli.datasets import (create_generated_dataset, create_uploaded_dataset,
-                          download_dataset, fetch_datasets, filter_dataset)
-from cli.jobs import create_new_job, fetch_jobs
-from cli.sims import create_sim, fetch_sims
-from cli.utils import parse_args
-
 from cli.loader import Loader
+from cli.utils import parse_args, resolve_sweep
+from copy import deepcopy
+from requests.auth import HTTPBasicAuth
 from table_logger import TableLogger
+from zpy.files import read_json, to_pathlib_path
+import click
+import json
+import requests
 
 
 @click.group(context_settings=dict(token_normalize_func=str.lower))
@@ -272,7 +262,8 @@ def upload_sim(name, path):
     if to_pathlib_path(path).suffix != '.zip':
         click.secho(f'File {path} must be of type zip', fg='red', err=True)
     try:
-        create_sim(name, path)
+        with Loader("Uploading sim..."):
+            create_sim(name, path)
         click.echo(f'Uploaded sim {path} with name {name}')
     except requests.exceptions.HTTPError as e:
         click.secho(f'Failed to upload sim {e}', fg='red', err=True)
@@ -297,7 +288,8 @@ def upload_dataset(name, path):
     if to_pathlib_path(path).suffix != '.zip':
         click.secho(f'File {path} must be of type zip', fg='red', err=True)
     try:
-        create_uploaded_dataset(name, path)
+        with Loader("Uploading dataset..."):
+            create_uploaded_dataset(name, path)
         click.echo(f'Uploaded dataset {path} with name {name}')
     except requests.exceptions.HTTPError as e:
         click.secho(f'Failed to upload datset {e}', fg='red', err=True)
@@ -322,9 +314,30 @@ def create():
 @click.argument('sim')
 @click.argument('args', nargs=-1)
 def create_dataset(name, sim, args):
-    dataset_config = parse_args(args)
-    create_generated_dataset(name, sim, dataset_config)
+    """ create dataset
 
+    Create a generated dataset object in backend that will trigger
+    the generation of the dataset.
+
+    Args:
+        name (str): name of new dataset
+        sim (str): name of sim dataset is built with
+        args (List(str)): configuration of sim for this dataset
+    """
+    from cli.datasets import create_generated_dataset
+    try:
+        dataset_config = parse_args(args)
+    except:
+        click.secho('Failed to parse args: {args}', fg='yellow', err=True)
+        return
+    try:
+        create_generated_dataset(name, sim, parse_args(args))
+        click.echo(f'Created dataset {name} from sim {sim} with config {dataset_config}')
+    except requests.exceptions.HTTPError as e:
+        click.secho(f'Failed to create dataset {e}', fg='red', err=True)
+    except NameError as e:
+        click.secho(f'Failed to create dataset {e}', fg='yellow', err=True)
+ 
 
 @create.command('sweep')
 @click.argument('name')
@@ -332,37 +345,100 @@ def create_dataset(name, sim, args):
 @click.argument('number')
 @click.argument('args', nargs=-1)
 def create_sweep(name, sim, number, args):
-    dataset_config = parse_args(args)
+    """ create sweep
+
+    Create a sweep of generated dataset object in backend that will trigger
+    the generation of the dataset. Sweep is just a series of create dataset
+    calls with different seeds set.
+
+    Args:
+        name (str): name of new dataset
+        sim (str): name of sim dataset is built with
+        number (str): number of datasets to create
+        args (List(str)): configuration of sim for this dataset
+    """
+    from cli.datasets import create_generated_dataset
+    try:
+        dataset_config = parse_args(args)
+    except:
+        click.secho('Failed to parse args: {args}', fg='yellow', err=True)
+        return
     for i in range(int(number)):
         dataset_name = f'{name} seed{i}'
         dataset_config['seed'] = i
-        create_generated_dataset(dataset_name, sim, dataset_config)
+        try:
+            create_generated_dataset(dataset_name, sim, dataset_config)
+            click.echo(f'Created dataset {name} from sim {sim} with config {dataset_config}')
+        except requests.exceptions.HTTPError as e:
+            click.secho(f'Failed to create dataset {e}', fg='red', err=True)
+        except NameError as e:
+            click.secho(f'Failed to create dataset {e}', fg='yellow', err=True)
+    click.echo(f'Finished creating {number} datasets from sim {sim}.')
 
 
 @create.command('job')
 @click.argument('name')
 @click.argument('operation')
 @click.option('filters', '-f', multiple=True)
-@click.option('configfile', '-configfile')
-@click.option('sweepfile', '-sweepfile')
-@click.argument('args', nargs=-1)
-def create_job(name, operation, filters, configfile, sweepfile, args):
-    datasets_list = []
+@click.option(
+    'configfile', 
+    '--configfile',
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    'sweepfile', 
+    '--sweepfile',
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True)
+)
+def create_job(name, operation, filters, configfile, sweepfile):
+    """ create job
+
+    Create a job object in backend that will trigger an operation on
+    datasets filtered by the filters.
+
+    Args:
+        name (str): name of new job
+        operation (str): name of operation to run on datasets
+        filters (str): string filters for dataset names to run job on
+        configfile (str): json configuration for the job
+        sweepfile (str): sweep json to launch a suite of jobs
+    """
+    from cli.datasets import filter_datasets
+    from cli.jobs import create_new_job
+    datasets = []
     for dfilter in filters:
-        datasets_list.extend(filter_dataset(dfilter))
+        try:
+            with Loader(f'Filtering datasets by {dfilter}...'):
+                filtered_datasets = filter_datasets(dfilter)
+            click.echo(f'Filtered datasets by filter {dfilter}:\n{filtered_datasets.keys()}')
+            datasets.append(filtered_datasets.values()
+        except requests.exceptions.HTTPError as e:
+            click.secho(f'Failed to filter datsets {e}', fg='red', err=True)
 
-    if sweepfile:
-        sweep_config = read_json(sweepfile)
-        bindings = sweep_config['gin_bindings']
-        for c, random_binding in enumerate([dict(zip(bindings, v)) for v in product(*bindings.values())]):
-            job_name = f'{name} {c}'
-            job_config = deepcopy(sweep_config)
-            job_config['gin_bindings'] = random_binding
-            create_new_job(job_name, operation, job_config, datasets_list)
-        return
-
+    job_configs = []
     if configfile:
-        job_config = read_json(configfile)
+        config = read_json(configfile)
+        job_configs.append(config)
+        click.echo(f'Parsed config file {configfile} : {config}')
+    elif sweepfile:
+        sweep_config = read_json(sweepfile)
+        try:
+            configs = resolve_sweep(sweep_config)
+        except:
+            click.secho('Failed to resolve sweep file {sweepfile} {e}', fg='yellow', err=True)
+            return
+        job_configs.append(configs)
+        click.echo(f'Parsed sweep file {sweepfile} : {sweep_config}')
     else:
-        job_config = parse_args(args)
-    create_new_job(name, operation, job_config, datasets_list)
+        job_configs.append(dict())
+    click.echo(f'Configuration for {len(job_configs)} jobs:\n{'\n'.join(job_configs)}')
+
+    for i, config in enumerate(job_configs):
+        job_name = name if i == 0 else f'{name} {i}'
+        try:
+            create_new_job(job_name, operation, config, datasets)
+            click.echo(f'Created {operation} job {job_name} with config {config}')
+        except requests.exceptions.HTTPError as e:
+            click.secho(f'Failed to create job {e}', fg='red', err=True)
+
+    click.echo(f'Finished creating {len(job_configs)} jobs with name {name}')
