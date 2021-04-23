@@ -1,76 +1,78 @@
-import json
-import logging
-
-import requests
-from table_logger import TableLogger
+from cli.utils import download_url, fetch_auth, parse_filter
 from zpy.files import to_pathlib_path
+import json
+import requests
 
-from cli.utils import download_url, fetch_auth, parse_dataset_filter
+DATASET_TYPES = ['uploaded-data-sets', 'generated-data-sets', 'job-data-sets']
 
-log = logging.getLogger(__name__)
+
+@fetch_auth
+def filter_datasets(dfilter, url, auth_headers):
+    """ filter datasets
+
+    Filter dataset objects on ZumoLabs backend by given dfilter.
+    Parse dfilter using parse_filter and make calls to 
+    generated, uploaded, job dataset endpoints.
+
+    Args:
+        dfilter (str): filter query for datasets
+        url (str): backend endpoint
+        auth_headers: authentication for backend
+
+    Return:
+        dict: filtered datasets by dfilter {'name': 'id'}
+    """
+    filtered_datasets = {}
+    field, pattern, regex = parse_filter(dfilter)
+    for dataset_type in DATASET_TYPES:
+        endpoint = f'{url}/api/v1/{dataset_type}/?{field}__{pattern}={regex}'
+        while endpoint is not None:
+            r = requests.get(endpoint, headers=auth_headers)
+            if r.status_code != 200:
+                r.raise_for_status()
+            response = json.loads(r.text)
+            for r in response['results']:
+                filtered_datasets[d['name']] = d['id']
+            endpoint = response['next']
+    return filtered_datasets
 
 
 @fetch_auth
 def create_generated_dataset(name, sim_name, config, url, auth_headers):
-    """ create a dataset on ragnarok """
+    """ create dataset
+
+    Create generated dataset on ZumoLabs backend which will launch
+    a generation job with specified params.
+
+    Args:
+        name (str): name of dataset
+        sim_name (str): name of sim the dataset is built from
+        config (dict): configration of sim for this dataset
+        url (str): backend endpoint
+        auth_headers: authentication for backend
+    """
     endpoint = f'{url}/api/v1/sims/'
-    params = {'name': sim_name}
-    r = requests.get(endpoint, params=params, headers=auth_headers)
+    r = requests.get(
+        endpoint, 
+        params={'name': sim_name},
+        headers=auth_headers)
     if r.status_code != 200:
-        log.warning(f'unable to fetch sims')
-        return
+        r.raise_for_status()
     response = json.loads(r.text)
     if response['count'] != 1:
-        log.warning(f'unable to find sim with name {sim_name}')
-        return
+        raise NameError(f"found {response['count']} sims for name {sim_name}")
     sim = response['results'][0]
     endpoint = f'{url}/api/v1/generated-data-sets/'
-    data = {
-        'sim': sim['id'],
-        'config': json.dumps(config),
-        'name': name
-    }
-    r = requests.post(endpoint, data=data, headers=auth_headers)
+    r = requests.post(
+        endpoint, 
+        data={
+            'sim': sim['id'],
+            'config': json.dumps(config),
+            'name': name
+        }, 
+        headers=auth_headers)
     if r.status_code != 201:
-        log.warning(
-            f'Unable to create dataset {name} for sim {sim_name} with config {config}')
-        return
-    log.info(f'created dataset {name} for sim {sim_name} with config {config}')
-
-
-@fetch_auth
-def filter_dataset(dfilter, url, auth_headers):
-    """ filter dataset """
-    dset = []
-    field, pattern, regex = parse_dataset_filter(dfilter)
-    endpoint = f'{url}/api/v1/uploaded-data-sets/'
-    dset.extend(filter_dataset_url(
-        field, pattern, regex, endpoint, auth_headers))
-    endpoint = f'{url}/api/v1/generated-data-sets/'
-    dset.extend(filter_dataset_url(
-        field, pattern, regex, endpoint, auth_headers))
-    endpoint = f'{url}/api/v1/job-data-sets/'
-    dset.extend(filter_dataset_url(
-        field, pattern, regex, endpoint, auth_headers))
-    return dset
-
-
-def filter_dataset_url(field, pattern, regex, url, auth_headers):
-    """ filter generated dataset """
-    endpoint = f'{url}?{field}__{pattern}={regex}'
-    datasets, names = [], []
-    while endpoint is not None:
-        r = requests.get(endpoint, headers=auth_headers)
-        if r.status_code != 200:
-            log.warning(f"Unable to filter {endpoint}")
-            return []
-        response = json.loads(r.text)
-        for d in response['results']:
-            names.append(d['name'])
-            datasets.append(d['id'])
-        endpoint = response['next']
-    log.info(f'filter <{url}> found {names}')
-    return datasets
+        r.raise_for_status()
 
 
 @fetch_auth
@@ -141,12 +143,10 @@ def fetch_datasets():
         list: paginated sorted datasets for all types
     """
     datasets = []
-    datasets += [(lambda d: d.update({'type': 'job'}) or d)(d) 
-        for d in _fetch_type_datasets('job-data-sets')]
-    datasets += [(lambda d: d.update({'type': 'generated'}) or d)(d) 
-        for d in _fetch_type_datasets('generated-data-sets')]
-    datasets += [(lambda d: d.update({'type': 'uploaded'}) or d)(d) 
-        for d in _fetch_type_datasets('uploaded-data-sets')]
+    for dataset_type in DATASET_TYPES:
+        short_dataset_type = dataset_type.split('-')[0]
+        datasets += [(lambda d: d.update({'type': short_dataset_type}) or d)(d) 
+            for d in _fetch_type_datasets(dataset_type)]
     return sorted(datasets, key = lambda i: i['created_at'], reverse=True)
 
 
