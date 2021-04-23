@@ -1,15 +1,23 @@
 from cli.utils import fetch_auth
-from table_logger import TableLogger
 import requests
 import json
-import logging
-
-log = logging.getLogger(__name__)
 
 
 @fetch_auth
 def create_new_job(name, operation, config, datasets, url, auth_headers):
-    """ create job on ragnarok """
+    """ create job
+
+    Create a job object on ZumoLabs backend. This will trigger the backend
+    to run the job.
+
+    Args:
+        name (str): name of job
+        operation (str): job type
+        config (dict): configuration for job
+        datasets (dict): list of dataset ids
+        url (str): backend endpoint
+        auth_headers: authentication for backend
+    """
     endpoint = f'{url}/api/v1/jobs/'
     data = {
         'operation': operation.upper(),
@@ -19,9 +27,7 @@ def create_new_job(name, operation, config, datasets, url, auth_headers):
     }
     r = requests.post(endpoint, data=data, headers=auth_headers)
     if r.status_code != 201:
-        log.warning(f'Unable to create {operation} job {name} on datasets {datasets}')
-        return
-    log.info(f'created {operation} job {name} {config} on datasets {datasets}')
+        r.raise_for_status()
 
 
 @fetch_auth
@@ -33,6 +39,9 @@ def fetch_jobs(url, auth_headers):
     Args:
         url (str): backend endpoint
         auth_headers: authentication for backend
+
+    Returns:
+        list: list of jobs
     """
     endpoint = f'{url}/api/v1/jobs/'
     r = requests.get(endpoint, headers=auth_headers)
