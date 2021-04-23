@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://www.zumolabs.ai/?utm_source=github.com&utm_medium=referral&utm_campaign=zpy">Website</a> •
   <a href="#Install">Install</a> •
-  <a href="#Documentation">Docs</a> •
+  <a href="https://zumo-zpy.readthedocs.io/en/latest/index.html">Docs</a> •
   <a href="#Examples">Examples</a> •
   <a href="#CLI">CLI</a> •
   <a href="#Contribute">Contribute</a> •
