@@ -11,10 +11,14 @@ CONFIG_FILE = '~/.zpy/config.yaml'
 
 
 def initialize_config():
-    """ Initialize zpy config file if missing """
+    """ initialize config
+
+    If CONFIG_FILE doesnt exist write it and put in prod as the endpoint. Also creates
+    the ~/.zpy folder if not existing. The config is some variables needed by the cli to 
+    make validated requests to the backend.
+    """
     path = to_pathlib_path(os.path.expanduser(CONFIG_FILE))
     if path.exists():
-        config = read_config()
         return
     CONFIG = {
         'ENVIRONMENT': 'prod',
@@ -26,7 +30,13 @@ def initialize_config():
 
 
 def read_config():
-    """ read zpy configuration file """
+    """ read config
+
+    Read zpy cli configuration file.
+
+    Returns:
+        config: dictionary of current configuration
+    """
     path = to_pathlib_path(os.path.expanduser(CONFIG_FILE))
     with path.open() as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
@@ -34,7 +44,13 @@ def read_config():
 
 
 def write_config(config):
-    """ write zpy configuration file """
+    """ write config
+
+    Write zpy cli configuration file.
+
+    Args:
+        config (dict): new configuration to write
+    """
     path = to_pathlib_path(os.path.expanduser(CONFIG_FILE))
     with path.open('w') as f:
         yaml.dump(config, f)
