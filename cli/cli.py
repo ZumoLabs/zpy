@@ -27,7 +27,14 @@ def help():
     on how to use this tool.
     """
     # TODO: spec this out
-    click.echo('usage: zpy <command> [<args>]')
+    click.echo('zpy - ZumoLabs command line interface\n'
+               '\n'
+               'zpy is a tool used to list, create, upload, download\n'
+               'objects from the ZumoLabs backend (ragnarok)\n'
+               '\n'
+               'app    - https://app.zumolabs.ai\n'
+               'github - https://github.com/ZumoLabs/zpy\n'
+               'docs   - https://github.com/ZumoLabs/zpy/tree/main/docs/cli')
 
 
 @cli.command('env')
@@ -87,6 +94,16 @@ def config():
     """
     pretty_config = json.dumps(read_config(), indent=2)
     click.echo(f'Zpy cli configuration:\n{pretty_config}')
+
+
+@cli.command('version')
+def version():
+    """ version
+
+    Display the zpy cli version.
+    """
+    import zpy
+    click.echo(f'Version: {zpy.__version__}')
 
 
 ############
@@ -266,7 +283,7 @@ def upload_sim(name, path):
     try:
         with Loader("Uploading sim..."):
             create_sim(name, path)
-        click.echo(f"Uploaded sim {path} with name '{name}'")
+        click.secho(f"Uploaded sim {path} with name '{name}'", fg='green')
     except requests.exceptions.HTTPError as e:
         click.secho(f'Failed to upload sim: {e}', fg='red', err=True)
 
@@ -292,7 +309,7 @@ def upload_dataset(name, path):
     try:
         with Loader("Uploading dataset..."):
             create_uploaded_dataset(name, path)
-        click.echo(f"Uploaded dataset {path} with name '{name}'")
+        click.secho(f"Uploaded dataset {path} with name '{name}'", fg='green')
     except requests.exceptions.HTTPError as e:
         click.secho(f'Failed to upload dataset: {e}', fg='red', err=True)
 
@@ -334,7 +351,7 @@ def create_dataset(name, sim, args):
         return
     try:
         create_generated_dataset(name, sim, parse_args(args))
-        click.echo(f"Created dataset '{name}' from sim '{sim}' with config {dataset_config}")
+        click.secho(f"Created dataset '{name}' from sim '{sim}' with config {dataset_config}", fg='green')
     except requests.exceptions.HTTPError as e:
         click.secho(f'Failed to create dataset: {e}', fg='red', err=True)
     except NameError as e:
@@ -370,7 +387,7 @@ def create_sweep(name, sim, number, args):
         dataset_config['seed'] = i
         try:
             create_generated_dataset(dataset_name, sim, dataset_config)
-            click.echo(f"Created dataset '{dataset_name}' from sim '{sim}' with config {dataset_config}")
+            click.secho(f"Created dataset '{dataset_name}' from sim '{sim}' with config {dataset_config}", fg='green')
         except requests.exceptions.HTTPError as e:
             click.secho(f'Failed to create dataset: {e}', fg='red', err=True)
         except NameError as e:
@@ -436,13 +453,14 @@ def create_job(name, operation, filters, configfile, sweepfile):
         click.echo(f'Parsed sweep file {sweepfile} : {sweep_config}')
     else:
         job_configs.append(dict())
-    click.echo(f"Creating {len(job_configs)} jobs")
+
+    click.confirm(f'Launch {len(job_configs)} jobs?', abort=True)
 
     for i, config in enumerate(job_configs):
         job_name = name if i == 0 else f'{name} {i}'
         try:
             create_new_job(job_name, operation, config, datasets)
-            click.echo(f"Created {operation} job '{job_name}' with config {config}")
+            click.secho(f"Created {operation} job '{job_name}' with config {config}", fg='green')
         except requests.exceptions.HTTPError as e:
             click.secho(f'Failed to create job: {e}', fg='red', err=True)
 
