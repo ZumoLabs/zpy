@@ -10,6 +10,19 @@ ENDPOINTS = {
 CONFIG_FILE = '~/.zpy/config.yaml'
 
 
+def get_endpoint(env):
+    """ get endpoint
+    
+    Given an env return endpoint
+    Args:
+        env (str): desired env
+
+    Returns:
+        url (str): endpoint for env
+    """
+    return ENDPOINTS[env]
+
+
 def initialize_config():
     """ initialize config
 

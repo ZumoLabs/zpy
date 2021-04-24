@@ -32,7 +32,7 @@ def filter_datasets(dfilter, url, auth_headers):
                 r.raise_for_status()
             response = json.loads(r.text)
             for r in response['results']:
-                filtered_datasets[d['name']] = d['id']
+                filtered_datasets[r['name']] = r['id']
             endpoint = response['next']
     return filtered_datasets
 

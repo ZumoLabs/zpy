@@ -1,4 +1,5 @@
 from cli.config import read_config
+from copy import deepcopy
 from itertools import product
 from tqdm import tqdm
 from urllib.request import urlopen

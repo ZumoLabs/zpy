@@ -1,6 +1,6 @@
 from cli.loader import Loader
 from cli.utils import parse_args, resolve_sweep
-from copy import deepcopy
+from cli.config import initialize_config, read_config, write_config, get_endpoint
 from requests.auth import HTTPBasicAuth
 from table_logger import TableLogger
 from zpy.files import read_json, to_pathlib_path
@@ -42,12 +42,15 @@ def env(env):
         env (str): new environment for endpoint
     """
     config = read_config()
+    old_env, old_endpoint = config['ENVIRONMENT'], config['ENDPOINT']
     config['ENVIRONMENT'] = env
-    config['ENDPOINT'] = cli.config.ENDPOINTS[env]
+    config['ENDPOINT'] = get_endpoint(env)
     config['TOKEN'] = None
     write_config(config)
-    click.echo(f'Target environment now {env}')
-    click.echo("'zpy login' to fetch token")
+    click.echo(f'Swapped environment:')
+    click.echo(f"  {old_env} -> {config['ENVIRONMENT']}")
+    click.echo(f"  {old_endpoint} -> {config['ENDPOINT']}")
+    click.echo("zpy login to fetch token")
 
 
 @cli.command('login')
@@ -67,14 +70,13 @@ def login(username, password):
     """
     config = read_config()
     endpoint = f"{config['ENDPOINT']}/auth/login/"
-    click.echo(f'Login {endpoint}')
     r = requests.post(endpoint, auth=HTTPBasicAuth(username, password))
     if r.status_code != 200:
-        click.echo('Login failed', err=True)
+        click.secho('Login failed.', err=True, fg='red')
         return
     config['TOKEN'] = r.json()['token']
     write_config(config)
-    click.echo('Login successful')
+    click.echo('Login successful!')
 
 
 @cli.command('config')
@@ -84,7 +86,7 @@ def config():
     Display current configuration file to developer.
     """
     pretty_config = json.dumps(read_config(), indent=2)
-    click.echo(f'Zpy configuration:\n{pretty_config}')
+    click.echo(f'Zpy cli configuration:\n{pretty_config}')
 
 
 ############
@@ -109,16 +111,16 @@ def list_datasets():
     """
     from cli.datasets import fetch_datasets
     try:
-        with Loader("Fetching sims..."):
+        with Loader("Fetching datasets..."):
             datasets = fetch_datasets()
         click.echo(f'Fetched datasets succesfully.')
     except requests.exceptions.HTTPError as e:
         click.secho(f'Failed to fetch datasets {e}.', fg='red', err=True)
         return
 
-    tbl = TableLogger(columns='name,state,type,created,id')
+    tbl = TableLogger(columns='name,state,type,created,id', default_colwidth=30)
     for d in datasets:
-        tbl(d['name'], d['state'], d['type'], d['created_at'], d['id'])
+        tbl(d['name'], d['state'].lower(), d['type'], d['created_at'], d['id'])
 
 
 @list.command('sims')
@@ -197,11 +199,11 @@ def get_dataset(name, dtype, path):
     from cli.datasets import download_dataset
     try:
         output_path = download_dataset(name, path, dtype)
-        click.echo(f'Downloaded {dtype} dataset {name} to {output_path}')
+        click.echo(f"Downloaded {dtype} dataset '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
-        click.secho(f'Failed to download dataset {e}', fg='red', err=True)
+        click.secho(f'Failed to download dataset: {e}', fg='red', err=True)
     except NameError as e:
-        click.secho(f'Failed to download dataset {e}', fg='yellow', err=True)
+        click.secho(f'Failed to download dataset: {e}', fg='yellow', err=True)
 
 
 @get.command('sim')
@@ -222,11 +224,11 @@ def get_sim(name, path):
     from cli.sims import download_sim
     try:
         output_path = download_sim(name, path)
-        click.echo(f'Downloaded sim {name} to {output_path}')
+        click.echo(f"Downloaded sim '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
-        click.secho(f'Failed to download sim {e}', fg='red', err=True)
+        click.secho(f'Failed to download sim: {e}', fg='red', err=True)
     except NameError as e:
-        click.secho(f'Failed to download sim {e}', fg='yellow', err=True)
+        click.secho(f'Failed to download sim: {e}', fg='yellow', err=True)
 
 
 ##############
@@ -264,9 +266,9 @@ def upload_sim(name, path):
     try:
         with Loader("Uploading sim..."):
             create_sim(name, path)
-        click.echo(f'Uploaded sim {path} with name {name}')
+        click.echo(f"Uploaded sim {path} with name '{name}'")
     except requests.exceptions.HTTPError as e:
-        click.secho(f'Failed to upload sim {e}', fg='red', err=True)
+        click.secho(f'Failed to upload sim: {e}', fg='red', err=True)
 
 
 @upload.command('dataset')
@@ -290,9 +292,9 @@ def upload_dataset(name, path):
     try:
         with Loader("Uploading dataset..."):
             create_uploaded_dataset(name, path)
-        click.echo(f'Uploaded dataset {path} with name {name}')
+        click.echo(f"Uploaded dataset {path} with name '{name}'")
     except requests.exceptions.HTTPError as e:
-        click.secho(f'Failed to upload datset {e}', fg='red', err=True)
+        click.secho(f'Failed to upload dataset: {e}', fg='red', err=True)
 
 
 ##############
@@ -332,11 +334,11 @@ def create_dataset(name, sim, args):
         return
     try:
         create_generated_dataset(name, sim, parse_args(args))
-        click.echo(f'Created dataset {name} from sim {sim} with config {dataset_config}')
+        click.echo(f"Created dataset '{name}' from sim '{sim}' with config {dataset_config}")
     except requests.exceptions.HTTPError as e:
-        click.secho(f'Failed to create dataset {e}', fg='red', err=True)
+        click.secho(f'Failed to create dataset: {e}', fg='red', err=True)
     except NameError as e:
-        click.secho(f'Failed to create dataset {e}', fg='yellow', err=True)
+        click.secho(f'Failed to create dataset: {e}', fg='yellow', err=True)
  
 
 @create.command('sweep')
@@ -368,12 +370,13 @@ def create_sweep(name, sim, number, args):
         dataset_config['seed'] = i
         try:
             create_generated_dataset(dataset_name, sim, dataset_config)
-            click.echo(f'Created dataset {name} from sim {sim} with config {dataset_config}')
+            click.echo(f"Created dataset '{dataset_name}' from sim '{sim}' with config {dataset_config}")
         except requests.exceptions.HTTPError as e:
-            click.secho(f'Failed to create dataset {e}', fg='red', err=True)
+            click.secho(f'Failed to create dataset: {e}', fg='red', err=True)
         except NameError as e:
-            click.secho(f'Failed to create dataset {e}', fg='yellow', err=True)
-    click.echo(f'Finished creating {number} datasets from sim {sim}.')
+            click.secho(f'Failed to create dataset: {e}', fg='yellow', err=True)
+            return
+    click.echo(f"Finished creating {number} datasets from sim '{sim}'.")
 
 
 @create.command('job')
@@ -408,10 +411,12 @@ def create_job(name, operation, filters, configfile, sweepfile):
     datasets = []
     for dfilter in filters:
         try:
-            with Loader(f'Filtering datasets by {dfilter}...'):
+            with Loader(f"Filtering datasets by '{dfilter}'..."):
                 filtered_datasets = filter_datasets(dfilter)
-            click.echo(f'Filtered datasets by filter {dfilter}:\n{filtered_datasets.keys()}')
-            datasets.append(filtered_datasets.values()
+            filtered_datasets_names = [*filtered_datasets.keys()]
+            click.echo(
+                f"Filtered datasets by filter '{dfilter}':\n{filtered_datasets_names}")
+            datasets.append(filtered_datasets.values())
         except requests.exceptions.HTTPError as e:
             click.secho(f'Failed to filter datsets {e}', fg='red', err=True)
 
@@ -424,21 +429,21 @@ def create_job(name, operation, filters, configfile, sweepfile):
         sweep_config = read_json(sweepfile)
         try:
             configs = resolve_sweep(sweep_config)
-        except:
-            click.secho('Failed to resolve sweep file {sweepfile} {e}', fg='yellow', err=True)
+        except Exception as e:
+            click.secho(f'Failed to resolve sweep file {sweepfile} {e}', fg='yellow', err=True)
             return
-        job_configs.append(configs)
+        job_configs.extend(configs)
         click.echo(f'Parsed sweep file {sweepfile} : {sweep_config}')
     else:
         job_configs.append(dict())
-    click.echo(f'Configuration for {len(job_configs)} jobs:\n{'\n'.join(job_configs)}')
+    click.echo(f"Creating {len(job_configs)} jobs")
 
     for i, config in enumerate(job_configs):
         job_name = name if i == 0 else f'{name} {i}'
         try:
             create_new_job(job_name, operation, config, datasets)
-            click.echo(f'Created {operation} job {job_name} with config {config}')
+            click.echo(f"Created {operation} job '{job_name}' with config {config}")
         except requests.exceptions.HTTPError as e:
-            click.secho(f'Failed to create job {e}', fg='red', err=True)
+            click.secho(f'Failed to create job: {e}', fg='red', err=True)
 
-    click.echo(f'Finished creating {len(job_configs)} jobs with name {name}')
+    click.echo(f"Finished creating {len(job_configs)} jobs with name '{name}'")

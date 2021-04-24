@@ -19,6 +19,7 @@ class Loader:
         self._thread = Thread(target=self._animate, daemon=True)
         self.steps = ["⢿", "⣻", "⣽", "⣾", "⣷", "⣯", "⣟", "⡿"]
         self.done = False
+        self.end = end
 
     def start(self):
         self._thread.start()
