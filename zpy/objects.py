@@ -80,26 +80,21 @@ def select(
         obj (Union[bpy.types.Object, str]): Scene object (or it's name)
     """
     obj = verify(obj)
+    log.debug(f'Selecting obj: {obj.name}')
     view_layer = zpy.blender.verify_view_layer()
-    log.debug(f'Before de-select, bpy.context.active_object = {bpy.context.active_object}')
-    log.debug(f'Before de-select, view_layer.objects.active = {view_layer.objects.active}')
-    log.debug(f'Before de-select, bpy.context.view_layer.objects.active = {bpy.context.view_layer.objects.active}')
-    
-    log.debug(f'De-selecting everything')
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.context.active_object.select_set(False)
-    view_layer.objects.active = None
     log.debug(f'Before select, bpy.context.active_object = {bpy.context.active_object}')
     log.debug(f'Before select, view_layer.objects.active = {view_layer.objects.active}')
-    log.debug(f'Before select, bpy.context.view_layer.objects.active = {bpy.context.view_layer.objects.active}')
-
-    log.debug(f'Selecting obj: {obj.name}')
+    # De-select everything
+    bpy.ops.object.select_all(action='DESELECT')
+    if bpy.context.active_object is not None:
+        bpy.context.active_object.select_set(False)
+    view_layer.objects.active = None
+    # Select the new object
     view_layer.objects.active = obj
     bpy.context.view_layer.objects.active = obj
     bpy.data.objects[obj.name].select_set(True, view_layer=view_layer)
     log.debug(f'After select, bpy.context.active_object = {bpy.context.active_object}')
     log.debug(f'After select, view_layer.objects.active = {view_layer.objects.active}')
-    log.debug(f'After select, bpy.context.view_layer.objects.active = {bpy.context.view_layer.objects.active}')
 
 
 def delete_obj(
