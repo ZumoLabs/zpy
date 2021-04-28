@@ -27,6 +27,9 @@ class RunOperator(Operator):
         text = bpy.data.texts.get('run', None)
         if text is None:
             raise ValueError(f'Running a sim requires a run text, could not find in text with name "run".')
+        # Set the logger levels
+        zpy.logging.set_log_levels('debug')
+        # Execute the run function inside the run text
         text_as_module = text.as_module()
         text_as_module.run()
         return {'FINISHED'}
