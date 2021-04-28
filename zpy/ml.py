@@ -1,5 +1,4 @@
 from typing import Dict, Union
-from cli.utils import auth_headers
 from pathlib import Path
 import json
 import requests
@@ -81,7 +80,7 @@ class Experiment:
         self.sim = sim
         self.dataset = dataset
         self.config = config
-        self.auth_headers = auth_headers(api_key)
+        self.auth_headers = {'Authorization': 'token {}'.format(api_key)}
         self.id = None
 
     def _post(self, data=None):
