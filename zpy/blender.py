@@ -7,6 +7,7 @@ import math
 import os
 import random
 import time
+from functools import wraps
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
@@ -144,12 +145,12 @@ def get_asset_lib_path() -> Path:
 
 @gin.configurable
 def verify_view_layer(
-    view_layer_name: str = 'prod',
+    view_layer_name: str = 'View Layer',
 ) -> bpy.types.ViewLayer:
     """ Get and set the view layer in Blender.
 
     Args:
-        view_layer_name (str, optional): Name for View Layer. Defaults to 'prod'.
+        view_layer_name (str, optional): Name for View Layer. Defaults to 'View Layer'.
 
     Returns:
         bpy.types.ViewLayer: View Layer that will be used at runtime.
@@ -167,12 +168,12 @@ def verify_view_layer(
 
 @gin.configurable
 def verify_blender_scene(
-    blender_scene_name: str = 'Prod',
+    blender_scene_name: str = 'Scene',
 ) -> bpy.types.Scene:
     """ Get and set the scene in Blender.
 
     Args:
-        blender_scene_name (str, optional): Name for Scene. Defaults to 'Prod'.
+        blender_scene_name (str, optional): Name for Scene. Defaults to 'Scene'.
 
     Returns:
         bpy.types.Scene: Scene that will be used at runtime.
@@ -206,21 +207,27 @@ def parse_config(
         gin.finalize()
 
 
-def run_text(
-    text_name: str = 'run',
-) -> None:
-    """ Executes a text in Blender.
+def save_and_revert(_func):
+    """ Decorator for saving blenderfile before execution, and
+        reverting after execution.
 
     Args:
-        text_name (str, optional): Name of text to execute. Defaults to 'run'.
+        _func (callable): function to be decorated.
+
+    Returns:
+        [callable]: Wrapped function.
     """
-    text = bpy.data.texts.get(text_name, None)
-    if text is None:
-        log.warning(f'Could not find {text_name} in texts.')
-        return
-    _ctx = bpy.context.copy()
-    _ctx['edit_text'] = text
-    bpy.ops.text.run_script(_ctx)
+    @wraps(_func)
+    def wrapped_func(*args, **kwargs) -> None:
+        log.info('Saving the sim.')
+        bpy.ops.wm.save_mainfile()
+        try:
+            _func(*args, **kwargs)
+        except Exception as e:
+            log.error(f'Executing {_func.__name__} failed with exception {e}')
+        log.info('Reverting sim to previous savepoint.')
+        bpy.ops.wm.revert_mainfile()
+    return wrapped_func
 
 
 def load_text_from_file(
@@ -248,7 +255,7 @@ def load_text_from_file(
 
 def default_script_template_dir() -> Path:
     """ Path to the script templates for zpy addon.
-    
+
     Returns:
         pathlib.Path: Path to script templates for zpy addon.
     """

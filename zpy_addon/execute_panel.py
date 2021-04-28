@@ -24,22 +24,14 @@ class RunOperator(Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        try:
-            # Save the state of the sim before the run script was executed
-            bpy.ops.wm.save_mainfile()
-        except RuntimeError as e:
-            log.warning(f'When saving sim before run: {e}')
-        try:
-            zpy.blender.use_gpu()
-            zpy.blender.parse_config('config')
-            zpy.blender.run_text('run')
-        except Exception as e:
-            log.error(f'Executing script failed with exception {e}')
-        try:
-            # Return to the state of the sim before the run script was executed
-            bpy.ops.wm.revert_mainfile()
-        except RuntimeError as e:
-            log.warning(f'When saving sim before run: {e}')
+        text = bpy.data.texts.get('run', None)
+        if text is None:
+            raise ValueError(f'Running a sim requires a run text, could not find in text with name "run".')
+        # Set the logger levels
+        zpy.logging.set_log_levels('debug')
+        # Execute the run function inside the run text
+        text_as_module = text.as_module()
+        text_as_module.run()
         return {'FINISHED'}
 
 
@@ -83,7 +75,7 @@ class RenderOperator(Operator):
 
 class SCENE_PT_ExecutePanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
-    bl_idname="SCENE_PT_ExecutePanel"
+    bl_idname = "SCENE_PT_ExecutePanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Execute"

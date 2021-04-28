@@ -19,12 +19,14 @@ def set_log_levels(
         'neuralyzer',
         'bender',
     ],
+    log_format: str = '%(asctime)s: %(levelname)s %(filename)s] %(message)s',
 ) -> None:
     """ Set logger levels for all zpy modules.
 
     Args:
         level (str, optional): log level in [info, debug, warning]. Defaults to logging.Info.
         modules (List[str], optional): Modules to set logging for. Defaults to [ 'zpy', 'zpy_addon', 'bpy.zpy_addon' 'neuralyzer', ].
+        log_format (str, optional): Log format string, defaults to '%(asctime)s: %(levelname)s %(filename)s] %(message)s'
     """
     if level is None:
         log_level = logging.INFO
@@ -37,12 +39,10 @@ def set_log_levels(
     else:
         log.warning(f'Invalid log level {level}')
         return
-    log.warning(f'Setting log level to {log_level} ({level})')
-    logging.basicConfig(
-        level=log_level,
-        format='%(asctime)s: %(levelname)s %(filename)s] %(message)s')
+    logging.basicConfig(format=log_format)
     for logger_name in modules:
         try:
+            log.warning(f'Setting log level for {logger_name} to {log_level} ({level})')
             logging.getLogger(logger_name).setLevel(log_level)
         except:
             pass
