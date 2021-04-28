@@ -7,6 +7,7 @@ import math
 import os
 import random
 import time
+from functools import wraps
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
@@ -144,12 +145,12 @@ def get_asset_lib_path() -> Path:
 
 @gin.configurable
 def verify_view_layer(
-    view_layer_name: str = 'prod',
+    view_layer_name: str = 'View Layer',
 ) -> bpy.types.ViewLayer:
     """ Get and set the view layer in Blender.
 
     Args:
-        view_layer_name (str, optional): Name for View Layer. Defaults to 'prod'.
+        view_layer_name (str, optional): Name for View Layer. Defaults to 'View Layer'.
 
     Returns:
         bpy.types.ViewLayer: View Layer that will be used at runtime.
@@ -167,12 +168,12 @@ def verify_view_layer(
 
 @gin.configurable
 def verify_blender_scene(
-    blender_scene_name: str = 'Prod',
+    blender_scene_name: str = 'Scene',
 ) -> bpy.types.Scene:
     """ Get and set the scene in Blender.
 
     Args:
-        blender_scene_name (str, optional): Name for Scene. Defaults to 'Prod'.
+        blender_scene_name (str, optional): Name for Scene. Defaults to 'Scene'.
 
     Returns:
         bpy.types.Scene: Scene that will be used at runtime.
@@ -204,6 +205,29 @@ def parse_config(
     with gin.unlock_config():
         gin.parse_config(_text.as_string())
         gin.finalize()
+
+
+def save_and_revert(_func):
+    """ Decorator for saving blenderfile before execution, and
+        reverting after execution.
+
+    Args:
+        _func (callable): function to be decorated.
+
+    Returns:
+        [callable]: Wrapped function.
+    """
+    @wraps(_func)
+    def wrapped_func(*args, **kwargs) -> None:
+        log.info('Saving the sim.')
+        bpy.ops.wm.save_mainfile()
+        try:
+            _func(*args, **kwargs)
+        except Exception as e:
+            log.error(f'Executing {_func.name} failed with exception {e}')
+        log.info('Reverting sim to previous savepoint.')
+        bpy.ops.wm.revert_mainfile()
+    return wrapped_func
 
 
 def run_text(
@@ -248,7 +272,7 @@ def load_text_from_file(
 
 def default_script_template_dir() -> Path:
     """ Path to the script templates for zpy addon.
-    
+
     Returns:
         pathlib.Path: Path to script templates for zpy addon.
     """
