@@ -24,7 +24,11 @@ class RunOperator(Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        zpy.blender.run_text('run')
+        text = bpy.data.texts.get('run', None)
+        if text is None:
+            raise ValueError(f'Running a sim requires a run text, could not find in text with name "run".')
+        text_as_module = text.as_module()
+        text_as_module.run()
         return {'FINISHED'}
 
 

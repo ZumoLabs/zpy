@@ -230,23 +230,6 @@ def save_and_revert(_func):
     return wrapped_func
 
 
-def run_text(
-    text_name: str = 'run',
-) -> None:
-    """ Executes a text in Blender.
-
-    Args:
-        text_name (str, optional): Name of text to execute. Defaults to 'run'.
-    """
-    text = bpy.data.texts.get(text_name, None)
-    if text is None:
-        log.warning(f'Could not find {text_name} in texts.')
-        return
-    _ctx = bpy.context.copy()
-    _ctx['edit_text'] = text
-    bpy.ops.text.run_script(_ctx)
-
-
 def load_text_from_file(
     path: Union[Path, str],
     text_name: str = '',
