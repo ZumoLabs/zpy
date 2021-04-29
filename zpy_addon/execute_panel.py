@@ -7,6 +7,7 @@ from pathlib import Path
 
 import bpy
 import zpy
+import gin
 from bpy.types import Operator
 
 log = logging.getLogger(__name__)
@@ -29,8 +30,10 @@ class RunOperator(Operator):
             raise ValueError(f'Running a sim requires a run text, could not find in text with name "run".')
         # Set the logger levels
         zpy.logging.set_log_levels('debug')
+        # HACK: Gin will complain when this module is re-initialized
+        with gin.unlock_config():
+            text_as_module = text.as_module()
         # Execute the run function inside the run text
-        text_as_module = text.as_module()
         text_as_module.run()
         return {'FINISHED'}
 
@@ -94,6 +97,6 @@ class SCENE_PT_ExecutePanel(bpy.types.Panel):
         row = layout.row()
         row.operator(
             'scene.zpy_run',
-            text='Run',
+            text='Run (Debug)',
             icon='TRIA_RIGHT',
         )
