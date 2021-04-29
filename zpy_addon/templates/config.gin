@@ -18,5 +18,5 @@ image_size_width/macro.value = 640
 image_size_height/macro.value = 480
 zpy.saver_image.add_image.width = @image_size_width/macro()
 zpy.saver_image.add_image.height = @image_size_height/macro()
-zpy.render.render_aov.width = @image_size_width/macro()
-zpy.render.render_aov.height = @image_size_height/macro()
+zpy.render.render.width = @image_size_width/macro()
+zpy.render.render.height = @image_size_height/macro()

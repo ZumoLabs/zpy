@@ -28,7 +28,7 @@ def run(num_images: int = 5):
         iseg_image_name = zpy.files.make_iseg_image_name(step_idx)
 
         # Render image
-        zpy.render.render_aov(
+        zpy.render.render(
             rgb_path=saver.output_dir / rgb_image_name,
             iseg_path=saver.output_dir / iseg_image_name,
             width=640,

@@ -142,7 +142,7 @@ def lens_dirt_node(
 
 
 @gin.configurable
-def render_aov(
+def render(
     rgb_path: Union[Path, str] = None,
     depth_path: Union[Path, str] = None,
     iseg_path: Union[Path, str] = None,
@@ -247,6 +247,11 @@ def render_aov(
             _bad_name = str(output_path) + '%04d' % scene.frame_current
             os.rename(_bad_name, str(output_path))
             log.info(f'Rendered {style} image saved to {str(output_path)}')
+
+
+# TODO: Eventually remove this deprecated function name
+def render_aov(*args, **kwargs):
+    return render(*args, **kwargs)
 
 
 def _mute_aov_file_output_node(style: str, mute: bool = True):

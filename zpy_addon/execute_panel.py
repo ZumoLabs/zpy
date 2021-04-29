@@ -64,7 +64,7 @@ class RenderOperator(Operator):
         output_path = Path(context.scene.zpy_output_path)
 
         # Save renders to file
-        zpy.render.render_aov(
+        zpy.render.render(
             rgb_path=output_path / rgb_image_name,
             iseg_path=output_path / iseg_image_name,
             cseg_path=output_path / cseg_image_name,

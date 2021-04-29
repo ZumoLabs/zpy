@@ -97,7 +97,7 @@ def run():
         depth_image_name = zpy.files.make_depth_image_name(step_idx)
 
         # Render image
-        zpy.render.render_aov(
+        zpy.render.render(
             rgb_path=saver.output_dir / rgb_image_name,
             iseg_path=saver.output_dir / iseg_image_name,
             depth_path=saver.output_dir / depth_image_name,
