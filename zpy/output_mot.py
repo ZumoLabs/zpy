@@ -27,7 +27,7 @@ class OutputMOT(zpy.output.Output):
     
     """
 
-    ANNOTATION_FILENAME = Path('mot.csv')
+    ANNOTATION_FILENAME = Path('_annotations.mot.csv')
 
     def __init__(self, *args, **kwargs) -> Path:
         super().__init__(*args, annotation_filename=self.ANNOTATION_FILENAME, **kwargs)

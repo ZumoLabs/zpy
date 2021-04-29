@@ -24,7 +24,7 @@ class OutputZUMO(zpy.output.Output):
 
     """
 
-    ANNOTATION_FILENAME = Path('ZUMO_META.json')
+    ANNOTATION_FILENAME = Path('_annotations.zumo.json')
 
     def __init__(self, *args, **kwargs) -> Path:
         super().__init__(*args, annotation_filename=self.ANNOTATION_FILENAME, **kwargs)

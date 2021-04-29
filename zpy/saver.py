@@ -29,7 +29,7 @@ class Saver:
 
     # Names for annotation files, folders, configs, datasheets, etc
     HIDDEN_METAFOLDER_FILENAME = Path('.zumometa')
-    HIDDEN_DATASHEET_FILENAME = Path('ZUMO_DATASHEET.txt')
+    HIDDEN_DATASHEET_FILENAME = Path('_viz.datasheet.txt')
     GIN_CONFIG_FILENAME = Path('config.gin')
 
     DATETIME_FORMAT = '20%y%m%d_%H%M%S'

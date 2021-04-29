@@ -131,9 +131,9 @@ class ExportOperator(bpy.types.Operator):
         log.info('Export Step 3 of 4: Saving meta-information.')
         bpy.context.window_manager.progress_update(70)
 
-        # Output scene information in ZUMO_META
+        # Output scene information in _meta.zumo
         zpy.files.write_json(
-            export_path / 'ZUMO_META.json',
+            export_path / '_meta.zumo.json',
             zpy.blender.scene_information(),
         )
 

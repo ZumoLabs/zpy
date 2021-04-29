@@ -44,7 +44,7 @@ def plotter(func):
             log.info(f'Displaying {plot_name}...')
             plt.show()
             time.sleep(1)
-        output_path = output_path / (plot_name + '.png')
+        output_path = output_path / f'_plot.{plot_name}.png'
         plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
         plt.close('all')
         return fig
@@ -227,7 +227,7 @@ def draw_annotations(
         image.shape[1]/float(DPI),  # width
         image.shape[0]/float(DPI),  # height
     )
-    full_name = f'{image_path.stem}_annotated'
+    full_name = f'{image_path.stem}.annotated'
     return full_name, fig
 
 

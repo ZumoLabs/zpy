@@ -25,7 +25,7 @@ class OutputCOCO(zpy.output.Output):
 
     """
 
-    ANNOTATION_FILENAME = Path('coco_annotations.json')
+    ANNOTATION_FILENAME = Path('_annotations.coco.json')
 
     def __init__(self, *args, **kwargs) -> Path:
         super().__init__(*args, annotation_filename=self.ANNOTATION_FILENAME, **kwargs)
@@ -60,7 +60,7 @@ class OutputCOCO(zpy.output.Output):
             log.info('Outputting COCO annotations with multi-part' +
                      'segmentation split into seperate annotations')
             coco_dict['annotations'] = self.coco_split_segmentation_annotations()
-            annotation_path = zpy.files.make_underscore_path(
+            annotation_path = zpy.files.add_to_path(
                 annotation_path, 'splitseg')
             # Write out annotations to file
             zpy.files.write_json(annotation_path, coco_dict)

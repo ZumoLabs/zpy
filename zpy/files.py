@@ -33,19 +33,18 @@ You can test these out at: https://regex101.com/
 IMAGE_REGEX = '.*\.(jpeg|jpg|png|bmp)'
 FILE_REGEX = {
     # Images
-    'instance segmentation image': 'IMG_[0-9]*.*iseg' + IMAGE_REGEX,
-    'class segmentation image': 'IMG_[0-9]*.*cseg' + IMAGE_REGEX,
-    'depth image': 'IMG_[0-9]*.*depth' + IMAGE_REGEX,
-    'normal image': 'IMG_[0-9]*.*normal' + IMAGE_REGEX,
-    'stereo left image': 'IMG_[0-9]*.*stereoL' + IMAGE_REGEX,
-    'stereo right image': 'IMG_[0-9]*.*stereoR' + IMAGE_REGEX,
-    'rgb image': 'IMG_[0-9]*.*rgb' + IMAGE_REGEX,
-    'custom image': 'IMG_[0-9]*' + IMAGE_REGEX,
+    'instance segmentation image': '.*iseg' + IMAGE_REGEX,
+    'class segmentation image': '.*cseg' + IMAGE_REGEX,
+    'depth image': '.*depth' + IMAGE_REGEX,
+    'normal image': '.*normal' + IMAGE_REGEX,
+    'stereo left image': '.*.stereoL' + IMAGE_REGEX,
+    'stereo right image': '.*.stereoR' + IMAGE_REGEX,
+    'rgb image': '.*rgb' + IMAGE_REGEX,
     'image': IMAGE_REGEX,
     # Annotations
-    'zumo annotation': 'ZUMO_META.json',
+    'zumo annotation': '_annotations.zumo.json',
     'coco annotation': '.*coco.*\.json',
-    'annotation': '.*\.(json|xml|yaml)',
+    'annotation': '.*\.(json|xml|yaml|csv)',
 }
 
 
@@ -110,7 +109,7 @@ def make_rgb_image_name(id: int, extension: str = '.png') -> str:
     Returns:
         str: Image name.
     """
-    return 'IMG_%08d_rgb' % id + extension
+    return 'image.%08d.rgb' % id + extension
 
 
 def make_cseg_image_name(id: int, extension: str = '.png') -> str:
@@ -123,7 +122,7 @@ def make_cseg_image_name(id: int, extension: str = '.png') -> str:
     Returns:
         str: Image name.
     """
-    return 'IMG_%08d_cseg' % id + extension
+    return 'image.%08d.cseg' % id + extension
 
 
 def make_iseg_image_name(id: int, extension: str = '.png') -> str:
@@ -136,7 +135,7 @@ def make_iseg_image_name(id: int, extension: str = '.png') -> str:
     Returns:
         str: Image name.
     """
-    return 'IMG_%08d_iseg' % id + extension
+    return 'image.%08d.iseg' % id + extension
 
 
 def make_depth_image_name(id: int, extension: str = '.png') -> str:
@@ -149,7 +148,7 @@ def make_depth_image_name(id: int, extension: str = '.png') -> str:
     Returns:
         str: Image name.
     """
-    return 'IMG_%08d_depth' % id + extension
+    return 'image.%08d.depth' % id + extension
 
 
 def make_custom_image_name(id: int, name: str, extension: str = '.png') -> str:
@@ -163,7 +162,7 @@ def make_custom_image_name(id: int, name: str, extension: str = '.png') -> str:
     Returns:
         str: Image name.
     """
-    return 'IMG_%08d_%s' % (id, name) + extension
+    return 'image.%08d.%s' % (id, name) + extension
 
 
 def id_from_image_name(image_name: str) -> int:
@@ -192,8 +191,8 @@ def replace_id_in_image_name(image_name: str, new_id: int) -> str:
     return image_name[:4] + '%08d' % new_id + image_name[12:]
 
 
-def make_underscore_path(path: Union[Path, str], name: str) -> Path:
-    """ Make an underscore path: foo.txt -> foo_new.txt
+def add_to_path(path: Union[Path, str], name: str) -> Path:
+    """ Add string descriptor to path: foo.txt -> foo.more_foo.txt
 
     Args:
         path (Union[Path, str]): A filesystem path.
