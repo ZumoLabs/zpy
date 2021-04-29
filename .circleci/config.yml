@@ -113,13 +113,7 @@ workflows:
   version: 2
   build-publish:
     jobs:
-      - test:
-          filters:
-            branches:
-              only: /release-v.*/
       - tag:
-          requires:
-            - test
           filters:
             branches:
               only: /release-v.*/
