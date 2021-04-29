@@ -311,7 +311,7 @@ def save_debug_blenderfile(
         path (Union[Path, str], optional): Output directory path.
     """
     if path is None:
-        path = zpy.files.default_temp_path() / 'blender-debug-scene-tmp.blend'
+        path = zpy.files.default_temp_path() / '_debug.blend'
     path = zpy.files.verify_path(path, make=False)
     log.debug(f'Saving intermediate blenderfile to {path}')
     bpy.ops.wm.save_as_mainfile(filepath=str(path), compress=False, copy=True)
