@@ -71,7 +71,7 @@ def frgb_to_hex(frgb: Tuple[float]) -> str:
 def _gamma_correction(channel: float) -> float:
     """Convert float rgb (0 to 1) to the gamma-corrected sRGB float (0 to 1)
     for a single color channel."""
-    exponent_srgb = (1 / 2.2)
+    exponent_srgb = 1 / 2.2
     return channel ** exponent_srgb
 
 
@@ -83,7 +83,7 @@ def frgb_to_srgb(frgb: Tuple[float]) -> Tuple[float]:
 def frgb_to_srgba(frgb: Tuple[float], a=1.0) -> Tuple[float]:
     """Convert float rgb (0 to 1) to the gamma-corrected sRGBA float (0 to 1)."""
     srgb = frgb_to_srgb(frgb)
-    srgba = frgb_to_frgba(srgb, a = a)
+    srgba = frgb_to_frgba(srgb, a=a)
     return srgba
 
 
