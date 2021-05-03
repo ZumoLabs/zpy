@@ -1,0 +1,28 @@
+name: lint-pr
+
+on: pull_request
+
+jobs:
+  run-linters:
+    name: Leave PR comments with Flake8
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: pip install flake8
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_name: "Lint Bot"
+          git_email: "infra@zumolabs.ai"
+          flake8: true
