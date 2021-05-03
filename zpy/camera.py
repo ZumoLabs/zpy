@@ -20,7 +20,7 @@ def verify(
     camera: Union[bpy.types.Object, bpy.types.Camera, str],
     check_none=True,
 ) -> bpy.types.Camera:
-    """ Return camera given name or typed object.
+    """Return camera given name or typed object.
 
     Args:
         camera (Union[bpy.types.Object, bpy.types.Camera, str]): Camera object (or it's name)
@@ -35,9 +35,9 @@ def verify(
     if isinstance(camera, str):
         camera = bpy.data.cameras.get(camera)
     if check_none and camera is None:
-        raise ValueError(f'Could not find camera {camera}.')
+        raise ValueError(f"Could not find camera {camera}.")
     if camera is None:
-        log.info(f'No camera chosen, using default scene camera \"{camera}\".')
+        log.info(f'No camera chosen, using default scene camera "{camera}".')
         scene = zpy.blender.verify_blender_scene()
         camera = scene.camera
     return camera
@@ -48,7 +48,7 @@ def look_at(
     location: Union[Tuple[float], mathutils.Vector],
     roll: float = 0,
 ) -> None:
-    """ Rotate obj to look at target.
+    """Rotate obj to look at target.
 
     Based on: https://blender.stackexchange.com/a/5220/12947
 
@@ -63,10 +63,10 @@ def look_at(
     loc = obj.location
     # direction points from the object to the target
     direction = location - obj.location
-    quat = direction.to_track_quat('-Z', 'Y')
+    quat = direction.to_track_quat("-Z", "Y")
     quat = quat.to_matrix().to_4x4()
     # convert roll from radians to degrees
-    roll_matrix = mathutils.Matrix.Rotation(roll, 4, 'Z')
+    roll_matrix = mathutils.Matrix.Rotation(roll, 4, "Z")
     # remember the current location, since assigning to obj.matrix_world changes it
     loc = loc.to_tuple()
     obj.matrix_world = quat @ roll_matrix
@@ -79,7 +79,7 @@ def camera_xyz(
     camera: Union[bpy.types.Object, bpy.types.Camera, str] = None,
     fisheye_lens: bool = False,
 ) -> Tuple[float]:
-    """ Get pixel coordinates of point in camera space.
+    """Get pixel coordinates of point in camera space.
 
     - (0, 0) is the bottom left of the camera frame.
     - (1, 1) is the top right of the camera frame.
@@ -98,20 +98,19 @@ def camera_xyz(
     if not isinstance(location, mathutils.Vector):
         location = mathutils.Vector(location)
     scene = zpy.blender.verify_blender_scene()
-    point = bpy_extras.object_utils.world_to_camera_view(
-        scene, camera, location)
+    point = bpy_extras.object_utils.world_to_camera_view(scene, camera, location)
     # TODO: The z point here is incorrect?
-    log.debug(F'Point {point}')
+    log.debug(f"Point {point}")
     if point[2] < 0:
-        log.debug('Point is behind camera')
+        log.debug("Point is behind camera")
 
     # Fix the point based on camera distortion
     if fisheye_lens:
-        log.debug('Correcting for fisheye distortion')
+        log.debug("Correcting for fisheye distortion")
 
         # HACK: There should be a better place to put this
-        bpy.data.cameras[0].lens_unit = 'FOV'
-        bpy.data.cameras[0].lens = 18.
+        bpy.data.cameras[0].lens_unit = "FOV"
+        bpy.data.cameras[0].lens = 18.0
 
         # https://blender.stackexchange.com/questions/40702/how-can-i-get-the-projection-matrix-of-a-panoramic-camera-with-a-fisheye-equisol?noredirect=1&lq=1
         # Note this assumes 180 degree FOV
@@ -125,7 +124,7 @@ def camera_xyz(
 
         # Calculate our angles
         phi = math.atan2(p.y, p.x)
-        l = (p.x**2 + p.y**2)**(1/2)
+        l = (p.x ** 2 + p.y ** 2) ** (1 / 2)
         theta = math.asin(l)
 
         # Equisolid projection
@@ -147,7 +146,7 @@ def is_child_hit(
     obj: Union[bpy.types.Object, str],
     hit_obj: Union[bpy.types.Object, str],
 ) -> bool:
-    """ Recursive function to check if a child object is the hit object.
+    """Recursive function to check if a child object is the hit object.
 
     Args:
         obj (Union[bpy.types.Object, str]): Scene object (or it's name) that might contain a hit child.
@@ -172,7 +171,7 @@ def is_visible(
     obj_to_hit: Union[bpy.types.Object, str],
     camera: Union[bpy.types.Object, bpy.types.Camera, str] = None,
 ) -> bool:
-    """ Cast a ray to determine if object is visible from camera.
+    """Cast a ray to determine if object is visible from camera.
 
     Args:
         location (Union[Tuple[float], mathutils.Vector]): Location to shoot out ray towards.
@@ -188,20 +187,22 @@ def is_visible(
         location = mathutils.Vector(location)
     view_layer = zpy.blender.verify_view_layer()
     scene = zpy.blender.verify_blender_scene()
-    result = scene.ray_cast(depsgraph=view_layer.depsgraph,
-                            origin=camera.location,
-                            direction=(location - camera.location))
+    result = scene.ray_cast(
+        depsgraph=view_layer.depsgraph,
+        origin=camera.location,
+        direction=(location - camera.location),
+    )
     # Whether a hit occured
     is_hit = result[0]
     # Object hit by raycast
     hit_obj = result[4]
     if not is_hit:
         # Nothing was hit by the ray
-        log.debug(f'No raycast hit from camera to {obj_to_hit.name}')
+        log.debug(f"No raycast hit from camera to {obj_to_hit.name}")
         return False
     if is_child_hit(obj_to_hit, hit_obj):
         # One of the children of the obj_to_hit was hit
-        log.debug(f'Raycast hit from camera to {obj_to_hit.name}')
+        log.debug(f"Raycast hit from camera to {obj_to_hit.name}")
         return True
     return False
 
@@ -212,7 +213,7 @@ def is_in_view(
     camera: Union[bpy.types.Object, bpy.types.Camera, str] = None,
     epsilon: float = 0.05,
 ) -> bool:
-    """ Is a location visible from a camera (within some epsilon).
+    """Is a location visible from a camera (within some epsilon).
 
     Args:
         location (Union[Tuple[float], mathutils.Vector]): Location that is visible or not.
@@ -228,9 +229,9 @@ def is_in_view(
     x, y, z = camera_xyz(location, camera=camera)
     if z < 0:
         return False
-    if x < (0-epsilon) or x > (1 + epsilon):
+    if x < (0 - epsilon) or x > (1 + epsilon):
         return False
-    if y < (0-epsilon) or y > (1 + epsilon):
+    if y < (0 - epsilon) or y > (1 + epsilon):
         return False
     return True
 
@@ -243,7 +244,7 @@ def camera_xyv(
     width: int = 640,
     height: int = 480,
 ) -> Tuple[int]:
-    """ Get camera image xyv coordinates of point in scene.
+    """Get camera image xyv coordinates of point in scene.
 
     Keypoint coordinates (x, y) are measured from the top left
     image corner (and are 0-indexed). Coordinates are rounded
@@ -279,5 +280,5 @@ def camera_xyv(
     # float (0, 1) to pixel int (0, pixel size)
     x = int(x * width)
     y = int(y * height)
-    log.debug(f'(x, y, v) {(x, y, v)}')
+    log.debug(f"(x, y, v) {(x, y, v)}")
     return x, y, v

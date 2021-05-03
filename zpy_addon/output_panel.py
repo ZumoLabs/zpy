@@ -16,45 +16,47 @@ if "bpy" in locals():
 
 
 def registerSceneProperties():
-    """ Properties applied to scenes."""
+    """Properties applied to scenes."""
     bpy.types.Scene.zpy_output_path = bpy.props.StringProperty(
-        name='Output Path',
+        name="Output Path",
         description="Output path for rendered images, annotations, etc.",
         default=str(zpy.files.default_temp_path()),
-        subtype='DIR_PATH',
+        subtype="DIR_PATH",
     )
 
 
 class CleanOutputDirOperator(bpy.types.Operator):
-    """ Clean up output dir. """
+    """Clean up output dir."""
+
     bl_idname = "scene.zpy_cleanup_output_dir"
     bl_label = "Clean Output Dir"
     bl_description = "Clean output dir."
     bl_category = "ZPY"
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
 
     def execute(self, context):
         zpy.files.clean_dir(context.scene.zpy_output_path, keep_dir=True)
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class OpenOutputDirOperator(Operator):
-    """ Open file browser at output dir. """
+    """Open file browser at output dir."""
+
     bl_idname = "scene.zpy_open_output_dir"
     bl_label = "Open Output Dir"
     bl_description = "Open file browser at output dir."
     bl_category = "ZPY"
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
 
     def execute(self, context):
-        zpy.files.open_folder_in_explorer(
-            context.scene.zpy_output_path, make=True)
-        return {'FINISHED'}
+        zpy.files.open_folder_in_explorer(context.scene.zpy_output_path, make=True)
+        return {"FINISHED"}
 
 
 class SCENE_PT_OutputPanel(bpy.types.Panel):
-    """ UI for the addon that is visible in Blender. """
-    bl_idname="SCENE_PT_OutputPanel"
+    """UI for the addon that is visible in Blender."""
+
+    bl_idname = "SCENE_PT_OutputPanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Output Path"
@@ -68,12 +70,12 @@ class SCENE_PT_OutputPanel(bpy.types.Panel):
         row.prop(scene, "zpy_output_path", text="")
         row = layout.row()
         row.operator(
-            'scene.zpy_open_output_dir',
-            text='Open',
-            icon='FILEBROWSER',
+            "scene.zpy_open_output_dir",
+            text="Open",
+            icon="FILEBROWSER",
         )
         row.operator(
-            'scene.zpy_cleanup_output_dir',
-            text='Clean',
-            icon='PACKAGE',
+            "scene.zpy_cleanup_output_dir",
+            text="Clean",
+            icon="PACKAGE",
         )
