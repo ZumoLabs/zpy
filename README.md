@@ -69,7 +69,9 @@ export ZPY_VERSION="v1.1.1"
 ```
 ## CLI
 
-We provide a simple CLI, you can find documentation [here](https://github.com/ZumoLabs/zpy/tree/main/docs/cli/README.md).
+We provide a simple CLI. In order to run pip install zpy-zumo and then just run commands in that python environment.
+
+You can find documentation [here](https://github.com/ZumoLabs/zpy/tree/main/docs/cli/README.md).
 
 <p align="center"><img src="docs/cli/gif/createdataset.gif?raw=true"/></p>
 
