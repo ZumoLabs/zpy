@@ -45,13 +45,13 @@ def hex_to_frgb(hex_value: str) -> Tuple[float]:
     return irgb_to_frgb(hex_to_irgb(hex_value))
 
 
-def irgb_to_frgb(irgb: Tuple[float]) -> Tuple[float]:
+def irgb_to_frgb(irgb: Tuple[int]) -> Tuple[float]:
     """ Convert integer rgb (0 to 255) to float rgb (0 to 1). """
     r, g, b = irgb
     return r / 255.0, g / 255.0, b / 255.0
 
 
-def irgb_to_hex(irgb: Tuple[float]) -> str:
+def irgb_to_hex(irgb: Tuple[int]) -> str:
     """ Convert integer rgb (0 to 255) to hex. """
     r, g, b = irgb
     return '#%02x%02x%02x' % (r, g, b)

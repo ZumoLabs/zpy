@@ -225,8 +225,10 @@ def save_and_revert(_func):
             _func(*args, **kwargs)
         except Exception as e:
             log.error(f'Executing {_func.__name__} failed with exception {e}')
-        log.info('Reverting sim to previous savepoint.')
-        bpy.ops.wm.revert_mainfile()
+            raise e
+        finally:
+            log.info('Reverting sim to previous savepoint.')
+            bpy.ops.wm.revert_mainfile()
     return wrapped_func
 
 
