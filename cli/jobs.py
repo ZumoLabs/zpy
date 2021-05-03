@@ -18,12 +18,12 @@ def create_new_job(name, operation, config, datasets, url, auth_headers):
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
-    endpoint = f'{url}/api/v1/jobs/'
+    endpoint = f"{url}/api/v1/jobs/"
     data = {
-        'operation': operation.upper(),
-        'name': name,
-        'input_data_sets': datasets,
-        'config': json.dumps(config)
+        "operation": operation.upper(),
+        "name": name,
+        "input_data_sets": datasets,
+        "config": json.dumps(config),
     }
     r = requests.post(endpoint, data=data, headers=auth_headers)
     if r.status_code != 201:
@@ -43,8 +43,8 @@ def fetch_jobs(url, auth_headers):
     Returns:
         list: list of jobs
     """
-    endpoint = f'{url}/api/v1/jobs/'
+    endpoint = f"{url}/api/v1/jobs/"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
-    return json.loads(r.text)['results']
+    return json.loads(r.text)["results"]

@@ -1,23 +1,29 @@
 from ._version import get_versions
-__version__ = get_versions()['version']
+
+__version__ = get_versions()["version"]
 del get_versions
 
 import logging as py_logging
+
 log = py_logging.getLogger(__name__)
 
 # Import files first since it is used in other zpy modules
 from zpy import files
+
 # Color utilities will reset the random colors on import
 from zpy import color
+
 color.reset()
 from zpy import gin
 from zpy import image
 from zpy import logging
 from zpy import requests
+
 # Saver object (recording annotations at runtime)
 from zpy import saver
 from zpy import saver_image
 from zpy import saver_video
+
 # Output class (outputting annotations to file)
 from zpy import output
 from zpy import output_coco
@@ -39,8 +45,8 @@ try:
     from zpy import objects
     from zpy import render
 except ModuleNotFoundError:
-    log.debug('Could not load blender utilities.')
+    log.debug("Could not load blender utilities.")
 try:
     from zpy import viz
 except ModuleNotFoundError:
-    log.debug('Could not load viz utilities.')
+    log.debug("Could not load viz utilities.")

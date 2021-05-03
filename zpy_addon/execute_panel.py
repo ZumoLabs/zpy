@@ -18,33 +18,37 @@ if "bpy" in locals():
 
 class RunOperator(Operator):
     """ Launch the run script in Blender's texts. """
+
     bl_idname = "scene.zpy_run"
     bl_label = "Run Sim"
     bl_description = "Launch the run script in Blender's texts."
     bl_category = "ZPY"
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
 
     def execute(self, context):
-        text = bpy.data.texts.get('run', None)
+        text = bpy.data.texts.get("run", None)
         if text is None:
-            raise ValueError(f'Running a sim requires a run text, could not find in text with name "run".')
+            raise ValueError(
+                f'Running a sim requires a run text, could not find in text with name "run".'
+            )
         # Set the logger levels
-        zpy.logging.set_log_levels('debug')
+        zpy.logging.set_log_levels("debug")
         # HACK: Gin will complain when this module is re-initialized
         with gin.unlock_config():
             text_as_module = text.as_module()
         # Execute the run function inside the run text
         text_as_module.run()
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class RenderOperator(Operator):
     """ Render out single image (rgb, segmented, depth). """
+
     bl_idname = "scene.zpy_render"
     bl_label = "Render Frame"
     bl_description = "Render out segmented images."
     bl_category = "ZPY"
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
 
     @classmethod
     def poll(cls, context):
@@ -52,7 +56,7 @@ class RenderOperator(Operator):
         return True
 
     def execute(self, context):
-        context.space_data.shading.color_type = 'OBJECT'
+        context.space_data.shading.color_type = "OBJECT"
 
         # Image names
         rgb_image_name = zpy.files.make_rgb_image_name(0)
@@ -73,11 +77,12 @@ class RenderOperator(Operator):
             height=480,
         )
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class SCENE_PT_ExecutePanel(bpy.types.Panel):
     """ UI for the addon that is visible in Blender. """
+
     bl_idname = "SCENE_PT_ExecutePanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -90,13 +95,9 @@ class SCENE_PT_ExecutePanel(bpy.types.Panel):
 
         row = layout.row()
         row.operator(
-            'scene.zpy_render',
-            text='Render',
-            icon='FILE_IMAGE',
+            "scene.zpy_render", text="Render", icon="FILE_IMAGE",
         )
         row = layout.row()
         row.operator(
-            'scene.zpy_run',
-            text='Run (Debug)',
-            icon='TRIA_RIGHT',
+            "scene.zpy_run", text="Run (Debug)", icon="TRIA_RIGHT",
         )

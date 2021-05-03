@@ -18,7 +18,7 @@ def get_or_make(
     name: str,
     node_type: str,
     tree: bpy.types.NodeTree,
-    label_tag: str = '(zpy) ',
+    label_tag: str = "(zpy) ",
     pos: Tuple[float] = None,
 ) -> bpy.types.Node:
     """ Verify existence or create a node.
@@ -37,16 +37,14 @@ def get_or_make(
     if node is None:
         node = tree.nodes.new(node_type)
         node.name = name
-    node.label = f'{label_tag}{name}'
-    node.bl_description = 'This node has been created and/or modified by zpy'
+    node.label = f"{label_tag}{name}"
+    node.bl_description = "This node has been created and/or modified by zpy"
     if pos is not None:
         node.location = pos
     return node
 
-def toggle_nodegroup(
-    node_tree: bpy.types.NodeTree,
-    state: bool = False
-) -> None:
+
+def toggle_nodegroup(node_tree: bpy.types.NodeTree, state: bool = False) -> None:
     """ Change the state of all the nodes inside a node group 
     
     Args:
@@ -54,4 +52,4 @@ def toggle_nodegroup(
         state: (bool): Toggle state
     """
     for n in node_tree.nodes:
-        n.mute=state
+        n.mute = state

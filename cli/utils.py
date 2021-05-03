@@ -27,9 +27,9 @@ def parse_filter(str_filter):
         field: field to filter on
         pattern: pattern to apply regex
         regex: string regex for pattern
-    """     
-    filter_arr = str_filter.split(':')
-    field, pattern, regex = 'name', 'startswith', filter_arr[-1]
+    """
+    filter_arr = str_filter.split(":")
+    field, pattern, regex = "name", "startswith", filter_arr[-1]
     if len(filter_arr) == 2:
         pattern = filter_arr[0]
     elif len(filter_arr) == 3:
@@ -53,10 +53,10 @@ def resolve_sweep(sweep_config):
     Returns:
         list: list of configs resolved from sweep config
     """
-    configs, bindings = [], sweep_config['gin_bindings']
+    configs, bindings = [], sweep_config["gin_bindings"]
     for random_binding in [dict(zip(bindings, v)) for v in product(*bindings.values())]:
         config = deepcopy(sweep_config)
-        config['gin_bindings'] = random_binding
+        config["gin_bindings"] = random_binding
         configs.append(config)
     return configs
 
@@ -70,14 +70,16 @@ def parse_args(args):
     Example:
         foo 1 bar 2 -> {'foo': 1, 'bar': 2}
     """
+
     def _safe_eval(key):
         try:
             return eval(key)
         except:
             return key
+
     keys = args[::2]
     vals = map(lambda x: _safe_eval(x), args[1::2])
-    return dict(zip(keys,vals))
+    return dict(zip(keys, vals))
 
 
 def download_url(url, output_path):
@@ -93,13 +95,13 @@ def download_url(url, output_path):
     h = u.info()
     totalSize = int(h["Content-Length"])
 
-    fp = open(output_path, 'wb')
+    fp = open(output_path, "wb")
 
     blockSize = 8192
     with tqdm(total=totalSize) as pbar:
         while True:
             chunk = u.read(blockSize)
-            if not chunk: 
+            if not chunk:
                 break
             fp.write(chunk)
             pbar.update(blockSize)
@@ -120,10 +122,12 @@ def fetch_auth(func):
     Returns:
         wrapped function
     """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         config = read_config()
-        endpoint = config['ENDPOINT']
-        auth_header = {'Authorization': 'token {}'.format(config['TOKEN'])}
+        endpoint = config["ENDPOINT"]
+        auth_header = {"Authorization": "token {}".format(config["TOKEN"])}
         return func(*args, **kwargs, url=endpoint, auth_headers=auth_header)
+
     return wrapper

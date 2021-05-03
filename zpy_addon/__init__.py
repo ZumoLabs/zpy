@@ -29,36 +29,39 @@ bl_info = {
 def install_pip_depenencies():
     """ Install pip dependencies required by zpy addon."""
     try:
-        log.info('Installing zpy and dependencies...')
+        log.info("Installing zpy and dependencies...")
         # Upgrade pip with Blender's python
         pip_install = [sys.executable, "-m", "pip", "install"]
         subprocess.run(pip_install + ["--upgrade", "pip"], check=True)
         # Install zpy through PyPI into Blender's python site-package dir
-        pkg_path = Path(sys.executable).parent.parent / \
-            'lib' / 'site-packages' / 'zpy'
-        subprocess.run(pip_install + ['zpy-zumo', '--target', str(pkg_path)],
-                       check=True)
+        pkg_path = Path(sys.executable).parent.parent / "lib" / "site-packages" / "zpy"
+        subprocess.run(
+            pip_install + ["zpy-zumo", "--target", str(pkg_path)], check=True
+        )
     except Exception as e:
-        log.warning(f'Could not install ZPY and dependencies: {e}')
+        log.warning(f"Could not install ZPY and dependencies: {e}")
 
 
 try:
     import zpy
 except ModuleNotFoundError as e:
-    log.exception('No zpy module found, please follow developer ' +
-                  'install instructions at https://github.com/ZumoLabs/zpy#install')
+    log.exception(
+        "No zpy module found, please follow developer "
+        + "install instructions at https://github.com/ZumoLabs/zpy#install"
+    )
     # TODO: Automatic installation of pip dependencies
     #       waiting on https://developer.blender.org/T71420
     # install_pip_depenencies()
     # import zpy
 
 if "bpy" in locals():
-    log.warning('Reloading zpy_addon files.')
+    log.warning("Reloading zpy_addon files.")
     from . import export_panel
     from . import output_panel
     from . import execute_panel
     from . import script_panel
     from . import segment_panel
+
     importlib.reload(export_panel)
     importlib.reload(output_panel)
     importlib.reload(execute_panel)
@@ -107,10 +110,10 @@ def register():
     """ Register any classes and properties. """
     for cls in classes:
         try:
-            log.info(f'Registering class {cls.__name__}')
+            log.info(f"Registering class {cls.__name__}")
             bpy.utils.register_class(cls)
         except Exception as e:
-            log.warning(f'Exception when registering {cls.__name__}: {e}')
+            log.warning(f"Exception when registering {cls.__name__}: {e}")
     segment_panel.registerObjectProperties()
     segment_panel.registerSceneProperties()
     output_panel.registerSceneProperties()
@@ -122,15 +125,14 @@ def register():
         bpy.context.preferences.experimental.use_sculpt_vertex_colors = True
 
 
-
 def unregister():
     """ Unregister any classes and properties. """
     for cls in classes:
         try:
-            log.info(f'Un-registering class {cls.__name__}')
+            log.info(f"Un-registering class {cls.__name__}")
             bpy.utils.unregister_class(cls)
         except Exception as e:
-            log.warning(f'Exception when un-registering {cls.__name__}: {e}')
+            log.warning(f"Exception when un-registering {cls.__name__}: {e}")
     # Script templates
     bpy.types.TEXT_MT_templates_py.remove(script_panel.script_template_menu)
 

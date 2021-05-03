@@ -18,8 +18,7 @@ log = logging.getLogger(__name__)
 
 
 def verify(
-    mat: Union[bpy.types.Material, str],
-    check_none: bool = True,
+    mat: Union[bpy.types.Material, str], check_none: bool = True,
 ) -> bpy.types.Material:
     """ Get a material given either its name or the object itself.
 
@@ -36,13 +35,11 @@ def verify(
     if isinstance(mat, str):
         mat = bpy.data.materials.get(mat)
     if check_none and mat is None:
-        raise ValueError(f'Could not find material {mat}.')
+        raise ValueError(f"Could not find material {mat}.")
     return mat
 
 
-def for_mat_in_obj(
-    obj: Union[bpy.types.Object, str],
-) -> bpy.types.Material:
+def for_mat_in_obj(obj: Union[bpy.types.Object, str],) -> bpy.types.Material:
     """ Yield materials in scene object.
 
     Args:
@@ -62,35 +59,30 @@ def for_mat_in_obj(
         if obj.active_material is not None:
             return obj.active_material
         else:
-            log.debug(
-                f'No active material or material slots found for {obj.name}')
+            log.debug(f"No active material or material slots found for {obj.name}")
             return None
 
 
 _SAVED_MATERIALS = {}
 
 
-def save_mat_props(
-    mat: Union[bpy.types.Material, str],
-) -> None:
+def save_mat_props(mat: Union[bpy.types.Material, str],) -> None:
     """ Save a pose (rot and pos) to dict.
 
     Args:
         mat (Union[bpy.types.Material, str]):  Material (or it's name)
     """
-    log.info(f'Saving material properties for {mat.name}')
+    log.info(f"Saving material properties for {mat.name}")
     _SAVED_MATERIALS[mat.name] = get_mat_props(mat)
 
 
-def restore_mat_props(
-    mat: Union[bpy.types.Material, str],
-) -> None:
+def restore_mat_props(mat: Union[bpy.types.Material, str],) -> None:
     """ Restore an object to a position.
 
     Args:
         mat (Union[bpy.types.Material, str]):  Material (or it's name)
     """
-    log.info(f'Restoring material properties for {mat.name}')
+    log.info(f"Restoring material properties for {mat.name}")
     set_mat_props(mat, _SAVED_MATERIALS[mat.name])
 
 
@@ -100,9 +92,7 @@ def restore_all_mat_props() -> None:
         set_mat_props(mat_name, mat_props)
 
 
-def get_mat_props(
-    mat: Union[bpy.types.Material, str],
-) -> Tuple[float]:
+def get_mat_props(mat: Union[bpy.types.Material, str],) -> Tuple[float]:
     """ Get (some of the) material properties.
 
     Args:
@@ -112,20 +102,19 @@ def get_mat_props(
         Tuple[float]: Material property values (roughness, metallic, specular).
     """
     mat = verify(mat)
-    bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
+    bsdf_node = mat.node_tree.nodes.get("Principled BSDF")
     if bsdf_node is None:
-        log.warning(f'No BSDF node in {mat.name}')
+        log.warning(f"No BSDF node in {mat.name}")
         return (0.0, 0.0, 0.0)
     return (
-        bsdf_node.inputs['Roughness'].default_value,
-        bsdf_node.inputs['Metallic'].default_value,
-        bsdf_node.inputs['Specular'].default_value,
+        bsdf_node.inputs["Roughness"].default_value,
+        bsdf_node.inputs["Metallic"].default_value,
+        bsdf_node.inputs["Specular"].default_value,
     )
 
 
 def set_mat_props(
-    mat: Union[bpy.types.Material, str],
-    prop_tuple: Tuple[float],
+    mat: Union[bpy.types.Material, str], prop_tuple: Tuple[float],
 ) -> None:
     """ Set (some of the) material properties.
 
@@ -136,20 +125,18 @@ def set_mat_props(
     mat = verify(mat)
     # TODO: Work backwards from Material output node instead of
     #       assuming a 'Principled BSDF' node
-    bsdf_node = mat.node_tree.nodes.get('Principled BSDF', None)
+    bsdf_node = mat.node_tree.nodes.get("Principled BSDF", None)
     if bsdf_node is None:
-        log.warning(f'No BSDF node in {mat.name}')
+        log.warning(f"No BSDF node in {mat.name}")
         return
-    bsdf_node.inputs['Roughness'].default_value = copy.copy(prop_tuple[0])
-    bsdf_node.inputs['Metallic'].default_value = copy.copy(prop_tuple[1])
-    bsdf_node.inputs['Specular'].default_value = copy.copy(prop_tuple[2])
+    bsdf_node.inputs["Roughness"].default_value = copy.copy(prop_tuple[0])
+    bsdf_node.inputs["Metallic"].default_value = copy.copy(prop_tuple[1])
+    bsdf_node.inputs["Specular"].default_value = copy.copy(prop_tuple[2])
 
 
 @gin.configurable
 def jitter(
-    mat: Union[bpy.types.Material, str],
-    std: float = 0.2,
-    save_first_time: bool = True,
+    mat: Union[bpy.types.Material, str], std: float = 0.2, save_first_time: bool = True,
 ) -> None:
     """ Randomize an existing material a little.
 
@@ -164,16 +151,15 @@ def jitter(
             save_mat_props(mat)
         else:
             restore_mat_props(mat)
-    log.info(f'Jittering material {mat.name}')
+    log.info(f"Jittering material {mat.name}")
     mat_props = get_mat_props(mat)
-    jittered_mat_props = tuple(
-        map(lambda p: p + random.gauss(0, std), mat_props))
+    jittered_mat_props = tuple(map(lambda p: p + random.gauss(0, std), mat_props))
     set_mat_props(mat, jittered_mat_props)
 
 
 @gin.configurable
 def random_texture_mat(
-    texture_dir: Union[Path, str] = 'lib/textures/random_512p',
+    texture_dir: Union[Path, str] = "lib/textures/random_512p",
     relative_to_assets_dir: bool = True,
 ) -> bpy.types.Material:
     """ Generate a random material from a directory of random texture images.
@@ -191,19 +177,17 @@ def random_texture_mat(
     # Create list of texture images in directory
     texture_paths = []
     for _path in texture_dir.iterdir():
-        if _path.is_file() and _path.suffix in ['.jpg', '.png']:
+        if _path.is_file() and _path.suffix in [".jpg", ".png"]:
             texture_paths.append(_path)
     texture_path = random.choice(texture_paths)
-    log.info(f'Found {len(texture_paths)} Textures at {texture_dir}')
-    log.info(f'Randomly picked {texture_path.stem}')
+    log.info(f"Found {len(texture_paths)} Textures at {texture_dir}")
+    log.info(f"Randomly picked {texture_path.stem}")
     return make_mat_from_texture(texture_path, name=texture_path.stem)
 
 
 @gin.configurable
 def make_mat_from_texture(
-    texture_path: Union[Path, str],
-    name: str = None,
-    coordinate: str = 'uv',
+    texture_path: Union[Path, str], name: str = None, coordinate: str = "uv",
 ) -> bpy.types.Material:
     """ Makes a material from a texture image.
 
@@ -220,22 +204,23 @@ def make_mat_from_texture(
         name = texture_path.stem
     mat = bpy.data.materials.get(name, None)
     if mat is None:
-        log.debug(f'Material {name} does not exist, creating it.')
+        log.debug(f"Material {name} does not exist, creating it.")
         mat = bpy.data.materials.new(name=name)
     mat.use_nodes = True
-    bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
-    out_node = mat.node_tree.nodes.get('Material Output')
-    tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
-    tex_node.name = 'ImageTexture'
-    coord_node = mat.node_tree.nodes.new('ShaderNodeTexCoord')
+    bsdf_node = mat.node_tree.nodes.get("Principled BSDF")
+    out_node = mat.node_tree.nodes.get("Material Output")
+    tex_node = mat.node_tree.nodes.new("ShaderNodeTexImage")
+    tex_node.name = "ImageTexture"
+    coord_node = mat.node_tree.nodes.new("ShaderNodeTexCoord")
     bpy.ops.image.open(filepath=str(texture_path))
     tex_node.image = bpy.data.images[texture_path.name]
-    tex_node.image.colorspace_settings.name = 'Filmic Log'
+    tex_node.image.colorspace_settings.name = "Filmic Log"
     mat.node_tree.links.new(tex_node.outputs[0], bsdf_node.inputs[0])
     # TODO: Texture coordinate index is hardcoded
-    valid_coordinates = ['generated', 'normal', 'uv', 'object']
-    assert coordinate in valid_coordinates, \
-        f'Texture coordinate {coordinate} must be in {valid_coordinates}'
+    valid_coordinates = ["generated", "normal", "uv", "object"]
+    assert (
+        coordinate in valid_coordinates
+    ), f"Texture coordinate {coordinate} must be in {valid_coordinates}"
     _coord_idx = valid_coordinates.index(coordinate)
     mat.node_tree.links.new(coord_node.outputs[_coord_idx], tex_node.inputs[0])
     mat.node_tree.links.new(out_node.inputs[0], bsdf_node.outputs[0])
@@ -244,10 +229,7 @@ def make_mat_from_texture(
 
 
 @gin.configurable
-def make_mat_from_color(
-    color: Tuple[float],
-    name: str = None,
-) -> bpy.types.Material:
+def make_mat_from_color(color: Tuple[float], name: str = None,) -> bpy.types.Material:
     """ Makes a material given a color.
 
     Args:
@@ -261,14 +243,14 @@ def make_mat_from_color(
         name = str(color)
     mat = bpy.data.materials.get(name, None)
     if mat is None:
-        log.debug(f'Material {name} does not exist, creating it.')
+        log.debug(f"Material {name} does not exist, creating it.")
         mat = bpy.data.materials.new(name=name)
     mat.use_nodes = True
-    bsdf_node = mat.node_tree.nodes.get('Principled BSDF')
-    out_node = mat.node_tree.nodes.get('Material Output')
+    bsdf_node = mat.node_tree.nodes.get("Principled BSDF")
+    out_node = mat.node_tree.nodes.get("Material Output")
     mat.node_tree.nodes.remove(bsdf_node)
-    bsdf_node = mat.node_tree.nodes.new('ShaderNodeBsdfDiffuse')
-    bsdf_node.inputs['Color'].default_value = color + (1.,)
+    bsdf_node = mat.node_tree.nodes.new("ShaderNodeBsdfDiffuse")
+    bsdf_node.inputs["Color"].default_value = color + (1.0,)
     mat.node_tree.links.new(out_node.inputs[0], bsdf_node.outputs[0])
     return mat
 
@@ -287,11 +269,11 @@ def set_mat(
     """
     obj = zpy.objects.verify(obj)
     mat = zpy.material.verify(mat)
-    if hasattr(obj, 'active_material'):
-        log.debug(f'Setting object {obj.name} material {mat.name}')
+    if hasattr(obj, "active_material"):
+        log.debug(f"Setting object {obj.name} material {mat.name}")
         obj.active_material = mat
     else:
-        log.warning('Object does not have material property')
+        log.warning("Object does not have material property")
         return
     # Recursively change material on all children of object
     if recursive:
@@ -303,7 +285,7 @@ def set_mat(
 def make_aov_material_output_node(
     mat: bpy.types.Material = None,
     obj: bpy.types.Object = None,
-    style: str = 'instance',
+    style: str = "instance",
 ) -> None:
     """ Make AOV Output nodes in Composition Graph.
 
@@ -318,15 +300,16 @@ def make_aov_material_output_node(
     # Make sure engine is set to Cycles
     scene = zpy.blender.verify_blender_scene()
     if not (scene.render.engine == "CYCLES"):
-        log.warning(' Setting render engine to CYCLES to use AOV')
+        log.warning(" Setting render engine to CYCLES to use AOV")
         scene.render.engine == "CYCLES"
 
     # TODO: Refactor this legacy "styles" code
 
     # Only certain styles are available
-    valid_styles = ['instance', 'category']
-    assert style in valid_styles, \
-        f'Invalid style {style} for AOV material output node, must be in {valid_styles}.'
+    valid_styles = ["instance", "category"]
+    assert (
+        style in valid_styles
+    ), f"Invalid style {style} for AOV material output node, must be in {valid_styles}."
 
     # HACK: multiple material slots
     all_mats = []
@@ -337,7 +320,7 @@ def make_aov_material_output_node(
     # Get material from object
     elif obj is not None:
         if obj.active_material is None:
-            log.debug(f'No active material found for {obj.name}')
+            log.debug(f"No active material found for {obj.name}")
             return
         if len(obj.material_slots) > 1:
             for mat in obj.material_slots:
@@ -345,7 +328,7 @@ def make_aov_material_output_node(
         else:
             all_mats.append(obj.active_material)
     else:
-        raise ValueError('Must pass in an Object or Material')
+        raise ValueError("Must pass in an Object or Material")
 
     # HACK: multiple material slots
     for mat in all_mats:
@@ -357,7 +340,8 @@ def make_aov_material_output_node(
 
         # Vertex Color Node
         vcol_node = zpy.nodes.get_or_make(
-            f'{style} Vertex Color', 'ShaderNodeVertexColor', tree)
+            f"{style} Vertex Color", "ShaderNodeVertexColor", tree
+        )
         vcol_node.layer_name = style
 
         # AOV Output Node
@@ -370,7 +354,7 @@ def make_aov_material_output_node(
             if _node.name == _name:
                 aovout_node = _node
         if aovout_node is None:
-            aovout_node = tree.nodes.new('ShaderNodeOutputAOV')
+            aovout_node = tree.nodes.new("ShaderNodeOutputAOV")
         aovout_node.name = style
 
-        tree.links.new(vcol_node.outputs['Color'], aovout_node.inputs['Color'])
+        tree.links.new(vcol_node.outputs["Color"], aovout_node.inputs["Color"])

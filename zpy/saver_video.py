@@ -25,16 +25,17 @@ class VideoSaver(zpy.saver.Saver):
         self.video_name_to_id = {}
 
     @gin.configurable
-    def add_video(self,
-                  name: str = 'default video',
-                  style: str = 'default',
-                  output_path: Union[Path, str] = '/tmp/test.avi',
-                  width: int = 640,
-                  height: int = 480,
-                  length: timedelta = 0,
-                  zero_indexed: bool = True,
-                  **kwargs,
-                  ) -> Dict:
+    def add_video(
+        self,
+        name: str = "default video",
+        style: str = "default",
+        output_path: Union[Path, str] = "/tmp/test.avi",
+        width: int = 640,
+        height: int = 480,
+        length: timedelta = 0,
+        zero_indexed: bool = True,
+        **kwargs,
+    ) -> Dict:
         """ Add a new annotation to the Saver object.
 
         Args:
@@ -50,28 +51,24 @@ class VideoSaver(zpy.saver.Saver):
             Dict: The video annotation dictionary.
         """
         video = {
-            'name': name,
-            'style': style,
-            'output_path': str(output_path),
-            'relative_path': str(Path(output_path).relative_to(self.output_dir)),
-            'width': width,
-            'height': height,
-            'length': length,
+            "name": name,
+            "style": style,
+            "output_path": str(output_path),
+            "relative_path": str(Path(output_path).relative_to(self.output_dir)),
+            "width": width,
+            "height": height,
+            "length": length,
         }
         video.update(**kwargs)
-        video['id'] = len(self.videos.keys())
-        video['id'] += 0 if zero_indexed else 1
-        log.debug(f'Adding video: {zpy.files.pretty_print(video)}')
-        self.videos[video['id']] = video
-        self.video_name_to_id[name] = video['id']
+        video["id"] = len(self.videos.keys())
+        video["id"] += 0 if zero_indexed else 1
+        log.debug(f"Adding video: {zpy.files.pretty_print(video)}")
+        self.videos[video["id"]] = video
+        self.video_name_to_id[name] = video["id"]
         return video
 
     @gin.configurable
-    def add_annotation(self,
-                       *args,
-                       video: str = 'default video',
-                       **kwargs,
-                       ) -> Dict:
+    def add_annotation(self, *args, video: str = "default video", **kwargs,) -> Dict:
         """ Add a new annotation to the Saver object.
 
         Args:
@@ -82,8 +79,8 @@ class VideoSaver(zpy.saver.Saver):
         """
         annotation = super().add_annotation(*args, **kwargs)
         video_id = self.video_name_to_id.get(video, None)
-        assert video_id is not None, f'Could not find id for video {video}'
-        annotation['video_id'] = video_id
+        assert video_id is not None, f"Could not find id for video {video}"
+        annotation["video_id"] = video_id
         annotation.update(**kwargs)
         self.annotations.append(annotation)
         return annotation

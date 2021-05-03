@@ -3,11 +3,11 @@ import os
 import yaml
 
 ENDPOINTS = {
-    'local': 'http://localhost:8000',
-    'stage': 'https://ragnarok.stage.zumok8s.org',
-    'prod':  'https://ragnarok.zumok8s.org'
+    "local": "http://localhost:8000",
+    "stage": "https://ragnarok.stage.zumok8s.org",
+    "prod": "https://ragnarok.zumok8s.org",
 }
-CONFIG_FILE = '~/.zpy/config.yaml'
+CONFIG_FILE = "~/.zpy/config.yaml"
 
 
 def get_endpoint(env):
@@ -33,11 +33,7 @@ def initialize_config():
     path = to_pathlib_path(os.path.expanduser(CONFIG_FILE))
     if path.exists():
         return
-    CONFIG = {
-        'ENVIRONMENT': 'prod',
-        'TOKEN': None,
-        'ENDPOINT': ENDPOINTS['prod']
-    }
+    CONFIG = {"ENVIRONMENT": "prod", "TOKEN": None, "ENDPOINT": ENDPOINTS["prod"]}
     path.parent.mkdir(parents=True, exist_ok=True)
     write_config(CONFIG)
 
@@ -65,5 +61,5 @@ def write_config(config):
         config (dict): new configuration to write
     """
     path = to_pathlib_path(os.path.expanduser(CONFIG_FILE))
-    with path.open('w') as f:
+    with path.open("w") as f:
         yaml.dump(config, f)

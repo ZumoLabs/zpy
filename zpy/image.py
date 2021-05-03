@@ -21,9 +21,7 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def open_image(
-    image_path: Union[Path, str],
-) -> np.ndarray:
+def open_image(image_path: Union[Path, str],) -> np.ndarray:
     """ Open image from path to ndarray.
 
     Args:
@@ -37,18 +35,16 @@ def open_image(
     try:
         img = io.imread(image_path)
         if img.shape[2] > 3:
-            log.debug('RGBA image detected!')
+            log.debug("RGBA image detected!")
             img = img[:, :, :3]
         if img.max() > 2.0:
             img = np.divide(img, 255.0)
     except Exception as e:
-        log.error(f'Error {e} when opening {image_path}')
+        log.error(f"Error {e} when opening {image_path}")
     return img
 
 
-def remove_alpha_channel(
-    image_path: Union[Path, str]
-) -> None:
+def remove_alpha_channel(image_path: Union[Path, str]) -> None:
     """ Remove the alpha channel in an image (overwrites image).
 
     Args:
@@ -56,14 +52,11 @@ def remove_alpha_channel(
     """
     img = open_image(image_path)
     io.imsave(image_path, img)
-    log.info(f'Saving image with no alpha channel at {image_path}')
+    log.info(f"Saving image with no alpha channel at {image_path}")
 
 
 @gin.configurable
-def jpeg_compression(
-    image_path: Union[Path, str],
-    quality : int = 40,    
-) -> Path:
+def jpeg_compression(image_path: Union[Path, str], quality: int = 40,) -> Path:
     """ Add jpeg compression to an image (overwrites image).
 
     Args:
@@ -76,18 +69,16 @@ def jpeg_compression(
     image_path = zpy.files.verify_path(image_path, make=False)
     img = io.imread(image_path)
     # Make sure image is jpeg
-    if not image_path.suffix == '.jpeg':
-        image_path = image_path.with_suffix('.jpeg')
+    if not image_path.suffix == ".jpeg":
+        image_path = image_path.with_suffix(".jpeg")
     io.imsave(image_path, arr=img, quality=quality)
-    log.info(f'Saving compressed image at {image_path}')
+    log.info(f"Saving compressed image at {image_path}")
     return image_path
 
 
 @gin.configurable
 def resize_image(
-    image_path: Union[Path, str],
-    width: int = 640,
-    height: int = 480,
+    image_path: Union[Path, str], width: int = 640, height: int = 480,
 ) -> Path:
     """ Resize an image (overwrites image).
 
@@ -104,9 +95,7 @@ def resize_image(
     io.imsave(image_path, resized_img)
 
 
-def pixel_mean_std(
-    flat_images: List[np.ndarray],
-) -> Dict:
+def pixel_mean_std(flat_images: List[np.ndarray],) -> Dict:
     """ Return the pixel mean and std from a flattened images array.
 
     Args:
@@ -136,8 +125,7 @@ def pixel_mean_std(
 
 
 def flatten_images(
-    images: List[np.ndarray],
-    max_pixels: int = 500000,
+    images: List[np.ndarray], max_pixels: int = 500000,
 ) -> List[np.ndarray]:
     """ Flatten a list of images in ndarray form.
 
@@ -152,11 +140,9 @@ def flatten_images(
     for image in images:
         dims = np.shape(image)
         if len(dims) == 3:
-            flat_images.append(np.reshape(
-                image, (dims[0] * dims[1], dims[2])))
+            flat_images.append(np.reshape(image, (dims[0] * dims[1], dims[2])))
     flat_images = np.concatenate(flat_images, axis=0)
-    subsample = flat_images[np.random.randint(flat_images.shape[0],
-                                              size=max_pixels), :]
+    subsample = flat_images[np.random.randint(flat_images.shape[0], size=max_pixels), :]
     return [subsample]
 
 
@@ -165,9 +151,9 @@ def pad_with(vector, pad_width, iaxis, kwargs):
 
     https://numpy.org/doc/stable/reference/generated/numpy.pad.html
     """
-    pad_value = kwargs.get('padder', 10)
-    vector[:pad_width[0]] = pad_value
-    vector[-pad_width[1]:] = pad_value
+    pad_value = kwargs.get("padder", 10)
+    vector[: pad_width[0]] = pad_value
+    vector[-pad_width[1] :] = pad_value
 
 
 def binary_mask_to_rle(binary_mask) -> Dict:
@@ -176,9 +162,9 @@ def binary_mask_to_rle(binary_mask) -> Dict:
     https://stackoverflow.com/questions/49494337/encode-numpy-array-using-uncompressed-rle-for-coco-dataset
     """
     binary_mask = np.asfortranarray(binary_mask)
-    rle = {'counts': [], 'size': list(binary_mask.shape)}
-    counts = rle.get('counts')
-    for i, (value, elements) in enumerate(groupby(binary_mask.ravel(order='F'))):
+    rle = {"counts": [], "size": list(binary_mask.shape)}
+    counts = rle.get("counts")
+    for i, (value, elements) in enumerate(groupby(binary_mask.ravel(order="F"))):
         if i == 0 and value == 1:
             counts.append(0)
         counts.append(len(list(elements)))
@@ -187,11 +173,11 @@ def binary_mask_to_rle(binary_mask) -> Dict:
 
 @gin.configurable
 def seg_to_annotations(
-        image_path: Union[Path, str],
-        remove_salt: bool = True,
-        rle_segmentations: bool = False,
-        float_annotations: bool = False,
-        max_categories: int = 1000
+    image_path: Union[Path, str],
+    remove_salt: bool = True,
+    rle_segmentations: bool = False,
+    float_annotations: bool = False,
+    max_categories: int = 1000,
 ) -> List[Dict]:
     """ Convert a segmentation image into bounding boxes and polygon segmentations.
 
@@ -208,7 +194,7 @@ def seg_to_annotations(
     Returns:
         List[Dict]: List of annotation dictionaries.
     """
-    log.info(f'Extracting annotations from segmentation: {image_path}')
+    log.info(f"Extracting annotations from segmentation: {image_path}")
     image_path = zpy.files.verify_path(image_path, make=False)
     img = open_image(image_path)
     img_height, img_width = img.shape[0], img.shape[1]
@@ -218,13 +204,12 @@ def seg_to_annotations(
     annotations = []
     # Loop through each category
     if unique_colors.shape[0] > max_categories:
-        raise ValueError(
-            f'Over {max_categories} categories: {unique_colors.shape[0]}')
+        raise ValueError(f"Over {max_categories} categories: {unique_colors.shape[0]}")
     for i in range(unique_colors.shape[0]):
         seg_color = unique_colors[i, :]
-        log.debug(f'Unique color {seg_color}')
+        log.debug(f"Unique color {seg_color}")
         if all(np.equal(seg_color, np.zeros(3))):
-            log.debug('Color is background.')
+            log.debug("Color is background.")
             continue
         # Make an image mask for this category
         masked_image = img.copy()
@@ -232,11 +217,13 @@ def seg_to_annotations(
         masked_image[mask] = np.zeros(3)
         masked_image = color.rgb2gray(masked_image)
         if log.getEffectiveLevel() == logging.DEBUG:
-            masked_image_name = str(
-                image_path.stem) + f'_masked_{i}' + str(image_path.suffix)
+            masked_image_name = (
+                str(image_path.stem) + f"_masked_{i}" + str(image_path.suffix)
+            )
             masked_image_path = image_path.parent / masked_image_name
-            io.imsave(masked_image_path,
-                      img_as_uint(exposure.rescale_intensity(masked_image)))
+            io.imsave(
+                masked_image_path, img_as_uint(exposure.rescale_intensity(masked_image))
+            )
         if remove_salt:
             # Remove "salt"
             # https://scikit-image.org/docs/dev/api/skimage.morphology
@@ -254,9 +241,9 @@ def seg_to_annotations(
         filled_masked_image = ndi.binary_fill_holes(masked_image)
         # Get countours for each blob
         contours = measure.find_contours(
-            filled_masked_image, 0.01, positive_orientation='low')
-        log.debug(
-            f'found {len(contours)} contours for {seg_color} in {image_path}')
+            filled_masked_image, 0.01, positive_orientation="low"
+        )
+        log.debug(f"found {len(contours)} contours for {seg_color} in {image_path}")
         # HACK: Sometimes all you get is salt for an image, in this case
         #       do not add any annotation for this category.
         if len(contours) == 0:
@@ -281,9 +268,12 @@ def seg_to_annotations(
             # Segmentation
             segmentation = np.array(poly.exterior.coords).ravel().tolist()
             segmentations.append(segmentation)
-            segmentations_float.append([
-                x/img_height if k % 2 == 0 else x/img_width for k, x in enumerate(segmentation)
-            ])
+            segmentations_float.append(
+                [
+                    x / img_height if k % 2 == 0 else x / img_width
+                    for k, x in enumerate(segmentation)
+                ]
+            )
             # Bounding boxes
             x, y, max_x, max_y = poly.bounds
             bbox = (x, y, max_x - x, max_y - y)
@@ -311,22 +301,22 @@ def seg_to_annotations(
         ]
         area_float = area / (img_width * img_height)
         annotation = {
-            'color': tuple(seg_color),
+            "color": tuple(seg_color),
             # COCO standards
-            'segmentation': segmentations,
-            'bbox': bbox,
-            'area': area,
+            "segmentation": segmentations,
+            "bbox": bbox,
+            "area": area,
             # List of list versions
-            'bboxes': bboxes,
-            'areas': areas,
+            "bboxes": bboxes,
+            "areas": areas,
         }
         if rle_segmentations:
-            annotation['segmentation_rle'] = rle_segmentation
+            annotation["segmentation_rle"] = rle_segmentation
         if float_annotations:
-            annotation['segmentation_float'] = segmentations_float
-            annotation['bbox_float'] = bbox_float
-            annotation['area_float'] = area_float
-            annotation['bboxes_float'] = bboxes_float
-            annotation['areas_float'] = areas_float
+            annotation["segmentation_float"] = segmentations_float
+            annotation["bbox_float"] = bbox_float
+            annotation["area_float"] = area_float
+            annotation["bboxes_float"] = bboxes_float
+            annotation["areas_float"] = areas_float
         annotations.append(annotation)
     return annotations

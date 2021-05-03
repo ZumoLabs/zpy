@@ -10,15 +10,14 @@ def run(num_images: int = 5):
     zpy.blender.set_seed()
 
     # Create the saver object
-    saver = zpy.saver_image.ImageSaver(
-        description='Suzannes from a camera view')
+    saver = zpy.saver_image.ImageSaver(description="Suzannes from a camera view")
 
     # Add the Suzanne category
-    suzanne_seg_color = zpy.color.random_color(output_style='frgb')
-    saver.add_category(name='Suzanne', color=suzanne_seg_color)
+    suzanne_seg_color = zpy.color.random_color(output_style="frgb")
+    saver.add_category(name="Suzanne", color=suzanne_seg_color)
 
     # Segment Suzzanne (make sure a material exists for the object!)
-    zpy.objects.segment('Suzanne', color=suzanne_seg_color)
+    zpy.objects.segment("Suzanne", color=suzanne_seg_color)
 
     # Run the sim.
     for step_idx in zpy.blender.step(num_steps=num_images):
@@ -38,7 +37,7 @@ def run(num_images: int = 5):
         # Add images to saver
         saver.add_image(
             name=rgb_image_name,
-            style='default',
+            style="default",
             output_path=saver.output_dir / rgb_image_name,
             frame=step_idx,
             width=640,
@@ -46,7 +45,7 @@ def run(num_images: int = 5):
         )
         saver.add_image(
             name=iseg_image_name,
-            style='segmentation',
+            style="segmentation",
             output_path=saver.output_dir / iseg_image_name,
             frame=step_idx,
             width=640,
