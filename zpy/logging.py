@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 def set_log_levels(
     level: str = None,
-    modules: List[str] = ["zpy", "zpy_addon", "bpy.zpy_addon" "neuralyzer", "bender",],
+    modules: List[str] = ["zpy", "zpy_addon", "bpy.zpy_addon" "neuralyzer", "bender"],
     log_format: str = "%(asctime)s: %(levelname)s %(filename)s] %(message)s",
 ) -> None:
     """ Set logger levels for all zpy modules.

@@ -21,7 +21,7 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def open_image(image_path: Union[Path, str],) -> np.ndarray:
+def open_image(image_path: Union[Path, str]) -> np.ndarray:
     """ Open image from path to ndarray.
 
     Args:
@@ -56,7 +56,7 @@ def remove_alpha_channel(image_path: Union[Path, str]) -> None:
 
 
 @gin.configurable
-def jpeg_compression(image_path: Union[Path, str], quality: int = 40,) -> Path:
+def jpeg_compression(image_path: Union[Path, str], quality: int = 40) -> Path:
     """ Add jpeg compression to an image (overwrites image).
 
     Args:
@@ -95,14 +95,14 @@ def resize_image(
     io.imsave(image_path, resized_img)
 
 
-def pixel_mean_std(flat_images: List[np.ndarray],) -> Dict:
+def pixel_mean_std(flat_images: List[np.ndarray]) -> Dict:
     """ Return the pixel mean and std from a flattened images array.
 
     Args:
         flat_images (List[np.ndarray]): Image pixels in a flattened array
 
     Returns:
-        Dict: Pixel means and std as floats and integers (256) 
+        Dict: Pixel means and std as floats and integers (256)
     """
     # HACK: Incorrect type assumption
     flat_images = flat_images[0]
@@ -222,7 +222,8 @@ def seg_to_annotations(
             )
             masked_image_path = image_path.parent / masked_image_name
             io.imsave(
-                masked_image_path, img_as_uint(exposure.rescale_intensity(masked_image))
+                masked_image_path,
+                img_as_uint(exposure.rescale_intensity(masked_image)),
             )
         if remove_salt:
             # Remove "salt"
@@ -241,7 +242,7 @@ def seg_to_annotations(
         filled_masked_image = ndi.binary_fill_holes(masked_image)
         # Get countours for each blob
         contours = measure.find_contours(
-            filled_masked_image, 0.01, positive_orientation="low"
+            filled_masked_image, 0.01, positive_orientation="low",
         )
         log.debug(f"found {len(contours)} contours for {seg_color} in {image_path}")
         # HACK: Sometimes all you get is salt for an image, in this case
@@ -272,7 +273,7 @@ def seg_to_annotations(
                 [
                     x / img_height if k % 2 == 0 else x / img_width
                     for k, x in enumerate(segmentation)
-                ]
+                ],
             )
             # Bounding boxes
             x, y, max_x, max_y = poly.bounds

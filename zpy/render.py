@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 
 @gin.configurable
-def make_aov_pass(style: str = "instance",) -> None:
+def make_aov_pass(style: str = "instance") -> None:
     """ Make AOV pass in Cycles. """
     scene = zpy.blender.verify_blender_scene()
     # Make sure engine is set to Cycles
@@ -76,7 +76,7 @@ def make_aov_file_output_node(
 
     # File output node renders out image
     fileout_node = zpy.nodes.get_or_make(
-        f"{style} Output", "CompositorNodeOutputFile", tree
+        f"{style} Output", "CompositorNodeOutputFile", tree,
     )
     fileout_node.mute = False
 
@@ -85,12 +85,12 @@ def make_aov_file_output_node(
 
         # Normalization node
         norm_node = zpy.nodes.get_or_make(
-            f"{style} Normalize", "CompositorNodeNormalize", tree
+            f"{style} Normalize", "CompositorNodeNormalize", tree,
         )
 
         # Negative inversion
         invert_node = zpy.nodes.get_or_make(
-            f"{style} Negate", "CompositorNodeInvert", tree
+            f"{style} Negate", "CompositorNodeInvert", tree,
         )
 
         # Link up the nodes
@@ -256,7 +256,7 @@ def default_render_settings(
     spatial_splits: bool = False,
     is_aggressive: bool = False,
 ) -> None:
-    """ Render settings for normal color images. 
+    """ Render settings for normal color images.
 
     Args:
         samples (int, optional): Number of Cycles samples per frame

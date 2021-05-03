@@ -59,7 +59,7 @@ def _category_items(self, context):
                 str(i),
                 name,
                 zpy.color.frgb_to_hex(category.color),
-            )
+            ),
         )
     return _categories_enum
 

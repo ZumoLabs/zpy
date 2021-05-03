@@ -105,7 +105,7 @@ class Saver:
             annotation["category_id"] = category_id
         if subcategory is not None:
             subcategory_id = self.categories[category_id]["subcategories"].index(
-                subcategory
+                subcategory,
             )
             self.categories[category_id]["subcategory_count"][subcategory_id] += 1
             subcategory_id += 0 if subcategory_zero_indexed else 1
@@ -156,7 +156,7 @@ class Saver:
         return category
 
     @gin.configurable
-    def remap_filter_categories(self, category_remap: Dict = None,) -> None:
+    def remap_filter_categories(self, category_remap: Dict = None) -> None:
         """Re-map the categories (name and id correspondence).
 
         This will also filter out any categories not in the category_remap dict.
@@ -261,7 +261,7 @@ class Saver:
         if any(isinstance(i, list) for i in annotation):
             return [
                 zpy.saver.Saver.clip_coordinate_list(
-                    height=height, width=width, normalized=normalized, annotation=ann
+                    height=height, width=width, normalized=normalized, annotation=ann,
                 )
                 for ann in annotation
             ]

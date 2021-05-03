@@ -43,7 +43,7 @@ def replace_human_redable_kwargs(
             yield key, value
 
 
-def parse_gin_bindings(gin_bindings: Dict = None,) -> None:
+def parse_gin_bindings(gin_bindings: Dict = None) -> None:
     """ Parse any extra gin bindings to the config.
 
     Args:
@@ -86,13 +86,13 @@ def parse_gin_config(
         log.info(f"Parsing gin config at {gin_config_path}")
         if not gin_config_path.exists():
             raise zpy.requests.InvalidRequest(
-                f"Could not find gin config at {gin_config_path}"
+                f"Could not find gin config at {gin_config_path}",
             )
         gin.clear_config()
         gin.parse_config_file(str(gin_config_path))
 
 
-def parse_gin_in_request(request: Dict,) -> None:
+def parse_gin_in_request(request: Dict) -> None:
     """ Parse any gin related keys in a request dict.
 
     Args:

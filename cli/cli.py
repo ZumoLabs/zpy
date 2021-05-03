@@ -35,16 +35,16 @@ def help():
         "\n"
         "app    - https://app.zumolabs.ai\n"
         "github - https://github.com/ZumoLabs/zpy\n"
-        "docs   - https://github.com/ZumoLabs/zpy/tree/main/docs/cli"
+        "docs   - https://github.com/ZumoLabs/zpy/tree/main/docs/cli",
     )
 
 
 @cli.command("env")
 @click.argument("env", type=click.Choice(["local", "stage", "prod"]))
 def env(env):
-    """ switch target environment 
+    """ switch target environment
 
-    This command allows zumo labs developers to swap the endpoint that the 
+    This command allows zumo labs developers to swap the endpoint that the
     cli communicates with. Unlikely to be relevant for non-zumo devs.
 
     Args:
@@ -69,8 +69,8 @@ def login(username, password):
     """ login to ragnarok
 
     This command will update the zpy config with a token that is fetched
-    from the backend using account details. 
-    
+    from the backend using account details.
+
     Accounts can be created at: app.zumolabs.ai
 
     Args:
@@ -90,7 +90,7 @@ def login(username, password):
 
 @cli.command("config")
 def config():
-    """ display config 
+    """ display config
 
     Display current configuration file to developer.
     """
@@ -161,7 +161,7 @@ def list_sims():
         return
 
     tbl = TableLogger(
-        columns="name,state,zpy_version,blender_version,created", default_colwidth=30
+        columns="name,state,zpy_version,blender_version,created", default_colwidth=30,
     )
     for s in sims:
         tbl(
@@ -451,7 +451,7 @@ def create_job(name, operation, filters, configfile, sweepfile):
                 filtered_datasets = filter_datasets(dfilter)
             filtered_datasets_names = [*filtered_datasets.keys()]
             click.echo(
-                f"Filtered datasets by filter '{dfilter}':\n{filtered_datasets_names}"
+                f"Filtered datasets by filter '{dfilter}':\n{filtered_datasets_names}",
             )
             datasets.append(filtered_datasets.values())
         except requests.exceptions.HTTPError as e:
@@ -468,7 +468,7 @@ def create_job(name, operation, filters, configfile, sweepfile):
             configs = resolve_sweep(sweep_config)
         except Exception as e:
             click.secho(
-                f"Failed to resolve sweep file {sweepfile} {e}", fg="yellow", err=True
+                f"Failed to resolve sweep file {sweepfile} {e}", fg="yellow", err=True,
             )
             return
         job_configs.extend(configs)
@@ -483,7 +483,8 @@ def create_job(name, operation, filters, configfile, sweepfile):
         try:
             create_new_job(job_name, operation, config, datasets)
             click.secho(
-                f"Created {operation} job '{job_name}' with config {config}", fg="green"
+                f"Created {operation} job '{job_name}' with config {config}",
+                fg="green",
             )
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to create job: {e}", fg="red", err=True)

@@ -68,7 +68,7 @@ class VideoSaver(zpy.saver.Saver):
         return video
 
     @gin.configurable
-    def add_annotation(self, *args, video: str = "default video", **kwargs,) -> Dict:
+    def add_annotation(self, *args, video: str = "default video", **kwargs) -> Dict:
         """ Add a new annotation to the Saver object.
 
         Args:

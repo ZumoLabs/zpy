@@ -23,9 +23,9 @@ class MOTParseError(Exception):
 @gin.configurable
 class OutputMOT(zpy.output.Output):
     """ Output class for MOT (Multi-Object Tracking) style annotations.
-    
+
     https://motchallenge.net/faq/
-    
+
     """
 
     ANNOTATION_FILENAME = Path("_annotations.mot.csv")
@@ -34,7 +34,7 @@ class OutputMOT(zpy.output.Output):
         super().__init__(*args, annotation_filename=self.ANNOTATION_FILENAME, **kwargs)
 
     @gin.configurable
-    def output_annotations(self, annotation_path: Union[Path, str] = None,) -> Path:
+    def output_annotations(self, annotation_path: Union[Path, str] = None) -> Path:
         """ Output MOT (Multi-Object Tracking) annotations to file.
 
         Args:
@@ -71,7 +71,7 @@ class OutputMOT(zpy.output.Output):
                 row[6] = 1
                 # TODO: Type of object annotated
                 """
-                MOT Types:                
+                MOT Types:
                     Pedestrian 1
                     Person on vehicle 2
                     Car 3
@@ -100,7 +100,7 @@ class OutputMOT(zpy.output.Output):
 
 
 @gin.configurable
-def parse_mot_annotations(annotation_file: Union[Path, str],) -> None:
+def parse_mot_annotations(annotation_file: Union[Path, str]) -> None:
     """ Parse MOT annotations.
 
     Args:
@@ -114,6 +114,6 @@ def parse_mot_annotations(annotation_file: Union[Path, str],) -> None:
     for row in mot:
         if not len(row) == 9:
             raise MOTParseError(
-                f"Each row in MOT csv must have len 9, found len {len(row)}"
+                f"Each row in MOT csv must have len 9, found len {len(row)}",
             )
     # TODO: Return Saver object.

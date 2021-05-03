@@ -34,20 +34,20 @@ def load_hdri(
     scene.world.use_nodes = True
     tree = scene.world.node_tree
     out_node = zpy.nodes.get_or_make(
-        "World Output", "ShaderNodeOutputWorld", tree, pos=(0, 0)
+        "World Output", "ShaderNodeOutputWorld", tree, pos=(0, 0),
     )
     bg_node = zpy.nodes.get_or_make(
-        "Background", "ShaderNodeBackground", tree, pos=(-150, 0)
+        "Background", "ShaderNodeBackground", tree, pos=(-150, 0),
     )
     env_node = zpy.nodes.get_or_make(
-        "Environment Texture", "ShaderNodeTexEnvironment", tree, pos=(-400, 0)
+        "Environment Texture", "ShaderNodeTexEnvironment", tree, pos=(-400, 0),
     )
     log.info(f"Loading HDRI at {path}")
     path = zpy.files.verify_path(path, make=False)
     env_node.image = bpy.data.images.load(str(path))
     env_node.texture_mapping.scale = mathutils.Vector(scale)
     world_rot_node = zpy.nodes.get_or_make(
-        "World Rotation", "ShaderNodeVectorRotate", tree, pos=(-550, 0)
+        "World Rotation", "ShaderNodeVectorRotate", tree, pos=(-550, 0),
     )
     world_rot_node.rotation_type = "Z_AXIS"
     if random_z_rot:
@@ -55,7 +55,7 @@ def load_hdri(
         log.debug(f"Rotating HDRI randomly along Z axis to {world_rotation}")
         world_rot_node.inputs["Angle"].default_value = world_rotation
     texcoord_node = zpy.nodes.get_or_make(
-        "Texture Coordinate", "ShaderNodeTexCoord", tree, pos=(-730, 0)
+        "Texture Coordinate", "ShaderNodeTexCoord", tree, pos=(-730, 0),
     )
     # Link all the nodes together
     tree.links.new(out_node.inputs[0], bg_node.outputs[0])

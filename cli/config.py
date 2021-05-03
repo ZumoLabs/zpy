@@ -12,7 +12,7 @@ CONFIG_FILE = "~/.zpy/config.yaml"
 
 def get_endpoint(env):
     """ get endpoint
-    
+
     Given an env return endpoint
     Args:
         env (str): desired env
@@ -27,7 +27,7 @@ def initialize_config():
     """ initialize config
 
     If CONFIG_FILE doesnt exist write it and put in prod as the endpoint. Also creates
-    the ~/.zpy folder if not existing. The config is some variables needed by the cli to 
+    the ~/.zpy folder if not existing. The config is some variables needed by the cli to
     make validated requests to the backend.
     """
     path = to_pathlib_path(os.path.expanduser(CONFIG_FILE))

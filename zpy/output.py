@@ -36,7 +36,7 @@ class Output:
                 self.annotation_path = None
                 log.warning("No annotation path could be deduced from Saver object.")
 
-    def output_annotations(self, annotation_path: Union[Path, str] = None,) -> Path:
+    def output_annotations(self, annotation_path: Union[Path, str] = None) -> Path:
         """ Output annotations to file.
 
         Args:

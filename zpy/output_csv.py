@@ -46,7 +46,7 @@ class OutputCSV(zpy.output.Output):
         annotation_path = super().output_annotations(annotation_path=annotation_path)
         if annotation_dict_to_csv_row_func is None:
             raise CSVParseError(
-                "Output CSV annotations requires a annotation_dict_to_csv_row_func"
+                "Output CSV annotations requires a annotation_dict_to_csv_row_func",
             )
         csv_data = []
         if header is not None:
@@ -63,7 +63,7 @@ class OutputCSV(zpy.output.Output):
 
 
 @gin.configurable
-def parse_csv_annotations(annotation_file: Union[Path, str],) -> None:
+def parse_csv_annotations(annotation_file: Union[Path, str]) -> None:
     """ Parse CSV annotations.
 
     Args:

@@ -30,7 +30,7 @@ class OutputZUMO(zpy.output.Output):
     def __init__(self, *args, **kwargs) -> Path:
         super().__init__(*args, annotation_filename=self.ANNOTATION_FILENAME, **kwargs)
 
-    def output_annotations(self, annotation_path: Union[Path, str] = None,) -> Path:
+    def output_annotations(self, annotation_path: Union[Path, str] = None) -> Path:
         """ Output annotations to file.
 
         Args:
@@ -50,7 +50,7 @@ class OutputZUMO(zpy.output.Output):
         zpy.files.write_json(annotation_path, zumo_dict)
         # Verify annotations
         parse_zumo_annotations(
-            annotation_file=annotation_path, data_dir=self.saver.output_dir
+            annotation_file=annotation_path, data_dir=self.saver.output_dir,
         )
         return annotation_path
 
@@ -95,7 +95,7 @@ def parse_zumo_annotations(
     if len(annotations) == 0:
         raise ZUMOParseError(f"no annotations found in {annotation_file}")
     log.info(
-        f"images:{len(images)} categories:{len(categories)} annotations:{len(annotations)}"
+        f"images:{len(images)} categories:{len(categories)} annotations:{len(annotations)}",
     )
 
     # Optionally output a saver object.
@@ -116,7 +116,7 @@ def parse_zumo_annotations(
         # Image ID
         if not image_id == img["id"]:
             raise ZUMOParseError(
-                f"image id {image_id} does not match image dict key {img['id']}"
+                f"image id {image_id} does not match image dict key {img['id']}",
             )
         if not isinstance(image_id, int):
             raise ZUMOParseError(f"image id {image_id} must be int.")
@@ -152,7 +152,7 @@ def parse_zumo_annotations(
             ):
                 raise ZUMOParseError(
                     f"name {name} does not correspond to"
-                    f" frame {frame} or image_id {image_id}."
+                    f" frame {frame} or image_id {image_id}.",
                 )
         # Output path
         output_path = img.get("output_path", None)
@@ -182,7 +182,7 @@ def parse_zumo_annotations(
         # Category ID
         if not category_id == category["id"]:
             raise ZUMOParseError(
-                f"category_id {category_id} does not match category dict key {category['id']}"
+                f"category_id {category_id} does not match category dict key {category['id']}",
             )
         if not isinstance(image_id, int):
             raise ZUMOParseError(f"category_id {category_id} must be int.")
@@ -223,7 +223,7 @@ def parse_zumo_annotations(
             raise ZUMOParseError(f"annotation image id {image_id} not in {img_ids}")
         if category_id not in cat_ids:
             raise ZUMOParseError(
-                f"annotation category id {category_id} not in {cat_ids}"
+                f"annotation category id {category_id} not in {cat_ids}",
             )
         if annotation_id in ann_ids:
             raise ZUMOParseError(f"annotation id {annotation_id} already used")
@@ -243,7 +243,7 @@ def parse_zumo_annotations(
                     != int(annotation["num_keypoints"]) * 3
                 ):
                     raise ZUMOParseError(
-                        "keypoints_xyv not correct size {len(keypoints)}"
+                        "keypoints_xyv not correct size {len(keypoints)}",
                     )
             if "keypoints_xyz" in annotation:
                 if (
@@ -251,7 +251,7 @@ def parse_zumo_annotations(
                     != int(annotation["num_keypoints"]) * 3
                 ):
                     raise ZUMOParseError(
-                        "keypoints_xyz not correct size {len(keypoints)}"
+                        "keypoints_xyz not correct size {len(keypoints)}",
                     )
 
         # Save each annotation to ImageSaver object

@@ -7,10 +7,10 @@ import functools
 
 
 def parse_filter(str_filter):
-    """ parse filter 
+    """ parse filter
 
     Parse filter string to field, pattern, regex.
-    Valid patterns depend on field but can include exact, startswith, contains, 
+    Valid patterns depend on field but can include exact, startswith, contains,
     iexact, istartswith, icontains. If no pattern or field is provided the defaults
     are name for field and startswith for pattern.
 
@@ -49,7 +49,7 @@ def resolve_sweep(sweep_config):
 
     Args:
         sweep_config (dict): dictionary to unfold into sweep
-    
+
     Returns:
         list: list of configs resolved from sweep config
     """
@@ -64,9 +64,9 @@ def resolve_sweep(sweep_config):
 def parse_args(args):
     """ parse args
 
-    Used by cli to parse arguments passed to cli calls. Includes 
+    Used by cli to parse arguments passed to cli calls. Includes
     safe eval function to convert from string to other types.
-    
+
     Example:
         foo 1 bar 2 -> {'foo': 1, 'bar': 2}
     """
@@ -113,7 +113,7 @@ def download_url(url, output_path):
 def fetch_auth(func):
     """ fetch authetication
 
-    Decorator to wrap functions providing the backend url and the 
+    Decorator to wrap functions providing the backend url and the
     correct authorization headers for requests.
 
     Args:

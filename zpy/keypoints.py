@@ -217,7 +217,7 @@ class Keypoints:
         self.keypoints_xyv = None
         self.keypoints_xyz = None
 
-    def update(self, world_transform=None,) -> None:
+    def update(self, world_transform=None) -> None:
         """ Add a keypoint skeleton. """
         self.num_keypoints = 0
         self.keypoints_xyv = []

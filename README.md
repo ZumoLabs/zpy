@@ -42,7 +42,7 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 
 You can install `zpy` with pip:
 
-``` 
+```
 pip install zpy-zumo
 ```
 
@@ -56,7 +56,7 @@ Once you have installed the `zpy` module into Blender's python, download the lat
 
 ### Install: Linux: Using Install Script <a name="installscript_linux"></a>
 
-``` 
+```
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZumoLabs/zpy/main/install.sh)"
 ```
 

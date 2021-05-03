@@ -169,7 +169,7 @@ def category_barplot(
         subcategories = category["subcategories"]
         if len(subcategories) > 1:
             ax = plt.subplot(
-                subplot_num_rows, subplot_num_cols, subplot_plot_idx + i + 1
+                subplot_num_rows, subplot_num_cols, subplot_plot_idx + i + 1,
             )
             subcategory_count = category["subcategory_count"]
             ax.barh(subcategories, category["subcategory_count"])
@@ -312,25 +312,25 @@ def draw_keypoints(
 
         if k1_v == 1:
             circle = Circle(
-                (k1_x, k1_y), radius=5, edgecolor=color, facecolor="w", alpha=alpha
+                (k1_x, k1_y), radius=5, edgecolor=color, facecolor="w", alpha=alpha,
             )
             ax.add_patch(circle)
 
         if k1_v == 2:
             circle = Circle(
-                (k1_x, k1_y), radius=5, edgecolor=color, facecolor=color, alpha=alpha
+                (k1_x, k1_y), radius=5, edgecolor=color, facecolor=color, alpha=alpha,
             )
             ax.add_patch(circle)
 
         if k2_v == 1:
             circle = Circle(
-                (k2_x, k2_y), radius=5, edgecolor=color, facecolor="w", alpha=alpha
+                (k2_x, k2_y), radius=5, edgecolor=color, facecolor="w", alpha=alpha,
             )
             ax.add_patch(circle)
 
         if k2_v == 2:
             circle = Circle(
-                (k2_x, k2_y), radius=5, edgecolor=color, facecolor=color, alpha=alpha
+                (k2_x, k2_y), radius=5, edgecolor=color, facecolor=color, alpha=alpha,
             )
             ax.add_patch(circle)
 

@@ -35,14 +35,14 @@ def init(
     global logger
     logger = logging.getLogger(__name__)
     exp = Experiment(
-        name=name, sim=sim, dataset=dataset, config=config, api_key=api_key
+        name=name, sim=sim, dataset=dataset, config=config, api_key=api_key,
     )
     global experiment
     experiment = exp
     exp._create()
 
 
-def log(metrics: str = None, file_path: str = None,) -> None:
+def log(metrics: str = None, file_path: str = None) -> None:
     """ Log an update to experiment.
 
     Args:
@@ -98,7 +98,7 @@ class Experiment:
     def _put(self, data=None, files=None):
         """ put to endpoint """
         r = requests.put(
-            f"{ENDPOINT}{self.id}/", data=data, files=files, headers=self.auth_headers
+            f"{ENDPOINT}{self.id}/", data=data, files=files, headers=self.auth_headers,
         )
         if r.status_code != 200:
             logger.debug(f"{r.text}")

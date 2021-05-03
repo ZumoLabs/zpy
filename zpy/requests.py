@@ -184,7 +184,7 @@ def accept_requests(run_func):
     return wrapped_run_func
 
 
-def send_request(request: Dict, ip: str = "127.0.0.1", port: str = "5555",) -> Dict:
+def send_request(request: Dict, ip: str = "127.0.0.1", port: str = "5555") -> Dict:
     """ Send a request over a uri.
 
     Args:

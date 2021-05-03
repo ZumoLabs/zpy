@@ -76,7 +76,7 @@ def dataset_contents(
     return contents
 
 
-def file_is_of_type(path: Union[Path, str], filetype: str,) -> bool:
+def file_is_of_type(path: Union[Path, str], filetype: str) -> bool:
     """ Check to if file is of type given.
 
     Args:
@@ -226,7 +226,7 @@ def default_temp_path() -> Path:
     return Path(tempfile.gettempdir()) / "output"
 
 
-def clean_dir(path: Union[Path, str], keep_dir: bool = True,) -> None:
+def clean_dir(path: Union[Path, str], keep_dir: bool = True) -> None:
     """ Delete everything at the provided directory.
 
     Args:
@@ -290,7 +290,7 @@ def verify_path(
     return path
 
 
-def write_json(path: Union[Path, str], data: Union[Dict, List],) -> None:
+def write_json(path: Union[Path, str], data: Union[Dict, List]) -> None:
     """ Save data to json file.
 
     Args:
@@ -308,7 +308,7 @@ def write_json(path: Union[Path, str], data: Union[Dict, List],) -> None:
         json.dump(data, f, indent=4)
 
 
-def read_json(path: Union[Path, str],) -> Union[Dict, List]:
+def read_json(path: Union[Path, str]) -> Union[Dict, List]:
     """ Read a json from a path.
 
     Args:
@@ -379,7 +379,7 @@ def read_csv(path: Union[Path, str], delimiter: str = ",", **kwargs) -> List[Lis
     return data
 
 
-def sample(things: List, sample_size: int = None,) -> List:
+def sample(things: List, sample_size: int = None) -> List:
     """ Sample N things from a list.
 
     Args:
@@ -399,7 +399,7 @@ def sample(things: List, sample_size: int = None,) -> List:
     return sample_images
 
 
-def filecopy(src_path: Union[Path, str], dst_path: Union[Path, str],) -> None:
+def filecopy(src_path: Union[Path, str], dst_path: Union[Path, str]) -> None:
     """ Copy file from source (src) to destination (dst).
 
     Args:
@@ -412,7 +412,7 @@ def filecopy(src_path: Union[Path, str], dst_path: Union[Path, str],) -> None:
     shutil.copy(src_path, dst_path)
 
 
-def open_folder_in_explorer(path: Union[Path, str], make: bool = False,) -> None:
+def open_folder_in_explorer(path: Union[Path, str], make: bool = False) -> None:
     """ Opens a directory in the fileexplorer of your OS.
 
     Args:
@@ -428,7 +428,7 @@ def open_folder_in_explorer(path: Union[Path, str], make: bool = False,) -> None
         subprocess.call(("xdg-open", path))
 
 
-def remove_files_with_suffix(path: Union[Path, str], exts: List[str],) -> None:
+def remove_files_with_suffix(path: Union[Path, str], exts: List[str]) -> None:
     """ Remove file in a path with certain extension.
 
     Args:
@@ -442,7 +442,7 @@ def remove_files_with_suffix(path: Union[Path, str], exts: List[str],) -> None:
             _path.unlink()
 
 
-def unzip_file(zip_path: Union[Path, str], out_path: Union[Path, str],) -> None:
+def unzip_file(zip_path: Union[Path, str], out_path: Union[Path, str]) -> None:
     """ Unzip a file to an output path.
 
     Args:
@@ -465,7 +465,7 @@ def unzip_file(zip_path: Union[Path, str], out_path: Union[Path, str],) -> None:
     log.info(f"Done extracting to {out_path}.")
 
 
-def zip_file(in_path: Union[Path, str], zip_path: Union[Path, str],) -> None:
+def zip_file(in_path: Union[Path, str], zip_path: Union[Path, str]) -> None:
     """ Zip a directory to a path.
 
     Args:
@@ -481,7 +481,7 @@ def zip_file(in_path: Union[Path, str], zip_path: Union[Path, str],) -> None:
     if not zip_path.suffix == ".zip":
         raise ValueError(f"{zip_path} is not a zip file")
     shutil.make_archive(
-        base_name=zip_path.parent / zip_path.stem, format="zip", root_dir=in_path
+        base_name=zip_path.parent / zip_path.stem, format="zip", root_dir=in_path,
     )
     log.info(f"Done zipping to {zip_path}.")
     zf = zipfile.ZipFile(str(zip_path))

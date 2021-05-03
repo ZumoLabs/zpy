@@ -21,7 +21,7 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def use_gpu(compute_device_type="CUDA", use_cpu=True,) -> None:
+def use_gpu(compute_device_type="CUDA", use_cpu=True) -> None:
     """ Choose the rendering devices for rendering.
 
     The hybrid render device options (GPU+CPU) are possible for CUDA and OPTIX
@@ -54,7 +54,7 @@ def use_gpu(compute_device_type="CUDA", use_cpu=True,) -> None:
 
 
 @gin.configurable
-def set_seed(seed: int = 0,) -> None:
+def set_seed(seed: int = 0) -> None:
     """ Set the random seed (sets the python and numpy seed).
 
     Args:
@@ -138,7 +138,7 @@ def get_asset_lib_path() -> Path:
 
 
 @gin.configurable
-def verify_view_layer(view_layer_name: str = "View Layer",) -> bpy.types.ViewLayer:
+def verify_view_layer(view_layer_name: str = "View Layer") -> bpy.types.ViewLayer:
     """ Get and set the view layer in Blender.
 
     Args:
@@ -159,7 +159,7 @@ def verify_view_layer(view_layer_name: str = "View Layer",) -> bpy.types.ViewLay
 
 
 @gin.configurable
-def verify_blender_scene(blender_scene_name: str = "Scene",) -> bpy.types.Scene:
+def verify_blender_scene(blender_scene_name: str = "Scene") -> bpy.types.Scene:
     """ Get and set the scene in Blender.
 
     Args:
@@ -178,7 +178,7 @@ def verify_blender_scene(blender_scene_name: str = "Scene",) -> bpy.types.Scene:
     return scene
 
 
-def parse_config(text_name: str = "config",) -> None:
+def parse_config(text_name: str = "config") -> None:
     """ Parses the gin config text in Blender.
 
     Args:
@@ -256,7 +256,7 @@ def default_script_template_dir() -> Path:
 
 @gin.configurable
 def connect_addon(
-    name: str = "zpy_addon", addon_dir: Union[Path, str] = "$BLENDERADDONS"
+    name: str = "zpy_addon", addon_dir: Union[Path, str] = "$BLENDERADDONS",
 ) -> None:
     """ Connects a Blender Addon.
 
@@ -272,7 +272,7 @@ def connect_addon(
 
 
 @gin.configurable
-def connect_debugger_vscode(timeout: int = 3,) -> None:
+def connect_debugger_vscode(timeout: int = 3) -> None:
     """ Connects to a VSCode debugger.
 
     https://github.com/AlansCodeLog/blender-debugger-for-vscode
@@ -289,7 +289,7 @@ def connect_debugger_vscode(timeout: int = 3,) -> None:
             time.sleep(1)
 
 
-def save_debug_blenderfile(path: Union[Path, str] = None,) -> None:
+def save_debug_blenderfile(path: Union[Path, str] = None) -> None:
     """ Saves an intermediate blenderfile for debugging purposes.
 
     Args:
@@ -313,7 +313,7 @@ def refresh_blender_ui() -> None:
     view_layer.update()
 
 
-def load_sim(path: Union[Path, str], auto_execute_scripts: bool = True,) -> None:
+def load_sim(path: Union[Path, str], auto_execute_scripts: bool = True) -> None:
     """ Load a sim from a path to a *.blend file.
 
     Args:
@@ -341,7 +341,7 @@ def load_sim(path: Union[Path, str], auto_execute_scripts: bool = True,) -> None
         )
 
 
-def clear_scene(to_clear: List = ["MESH"],) -> None:
+def clear_scene(to_clear: List = ["MESH"]) -> None:
     """ Cleans objects in a scene based on the object type.
 
     Args:

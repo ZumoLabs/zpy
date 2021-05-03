@@ -15,7 +15,7 @@ import zpy
 log = logging.getLogger(__name__)
 
 
-def verify(obj: Union[bpy.types.Object, str], check_none=True,) -> bpy.types.Object:
+def verify(obj: Union[bpy.types.Object, str], check_none=True) -> bpy.types.Object:
     """ Return object given name or Object type object.
 
     Args:
@@ -66,7 +66,7 @@ def load_blend_obj(
     return bpy.data.objects[name]
 
 
-def select(obj: Union[bpy.types.Object, str],) -> None:
+def select(obj: Union[bpy.types.Object, str]) -> None:
     """ Select an object.
 
     Args:
@@ -90,7 +90,7 @@ def select(obj: Union[bpy.types.Object, str],) -> None:
     log.debug(f"After select, view_layer.objects.active = {view_layer.objects.active}")
 
 
-def delete_obj(obj: Union[bpy.types.Object, str],) -> None:
+def delete_obj(obj: Union[bpy.types.Object, str]) -> None:
     """ Delete an object.
 
     Args:
@@ -103,7 +103,7 @@ def delete_obj(obj: Union[bpy.types.Object, str],) -> None:
     bpy.data.objects.remove(obj, do_unlink=True)
 
 
-def delete_obj_context(obj: Union[bpy.types.Object, str],) -> None:
+def delete_obj_context(obj: Union[bpy.types.Object, str]) -> None:
     """ Alternative way to delete an object.
 
     Args:
@@ -213,7 +213,7 @@ def toggle_hidden(
             bpy.data.objects[obj.name].hide_viewport = hidden
         else:
             log.debug(
-                f"Object {obj.name} does not contain filter string {filter_string}"
+                f"Object {obj.name} does not contain filter string {filter_string}",
             )
     else:
         log.warning("Object does not have hide properties")
@@ -313,7 +313,7 @@ def populate_vertex_colors(
         for vcol in obj.data.sculpt_vertex_colors.keys():
             if seg_type in vcol:
                 obj.data.sculpt_vertex_colors.remove(
-                    obj.data.sculpt_vertex_colors[seg_type]
+                    obj.data.sculpt_vertex_colors[seg_type],
                 )
     # Add new vertex color data
     obj.data.sculpt_vertex_colors.new(name=seg_type)
@@ -322,7 +322,7 @@ def populate_vertex_colors(
         obj.data.sculpt_vertex_colors[seg_type].data[i].color = color_rgba
 
 
-def random_position_within_constraints(obj: Union[bpy.types.Object, str],) -> None:
+def random_position_within_constraints(obj: Union[bpy.types.Object, str]) -> None:
     """ Randomize position of object within constraints.
 
     Args:
@@ -441,7 +441,7 @@ def rotate(
 
 
 def scale(
-    obj: Union[bpy.types.Object, str], scale: Tuple[float] = (1.0, 1.0, 1.0)
+    obj: Union[bpy.types.Object, str], scale: Tuple[float] = (1.0, 1.0, 1.0),
 ) -> None:
     """ Scale an object.
 
@@ -478,16 +478,16 @@ def jitter_mesh(
                 random.uniform(-1.0, 1.0) * obj.dimensions.x * scale[0],
                 random.uniform(-1.0, 1.0) * obj.dimensions.y * scale[1],
                 random.uniform(-1.0, 1.0) * obj.dimensions.z * scale[2],
-            )
+            ),
         )
         vertex.co += offset
 
 
 def jitter(
     obj: Union[bpy.types.Object, str],
-    translate_range: Tuple[Tuple[float]] = ((0, 0), (0, 0), (0, 0),),
-    rotate_range: Tuple[Tuple[float]] = ((0, 0), (0, 0), (0, 0),),
-    scale_range: Tuple[Tuple[float]] = ((1.0, 1.0), (1.0, 1.0), (1.0, 1.0),),
+    translate_range: Tuple[Tuple[float]] = ((0, 0), (0, 0), (0, 0)),
+    rotate_range: Tuple[Tuple[float]] = ((0, 0), (0, 0), (0, 0)),
+    scale_range: Tuple[Tuple[float]] = ((1.0, 1.0), (1.0, 1.0), (1.0, 1.0)),
 ) -> None:
     """ Apply random scale (blender units) and rotation (radians) to object.
 
@@ -527,7 +527,7 @@ def jitter(
 _SAVED_POSES = {}
 
 
-def save_pose(obj: Union[bpy.types.Object, str], pose_name: str,) -> None:
+def save_pose(obj: Union[bpy.types.Object, str], pose_name: str) -> None:
     """ Save a pose (rot and pos) to dict.
 
     Args:
@@ -539,7 +539,7 @@ def save_pose(obj: Union[bpy.types.Object, str], pose_name: str,) -> None:
     _SAVED_POSES[pose_name] = obj.matrix_world.copy()
 
 
-def restore_pose(obj: Union[bpy.types.Object, str], pose_name: str,) -> None:
+def restore_pose(obj: Union[bpy.types.Object, str], pose_name: str) -> None:
     """ Restore an object to a position.
 
     Args:

@@ -52,7 +52,7 @@ def run():
         )
 
         # Jitter the camera pose
-        zpy.objects.jitter("Camera", translate_range=((-5, 5), (-5, 5), (-5, 5),))
+        zpy.objects.jitter("Camera", translate_range=((-5, 5), (-5, 5), (-5, 5)))
 
         # Camera should be looking at Suzanne
         zpy.camera.look_at("Camera", bpy.data.objects["Suzanne"].location)

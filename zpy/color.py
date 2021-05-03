@@ -79,7 +79,7 @@ def frgb_to_srgb(frgb: Tuple[float]) -> Tuple[float]:
 
 
 def _output_style(
-    name: str, hex: str, output_style: str
+    name: str, hex: str, output_style: str,
 ) -> Union[Tuple[float, int, str], str]:
     """ Convert hex to an output style. """
     if output_style == "frgb":
@@ -114,7 +114,7 @@ def default_color(output_style: str = "frgb") -> Union[Tuple[float, int, str], s
 def random_color(output_style: str = "frgb") -> Union[Tuple[float, int, str], str]:
     """ Random color.
 
-    This will go through a pre-baked list every time, 
+    This will go through a pre-baked list every time,
     to prevent different random seeds from changing the
     color for a category.
 

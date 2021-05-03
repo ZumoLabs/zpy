@@ -36,7 +36,7 @@ def install_pip_depenencies():
         # Install zpy through PyPI into Blender's python site-package dir
         pkg_path = Path(sys.executable).parent.parent / "lib" / "site-packages" / "zpy"
         subprocess.run(
-            pip_install + ["zpy-zumo", "--target", str(pkg_path)], check=True
+            pip_install + ["zpy-zumo", "--target", str(pkg_path)], check=True,
         )
     except Exception as e:
         log.warning(f"Could not install ZPY and dependencies: {e}")
@@ -47,7 +47,7 @@ try:
 except ModuleNotFoundError as e:
     log.exception(
         "No zpy module found, please follow developer "
-        + "install instructions at https://github.com/ZumoLabs/zpy#install"
+        + "install instructions at https://github.com/ZumoLabs/zpy#install",
     )
     # TODO: Automatic installation of pip dependencies
     #       waiting on https://developer.blender.org/T71420

@@ -59,7 +59,7 @@ class OutputCOCO(zpy.output.Output):
         if splitseg:
             log.info(
                 "Outputting COCO annotations with multi-part"
-                + "segmentation split into seperate annotations"
+                + "segmentation split into seperate annotations",
             )
             coco_dict["annotations"] = self.coco_split_segmentation_annotations()
             annotation_path = zpy.files.add_to_path(annotation_path, "splitseg")
@@ -211,7 +211,7 @@ class OutputCOCO(zpy.output.Output):
                         elif key == "bbox_float":
                             coco_ann["bbox_float"] = (
                                 self.saver.clip_bbox(
-                                    normalized=True, bbox=annotation["bbox_float"]
+                                    normalized=True, bbox=annotation["bbox_float"],
                                 )
                                 if clipped
                                 else annotation["bbox_float"]
@@ -219,7 +219,7 @@ class OutputCOCO(zpy.output.Output):
                         elif key == "bbox":
                             coco_ann["bbox"] = (
                                 self.saver.clip_bbox(
-                                    width=width, height=height, bbox=annotation["bbox"]
+                                    width=width, height=height, bbox=annotation["bbox"],
                                 )
                                 if clipped
                                 else annotation["bbox"]
@@ -237,7 +237,7 @@ class OutputCOCO(zpy.output.Output):
                             coco_ann["bboxes"] = (
                                 [
                                     self.saver.clip_bbox(
-                                        height=height, width=width, bbox=bbox
+                                        height=height, width=width, bbox=bbox,
                                     )
                                     for bbox in annotation["bboxes"]
                                 ]
@@ -303,7 +303,7 @@ class OutputCOCO(zpy.output.Output):
                 num_components = len(annotation["segmentation"])
             else:
                 log.warning(
-                    "Skipping annotation: split segmentation requires segmentaiton field."
+                    "Skipping annotation: split segmentation requires segmentaiton field.",
                 )
                 continue
 
@@ -317,7 +317,7 @@ class OutputCOCO(zpy.output.Output):
                                 height=height,
                                 width=width,
                                 annotation=annotation["segmentation"][i],
-                            )
+                            ),
                         ]
                         if clipped
                         else [annotation["segmentation"][i]]
@@ -334,7 +334,7 @@ class OutputCOCO(zpy.output.Output):
                             self.saver.clip_coordinate_list(
                                 normalized=True,
                                 annotation=annotation["segmentation_float"][i],
-                            )
+                            ),
                         ]
                         if clipped
                         else [annotation["segmentation_float"][i]]
@@ -344,7 +344,7 @@ class OutputCOCO(zpy.output.Output):
                 try:
                     _coco_ann["bbox_float"] = (
                         self.saver.clip_bbox(
-                            normalized=True, bbox=annotation["bboxes_float"][i]
+                            normalized=True, bbox=annotation["bboxes_float"][i],
                         )
                         if clipped
                         else annotation["bboxes_float"][i]
@@ -354,7 +354,7 @@ class OutputCOCO(zpy.output.Output):
                 try:
                     _coco_ann["bbox"] = (
                         self.saver.clip_bbox(
-                            width=width, height=height, bbox=annotation["bboxes"][i]
+                            width=width, height=height, bbox=annotation["bboxes"][i],
                         )
                         if clipped
                         else annotation["bboxes"][i]
@@ -418,7 +418,7 @@ def parse_coco_annotations(
     if len(annotations) == 0:
         raise COCOParseError(f"no annotations found in {annotation_file}")
     log.info(
-        f"images:{len(images)} categories:{len(categories)} annotations:{len(annotations)}"
+        f"images:{len(images)} categories:{len(categories)} annotations:{len(annotations)}",
     )
 
     # Optionally output a saver object.
@@ -560,7 +560,7 @@ def parse_coco_annotations(
                     != int(annotation["num_keypoints"]) * 3
                 ):
                     raise COCOParseError(
-                        "keypoints_xyv not correct size {len(keypoints)}"
+                        "keypoints_xyv not correct size {len(keypoints)}",
                     )
             if "keypoints_xyz" in annotation:
                 if (
@@ -568,7 +568,7 @@ def parse_coco_annotations(
                     != int(annotation["num_keypoints"]) * 3
                 ):
                     raise COCOParseError(
-                        "keypoints_xyz not correct size {len(keypoints)}"
+                        "keypoints_xyz not correct size {len(keypoints)}",
                     )
 
         # Save each annotation to ImageSaver object

@@ -109,7 +109,7 @@ class ImageSaver(zpy.saver.Saver):
         }
         if subcategory is not None:
             subcategory_id = self.categories[category_id]["subcategories"].index(
-                subcategory
+                subcategory,
             )
             self.categories[category_id]["subcategory_count"][subcategory_id] += 1
             subcategory_id += 0 if subcategory_zero_indexed else 1
@@ -133,7 +133,7 @@ class ImageSaver(zpy.saver.Saver):
             self.parse_annotations_from_seg_image(image_name=seg_image)
         return annotation
 
-    def parse_annotations_from_seg_image(self, image_name: str,) -> None:
+    def parse_annotations_from_seg_image(self, image_name: str) -> None:
         """ Populate annotation field based on segmentation image.
 
         Args:
@@ -155,15 +155,15 @@ class ImageSaver(zpy.saver.Saver):
         for annotation in zpy.image.seg_to_annotations(image_path):
             if (
                 self.seg_annotations_color_to_id[image_name].get(
-                    annotation["color"], None
+                    annotation["color"], None,
                 )
                 is None
             ):
                 log.warning(
-                    f'No annotations found for color {annotation["color"]} in {image_name}'
+                    f'No annotations found for color {annotation["color"]} in {image_name}',
                 )
                 log.warning(
-                    f"Available colors are {list(self.seg_annotations_color_to_id[image_name].keys())}"
+                    f"Available colors are {list(self.seg_annotations_color_to_id[image_name].keys())}",
                 )
                 closest_color = zpy.color.closest_color(
                     annotation["color"],
@@ -180,7 +180,7 @@ class ImageSaver(zpy.saver.Saver):
             self.annotations[idx].update(annotation)
 
     @gin.configurable
-    def output_annotated_images(self, num_annotated_images: int = 10,) -> None:
+    def output_annotated_images(self, num_annotated_images: int = 10) -> None:
         """ Dump annotated sampled images to the meta folder.
 
         Args:
@@ -208,7 +208,7 @@ class ImageSaver(zpy.saver.Saver):
                 )
 
     @gin.configurable
-    def output_meta_analysis(self, image_sample_size: int = 50,) -> None:
+    def output_meta_analysis(self, image_sample_size: int = 50) -> None:
         """ Perform a full meta analysis, outputting some meta files.
 
         Args:
@@ -247,11 +247,11 @@ class ImageSaver(zpy.saver.Saver):
             zpy.viz.image_grid_plot(images=opened_images, output_path=output_path)
             zpy.viz.image_shape_plot(images=opened_images, output_path=output_path)
             zpy.viz.color_correlations_plot(
-                flat_images=flat_images, output_path=output_path
+                flat_images=flat_images, output_path=output_path,
             )
             zpy.viz.pixel_histograms(flat_images=flat_images, output_path=output_path)
             zpy.viz.category_barplot(
-                categories=self.categories, output_path=output_path
+                categories=self.categories, output_path=output_path,
             )
         except Exception as e:
             log.warning(f"Error when visualizing {e}")

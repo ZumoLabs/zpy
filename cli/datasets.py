@@ -11,7 +11,7 @@ def filter_datasets(dfilter, url, auth_headers):
     """ filter datasets
 
     Filter dataset objects on ZumoLabs backend by given dfilter.
-    Parse dfilter using parse_filter and make calls to 
+    Parse dfilter using parse_filter and make calls to
     generated, uploaded, job dataset endpoints.
 
     Args:
@@ -73,7 +73,7 @@ def create_generated_dataset(name, sim_name, config, url, auth_headers):
 def create_uploaded_dataset(name, path, url, auth_headers):
     """ upload dataset
 
-    Upload dataset to S3 through ZumoLabs backend and 
+    Upload dataset to S3 through ZumoLabs backend and
     create object.
 
     Args:
@@ -133,7 +133,7 @@ def download_dataset(name, path, dataset_type, url, auth_headers):
 def fetch_datasets():
     """ fetch datasets
 
-    Fetch dataset objects from ZumoLabs backend. Fetches all three 
+    Fetch dataset objects from ZumoLabs backend. Fetches all three
     datasets types uploaded, generated, and job.
 
     Returns:

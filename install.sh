@@ -6,7 +6,7 @@ BLENDER_VERSION_FULL=${BLENDER_VERSION_FULL:-"2.92.0"}
 ZPY_VERSION=${ZPY_VERSION:-"1.1.1"}
 
 if [ "$(uname)" == "Darwin" ]; then
-    # Do something under Mac OS X platform        
+    # Do something under Mac OS X platform
     ON_MAC=true
     ON_LINUX=false
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
@@ -100,7 +100,7 @@ cd "${HOME}" || exit 1
 
 ###################################################################### script
 
-if $ON_MAC ; then 
+if $ON_MAC ; then
   if ! command -v curl >/dev/null; then
     echo "Must install cURL"
     exit 1
@@ -134,7 +134,7 @@ if [ "$RESP" = "y" ]; then
     mac_dmg_install blender-${BLENDER_VERSION_FULL}-macOS.dmg
     rm -rf blender-${BLENDER_VERSION_FULL}-macOS.dmg
     echo "Blender installed succesfully"
-  else 
+  else
     echo "Windows currently not supported"
   fi
 else
@@ -163,7 +163,7 @@ if [ "$RESP" = "y" ]; then
     ${BLENDER_BIN_PIP} install --pre --upgrade zpy-zumo==${ZPY_VERSION}
     rm -rf get-pip.py
     echo "zpy pip installed succesfully"
-  else 
+  else
     echo "Windows currently not supported"
   fi
 else
@@ -186,7 +186,7 @@ if [ "$RESP" = "y" ]; then
     unzip zpy_addon-v${ZPY_VERSION}.zip -d ${BLENDERADDONS}/
     rm zpy_addon-v${ZPY_VERSION}.zip
     echo "zpy addon installed succesfully"
-  else 
+  else
     echo "Windows currently not supported"
   fi
 else

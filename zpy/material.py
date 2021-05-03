@@ -39,7 +39,7 @@ def verify(
     return mat
 
 
-def for_mat_in_obj(obj: Union[bpy.types.Object, str],) -> bpy.types.Material:
+def for_mat_in_obj(obj: Union[bpy.types.Object, str]) -> bpy.types.Material:
     """ Yield materials in scene object.
 
     Args:
@@ -66,7 +66,7 @@ def for_mat_in_obj(obj: Union[bpy.types.Object, str],) -> bpy.types.Material:
 _SAVED_MATERIALS = {}
 
 
-def save_mat_props(mat: Union[bpy.types.Material, str],) -> None:
+def save_mat_props(mat: Union[bpy.types.Material, str]) -> None:
     """ Save a pose (rot and pos) to dict.
 
     Args:
@@ -76,7 +76,7 @@ def save_mat_props(mat: Union[bpy.types.Material, str],) -> None:
     _SAVED_MATERIALS[mat.name] = get_mat_props(mat)
 
 
-def restore_mat_props(mat: Union[bpy.types.Material, str],) -> None:
+def restore_mat_props(mat: Union[bpy.types.Material, str]) -> None:
     """ Restore an object to a position.
 
     Args:
@@ -92,7 +92,7 @@ def restore_all_mat_props() -> None:
         set_mat_props(mat_name, mat_props)
 
 
-def get_mat_props(mat: Union[bpy.types.Material, str],) -> Tuple[float]:
+def get_mat_props(mat: Union[bpy.types.Material, str]) -> Tuple[float]:
     """ Get (some of the) material properties.
 
     Args:
@@ -229,7 +229,7 @@ def make_mat_from_texture(
 
 
 @gin.configurable
-def make_mat_from_color(color: Tuple[float], name: str = None,) -> bpy.types.Material:
+def make_mat_from_color(color: Tuple[float], name: str = None) -> bpy.types.Material:
     """ Makes a material given a color.
 
     Args:
@@ -340,7 +340,7 @@ def make_aov_material_output_node(
 
         # Vertex Color Node
         vcol_node = zpy.nodes.get_or_make(
-            f"{style} Vertex Color", "ShaderNodeVertexColor", tree
+            f"{style} Vertex Color", "ShaderNodeVertexColor", tree,
         )
         vcol_node.layer_name = style
 
