@@ -33,23 +33,23 @@ def get_requirements_from_file(python_requirements_file="./requirements.txt"):
 
 
 def get_long_description(filepath):
-    with open(filepath, 'r', encoding='utf-8') as fh:
+    with open(filepath, "r", encoding="utf-8") as fh:
         long_description = fh.read()
     return long_description
 
 
 setup(
-    name='zpy-zumo',
+    name="zpy-zumo",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description='Create synthetic data with Blender.',
-    long_description=get_long_description('README.md'),
+    description="Create synthetic data with Blender.",
+    long_description=get_long_description("README.md"),
     long_description_content_type="text/markdown",
-    author='Zumo Labs',
-    author_email='infra@zumolabs.ai',
-    url='https://github.com/ZumoLabs/zpy',
+    author="Zumo Labs",
+    author_email="infra@zumolabs.ai",
+    url="https://github.com/ZumoLabs/zpy",
     packages=find_packages(),
     install_requires=get_requirements_from_file(),
     include_package_data=True,
-    entry_points='[console_scripts]\nzpy=cli.cli:cli\n',
+    entry_points="[console_scripts]\nzpy=cli.cli:cli\n",
 )

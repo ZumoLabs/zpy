@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 @gin.configurable
 class Saver:
-    """ Stores annotations and categories throughout a run script.
+    """Stores annotations and categories throughout a run script.
 
     Provides functions for some additional meta files.
 
@@ -28,20 +28,21 @@ class Saver:
     """
 
     # Names for annotation files, folders, configs, datasheets, etc
-    HIDDEN_METAFOLDER_FILENAME = Path('.zumometa')
-    HIDDEN_DATASHEET_FILENAME = Path('_viz.datasheet.txt')
-    GIN_CONFIG_FILENAME = Path('config.gin')
+    HIDDEN_METAFOLDER_FILENAME = Path(".zumometa")
+    HIDDEN_DATASHEET_FILENAME = Path("_viz.datasheet.txt")
+    GIN_CONFIG_FILENAME = Path("config.gin")
 
-    DATETIME_FORMAT = '20%y%m%d_%H%M%S'
-    DATETIME_YEAR_FORMAT = '20%y'
+    DATETIME_FORMAT = "20%y%m%d_%H%M%S"
+    DATETIME_YEAR_FORMAT = "20%y"
 
-    def __init__(self,
-                 output_dir: Union[Path, str] = None,
-                 annotation_path: Union[Path, str] = None,
-                 description: str = 'Description of dataset.',
-                 clean_dir: bool = True,
-                 ):
-        """ Creates a Saver object.
+    def __init__(
+        self,
+        output_dir: Union[Path, str] = None,
+        annotation_path: Union[Path, str] = None,
+        description: str = "Description of dataset.",
+        clean_dir: bool = True,
+    ):
+        """Creates a Saver object.
 
         Args:
             output_dir (Union[Path, str], optional): Directory where files will be dumped.
@@ -52,9 +53,8 @@ class Saver:
         # the output dir
         if output_dir is None:
             output_dir = zpy.files.default_temp_path()
-        self.output_dir = zpy.files.verify_path(
-            output_dir, make=True, check_dir=True)
-        log.debug(f'Saver output directory at {output_dir}')
+        self.output_dir = zpy.files.verify_path(output_dir, make=True, check_dir=True)
+        log.debug(f"Saver output directory at {output_dir}")
         if clean_dir:
             zpy.files.clean_dir(self.output_dir)
         # Annotation files can be optionally written out to a different dir
@@ -62,15 +62,15 @@ class Saver:
             self.annotation_path = annotation_path
         else:
             self.annotation_path = zpy.files.verify_path(annotation_path)
-            log.debug(f'Saver annotation path at {annotation_path}')
+            log.debug(f"Saver annotation path at {annotation_path}")
         # Very similar keys to COCO-style
         self.metadata = {
-            'description': description,
-            'contributor': 'Zumo Labs',
-            'url': 'zumolabs.ai',
-            'year': date.today().strftime(self.DATETIME_YEAR_FORMAT),
-            'date_created': date.today().strftime(self.DATETIME_FORMAT),
-            'save_path': str(self.output_dir),
+            "description": description,
+            "contributor": "Zumo Labs",
+            "url": "zumolabs.ai",
+            "year": date.today().strftime(self.DATETIME_YEAR_FORMAT),
+            "date_created": date.today().strftime(self.DATETIME_FORMAT),
+            "save_path": str(self.output_dir),
         }
         self.categories = {}
         self.annotations = []
@@ -78,13 +78,14 @@ class Saver:
         self.category_name_to_id = {}
 
     @gin.configurable
-    def add_annotation(self,
-                       category: str = None,
-                       subcategory: str = None,
-                       subcategory_zero_indexed: bool = True,
-                       **kwargs,
-                       ) -> Dict:
-        """ Add a new annotation to the Saver object.
+    def add_annotation(
+        self,
+        category: str = None,
+        subcategory: str = None,
+        subcategory_zero_indexed: bool = True,
+        **kwargs,
+    ) -> Dict:
+        """Add a new annotation to the Saver object.
 
         Pass any additional keys you want in the annotation dict as kwargs.
 
@@ -96,30 +97,32 @@ class Saver:
         Returns:
             Dict: The annotation dictionary.
         """
-        annotation = {'id': len(self.annotations)}
+        annotation = {"id": len(self.annotations)}
         if category is not None:
             category_id = self.category_name_to_id.get(category, None)
-            assert category_id is not None, f'Could not find id for category {category}'
-            self.categories[category_id]['count'] += 1
-            annotation['category_id'] = category_id
+            assert category_id is not None, f"Could not find id for category {category}"
+            self.categories[category_id]["count"] += 1
+            annotation["category_id"] = category_id
         if subcategory is not None:
-            subcategory_id = self.categories[category_id]['subcategories'].index(
-                subcategory)
-            self.categories[category_id]['subcategory_count'][subcategory_id] += 1
+            subcategory_id = self.categories[category_id]["subcategories"].index(
+                subcategory
+            )
+            self.categories[category_id]["subcategory_count"][subcategory_id] += 1
             subcategory_id += 0 if subcategory_zero_indexed else 1
-            annotation['subcategory_id'] = subcategory_id
+            annotation["subcategory_id"] = subcategory_id
         return annotation
 
     @gin.configurable
-    def add_category(self,
-                     name: str = 'default',
-                     supercategories: List[str] = None,
-                     subcategories: List[str] = None,
-                     color:  Tuple[float] = (0., 0., 0.),
-                     zero_indexed: bool = True,
-                     **kwargs,
-                     ) -> Dict:
-        """ Add a new category (also known as classes) to the Saver object.
+    def add_category(
+        self,
+        name: str = "default",
+        supercategories: List[str] = None,
+        subcategories: List[str] = None,
+        color: Tuple[float] = (0.0, 0.0, 0.0),
+        zero_indexed: bool = True,
+        **kwargs,
+    ) -> Dict:
+        """Add a new category (also known as classes) to the Saver object.
 
         Pass any additional keys you want in the category dict as kwargs.
 
@@ -137,25 +140,26 @@ class Saver:
         supercategories = supercategories or []
         subcategories = subcategories or []
         category = {
-            'name': name,
-            'supercategories': supercategories,
-            'subcategories': subcategories,
-            'color': color,
-            'count': 0,
-            'subcategory_count': [0] * len(subcategories),
+            "name": name,
+            "supercategories": supercategories,
+            "subcategories": subcategories,
+            "color": color,
+            "count": 0,
+            "subcategory_count": [0] * len(subcategories),
         }
         category.update(**kwargs)
-        category['id'] = len(self.categories.keys())
-        category['id'] += 0 if zero_indexed else 1
-        log.debug(f'Adding category: {zpy.files.pretty_print(category)}')
-        self.categories[category['id']] = category
-        self.category_name_to_id[name] = category['id']
+        category["id"] = len(self.categories.keys())
+        category["id"] += 0 if zero_indexed else 1
+        log.debug(f"Adding category: {zpy.files.pretty_print(category)}")
+        self.categories[category["id"]] = category
+        self.category_name_to_id[name] = category["id"]
         return category
 
     @gin.configurable
-    def remap_filter_categories(self,
-                                category_remap: Dict = None,
-                                ) -> None:
+    def remap_filter_categories(
+        self,
+        category_remap: Dict = None,
+    ) -> None:
         """Re-map the categories (name and id correspondence).
 
         This will also filter out any categories not in the category_remap dict.
@@ -167,8 +171,7 @@ class Saver:
             ValueError: Incorrect format for category remap dictionary.
         """
         if category_remap is None:
-            log.warning(
-                'Attempted to remap categories with no category remap.')
+            log.warning("Attempted to remap categories with no category remap.")
             return
 
         # Intermediate variables for organization
@@ -182,28 +185,29 @@ class Saver:
                 _id = int(_id)
                 _name = str(_name)
             except ValueError:
-                raise ValueError('Category remap must be {int : string}')
+                raise ValueError("Category remap must be {int : string}")
             if _name in category_remap_name_to_id:
-                raise ValueError(f'Duplicate category name in remap: {_name}')
+                raise ValueError(f"Duplicate category name in remap: {_name}")
             if _id in category_remap_ids:
-                raise ValueError(f'Duplicate category id in remap: {_id}')
+                raise ValueError(f"Duplicate category id in remap: {_id}")
             category_remap_ids.append(_id)
             category_remap_name_to_id[_name] = _id
 
         # Make sure the category names all exist in current categories
-        category_names = [c['name'] for c in self.categories.values()]
+        category_names = [c["name"] for c in self.categories.values()]
         for category_name in category_remap_name_to_id:
-            assert category_name in category_names, \
-                f'Could not find category {category_name} in dataset when remap-ing'
+            assert (
+                category_name in category_names
+            ), f"Could not find category {category_name} in dataset when remap-ing"
 
         # Go through all of the current categories
         new_categories = {}
         for old_id, category in self.categories.items():
             # Matching is done using the name
-            if category['name'] in category_remap_name_to_id:
-                new_id = category_remap_name_to_id[category['name']]
+            if category["name"] in category_remap_name_to_id:
+                new_id = category_remap_name_to_id[category["name"]]
                 category_remap_old_id_to_new_id[old_id] = new_id
-                category['id'] = new_id
+                category["id"] = new_id
                 new_categories[new_id] = category
         # Overwrite the old categories
         self.categories = new_categories
@@ -212,35 +216,32 @@ class Saver:
         new_annotations = []
         # Replace the category_id in all annotations
         for annotation in self.annotations:
-            if annotation['category_id'] in category_remap_old_id_to_new_id:
-                new_id = category_remap_old_id_to_new_id[annotation['category_id']]
-                annotation['category_id'] = new_id
+            if annotation["category_id"] in category_remap_old_id_to_new_id:
+                new_id = category_remap_old_id_to_new_id[annotation["category_id"]]
+                annotation["category_id"] = new_id
                 new_annotations.append(annotation)
         # Overwrite the old annotations
         self.annotations = new_annotations
 
     def output_gin_config(self):
-        """ Output the full gin config. """
+        """Output the full gin config."""
         gin_config_filepath = self.output_dir / self.GIN_CONFIG_FILENAME
-        log.info(f'Writing out gin config to {gin_config_filepath}')
+        log.info(f"Writing out gin config to {gin_config_filepath}")
         with open(gin_config_filepath, "w") as f:
             f.write(gin.operative_config_str())
 
     @staticmethod
-    def write_datasheet(
-        datasheet_path: str = None,
-        info: Dict = None
-    ):
-        """ Writes datasheet dict to file.
+    def write_datasheet(datasheet_path: str = None, info: Dict = None):
+        """Writes datasheet dict to file.
 
         Args:
             datasheet_path (str, optional): Path where datasheet will be written.
             info (Dict, optional): Information to include in datasheet.
 
         """
-        with datasheet_path.open('w') as f:
+        with datasheet_path.open("w") as f:
             for k, v in info.items():
-                f.write(f'{k},{v}\n')
+                f.write(f"{k},{v}\n")
 
     @staticmethod
     def clip_coordinate_list(
@@ -249,7 +250,7 @@ class Saver:
         width: Union[int, float] = None,
         normalized: bool = False,
     ) -> List[Union[int, float]]:
-        """ Clip a list of pixel coordinates (e.g. segmentation polygon).
+        """Clip a list of pixel coordinates (e.g. segmentation polygon).
 
         Args:
             annotation (List[Union[int, float]], optional): List of pixel coordinates.
@@ -261,10 +262,12 @@ class Saver:
             List[Union[int, float]]: Clipped list of pixel coordniates.
         """
         if any(isinstance(i, list) for i in annotation):
-            return [zpy.saver.Saver.clip_coordinate_list(height=height,
-                                                         width=width,
-                                                         normalized=normalized,
-                                                         annotation=ann) for ann in annotation]
+            return [
+                zpy.saver.Saver.clip_coordinate_list(
+                    height=height, width=width, normalized=normalized, annotation=ann
+                )
+                for ann in annotation
+            ]
         if normalized:
             # Coordinates are in (0, 1)
             max_x, max_y = 1.0, 1.0
@@ -273,7 +276,7 @@ class Saver:
             max_x, max_y = width, height
         new_annotation = []
         # TODO: This zip unpack here is unreadable
-        for x, y in zip(*[iter(annotation)]*2):
+        for x, y in zip(*[iter(annotation)] * 2):
             new_x, new_y = x, y
             if x < 0:
                 new_x = 0
@@ -294,7 +297,7 @@ class Saver:
         width: Union[int, float] = None,
         normalized: bool = False,
     ) -> List[Union[int, float]]:
-        """ Clip a bounding box in [x, y, width, height] format.
+        """Clip a bounding box in [x, y, width, height] format.
 
         Args:
             bbox (List[Union[int, float]], optional): Bounding box in [x, y, width, height] format.
