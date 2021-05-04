@@ -74,7 +74,7 @@ def parse_args(args):
     def _safe_eval(key):
         try:
             return eval(key)
-        except Exception as _:
+        except Exception:
             return key
 
     keys = args[::2]

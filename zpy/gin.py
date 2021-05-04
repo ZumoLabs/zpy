@@ -60,7 +60,7 @@ def parse_gin_bindings(
                 try:
                     gin.bind_parameter(key, value)
                     _message = "BOUND  "
-                except Exception as _:
+                except Exception:
                     _message = "IGNORED"
                 log.info(f"{_message} - {key} : {value}")
 

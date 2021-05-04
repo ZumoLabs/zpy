@@ -6,7 +6,7 @@ import os
 import random
 from pathlib import Path
 
-import gin
+import bpy
 import zpy
 
 log = logging.getLogger("zpy")

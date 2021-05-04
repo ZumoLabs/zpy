@@ -351,7 +351,7 @@ def create_dataset(name, sim, args):
 
     try:
         dataset_config = parse_args(args)
-    except Exception as _:
+    except Exception:
         click.secho("Failed to parse args: {args}", fg="yellow", err=True)
         return
     try:
@@ -388,7 +388,7 @@ def create_sweep(name, sim, number, args):
 
     try:
         dataset_config = parse_args(args)
-    except Exception as _:
+    except Exception:
         click.secho("Failed to parse args: {args}", fg="yellow", err=True)
         return
     for i in range(int(number)):

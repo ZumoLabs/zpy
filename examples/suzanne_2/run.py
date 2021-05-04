@@ -3,7 +3,7 @@
 import zpy
 import logging
 
-import gin
+import bpy
 import math
 
 log = logging.getLogger("zpy")

@@ -150,7 +150,8 @@ def flatten_images(
         if len(dims) == 3:
             flat_images.append(np.reshape(image, (dims[0] * dims[1], dims[2])))
     flat_images = np.concatenate(flat_images, axis=0)
-    subsample = flat_images[np.random.randint(flat_images.shape[0], size=max_pixels), :]
+    subsample = flat_images[np.random.randint(
+        flat_images.shape[0], size=max_pixels), :]
     return [subsample]
 
 
@@ -212,7 +213,8 @@ def seg_to_annotations(
     annotations = []
     # Loop through each category
     if unique_colors.shape[0] > max_categories:
-        raise ValueError(f"Over {max_categories} categories: {unique_colors.shape[0]}")
+        raise ValueError(
+            f"Over {max_categories} categories: {unique_colors.shape[0]}")
     for i in range(unique_colors.shape[0]):
         seg_color = unique_colors[i, :]
         log.debug(f"Unique color {seg_color}")
@@ -230,7 +232,8 @@ def seg_to_annotations(
             )
             masked_image_path = image_path.parent / masked_image_name
             io.imsave(
-                masked_image_path, img_as_uint(exposure.rescale_intensity(masked_image))
+                masked_image_path, img_as_uint(
+                    exposure.rescale_intensity(masked_image))
             )
         if remove_salt:
             # Remove "salt"
@@ -251,7 +254,8 @@ def seg_to_annotations(
         contours = measure.find_contours(
             filled_masked_image, 0.01, positive_orientation="low"
         )
-        log.debug(f"found {len(contours)} contours for {seg_color} in {image_path}")
+        log.debug(
+            f"found {len(contours)} contours for {seg_color} in {image_path}")
         # HACK: Sometimes all you get is salt for an image, in this case
         #       do not add any annotation for this category.
         if len(contours) == 0:
