@@ -160,8 +160,8 @@ def pad_with(vector, pad_width, iaxis, kwargs):
     https://numpy.org/doc/stable/reference/generated/numpy.pad.html
     """
     pad_value = kwargs.get("padder", 10)
-    vector[: pad_width[0]] = pad_value
-    vector[-pad_width[1] :] = pad_value
+    vector[:pad_width[0]] = pad_value
+    vector[-pad_width[1]:] = pad_value
 
 
 def binary_mask_to_rle(binary_mask) -> Dict:

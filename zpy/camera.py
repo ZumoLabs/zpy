@@ -3,8 +3,7 @@
 """
 import logging
 import math
-from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Tuple, Union
 
 import bpy
 import bpy_extras

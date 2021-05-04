@@ -24,8 +24,10 @@ def set_log_levels(
 
     Args:
         level (str, optional): log level in [info, debug, warning]. Defaults to logging.Info.
-        modules (List[str], optional): Modules to set logging for. Defaults to [ 'zpy', 'zpy_addon', 'bpy.zpy_addon' 'neuralyzer', ].
-        log_format (str, optional): Log format string, defaults to '%(asctime)s: %(levelname)s %(filename)s] %(message)s'
+        modules (List[str], optional): Modules to set logging for. 
+            Defaults to [ 'zpy', 'zpy_addon', 'bpy.zpy_addon' 'neuralyzer', ].
+        log_format (str, optional): Log format string. 
+            Defaults to '%(asctime)s: %(levelname)s %(filename)s] %(message)s'
     """
     if level is None:
         log_level = logging.INFO
@@ -43,7 +45,7 @@ def set_log_levels(
         try:
             log.warning(f"Setting log level for {logger_name} to {log_level} ({level})")
             logging.getLogger(logger_name).setLevel(log_level)
-        except:
+        except Exception:
             pass
 
 
@@ -118,11 +120,11 @@ def parse_log_file(log_file: Union[str, Path]) -> None:
     step_times, render_times = [], []
     with open(log_file, "r") as f:
         render_in_step = []
-        for l in f.readlines():
-            seconds = re.search("\d+\.\d+(?=s)", l)
-            if l.startswith("Rendering took"):
+        for line in f.readlines():
+            seconds = re.search("\d+\.\d+(?=s)", line)
+            if line.startswith("Rendering took"):
                 render_in_step.append(float(seconds.group(0)))
-            elif l.startswith("Simulation step took"):
+            elif line.startswith("Simulation step took"):
                 render_times.append(render_in_step)
                 render_in_step = []
                 step_times.append(float(seconds.group(0)))

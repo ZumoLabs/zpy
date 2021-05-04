@@ -2,9 +2,8 @@
     Image version of Saver object.
 """
 import logging
-from datetime import date
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, Tuple, Union
 
 import gin
 import numpy as np
@@ -92,7 +91,8 @@ class ImageSaver(zpy.saver.Saver):
             subcategory_zero_indexed (bool, optional): Whether subcategories are zero-indexed. Defaults to True.
             seg_image (str, optional): Name of segmentation image that corresponds to this image. Defaults to None.
             seg_color (Tuple[float], optional): Segmentation color of entity in this annotation. Defaults to None.
-            parse_on_add (bool, optional): Calculate bounding box and polygons and populate segmenation fields. Defaults to True.
+            parse_on_add (bool, optional): Calculate bounding box and polygons and populate segmenation fields. 
+                Defaults to True.
 
         Returns:
             Dict: The annotation dictionary.
@@ -173,7 +173,7 @@ class ImageSaver(zpy.saver.Saver):
                     list(self.seg_annotations_color_to_id[image_name].keys()),
                 )
                 if closest_color is None:
-                    log.warning(f"Could not find close enough color, skipping ...")
+                    log.warning("Could not find close enough color, skipping ...")
                     continue
                 else:
                     log.warning(f"Using closest color {closest_color}")
