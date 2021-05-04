@@ -108,6 +108,7 @@ def version():
 
     click.echo(f"Version: {zpy.__version__}")
 
+
 # ------- LIST
 
 
@@ -136,8 +137,7 @@ def list_datasets():
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="name,state,type,created,id",
-                      default_colwidth=30)
+    tbl = TableLogger(columns="name,state,type,created,id", default_colwidth=30)
     for d in datasets:
         tbl(d["name"], d["state"].lower(), d["type"], d["created_at"], d["id"])
 
@@ -187,13 +187,13 @@ def list_jobs():
         click.secho(f"Failed to fetch jobs {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="state,name,operation,created",
-                      default_colwidth=30)
+    tbl = TableLogger(columns="state,name,operation,created", default_colwidth=30)
     for j in jobs:
         tbl(j["state"], j["name"], j["operation"], j["created_at"])
 
 
 # ------- GET
+
 
 @cli.group()
 def get():
@@ -209,8 +209,7 @@ def get():
 @click.argument("dtype", type=click.Choice(["job", "generated", "uploaded"]))
 @click.argument(
     "path",
-    type=click.Path(exists=True, file_okay=False,
-                    writable=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
 )
 def get_dataset(name, dtype, path):
     """get dataset
@@ -237,8 +236,7 @@ def get_dataset(name, dtype, path):
 @click.argument("name")
 @click.argument(
     "path",
-    type=click.Path(exists=True, file_okay=False,
-                    writable=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
 )
 def get_sim(name, path):
     """get sim
@@ -403,8 +401,7 @@ def create_sweep(name, sim, number, args):
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
         except NameError as e:
-            click.secho(
-                f"Failed to create dataset: {e}", fg="yellow", err=True)
+            click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
             return
     click.echo(f"Finished creating {number} datasets from sim '{sim}'.")
 
