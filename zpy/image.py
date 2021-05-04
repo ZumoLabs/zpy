@@ -2,7 +2,6 @@
     Image utilties.
 """
 import logging
-import random
 from itertools import groupby
 from pathlib import Path
 from typing import Dict, List, Union
@@ -12,7 +11,6 @@ import numpy as np
 from scipy import ndimage as ndi
 from shapely.geometry import MultiPolygon, Polygon
 from skimage import color, exposure, img_as_uint, io, measure
-from skimage.exposure import match_histograms
 from skimage.morphology import binary_closing, binary_opening
 from skimage.transform import resize
 
@@ -162,8 +160,8 @@ def pad_with(vector, pad_width, iaxis, kwargs):
     https://numpy.org/doc/stable/reference/generated/numpy.pad.html
     """
     pad_value = kwargs.get("padder", 10)
-    vector[: pad_width[0]] = pad_value
-    vector[-pad_width[1] :] = pad_value
+    vector[:pad_width[0]] = pad_value
+    vector[-pad_width[1]:] = pad_value
 
 
 def binary_mask_to_rle(binary_mask) -> Dict:
@@ -195,7 +193,7 @@ def seg_to_annotations(
         image_path (Union[Path, str]): Path to image.
         remove_salt (bool, optional): Remove salt when calculating bounding box and polygons. Defaults to True.
         rle_segmentations (bool, optional): Include RLE polygons in annotation dictionaries. Defaults to False.
-        float_annotations (bool, optional): Include float (0, 1) bboxes/polygons in annotation dictionaries. Defaults to False.
+        float_annotations (bool, optional): Include float (0, 1) bboxes/polygons in annotation dicts. Defaults False.
         max_categories (int, optional): Maximum number of categories allowed in an image. Defaults to 1000.
 
     Raises:

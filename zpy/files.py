@@ -359,7 +359,7 @@ def write_csv(
         ValueError: Path is not a csv or txt file.
     """
     path = to_pathlib_path(path)
-    if not path.suffix in [".csv", ".txt"]:
+    if path.suffix not in [".csv", ".txt"]:
         raise ValueError(f"{path} is not a CSV file.")
     log.info(f"Writing CSV to file {path}")
     with path.open("w") as f:
@@ -383,7 +383,7 @@ def read_csv(path: Union[Path, str], delimiter: str = ",", **kwargs) -> List[Lis
         List[List[Any]]: Data in the csv.
     """
     path = to_pathlib_path(path)
-    if not path.suffix in [".csv", ".txt"]:
+    if path.suffix not in [".csv", ".txt"]:
         raise ValueError(f"{path} is not a CSV file.")
     log.info(f"Reading CSV file at {path}")
     data = []

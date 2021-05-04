@@ -4,12 +4,11 @@
 import logging
 import random
 from pathlib import Path
-from typing import Any, List, Tuple, Union
+from typing import List, Tuple, Union
 
 import bpy
 import gin
 import mathutils
-import numpy as np
 import zpy
 
 log = logging.getLogger(__name__)
@@ -416,7 +415,7 @@ def translate(
 
     Args:
         obj (Union[bpy.types.Object, str]): Scene object (or it's name)
-        translation (Union[Tuple[float], mathutils.Vector], optional): Translation vector (x, y, z). Defaults to (0, 0, 0).
+        translation (Union[Tuple[float], mathutils.Vector], optional): Translation vector (x, y, z). Default (0, 0, 0).
         is_absolute: (bool, optional): The translation vector becomes the absolute world position
 
     """
@@ -524,9 +523,12 @@ def jitter(
 
     Args:
         obj (Union[bpy.types.Object, str]): Scene object (or it's name)
-        translate_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on translation in (x, y, z) axes. Defaults to ( (-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), ).
-        rotate_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on rotation in (x, y, z) axes. Defaults to ( (-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), ).
-        scale_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on scale in (x, y, z) axes. Defaults to ( (1.0, 1.0), (1.0, 1.0), (1.0, 1.0), ).
+        translate_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on translation in (x, y, z) axes.
+            Defaults to ( (-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), ).
+        rotate_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on rotation in (x, y, z) axes.
+            Defaults to ( (-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), ).
+        scale_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on scale in (x, y, z) axes.
+            Defaults to ( (1.0, 1.0), (1.0, 1.0), (1.0, 1.0), ).
     """
     obj = verify(obj)
     translate(
