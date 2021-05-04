@@ -26,4 +26,4 @@ jobs:
           git_name: "Lint Bot"
           git_email: "infra@zumolabs.ai"
           flake8: true
-          flake8_args: "--max-line-length=120 --exclude=versioneer.py"
+          flake8_args: "--max-line-length=120 --exclude=versioneer.py,zpy/_version.py"
