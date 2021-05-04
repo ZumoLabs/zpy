@@ -255,7 +255,7 @@ class Saver:
             annotation (List[Union[int, float]], optional): List of pixel coordinates.
             height (Union[int, float], optional): Height used for clipping.
             width (Union[int, float], optional): Width used for clipping.
-            normalized (bool, optional): Whether coordinates are normalized (0, 1) or integer pixel values. 
+            normalized (bool, optional): Whether coordinates are normalized (0, 1) or integer pixel values.
                 Defaults to False.
 
         Returns:
@@ -303,7 +303,7 @@ class Saver:
             bbox (List[Union[int, float]], optional): Bounding box in [x, y, width, height] format.
             height (Union[int, float], optional): Height used for clipping.
             width (Union[int, float], optional): Width used for clipping.
-            normalized (bool, optional): Whether bounding box values are normalized (0, 1) or integer pixel values. 
+            normalized (bool, optional): Whether bounding box values are normalized (0, 1) or integer pixel values.
                 Defaults to False.
 
         Returns:
