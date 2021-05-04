@@ -3,10 +3,9 @@
 """
 import logging
 import math
-import os
 import random
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Tuple, Union
 
 import bpy
 import mathutils

@@ -7,7 +7,6 @@ from pathlib import Path
 
 import bpy
 import zpy
-from bpy.types import Operator
 
 log = logging.getLogger(__name__)
 

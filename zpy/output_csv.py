@@ -37,7 +37,8 @@ class OutputCSV(zpy.output.Output):
 
         Args:
             annotation_path (Union[Path, str], optional): Output path for annotation file.
-            annotation_dict_to_csv_row_func (Callable, optional): Function that converts an annotation dict to a csv row. Defaults to None.
+            annotation_dict_to_csv_row_func (Callable, optional): Function that converts an annotation dict to csv row.
+                Defaults to None.
             header (List[str], optional): Column headers. Defaults to None.
 
         Returns:
@@ -83,6 +84,6 @@ def parse_csv_annotations(
     except StopIteration:
         raise CSVParseError(f"No data found in CSV at {annotation_file}")
     log.debug(f"Row length in CSV: {[length for l in csv_data_iterable]}")
-    if not all(len(l) == length for l in csv_data_iterable):
+    if not all(len(row) == length for row in csv_data_iterable):
         raise CSVParseError(f"Not all rows in the CSV have same length {length}")
     # TODO: Return Saver object.

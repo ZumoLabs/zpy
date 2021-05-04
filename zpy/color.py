@@ -2,7 +2,6 @@
     Utilities for color.
 """
 import logging
-import random
 from pathlib import Path
 from typing import List, Tuple, Union
 
@@ -136,7 +135,7 @@ def random_color(output_style: str = "frgb") -> Union[Tuple[float, int, str], st
     # Update global color idx
     RANDOM_COLOR_IDX += 1
     if RANDOM_COLOR_IDX > len(COLORS):
-        log.error(f"Ran out of unique colors!")
+        log.error("Ran out of unique colors!")
     log.debug(f"Random color chosen is {_name} - {_hex} - {hex_to_frgb(_hex)}")
     return _output_style(_name, _hex, output_style=output_style)
 

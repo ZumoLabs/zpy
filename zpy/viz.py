@@ -105,13 +105,13 @@ def color_correlations_plot(
     fig = plt.figure(figsize=(16, 5))
     plt.rcParams["axes.grid"] = False
     plt.suptitle("Pixel Color Correlations \n\n\n", fontsize=18)
-    ax = plt.subplot(131)
+    plt.subplot(131)
     plt.hist2d(flat_images[:, 0], flat_images[:, 1], bins=(50, 50), density=True)
     plt.title("Red - Green", fontsize=16)
-    ax = plt.subplot(132)
+    plt.subplot(132)
     plt.hist2d(flat_images[:, 0], flat_images[:, 2], bins=(50, 50), density=True)
     plt.title("Red - Blue", fontsize=16)
-    ax = plt.subplot(133)
+    plt.subplot(133)
     plt.hist2d(flat_images[:, 1], flat_images[:, 2], bins=(50, 50), density=True)
     plt.title("Blue - Green", fontsize=16)
     return "color_correlations_plot", fig
@@ -175,7 +175,6 @@ def category_barplot(
             ax = plt.subplot(
                 subplot_num_rows, subplot_num_cols, subplot_plot_idx + i + 1
             )
-            subcategory_count = category["subcategory_count"]
             ax.barh(subcategories, category["subcategory_count"])
             ax.set(title=f'Annotations per Subcategory of {category["name"]}')
             ax.set(xlabel="Number of Annotations")
@@ -302,7 +301,7 @@ def draw_keypoints(
             v=2: labeled and visible
 
     """
-    log.debug(f"Drawing keypoints")
+    log.debug("Drawing keypoints")
     for k1, k2 in skeleton:
 
         # HACK: 0 indexed versus 1 indexed skeleton

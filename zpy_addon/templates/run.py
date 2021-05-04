@@ -22,7 +22,7 @@ def run(
     Give them types and defaults!
     """
 
-    log.info(f"Inside the run() function! The values of the config kwargs are:")
+    log.info("Inside the run() function! The values of the config kwargs are:")
     log.info(f"boolkwarg {boolkwarg}")
     log.info(f"intkwarg {intkwarg}")
     log.info(f"mysterykwarg {mysterykwarg}")

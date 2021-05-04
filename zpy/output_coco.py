@@ -131,7 +131,6 @@ class OutputCOCO(zpy.output.Output):
         keys_to_add: List[str] = None,
     ):
         """coco images"""
-        _coco_img_id_to_idx = {}  # Image id does not correspond to index in image list
         coco_images = []
         for image in self.saver.images.values():
             if only_default_images and not image["style"] == "default":
@@ -259,7 +258,7 @@ class OutputCOCO(zpy.output.Output):
                             coco_ann["areas"] = [
                                 bbox[2] * bbox[3] for bbox in annotation["bboxes"]
                             ]
-                    except:
+                    except Exception:
                         pass
             # HACK: Require bbox for an annotation
             if coco_ann.get("bbox", None) is not None:
@@ -326,11 +325,11 @@ class OutputCOCO(zpy.output.Output):
                         if clipped
                         else [annotation["segmentation"][i]]
                     )
-                except:
+                except Exception:
                     pass
                 try:
                     _coco_ann["segmentation_rle"] = [annotation["segmentation_rle"][i]]
-                except:
+                except Exception:
                     pass
                 try:
                     _coco_ann["segmentation_float"] = (
@@ -343,7 +342,7 @@ class OutputCOCO(zpy.output.Output):
                         if clipped
                         else [annotation["segmentation_float"][i]]
                     )
-                except:
+                except Exception:
                     pass
                 try:
                     _coco_ann["bbox_float"] = (
@@ -353,7 +352,7 @@ class OutputCOCO(zpy.output.Output):
                         if clipped
                         else annotation["bboxes_float"][i]
                     )
-                except:
+                except Exception:
                     pass
                 try:
                     _coco_ann["bbox"] = (
@@ -363,11 +362,11 @@ class OutputCOCO(zpy.output.Output):
                         if clipped
                         else annotation["bboxes"][i]
                     )
-                except:
+                except Exception:
                     pass
                 try:
                     _coco_ann["area"] = annotation["areas"][i]
-                except:
+                except Exception:
                     pass
 
                 # HACK: Require bbox for an annotation

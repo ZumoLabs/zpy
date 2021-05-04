@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 import gin
-import numpy as np
 
 import zpy
 
@@ -47,8 +46,8 @@ class Saver:
         Args:
             output_dir (Union[Path, str], optional): Directory where files will be dumped.
             annotation_path (Union[Path, str], optional): Path where annotation file will be dumped.
-            description (str, optional): A couple sentences describing the dataset. Defaults to 'Description of dataset.'.
-            clean_dir (bool, optional): Whether to empty/clean the output directory on object creation. Defaults to True.
+            description (str, optional): A couple sentences describing the dataset. Default 'Description of dataset.'.
+            clean_dir (bool, optional): Whether to empty/clean the output directory on object creation. Default True.
         """
         # the output dir
         if output_dir is None:
@@ -256,7 +255,8 @@ class Saver:
             annotation (List[Union[int, float]], optional): List of pixel coordinates.
             height (Union[int, float], optional): Height used for clipping.
             width (Union[int, float], optional): Width used for clipping.
-            normalized (bool, optional): Whether coordinates are normalized (0, 1) or integer pixel values. Defaults to False.
+            normalized (bool, optional): Whether coordinates are normalized (0, 1) or integer pixel values.
+                Defaults to False.
 
         Returns:
             List[Union[int, float]]: Clipped list of pixel coordniates.
@@ -303,7 +303,8 @@ class Saver:
             bbox (List[Union[int, float]], optional): Bounding box in [x, y, width, height] format.
             height (Union[int, float], optional): Height used for clipping.
             width (Union[int, float], optional): Width used for clipping.
-            normalized (bool, optional): Whether bounding box values are normalized (0, 1) or integer pixel values. Defaults to False.
+            normalized (bool, optional): Whether bounding box values are normalized (0, 1) or integer pixel values.
+                Defaults to False.
 
         Returns:
             List[Union[int, float]]: Clipped bounding box in [x, y, width, height] format.
