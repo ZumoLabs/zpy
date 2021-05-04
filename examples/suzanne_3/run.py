@@ -6,7 +6,6 @@ import os
 import random
 from pathlib import Path
 
-import bpy
 import gin
 import zpy
 

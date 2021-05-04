@@ -56,7 +56,7 @@ def env(env):
     config["ENDPOINT"] = get_endpoint(env)
     config["TOKEN"] = None
     write_config(config)
-    click.echo(f"Swapped environment:")
+    click.echo("Swapped environment:")
     click.echo(f"  {old_env} -> {config['ENVIRONMENT']}")
     click.echo(f"  {old_endpoint} -> {config['ENDPOINT']}")
     click.echo("zpy login to fetch token")
@@ -108,10 +108,7 @@ def version():
 
     click.echo(f"Version: {zpy.__version__}")
 
-
-############
-### LIST ###
-############
+# ------- LIST
 
 
 @cli.group()
@@ -134,12 +131,13 @@ def list_datasets():
     try:
         with Loader("Fetching datasets..."):
             datasets = fetch_datasets()
-        click.echo(f"Fetched datasets succesfully.")
+        click.echo("Fetched datasets succesfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="name,state,type,created,id", default_colwidth=30)
+    tbl = TableLogger(columns="name,state,type,created,id",
+                      default_colwidth=30)
     for d in datasets:
         tbl(d["name"], d["state"].lower(), d["type"], d["created_at"], d["id"])
 
@@ -155,7 +153,7 @@ def list_sims():
     try:
         with Loader("Fetching sims..."):
             sims = fetch_sims()
-        click.echo(f"Fetched sims succesfully.")
+        click.echo("Fetched sims succesfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch sims {e}.", fg="red", err=True)
         return
@@ -184,20 +182,18 @@ def list_jobs():
     try:
         with Loader("Fetching jobs..."):
             jobs = fetch_jobs()
-        click.echo(f"Fetched jobs succesfully.")
+        click.echo("Fetched jobs succesfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch jobs {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="state,name,operation,created", default_colwidth=30)
+    tbl = TableLogger(columns="state,name,operation,created",
+                      default_colwidth=30)
     for j in jobs:
         tbl(j["state"], j["name"], j["operation"], j["created_at"])
 
 
-###########
-### GET ###
-###########
-
+# ------- GET
 
 @cli.group()
 def get():
@@ -213,7 +209,8 @@ def get():
 @click.argument("dtype", type=click.Choice(["job", "generated", "uploaded"]))
 @click.argument(
     "path",
-    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False,
+                    writable=True, resolve_path=True),
 )
 def get_dataset(name, dtype, path):
     """get dataset
@@ -240,7 +237,8 @@ def get_dataset(name, dtype, path):
 @click.argument("name")
 @click.argument(
     "path",
-    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
+    type=click.Path(exists=True, file_okay=False,
+                    writable=True, resolve_path=True),
 )
 def get_sim(name, path):
     """get sim
@@ -262,9 +260,7 @@ def get_sim(name, path):
         click.secho(f"Failed to download sim: {e}", fg="yellow", err=True)
 
 
-##############
-### UPLOAD ###
-##############
+# -------  UPLOAD
 
 
 @cli.group()
@@ -324,9 +320,7 @@ def upload_dataset(name, path):
         click.secho(f"Failed to upload dataset: {e}", fg="red", err=True)
 
 
-##############
-### CREATE ###
-##############
+# ------- CREATE
 
 
 @cli.group()
@@ -357,7 +351,7 @@ def create_dataset(name, sim, args):
 
     try:
         dataset_config = parse_args(args)
-    except:
+    except Exception as _:
         click.secho("Failed to parse args: {args}", fg="yellow", err=True)
         return
     try:
@@ -394,7 +388,7 @@ def create_sweep(name, sim, number, args):
 
     try:
         dataset_config = parse_args(args)
-    except:
+    except Exception as _:
         click.secho("Failed to parse args: {args}", fg="yellow", err=True)
         return
     for i in range(int(number)):
@@ -409,7 +403,8 @@ def create_sweep(name, sim, number, args):
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
         except NameError as e:
-            click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
+            click.secho(
+                f"Failed to create dataset: {e}", fg="yellow", err=True)
             return
     click.echo(f"Finished creating {number} datasets from sim '{sim}'.")
 
