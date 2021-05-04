@@ -590,79 +590,40 @@ def restore_pose(
 
 def lighting_randomize(
     path: Union[Path, str] = "hdri",
-    lighting_styles: List = ["bounded", "sun", "hdri"],
     energy_jitter: bool = True,
-    lighting_styles_weights: List[int] = [3, 5, 2],
 ) -> None:
     """Randomizes Lighting Types.
+
     Args:
         path: str: Where to pull HDRI textures from
-        lighting_styles str: List of lighting styles to randomly choose from. Defaults to bounded, sun and hdri
         energy_jitter: bool: Whether to jitter the lighting intensity for bounded and sun lights. Defaults to True
-        lighting_styles_weights: List[int]: List of 3 intergers corresponding to the lighting list that dictates how often each lighting style might appear.
-    """
+    """    
+    
+    bounded_lights = []
+    sun_lights = []
+    switch = [True, False]
 
-    if "bounded" in lighting_styles:
-        bounded_lights = []
+    for obj in bpy.data.lights:
+        if obj.type == "POINT" or obj.type == "SPOT" or obj.type == "AREA":
+            log.info("BOUNDED light found")
+            bounded_lights.append(obj.name)
+        if obj.type == "SUN":
+            log.info("SUN light found")
+            sun_lights.append(obj.name)
+        elif bpy.data.lights == None:
+            log.debug("add lights to use this function")
 
-        for obj in bpy.data.lights:
-            if obj.type == "POINT" or obj.type == "SPOT" or obj.type == "AREA":
-                print("BOUNDED light found")
-                bounded_lights.append(obj.name)
-            elif bpy.data.lights == None:
-                print("add bounded lights to use this function")
-        print(bounded_lights)
-
-    if "sun" in lighting_styles:
-        sun_lights = []
-
-        for obj in bpy.data.lights:
-            if obj.type == "SUN":
-                print("SUN light found")
-                sun_lights.append(obj.name)
-            elif bpy.data.lights == None:
-                print("add sun lights to use this function")
-        print(sun_lights)
-
-    lighting_style = random.choices(
-        lighting_styles, weights=lighting_styles_weights, k=1
-    )[0]
-    log.info(f"Setting lighting style to {lighting_style}")
-
-    if lighting_style == "bounded":
-        # Hide Sun and HDRI
-        bpy.data.scenes["Scene"].world.use_nodes = False
-        #
+    #randomly hide lights
         for obj in sun_lights:
-            bpy.data.objects[obj].hide_render = True
+            bpy.data.objects[obj].hide_render = random.choice(switch)
         for obj in bounded_lights:
-            bpy.data.objects[obj].hide_render = False
-        if energy_jitter == True:
-            for obj in bounded_lights:
-                bpy.data.objects[obj].data.energy = random.randint(100, 500)
-
-    elif lighting_style == "sun":
-        # Hide HDRI and bounded lights
-        bpy.data.scenes["Scene"].world.use_nodes = False
-        #
-        for obj in sun_lights:
-            bpy.data.objects[obj].hide_render = False
-        for obj in bounded_lights:
-            bpy.data.objects[obj].hide_render = True
+            bpy.data.objects[obj].hide_render = random.choice(switch)
+        bpy.data.scenes["Scene"].world.use_nodes = random.choice(switch)
         if energy_jitter == True:
             for obj in sun_lights:
                 bpy.data.objects[obj].data.energy = random.randint(1, 20)
-
-    elif lighting_style == "hdri":
-        # Hide Sun and HDRI
-        bpy.data.scenes["Scene"].world.use_nodes = True
-        #
-        for obj in sun_lights:
-            bpy.data.objects[obj].hide_render = True
-        for obj in bounded_lights:
-            bpy.data.objects[obj].hide_render = True
+            for obj in bounded_lights:
+                bpy.data.objects[obj].data.energy = random.randint(100, 500)
         # Pick a random HDRI
-        zpy.hdris.random_hdri(hdri_dir=path)
-
-    else:
-        raise ValueError(f"No such lighting style {lighting_style}")
+        if bpy.data.scenes["Scene"].world.use_nodes == True:
+            zpy.hdris.random_hdri(hdri_dir=path)
