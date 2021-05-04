@@ -597,8 +597,8 @@ def lighting_randomize(
     Args:
         path: str: Where to pull HDRI textures from
         energy_jitter: bool: Whether to jitter the lighting intensity for bounded and sun lights. Defaults to True
-    """    
-    
+    """
+
     bounded_lights = []
     sun_lights = []
     switch = [True, False]
@@ -613,7 +613,7 @@ def lighting_randomize(
         elif bpy.data.lights == None:
             log.debug("add lights to use this function")
 
-    #randomly hide lights
+        # randomly hide lights
         for obj in sun_lights:
             bpy.data.objects[obj].hide_render = random.choice(switch)
         for obj in bounded_lights:
