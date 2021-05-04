@@ -47,8 +47,8 @@ def hex_to_frgb(hex_value: str) -> Tuple[float]:
 
 def irgb_to_frgb(irgb: Tuple[int]) -> Tuple[float]:
     """Convert integer rgb (0 to 255) to float rgb (0 to 1)."""
-    r, g, b = irgb
-    return r / 255.0, g / 255.0, b / 255.0
+    max_rgb_value = 255
+    return tuple((x / max_rgb_value) for x in irgb)
 
 
 def irgb_to_hex(irgb: Tuple[int]) -> str:
@@ -59,8 +59,8 @@ def irgb_to_hex(irgb: Tuple[int]) -> str:
 
 def frgb_to_irgb(frgb: Tuple[float]) -> Tuple[int]:
     """Convert float rgb (0 to 1) to integer rgb (0 to 255)."""
-    r, g, b = frgb
-    return int(r * 255.0), int(g * 255.0), int(b * 255.0)
+    max_rgb_value = 255
+    return tuple((int(x * max_rgb_value) for x in frgb))
 
 
 def frgb_to_hex(frgb: Tuple[float]) -> str:
@@ -68,14 +68,23 @@ def frgb_to_hex(frgb: Tuple[float]) -> str:
     return irgb_to_hex(frgb_to_irgb(frgb))
 
 
-def frgb_to_srgba(frgb: Tuple[float], a=1.0) -> Tuple[float]:
-    """Convert float rgb (0 to 1) to the gamma-corrected sRGBA float (0 to 1)."""
-    return frgb[0] ** (1 / 2.2), frgb[1] ** (1 / 2.2), frgb[2] ** (1 / 2.2), a
+def _gamma_correction(channel: float) -> float:
+    """Convert float rgb (0 to 1) to the gamma-corrected sRGB float (0 to 1)
+    for a single color channel."""
+    exponent_srgb = 1 / 2.2
+    return channel ** exponent_srgb
 
 
 def frgb_to_srgb(frgb: Tuple[float]) -> Tuple[float]:
     """Convert float rgb (0 to 1) to the gamma-corrected sRGB float (0 to 1)."""
-    return frgb[0] ** (1 / 2.2), frgb[1] ** (1 / 2.2), frgb[2] ** (1 / 2.2)
+    return tuple(_gamma_correction(x) for x in frgb)
+
+
+def frgb_to_srgba(frgb: Tuple[float], a=1.0) -> Tuple[float]:
+    """Convert float rgb (0 to 1) to the gamma-corrected sRGBA float (0 to 1)."""
+    srgb = frgb_to_srgb(frgb)
+    srgba = frgb_to_frgba(srgb, a=a)
+    return srgba
 
 
 def _output_style(
