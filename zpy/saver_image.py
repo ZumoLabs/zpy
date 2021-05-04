@@ -91,7 +91,7 @@ class ImageSaver(zpy.saver.Saver):
             subcategory_zero_indexed (bool, optional): Whether subcategories are zero-indexed. Defaults to True.
             seg_image (str, optional): Name of segmentation image that corresponds to this image. Defaults to None.
             seg_color (Tuple[float], optional): Segmentation color of entity in this annotation. Defaults to None.
-            parse_on_add (bool, optional): Calculate bounding box and polygons and populate segmenation fields. 
+            parse_on_add (bool, optional): Calculate bounding box and polygons and populate segmenation fields.
                 Defaults to True.
 
         Returns:

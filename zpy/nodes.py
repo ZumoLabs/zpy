@@ -25,7 +25,7 @@ def get_or_make(
         name (str): Name of the node.
         node_type (str): Node type e.g. "ShaderNodeBackground"
         tree (bpy.types.NodeTree): Node tree where this node will be added.
-        label_tag (str, optional): Node label will include this tag to make it easier to identify within Blender. 
+        label_tag (str, optional): Node label will include this tag to make it easier to identify within Blender.
             Defaults to '(zpy) '.
         pos (Tuple[float], optional): Location of the node in node editor. Defaults to None.
 

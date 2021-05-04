@@ -24,9 +24,9 @@ def set_log_levels(
 
     Args:
         level (str, optional): log level in [info, debug, warning]. Defaults to logging.Info.
-        modules (List[str], optional): Modules to set logging for. 
+        modules (List[str], optional): Modules to set logging for.
             Defaults to [ 'zpy', 'zpy_addon', 'bpy.zpy_addon' 'neuralyzer', ].
-        log_format (str, optional): Log format string. 
+        log_format (str, optional): Log format string.
             Defaults to '%(asctime)s: %(levelname)s %(filename)s] %(message)s'
     """
     if level is None:
