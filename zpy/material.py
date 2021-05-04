@@ -153,7 +153,7 @@ def jitter(
     Args:
         mat (Union[bpy.types.Material, str]):  Material (or it's name)
         std (float, optional): Standard deviation of gaussian noise over material property. Defaults to 0.2.
-        save_first_time (bool, optional): Save the material props first time jitter is called and 
+        save_first_time (bool, optional): Save the material props first time jitter is called and
             restore before jittering every subsequent time. Defaults to True.
     """
     mat = verify(mat)
@@ -207,7 +207,7 @@ def make_mat_from_texture(
     Args:
         texture_path (Union[Path, str]): Path to texture image.
         name (str, optional): Name of new material.
-        coordinate (str, optional): Type of texture coordinates. Values are 
+        coordinate (str, optional): Type of texture coordinates. Values are
             "generated", "normal", "uv", "object" , defaults to "uv"
 
     Returns:
