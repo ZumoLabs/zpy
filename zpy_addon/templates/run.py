@@ -28,7 +28,7 @@ def run(
     log.info(f"mysterykwarg {mysterykwarg}")
 
     # You can use any bpy function call here
-    log.info(f'Objects in the scene: {bpy.data.objects}')
+    log.info(f"Objects in the scene: {bpy.data.objects}")
 
     # Random seed results in unique behavior
     zpy.blender.set_seed()
