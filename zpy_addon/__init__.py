@@ -44,7 +44,7 @@ def install_pip_depenencies():
 
 try:
     import zpy
-except ModuleNotFoundError as e:
+except ModuleNotFoundError:
     log.exception(
         "No zpy module found, please follow developer "
         + "install instructions at https://github.com/ZumoLabs/zpy#install"
