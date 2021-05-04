@@ -2,9 +2,7 @@
     Segment panel and functions.
 """
 import importlib
-import json
 import logging
-import random
 from typing import Tuple
 
 import bpy

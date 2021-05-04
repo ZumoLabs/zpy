@@ -3,7 +3,6 @@
 """
 import importlib
 import logging
-import time
 from pathlib import Path
 
 import bpy
