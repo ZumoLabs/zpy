@@ -123,8 +123,8 @@ def camera_xyz(
 
         # Calculate our angles
         phi = math.atan2(p.y, p.x)
-        l = (p.x ** 2 + p.y ** 2) ** (1 / 2)
-        theta = math.asin(l)
+        length = (p.x ** 2 + p.y ** 2) ** (1 / 2)
+        theta = math.asin(length)
 
         # Equisolid projection
         r = 2.0 * f * math.sin(theta / 2)

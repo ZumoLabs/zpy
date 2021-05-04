@@ -2,13 +2,11 @@
     Video version of Saver object.
 """
 import logging
-from datetime import date
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, Union
 from datetime import timedelta
 
 import gin
-import numpy as np
 
 import zpy
 

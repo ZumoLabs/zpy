@@ -56,7 +56,7 @@ def env(env):
     config["ENDPOINT"] = get_endpoint(env)
     config["TOKEN"] = None
     write_config(config)
-    click.echo(f"Swapped environment:")
+    click.echo("Swapped environment:")
     click.echo(f"  {old_env} -> {config['ENVIRONMENT']}")
     click.echo(f"  {old_endpoint} -> {config['ENDPOINT']}")
     click.echo("zpy login to fetch token")
@@ -109,9 +109,7 @@ def version():
     click.echo(f"Version: {zpy.__version__}")
 
 
-############
-### LIST ###
-############
+# ------- LIST
 
 
 @cli.group()
@@ -134,7 +132,7 @@ def list_datasets():
     try:
         with Loader("Fetching datasets..."):
             datasets = fetch_datasets()
-        click.echo(f"Fetched datasets succesfully.")
+        click.echo("Fetched datasets succesfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
         return
@@ -155,7 +153,7 @@ def list_sims():
     try:
         with Loader("Fetching sims..."):
             sims = fetch_sims()
-        click.echo(f"Fetched sims succesfully.")
+        click.echo("Fetched sims succesfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch sims {e}.", fg="red", err=True)
         return
@@ -184,7 +182,7 @@ def list_jobs():
     try:
         with Loader("Fetching jobs..."):
             jobs = fetch_jobs()
-        click.echo(f"Fetched jobs succesfully.")
+        click.echo("Fetched jobs succesfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch jobs {e}.", fg="red", err=True)
         return
@@ -194,9 +192,7 @@ def list_jobs():
         tbl(j["state"], j["name"], j["operation"], j["created_at"])
 
 
-###########
-### GET ###
-###########
+# ------- GET
 
 
 @cli.group()
@@ -262,9 +258,7 @@ def get_sim(name, path):
         click.secho(f"Failed to download sim: {e}", fg="yellow", err=True)
 
 
-##############
-### UPLOAD ###
-##############
+# -------  UPLOAD
 
 
 @cli.group()
@@ -324,9 +318,7 @@ def upload_dataset(name, path):
         click.secho(f"Failed to upload dataset: {e}", fg="red", err=True)
 
 
-##############
-### CREATE ###
-##############
+# ------- CREATE
 
 
 @cli.group()
@@ -357,7 +349,7 @@ def create_dataset(name, sim, args):
 
     try:
         dataset_config = parse_args(args)
-    except:
+    except Exception:
         click.secho("Failed to parse args: {args}", fg="yellow", err=True)
         return
     try:
@@ -394,7 +386,7 @@ def create_sweep(name, sim, number, args):
 
     try:
         dataset_config = parse_args(args)
-    except:
+    except Exception:
         click.secho("Failed to parse args: {args}", fg="yellow", err=True)
         return
     for i in range(int(number)):

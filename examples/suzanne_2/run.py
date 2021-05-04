@@ -1,10 +1,9 @@
 """ Suzanne Tutorial Sim: Part 2. """
 
-import bpy
 import zpy
 import logging
 
-import gin
+import bpy
 import math
 
 log = logging.getLogger("zpy")
