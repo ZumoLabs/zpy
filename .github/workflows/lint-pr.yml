@@ -29,9 +29,4 @@ jobs:
           flake8_args: >
             --max-line-length=120
             --ignore=W605
-            --exclude=
-            versioneer.py,
-            zpy/_version.py,
-            zpy/__init__.py,
-            zpy_addon/segment_panel.py
-            docs/source/conf.py
+            --exclude=versioneer.py,zpy/_version.py,zpy/__init__.py,zpy_addon/segment_panel.py,docs/source/conf.py
