@@ -60,8 +60,7 @@ def for_mat_in_obj(
         if obj.active_material is not None:
             return obj.active_material
         else:
-            log.debug(
-                f"No active material or material slots found for {obj.name}")
+            log.debug(f"No active material or material slots found for {obj.name}")
             return None
 
 
@@ -165,8 +164,7 @@ def jitter(
             restore_mat_props(mat)
     log.info(f"Jittering material {mat.name}")
     mat_props = get_mat_props(mat)
-    jittered_mat_props = tuple(
-        map(lambda p: p + random.gauss(0, std), mat_props))
+    jittered_mat_props = tuple(map(lambda p: p + random.gauss(0, std), mat_props))
     set_mat_props(mat, jittered_mat_props)
 
 
@@ -191,13 +189,15 @@ def random_mat(
     if resegment:
         # Have to re-segment the object to properly
         # set the properties on the new material
-        zpy.objects.segment(obj,
-                            name=obj.seg.instance_name,
-                            color=obj.seg.instance_color)
-        zpy.objects.segment(obj,
-                            as_category=True,
-                            name=obj.seg.category_name,
-                            color=obj.seg.category_color)
+        zpy.objects.segment(
+            obj, name=obj.seg.instance_name, color=obj.seg.instance_color
+        )
+        zpy.objects.segment(
+            obj,
+            as_category=True,
+            name=obj.seg.category_name,
+            color=obj.seg.category_color,
+        )
 
 
 @gin.configurable
