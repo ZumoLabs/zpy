@@ -5,7 +5,7 @@ import logging
 import copy
 import random
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 
 import bpy
 
@@ -166,6 +166,38 @@ def jitter(
     mat_props = get_mat_props(mat)
     jittered_mat_props = tuple(map(lambda p: p + random.gauss(0, std), mat_props))
     set_mat_props(mat, jittered_mat_props)
+
+
+@gin.configurable
+def random_mat(
+    obj: Union[bpy.types.Material, str],
+    list_of_mats: List[bpy.types.Material],
+    resegment: bool = True,
+):
+    """[summary]
+
+    Args:
+        obj (Union[bpy.types.Object, str]): Scene object (or it's name)
+        list_of_mats (List[bpy.types.Material]): List of possible materials to choose from
+        resegment (bool, optional): Re-segment the object after setting material. Defaults to True.
+    """
+    obj = verify(obj)
+    log.debug(f"Choosing random material for obj: {obj.name}")
+    _mat = random.choice(list_of_mats)
+    _mat = zpy.material.verify(_mat)
+    zpy.material.set_mat(obj, _mat)
+    if resegment:
+        # Have to re-segment the object to properly
+        # set the properties on the new material
+        zpy.objects.segment(
+            obj, name=obj.seg.instance_name, color=obj.seg.instance_color
+        )
+        zpy.objects.segment(
+            obj,
+            as_category=True,
+            name=obj.seg.category_name,
+            color=obj.seg.category_color,
+        )
 
 
 @gin.configurable
