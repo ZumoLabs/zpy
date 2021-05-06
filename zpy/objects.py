@@ -589,41 +589,27 @@ def restore_pose(
 
 
 def lighting_randomize(
-    path: Union[Path, str] = "hdri",
-    energy_jitter: bool = True,
+    energy_jitter: bool = False,
 ) -> None:
-    """Randomizes Lighting Types.
-
+    """Randomizes Lighting.
     Args:
-        path: str: Where to pull HDRI textures from
-        energy_jitter: bool: Whether to jitter the lighting intensity for bounded and sun lights. Defaults to True
-    """
-
-    bounded_lights = []
-    sun_lights = []
+        energy_jitter: bool: Whether to jitter the lighting intensity for lights in scene. Defaults to True
+    """    
     switch = [True, False]
-
+    #check if lights are in the scene, if not log error
+    for obj in bpy.context.scene.objects:
+        if obj.type == "LIGHT":
+            continue
+        else:
+            log.debug("add lights to use this function")
+    #loop through objects in scene and randomly toggle them on and off in the render (will still be visible in preview scene)
     for obj in bpy.data.lights:
         if obj.type == "POINT" or obj.type == "SPOT" or obj.type == "AREA":
-            log.info("BOUNDED light found")
-            bounded_lights.append(obj.name)
+            bpy.data.objects[obj.name].hide_render = random.choice(switch)
+            if energy_jitter == True:
+                bpy.data.objects[obj.name].data.energy = random.randint(100, 500)
         if obj.type == "SUN":
-            log.info("SUN light found")
-            sun_lights.append(obj.name)
-        elif bpy.data.lights == None:
-            log.debug("add lights to use this function")
-
-        # randomly hide lights
-        for obj in sun_lights:
-            bpy.data.objects[obj].hide_render = random.choice(switch)
-        for obj in bounded_lights:
-            bpy.data.objects[obj].hide_render = random.choice(switch)
-        bpy.data.scenes["Scene"].world.use_nodes = random.choice(switch)
-        if energy_jitter == True:
-            for obj in sun_lights:
-                bpy.data.objects[obj].data.energy = random.randint(1, 20)
-            for obj in bounded_lights:
-                bpy.data.objects[obj].data.energy = random.randint(100, 500)
-        # Pick a random HDRI
-        if bpy.data.scenes["Scene"].world.use_nodes == True:
-            zpy.hdris.random_hdri(hdri_dir=path)
+            bpy.data.objects[obj.name].hide_render = random.choice(switch)
+            if energy_jitter == True:
+                bpy.data.objects[obj.name].data.energy = random.randint(1, 20)
+            bpy.data.scenes["Scene"].world.use_nodes = random.choice(switch)
