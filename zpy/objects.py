@@ -594,15 +594,15 @@ def lighting_randomize(
     """Randomizes Lighting.
     Args:
         energy_jitter: bool: Whether to jitter the lighting intensity for lights in scene. Defaults to True
-    """    
+    """
     switch = [True, False]
-    #check if lights are in the scene, if not log error
+    # check if lights are in the scene, if not log error
     for obj in bpy.context.scene.objects:
         if obj.type == "LIGHT":
             continue
         else:
             log.debug("add lights to use this function")
-    #loop through objects in scene and randomly toggle them on and off in the render (will still be visible in preview scene)
+    # loop through objects in scene and randomly toggle them on and off in the render (will still be visible in preview scene)
     for obj in bpy.data.lights:
         if obj.type == "POINT" or obj.type == "SPOT" or obj.type == "AREA":
             bpy.data.objects[obj.name].hide_render = random.choice(switch)
