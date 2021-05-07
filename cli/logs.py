@@ -9,7 +9,7 @@ LOG_TYPES = ["info", "debug", "error"]
 @fetch_auth
 def fetch_logs(resource, name, path, url, auth_headers):
     """fetch logs
-    
+
     Fetch LOG_TYPES for a backend run.
 
     Args:
