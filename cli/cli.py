@@ -481,3 +481,67 @@ def create_job(name, operation, filters, configfile, sweepfile):
             click.secho(f"Failed to create job: {e}", fg="red", err=True)
 
     click.echo(f"Finished creating {len(job_configs)} jobs with name '{name}'")
+
+
+# ------- LOGS
+
+
+@cli.group()
+def logs():
+    """logs
+
+    Logs group is used for fetching logs of object backend runs.
+    """
+    pass
+
+
+@logs.command("dataset")
+@click.argument("name")
+@click.argument(
+    "path",
+    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
+)
+def logs_dataset(name, path):
+    """generated dataset logs
+
+    Download generated dataset run logs.
+
+    Args:
+        name (str): name of dataset
+        path (str): directory to put logs in
+    """
+    from cli.logs import fetch_logs
+
+    try:
+        fetch_logs("generated-data-sets", name, path)
+        click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
+
+
+@logs.command("job")
+@click.argument("name")
+@click.argument(
+    "path",
+    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
+)
+def logs_job(name, path):
+    """job logs
+
+    Download job run logs.
+
+    Args:
+        name (str): name of job
+        path (str): directory to put logs in
+    """
+    from cli.logs import fetch_logs
+
+    try:
+        fetch_logs("jobs", name, path)
+        click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
