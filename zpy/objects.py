@@ -588,3 +588,30 @@ def restore_pose(
     obj = verify(obj)
     log.info(f"Restoring pose {pose_name} to object {obj.name}")
     obj.matrix_world = _SAVED_POSES[pose_name]
+
+
+def lighting_randomize(
+    energy_jitter: bool = False,
+) -> None:
+    """Randomizes Lighting.
+    Args:
+        energy_jitter: bool: Whether to jitter the lighting intensity for lights in scene. Defaults to True
+    """
+    switch = [True, False]
+    # check if lights are in the scene, if not log error
+    for obj in bpy.context.scene.objects:
+        if obj.type == "LIGHT":
+            continue
+        else:
+            log.debug("add lights to use this function")
+    # loop through objects in scene and randomly toggle them on and off in the render (will still be visible in preview scene)
+    for obj in bpy.data.lights:
+        if obj.type == "POINT" or obj.type == "SPOT" or obj.type == "AREA":
+            bpy.data.objects[obj.name].hide_render = random.choice(switch)
+            if energy_jitter == True:
+                bpy.data.objects[obj.name].data.energy = random.randint(100, 500)
+        if obj.type == "SUN":
+            bpy.data.objects[obj.name].hide_render = random.choice(switch)
+            if energy_jitter == True:
+                bpy.data.objects[obj.name].data.energy = random.randint(1, 20)
+            bpy.data.scenes["Scene"].world.use_nodes = random.choice(switch)
