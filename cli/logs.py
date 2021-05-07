@@ -26,8 +26,8 @@ def fetch_logs(resource, name, path, url, auth_headers):
     response = json.loads(r.text)
     if response["count"] != 1:
         raise NameError(f"found {response['count']} {resource} for name {name}")
-    resource = response["results"][0]
-    endpoint = f"{url}/api/v1/{resource}/{resource['id']}/logs"
+    obj = response["results"][0]
+    endpoint = f"{url}/api/v1/{resource}/{obj['id']}/logs"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()

@@ -514,7 +514,7 @@ def logs_dataset(name, path):
 
     try:
         fetch_logs('generated-data-sets', name, path)
-        click.echo(f"Downloaded [info/debug/error].log from '{name}' to {output_path}")
+        click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
     except NameError as e:
@@ -541,7 +541,7 @@ def logs_job(name, path):
 
     try:
         fetch_logs('jobs', name, path)
-        click.echo(f"Downloaded [info/debug/error].log from '{name}' to {output_path}")
+        click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
     except NameError as e:
