@@ -3,13 +3,12 @@
 """
 import inspect
 import logging
-import math
 import os
 import random
 import time
 from functools import wraps
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Union
 
 import bpy
 import mathutils
@@ -324,7 +323,7 @@ def refresh_blender_ui() -> None:
 
     Does not work on headless instances.
     """
-    log.debug(f"Refreshing Blender UI.")
+    log.debug("Refreshing Blender UI.")
     bpy.ops.wm.redraw_timer(type="DRAW_WIN_SWAP", iterations=1)
     view_layer = zpy.blender.verify_view_layer()
     view_layer.update()
@@ -384,7 +383,7 @@ def scene_information() -> Dict:
     Returns:
         Dict: Sim information dictionary.
     """
-    log.info(f"Collecting scene information")
+    log.info("Collecting scene information")
     run_script = bpy.data.texts.get("run", None)
     if run_script is None:
         raise ValueError("No run script found in scene.")

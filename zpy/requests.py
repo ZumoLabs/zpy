@@ -8,7 +8,7 @@ import signal
 import sys
 import time
 import traceback
-from functools import partial, wraps
+from functools import wraps
 from pprint import pformat
 from typing import Any, Dict
 
@@ -206,7 +206,7 @@ def send_request(
     log.info("... Done!")
     log.info(f"Sending request: {request}")
     socket.send_json(json.dumps(request))
-    log.info(f"Waiting for response...")
+    log.info("Waiting for response...")
     response = json.loads(socket.recv_json())
     log.info(f"Received response: {pformat(response)}")
     return response

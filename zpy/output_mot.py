@@ -6,7 +6,7 @@
 """
 import logging
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 import gin
 import zpy
@@ -74,7 +74,7 @@ class OutputMOT(zpy.output.Output):
                 row[6] = 1
                 # TODO: Type of object annotated
                 """
-                MOT Types:                
+                MOT Types:
                     Pedestrian 1
                     Person on vehicle 2
                     Car 3

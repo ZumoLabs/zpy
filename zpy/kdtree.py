@@ -2,8 +2,6 @@
     KDTree utilities for Blender Python.
 """
 import logging
-import random
-from pathlib import Path
 from typing import List, Tuple
 
 import bpy
@@ -46,7 +44,7 @@ def floor_occupancy(
     num_voxels: int = 100,
 ) -> float:
     """Get occupancy percentage for floor (XY plane)."""
-    log.info(f"Calculating floor occupancy ....")
+    log.info("Calculating floor occupancy ....")
     x_side_length = abs(x_bounds[1] - x_bounds[0])
     y_side_length = abs(y_bounds[1] - y_bounds[0])
     # Number of voxels determines number of points in each dimmension
@@ -67,7 +65,7 @@ def floor_occupancy(
                     closest_point.y < (y + y_step)
                 ):
                     occupancy_grid[x_idx][y_idx] = 1.0
-    log.info(f"... Done.")
+    log.info("... Done.")
     log.debug(f"Floor occupancy grid: {str(occupancy_grid)}")
     return float(np.mean(occupancy_grid.copy()))
 
@@ -81,7 +79,7 @@ def volume_occupancy(
     num_voxels: int = 100,
 ) -> float:
     """Get occupancy percentage for volume."""
-    log.info(f"Calculating volume occupancy ....")
+    log.info("Calculating volume occupancy ....")
     x_side_length = abs(x_bounds[1] - x_bounds[0])
     y_side_length = abs(y_bounds[1] - y_bounds[0])
     z_side_length = abs(z_bounds[1] - z_bounds[0])
@@ -114,6 +112,6 @@ def volume_occupancy(
                             closest_point.z < (z + z_step)
                         ):
                             occupancy_grid[x_idx][y_idx][z_idx] = 1.0
-    log.info(f"... Done.")
+    log.info("... Done.")
     log.debug(f"Volume occupancy grid: {str(occupancy_grid)}")
     return float(np.mean(occupancy_grid.copy()))

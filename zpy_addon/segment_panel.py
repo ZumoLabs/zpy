@@ -2,9 +2,7 @@
     Segment panel and functions.
 """
 import importlib
-import json
 import logging
-import random
 from typing import Tuple
 
 import bpy
@@ -262,7 +260,7 @@ class CategoriesFromText(Operator):
 
         assert (
             category_text is not None
-        ), f"Category text block must exist for segmentation."
+        ), "Category text block must exist for segmentation."
 
         # Activate the categories text block in the text editor
         for area in context.screen.areas:
@@ -289,7 +287,7 @@ class CategoriesFromZUMOJSON(Operator, ImportHelper):
     def execute(self, context):
         zumo_json = zpy.files.read_json(self.filepath)
         categories = zumo_json.get("categories", None)
-        assert categories is not None, f"ZUMO JSON does not have categories."
+        assert categories is not None, "ZUMO JSON does not have categories."
         _reset_categories(context)
         for category in categories.values():
             _add_category(

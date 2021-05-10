@@ -2,7 +2,6 @@
     Utilities for color.
 """
 import logging
-import random
 from pathlib import Path
 from typing import List, Tuple, Union
 
@@ -68,14 +67,23 @@ def frgb_to_hex(frgb: Tuple[float]) -> str:
     return irgb_to_hex(frgb_to_irgb(frgb))
 
 
-def frgb_to_srgba(frgb: Tuple[float], a=1.0) -> Tuple[float]:
-    """Convert float rgb (0 to 1) to the gamma-corrected sRGBA float (0 to 1)."""
-    return frgb[0] ** (1 / 2.2), frgb[1] ** (1 / 2.2), frgb[2] ** (1 / 2.2), a
+def _gamma_correction(channel: float) -> float:
+    """Convert float rgb (0 to 1) to the gamma-corrected sRGB float (0 to 1)
+    for a single color channel."""
+    exponent_srgb = 1 / 2.2
+    return channel ** exponent_srgb
 
 
 def frgb_to_srgb(frgb: Tuple[float]) -> Tuple[float]:
     """Convert float rgb (0 to 1) to the gamma-corrected sRGB float (0 to 1)."""
-    return frgb[0] ** (1 / 2.2), frgb[1] ** (1 / 2.2), frgb[2] ** (1 / 2.2)
+    return tuple(_gamma_correction(x) for x in frgb)
+
+
+def frgb_to_srgba(frgb: Tuple[float], a=1.0) -> Tuple[float]:
+    """Convert float rgb (0 to 1) to the gamma-corrected sRGBA float (0 to 1)."""
+    srgb = frgb_to_srgb(frgb)
+    srgba = frgb_to_frgba(srgb, a=a)
+    return srgba
 
 
 def _output_style(
@@ -127,7 +135,7 @@ def random_color(output_style: str = "frgb") -> Union[Tuple[float, int, str], st
     # Update global color idx
     RANDOM_COLOR_IDX += 1
     if RANDOM_COLOR_IDX > len(COLORS):
-        log.error(f"Ran out of unique colors!")
+        log.error("Ran out of unique colors!")
     log.debug(f"Random color chosen is {_name} - {_hex} - {hex_to_frgb(_hex)}")
     return _output_style(_name, _hex, output_style=output_style)
 

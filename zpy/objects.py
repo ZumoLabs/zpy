@@ -4,12 +4,11 @@
 import logging
 import random
 from pathlib import Path
-from typing import Any, List, Tuple, Union
+from typing import List, Tuple, Union
 
 import bpy
 import gin
 import mathutils
-import numpy as np
 import zpy
 
 log = logging.getLogger(__name__)
@@ -416,7 +415,7 @@ def translate(
 
     Args:
         obj (Union[bpy.types.Object, str]): Scene object (or it's name)
-        translation (Union[Tuple[float], mathutils.Vector], optional): Translation vector (x, y, z). Defaults to (0, 0, 0).
+        translation (Union[Tuple[float], mathutils.Vector], optional): Translation vector (x, y, z). Default (0, 0, 0).
         is_absolute: (bool, optional): The translation vector becomes the absolute world position
 
     """
@@ -524,9 +523,12 @@ def jitter(
 
     Args:
         obj (Union[bpy.types.Object, str]): Scene object (or it's name)
-        translate_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on translation in (x, y, z) axes. Defaults to ( (-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), ).
-        rotate_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on rotation in (x, y, z) axes. Defaults to ( (-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), ).
-        scale_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on scale in (x, y, z) axes. Defaults to ( (1.0, 1.0), (1.0, 1.0), (1.0, 1.0), ).
+        translate_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on translation in (x, y, z) axes.
+            Defaults to ( (-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), ).
+        rotate_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on rotation in (x, y, z) axes.
+            Defaults to ( (-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), ).
+        scale_range (Tuple[Tuple[float]], optional): (min, max) of uniform noise on scale in (x, y, z) axes.
+            Defaults to ( (1.0, 1.0), (1.0, 1.0), (1.0, 1.0), ).
     """
     obj = verify(obj)
     translate(
@@ -586,3 +588,30 @@ def restore_pose(
     obj = verify(obj)
     log.info(f"Restoring pose {pose_name} to object {obj.name}")
     obj.matrix_world = _SAVED_POSES[pose_name]
+
+
+def lighting_randomize(
+    energy_jitter: bool = False,
+) -> None:
+    """Randomizes Lighting.
+    Args:
+        energy_jitter: bool: Whether to jitter the lighting intensity for lights in scene. Defaults to True
+    """
+    switch = [True, False]
+    # check if lights are in the scene, if not log error
+    for obj in bpy.context.scene.objects:
+        if obj.type == "LIGHT":
+            continue
+        else:
+            log.debug("add lights to use this function")
+    # loop through objects in scene and randomly toggle them on and off in the render (will still be visible in preview scene)
+    for obj in bpy.data.lights:
+        if obj.type == "POINT" or obj.type == "SPOT" or obj.type == "AREA":
+            bpy.data.objects[obj.name].hide_render = random.choice(switch)
+            if energy_jitter == True:
+                bpy.data.objects[obj.name].data.energy = random.randint(100, 500)
+        if obj.type == "SUN":
+            bpy.data.objects[obj.name].hide_render = random.choice(switch)
+            if energy_jitter == True:
+                bpy.data.objects[obj.name].data.energy = random.randint(1, 20)
+            bpy.data.scenes["Scene"].world.use_nodes = random.choice(switch)

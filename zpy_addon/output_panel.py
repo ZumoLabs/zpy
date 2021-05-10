@@ -3,7 +3,6 @@
 """
 import importlib
 import logging
-from pathlib import Path
 
 import bpy
 import zpy

@@ -52,7 +52,7 @@ def parse_gin_bindings(
         gin_bindings (Dict, optional): Gin bindings dictionary {gin binding : value}.
     """
     if gin_bindings is None:
-        log.info(f"No additional gin bindings to parse")
+        log.info("No additional gin bindings to parse")
     else:
         log.info(f"Parsing additional bindings: {pformat(gin_bindings)}")
         with gin.unlock_config():
@@ -60,7 +60,7 @@ def parse_gin_bindings(
                 try:
                     gin.bind_parameter(key, value)
                     _message = "BOUND  "
-                except:
+                except Exception:
                     _message = "IGNORED"
                 log.info(f"{_message} - {key} : {value}")
 
@@ -79,7 +79,7 @@ def parse_gin_config(
         zpy.requests.InvalidRequest: Cannot find gin config at path.
     """
     if gin_config is None:
-        log.info(f"No gin file to parse.")
+        log.info("No gin file to parse.")
     else:
         if not gin_config.endswith(".gin"):
             gin_config = gin_config + ".gin"

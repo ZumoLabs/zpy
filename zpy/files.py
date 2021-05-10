@@ -110,7 +110,7 @@ def make_rgb_image_name(id: int, extension: str = ".png") -> str:
     Returns:
         str: Image name.
     """
-    return "image.%08d.rgb" % id + extension
+    return "image.%06d.rgb" % id + extension
 
 
 def make_cseg_image_name(id: int, extension: str = ".png") -> str:
@@ -123,7 +123,7 @@ def make_cseg_image_name(id: int, extension: str = ".png") -> str:
     Returns:
         str: Image name.
     """
-    return "image.%08d.cseg" % id + extension
+    return "image.%06d.cseg" % id + extension
 
 
 def make_iseg_image_name(id: int, extension: str = ".png") -> str:
@@ -136,7 +136,7 @@ def make_iseg_image_name(id: int, extension: str = ".png") -> str:
     Returns:
         str: Image name.
     """
-    return "image.%08d.iseg" % id + extension
+    return "image.%06d.iseg" % id + extension
 
 
 def make_depth_image_name(id: int, extension: str = ".png") -> str:
@@ -149,7 +149,7 @@ def make_depth_image_name(id: int, extension: str = ".png") -> str:
     Returns:
         str: Image name.
     """
-    return "image.%08d.depth" % id + extension
+    return "image.%06d.depth" % id + extension
 
 
 def make_custom_image_name(id: int, name: str, extension: str = ".png") -> str:
@@ -163,7 +163,7 @@ def make_custom_image_name(id: int, name: str, extension: str = ".png") -> str:
     Returns:
         str: Image name.
     """
-    return "image.%08d.%s" % (id, name) + extension
+    return "image.%06d.%s" % (id, name) + extension
 
 
 def id_from_image_name(image_name: str) -> int:
@@ -189,7 +189,7 @@ def replace_id_in_image_name(image_name: str, new_id: int) -> str:
         str: New image name.
     """
     # HACK: This will break for image names without 8-digit indices
-    return image_name[:4] + "%08d" % new_id + image_name[12:]
+    return "image.%06d" % new_id + image_name[12:]
 
 
 def add_to_path(path: Union[Path, str], name: str) -> Path:
@@ -359,7 +359,7 @@ def write_csv(
         ValueError: Path is not a csv or txt file.
     """
     path = to_pathlib_path(path)
-    if not path.suffix in [".csv", ".txt"]:
+    if path.suffix not in [".csv", ".txt"]:
         raise ValueError(f"{path} is not a CSV file.")
     log.info(f"Writing CSV to file {path}")
     with path.open("w") as f:
@@ -383,7 +383,7 @@ def read_csv(path: Union[Path, str], delimiter: str = ",", **kwargs) -> List[Lis
         List[List[Any]]: Data in the csv.
     """
     path = to_pathlib_path(path)
-    if not path.suffix in [".csv", ".txt"]:
+    if path.suffix not in [".csv", ".txt"]:
         raise ValueError(f"{path} is not a CSV file.")
     log.info(f"Reading CSV file at {path}")
     data = []

@@ -29,7 +29,7 @@ class RunOperator(Operator):
         text = bpy.data.texts.get("run", None)
         if text is None:
             raise ValueError(
-                f'Running a sim requires a run text, could not find in text with name "run".'
+                'Running a sim requires a run text, could not find in text with name "run".'
             )
         # Set the logger levels
         zpy.logging.set_log_levels("debug")
@@ -91,7 +91,6 @@ class SCENE_PT_ExecutePanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene
 
         row = layout.row()
         row.operator(
