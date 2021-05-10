@@ -63,7 +63,6 @@ def frgb_to_irgb(frgb: Tuple[float]) -> Tuple[int]:
     return tuple((int(x * max_rgb_value) for x in frgb))
 
 
-
 def frgb_to_hex(frgb: Tuple[float]) -> str:
     """Convert float rgb (0 to 1) to hex."""
     return irgb_to_hex(frgb_to_irgb(frgb))
