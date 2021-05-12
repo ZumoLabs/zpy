@@ -191,6 +191,7 @@ def for_obj_in_selected_objs(context) -> bpy.types.Object:
 
 def for_obj_in_collections(
     collections: List[bpy.types.Collection],
+    filter_mesh: bool = False,
 ) -> bpy.types.Object:
     """Yield objects in list of collection.
 
@@ -199,8 +200,10 @@ def for_obj_in_collections(
     """
     for collection in collections:
         for obj in collection.all_objects:
-            if obj.type == "MESH":
+            if filter_mesh and obj.type == "MESH":
                 # This gives you direct access to data block
+                yield bpy.data.objects[obj.name]
+            else:
                 yield bpy.data.objects[obj.name]
 
 
