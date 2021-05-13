@@ -26,7 +26,6 @@ def help():
     This will display help in order to provide users with more information
     on how to use this tool.
     """
-    # TODO: spec this out
     click.echo(
         "zpy - ZumoLabs command line interface\n"
         "\n"
@@ -137,9 +136,9 @@ def list_datasets():
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="name,state,type,created,id", default_colwidth=30)
+    tbl = TableLogger(columns="name", default_colwidth=30)
     for d in datasets:
-        tbl(d["name"], d["state"].lower(), d["type"], d["created_at"], d["id"])
+        tbl(d["value"])
 
 
 @list.command("sims")
@@ -306,16 +305,7 @@ def upload_dataset(name, path):
         name (str): name of dataset
         path (str): path to dataset
     """
-    from cli.datasets import create_uploaded_dataset
-
-    if to_pathlib_path(path).suffix != ".zip":
-        click.secho(f"File {path} must be of type zip", fg="red", err=True)
-    try:
-        with Loader("Uploading dataset..."):
-            create_uploaded_dataset(name, path)
-        click.secho(f"Uploaded dataset {path} with name '{name}'", fg="green")
-    except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to upload dataset: {e}", fg="red", err=True)
+    # TODO Upload Files and Tag
 
 
 # ------- CREATE
@@ -345,23 +335,7 @@ def create_dataset(name, sim, args):
         sim (str): name of sim dataset is built with
         args (List(str)): configuration of sim for this dataset
     """
-    from cli.datasets import create_generated_dataset
-
-    try:
-        dataset_config = parse_args(args)
-    except Exception:
-        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
-        return
-    try:
-        create_generated_dataset(name, sim, parse_args(args))
-        click.secho(
-            f"Created dataset '{name}' from sim '{sim}' with config {dataset_config}",
-            fg="green",
-        )
-    except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
-    except NameError as e:
-        click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
+    # TODO: hit the sim create endpoint
 
 
 @create.command("sweep")
@@ -382,29 +356,7 @@ def create_sweep(name, sim, number, args):
         number (str): number of datasets to create
         args (List(str)): configuration of sim for this dataset
     """
-    from cli.datasets import create_generated_dataset
-
-    try:
-        dataset_config = parse_args(args)
-    except Exception:
-        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
-        return
-    for i in range(int(number)):
-        dataset_name = f"{name} seed{i}"
-        dataset_config["seed"] = i
-        try:
-            create_generated_dataset(dataset_name, sim, dataset_config)
-            click.secho(
-                f"Created dataset '{dataset_name}' from sim '{sim}' with config {dataset_config}",
-                fg="green",
-            )
-        except requests.exceptions.HTTPError as e:
-            click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
-        except NameError as e:
-            click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
-            return
-    click.echo(f"Finished creating {number} datasets from sim '{sim}'.")
-
+    # TODO: hit the sweep endpoint
 
 @create.command("job")
 @click.argument("name")

@@ -130,39 +130,19 @@ def download_dataset(name, path, dataset_type, url, auth_headers):
     return output_path
 
 
-def fetch_datasets():
+@fetch_auth
+def fetch_datasets(url, auth_headers):
     """fetch datasets
 
-    Fetch dataset objects from ZumoLabs backend. Fetches all three
-    datasets types uploaded, generated, and job.
+    Fetch dataset names from backend. This is done through tags.
 
     Returns:
         list: paginated sorted datasets for all types
     """
-    datasets = []
-    for dataset_type in DATASET_TYPES:
-        short_dataset_type = dataset_type.split("-")[0]
-        datasets += [
-            (lambda d: d.update({"type": short_dataset_type}) or d)(d)
-            for d in _fetch_type_datasets(dataset_type)
-        ]
-    return sorted(datasets, key=lambda i: i["created_at"], reverse=True)
-
-
-@fetch_auth
-def _fetch_type_datasets(dataset_type, url, auth_headers):
-    """fetch type of datasets
-
-    Args:
-        dataset_type (str): type of dataset to fetch
-        url (str): backend endpoint
-        auth_headers: authentication for backend
-
-    Returns:
-        list: paginated datasets for given type
-    """
-    endpoint = f"{url}/api/v1/{dataset_type}/"
+    endpoint = f"{url}/api/v1/tags/"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
-    return json.loads(r.text)["results"]
+    results = json.loads(r.text)["results"]
+    filtered_results = filter(lambda x: x["key"] == "dataset", results)
+    return filtered_results
