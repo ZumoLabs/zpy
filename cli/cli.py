@@ -143,7 +143,7 @@ def list_datasets():
 
 @list.command("sims")
 def list_sims():
-    """list datasets
+    """list sims
 
     List sims from backend.
     """
