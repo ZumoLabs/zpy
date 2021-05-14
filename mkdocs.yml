@@ -34,32 +34,33 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Overview:
-    - Why use Synthetic Data: "overview/why.md"
-    - Does it Work?: "overview/work.md"
+    - Why use Synthetic Data: overview/why.md
+    - Does it Work?: overview/work.md
     - Workflow:
-        - sim: "overview/sim.md"
-        - cli: "overview/cli.md"
-        - webapp: "overview/webapp.md"
-    - Training with Synthetic Data: "values.md"
+        - sim: overview/sim.md
+        - cli: overview/cli.md
+        - webapp: overview/webapp.md
+    - Training with Synthetic Data: values.md
   - Zpy:
-    - Script Templates: "zpy/template.md"
-    - Running Sim: "zpy/sim.md"
-    - Segmentation Images: "zpy/segmentation.md"
-    - Depth Images: "zpy/depth.md"
-    - Jittering Object Pose: "zpy/jitterpose.md"
-    - Jitering Materials: "zpy/jittermat.md"
-    - Random HDRI Backgrounds: "zpy/hdri.md"
+    - Script Templates: zpy/template.md
+    - Running Sim: zpy/sim.md
+    - Segmentation Images: zpy/segmentation.md
+    - Depth Images: zpy/depth.md
+    - Jittering Object Pose: zpy/jitterpose.md
+    - Jitering Materials: zpy/jittermat.md
+    - Random HDRI Backgrounds: zpy/hdri.md
   - CLI:
-    - zpy: "cli/zpy.md"
-    - zpy list: "cli/list.md"
-    - zpy get: "cli/get.md"
-    - zpy upload: "cli/upload.md"
-    - zpy create: "cli/create.md"
-    - zpy logs: "cli/logs.md"
+    - zpy: cli/zpy.md
+    - zpy login: cli/login.md
+    - zpy list: cli/list.md
+    - zpy get: cli/get.md
+    - zpy upload: cli/upload.md
+    - zpy create: cli/create.md
+    - zpy logs: cli/logs.md
   - Web App:
-    - images: "app/images.md"
-    - experiments: "app/experiments.md"
+    - images: app/images.md
+    - experiments: app/experiments.md
   - Blender Addon:
-    - Loading the Blender Addon: "addon.md"
+    - Loading the Blender Addon: addon.md
   - Releases:
-    - "v1.2": releases/1.2-NOTES.md
+    - v1.2: releases/1.2-NOTES.md
