@@ -340,7 +340,7 @@ def create_dataset(name, sim, number, args):
     """
     # TODO: hit the sim create endpoint
     from cli.datasets import create_dataset, generate_dataset
-    
+
     try:
         dataset_config = parse_args(args)
     except Exception:
