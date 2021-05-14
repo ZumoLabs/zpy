@@ -138,7 +138,7 @@ def list_datasets():
 
     tbl = TableLogger(columns="name", default_colwidth=30)
     for d in datasets:
-        tbl(d["value"])
+        tbl(d["name"])
 
 
 @list.command("sims")
@@ -220,6 +220,7 @@ def get_dataset(name, dtype, path):
         dtype (str): type of dataset
         path (str): directory to put zipped dataset
     """
+    # TODO: FIX THIS
     from cli.datasets import download_dataset
 
     try:
@@ -323,32 +324,13 @@ def create():
 @create.command("dataset")
 @click.argument("name")
 @click.argument("sim")
-@click.argument("args", nargs=-1)
-def create_dataset(name, sim, args):
-    """create dataset
-
-    Create a generated dataset object in backend that will trigger
-    the generation of the dataset.
-
-    Args:
-        name (str): name of new dataset
-        sim (str): name of sim dataset is built with
-        args (List(str)): configuration of sim for this dataset
-    """
-    # TODO: hit the sim create endpoint
-
-
-@create.command("sweep")
-@click.argument("name")
-@click.argument("sim")
 @click.argument("number")
 @click.argument("args", nargs=-1)
-def create_sweep(name, sim, number, args):
-    """create sweep
+def create_dataset(name, sim, number, args):
+    """create dataset
 
-    Create a sweep of generated dataset object in backend that will trigger
-    the generation of the dataset. Sweep is just a series of create dataset
-    calls with different seeds set.
+    Create a dataset object in backend that will trigger number amount runs
+    of the sim.
 
     Args:
         name (str): name of new dataset
@@ -356,7 +338,27 @@ def create_sweep(name, sim, number, args):
         number (str): number of datasets to create
         args (List(str)): configuration of sim for this dataset
     """
-    # TODO: hit the sweep endpoint
+    # TODO: hit the sim create endpoint
+    from cli.datasets import create_dataset, generate_dataset
+    
+    try:
+        dataset_config = parse_args(args)
+    except Exception:
+        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
+        return
+
+    try:
+        create_dataset(name, None)
+        click.secho(f"Created dataset '{name}'", fg="green")
+        generate_dataset(name, sim, number, parse_args(args))
+        click.secho(
+            f"Generating data from sim '{sim}' with config {dataset_config}",
+            fg="green",
+        )
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
 
 @create.command("job")
 @click.argument("name")
