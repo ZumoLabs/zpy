@@ -42,6 +42,11 @@ nav:
         - webapp: overview/webapp.md
     - Training with Synthetic Data: overview/training.md
   - Zpy:
+    - Install:
+        - script: zpy/install/script.md
+        - pip: zpy/install/pip.md
+        - linux developer: zpy/install/linux.md
+        - windows developer: zpy/install/windows.md
     - Script Templates: zpy/template.md
     - Running Sim: zpy/sim.md
     - Segmentation Images: zpy/segmentation.md
