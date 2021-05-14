@@ -88,8 +88,9 @@ You can find documentation [here](https://github.com/ZumoLabs/zpy/tree/main/docs
 - [Random HDRI Backgrounds](https://youtu.be/QzJ6Y3jwr4w)
 
 **Projects**
-- [Raspberry Pi Component Detection](https://towardsdatascience.com/training-ai-with-cgi-b2fb3ca43929)
-- [Vote Counting](https://towardsdatascience.com/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data-d8e24eca114d)
+- [Raspberry Pi Component Detection](https://www.zumolabs.ai/post/training-ai-with-cgi)
+- [Vote Counting](https://www.zumolabs.ai/post/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data)
+- [How to 3D Scan an Object](https://www.zumolabs.ai/post/how-to-3d-scan-an-object)
 
 **Video Code-Alongs**
 - [Suzanne: Part 1](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne)
