@@ -607,17 +607,18 @@ def lighting_randomize(
             continue
         else:
             log.debug("add lights to use this function")
-    # loop through objects in scene and randomly toggle them on and off in the render (will still be visible in preview scene)
+    # Loop through objects in scene and randomly toggle them on and off in the render,
+    # these will still be visible in preview scene
     for obj in bpy.data.lights:
         if obj.type == "POINT" or obj.type == "SPOT" or obj.type == "AREA":
-            bpy.data.objects[obj.name].hide_render = random.randint(0, 1)
-            if energy_jitter == True:
+            bpy.data.objects[obj.name].hide_render = bool(random.randint(0, 1))
+            if energy_jitter:
                 bpy.data.objects[obj.name].data.energy = random.randint(100, 500)
         if obj.type == "SUN":
-            bpy.data.objects[obj.name].hide_render = random.randint(0, 1)
-            if energy_jitter == True:
+            bpy.data.objects[obj.name].hide_render = bool(random.randint(0, 1))
+            if energy_jitter:
                 bpy.data.objects[obj.name].data.energy = random.randint(1, 20)
-            bpy.data.scenes["Scene"].world.use_nodes = random.randint(0, 1)
+            # bpy.data.scenes["Scene"].world.use_nodes = True
         if jitter:
             zpy.objects.jitter(obj.name,
                         translate_range=(
