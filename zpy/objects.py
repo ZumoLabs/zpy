@@ -620,10 +620,11 @@ def lighting_randomize(
                 bpy.data.objects[obj.name].data.energy = random.randint(1, 20)
             # bpy.data.scenes["Scene"].world.use_nodes = True
         if jitter:
-            zpy.objects.jitter(obj.name,
-                        translate_range=(
-                            (-2, 2),
-                            (-2, -2),
-                            (1, 5),
-                        ))
-
+            zpy.objects.jitter(
+                obj.name,
+                translate_range=(
+                    (-2, 2),
+                    (-2, -2),
+                    (1, 5),
+                ),
+            )
