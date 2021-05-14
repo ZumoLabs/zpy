@@ -1,13 +1,23 @@
-## Create
+#### Create Dataset
 
-Create Dataset : ```zpy create dataset <name> <sim_name> kwargs```
+```zpy create dataset <name> <sim_name> kwargs```
 
-<p align="center"><img src="gif/createdataset.gif?raw=true"/></p>
+<p align="center">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/createdataset.gif?raw=true"/>
+</p>
 
-Create Sweep : ```zpy create sweep <name> <sim_name> <number_of_datasets> kwargs```
+#### Create Sweep
 
-<p align="center"><img src="gif/createsweep.gif?raw=true"/></p>
+```zpy create sweep <name> <sim_name> <number_of_datasets> kwargs```
 
-Create Job : ```zpy create job <name> <operation> -d <dataset_id> -d <dataset_id> kwargs```
+<p align="center">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/createsweep.gif?raw=true"/>
+</p>
 
-<p align="center"><img src="gif/createjob.gif?raw=true"/></p>
+#### Create Job
+
+```zpy create job <name> <operation> -d <dataset_id> -d <dataset_id> kwargs```
+
+<p align="center">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/createjob.gif?raw=true"/>
+</p>

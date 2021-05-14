@@ -1,13 +1,23 @@
-## List
+#### List Datasets : 
 
-List Datasets : ```zpy list datasets```
+```zpy list datasets```
 
-<p align="center"><img src="gif/listdataset.gif?raw=true"/></p>
+<p align="center">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/listdataset.gif?raw=true"/>
+</p>
 
-List Sims : ```zpy list sims```
+#### List Sims
 
-<p align="center"><img src="gif/listsim.svg?raw=true"/></p>
+```zpy list sims```
 
-List Jobs : ```zpy list jobs```
+<p align="center">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/listsim.svg?raw=true"/>
+</p>
 
-<p align="center"><img src="gif/listjob.gif?raw=true"/></p>
+#### List Jobs
+
+```zpy list jobs```
+
+<p align="center">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/listjob.gif?raw=true"/>
+</p>

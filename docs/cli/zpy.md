@@ -1,11 +1,16 @@
-## zpy cli
+# zpy cli
 
 Allows for communication with the Zumo Labs Backend.
 
 ### Abstract
 
-The ZPY cli is meant as a command line tool to interact with assets on the zumo labs backend. The app can be found at [app.zumolabs.ai](https://app.zumolabs.ai) this command line covers the same functionality but allows developers to use command line to interact with zumo databases.
+The zpy cli is meant as a command line tool to interact with assets on the zumo labs backend. The app can be found at [app.zumolabs.ai](https://app.zumolabs.ai) this command line covers the same functionality but allows developers to use command line to interact with zumo databases.
 
+### Install
+
+```
+pip install zpy-zumo
+```
 
 ### Usage
 

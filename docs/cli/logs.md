@@ -1,9 +1,7 @@
-## Logs
+#### Dataset Logs
 
-Fetch sim run logs
+```zpy logs dataset <name> path/to/dir```
 
-PUT IMAGE HERE
+#### Job Logs
 
-Fetch job run logs.
-
-PUT IMAGE HERE
+```zpy logs job <name> path/to/dir```
