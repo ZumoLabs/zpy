@@ -40,7 +40,7 @@ nav:
         - sim: overview/sim.md
         - cli: overview/cli.md
         - webapp: overview/webapp.md
-    - Training with Synthetic Data: values.md
+    - Training with Synthetic Data: overview/training.md
   - Zpy:
     - Script Templates: zpy/template.md
     - Running Sim: zpy/sim.md
@@ -60,7 +60,6 @@ nav:
   - Web App:
     - images: app/images.md
     - experiments: app/experiments.md
-  - Blender Addon:
-    - Loading the Blender Addon: addon.md
+  - Blender Addon: zpy/addon.md
   - Releases:
     - v1.2: releases/1.2-NOTES.md
