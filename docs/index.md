@@ -20,7 +20,3 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 ## Contribute
 
 We welcome community contributions! Search through the [current issues](https://github.com/ZumoLabs/zpy/issues) or open your own.
-
-## Licence
-
-This release of zpy is under the GPLv3 license, a free copyleft license used by Blender. TLDR: Its free, use it!
