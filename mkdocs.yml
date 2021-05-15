@@ -42,18 +42,24 @@ nav:
         - webapp: overview/webapp.md
     - Training with Synthetic Data: overview/training.md
   - Zpy:
+    - About: zpy/about.md
     - Install:
         - script: zpy/install/script.md
         - pip: zpy/install/pip.md
         - linux developer: zpy/install/linux.md
         - windows developer: zpy/install/windows.md
-    - Script Templates: zpy/template.md
-    - Running Sim: zpy/sim.md
-    - Segmentation Images: zpy/segmentation.md
-    - Depth Images: zpy/depth.md
-    - Jittering Object Pose: zpy/jitterpose.md
-    - Jitering Materials: zpy/jittermat.md
-    - Random HDRI Backgrounds: zpy/hdri.md
+    - Video Tutorials:
+        - Script Templates: zpy/tutorials/template.md
+        - Running Sim: zpy/tutorials/sim.md
+        - Segmentation Images: zpy/tutorials/segmentation.md
+        - Depth Images: zpy/tutorials/depth.md
+        - Jittering Object Pose: zpy/tutorials/jitterpose.md
+        - Jitering Materials: zpy/tutorials/jittermat.md
+        - Random HDRI Backgrounds: zpy/tutorials/hdri.md
+    - Suzanne Code-Alongs:
+        - part 1: zpy/example/part1.md
+        - part 2: zpy/example/part2.md
+        - part 3: zpy/example/part3.md
   - CLI:
     - zpy: cli/zpy.md
     - zpy login: cli/login.md
@@ -63,8 +69,7 @@ nav:
     - zpy create: cli/create.md
     - zpy logs: cli/logs.md
   - Web App:
-    - images: app/images.md
-    - experiments: app/experiments.md
+    - About: app/about.md
   - Blender Addon: zpy/addon.md
   - Releases:
-    - v1.2: releases/1.2-NOTES.md
+    - v1.1: releases/1.1-NOTES.md
