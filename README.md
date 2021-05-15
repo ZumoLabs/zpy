@@ -45,7 +45,7 @@ You can install `zpy` with pip:
 pip install zpy-zumo
 ```
 
-Note that Blender has it's own python, seperate from your system/venv/conda python. You will have to install it into both.
+Note that [Blender has it's own python](https://github.com/ZumoLabs/zpy/tree/main/docs/blender_python_path.md), seperate from your system/venv/conda python. You will have to install it into both.
 
 ### Install: Blender Addon <a name="installzip"></a>
 
@@ -66,6 +66,42 @@ export BLENDER_VERSION="2.92"
 export BLENDER_VERSION_FULL="2.92.0"
 export ZPY_VERSION="v1.1.3"
 ```
+<<<<<<< HEAD
+=======
+## CLI
+
+We provide a simple CLI. In order to run pip install zpy-zumo and then just run commands in that python environment.
+
+You can find documentation [here](https://github.com/ZumoLabs/zpy/tree/main/docs/cli/README.md).
+
+<p align="center"><img src="docs/cli/gif/createdataset.gif?raw=true"/></p>
+
+## Examples
+
+**Video Tutorials**
+- [Loading the zpy Blender Add-On](https://youtu.be/xipj3jFsZyY)
+- [Run a Sim](https://youtu.be/1_-6Vb2s10Y)
+- [Using Script Templates](https://youtu.be/ywaEhKGBUK0)
+- [Segmentation Images](https://youtu.be/NxFrY3EcIMA)
+- [Depth Images](https://youtu.be/G4Wa9aQSlOw)
+- [Jittering Materials](https://youtu.be/WbarQmJ9qlY)
+- [Jittering Object Pose](https://youtu.be/4Pe9B4auE1M)
+- [Random HDRI Backgrounds](https://youtu.be/QzJ6Y3jwr4w)
+
+**Projects**
+- [Raspberry Pi Component Detection](https://www.zumolabs.ai/post/training-ai-with-cgi)
+- [Vote Counting](https://www.zumolabs.ai/post/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data)
+- [How to 3D Scan an Object](https://www.zumolabs.ai/post/how-to-3d-scan-an-object)
+
+**Video Code-Alongs**
+- [Suzanne: Part 1](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne)
+- [Suzanne: Part 2](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_2)
+- [Suzanne: Part 3](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_3)
+
+## Documentation
+
+Code documentation can be found [here](https://zumo-zpy.readthedocs.io/en/latest/)
+>>>>>>> 9ed79b86c4e79d39c1c81aaccbc61bce9e7b6f39
 
 ## Contributing
 
