@@ -9,7 +9,7 @@
   <a href="#Documentation">Documentation</a> •
   <a href="#Install">Install</a> •
   <a href="#Contribute">Contribute</a> •
-  <a href="#Licence">Licence</a>
+  <a href="#License">License</a>
 </p>
 
 <p align="center">
@@ -71,7 +71,7 @@ export ZPY_VERSION="v1.1.3"
 
 We welcome community contributions! Search through the [current issues](https://github.com/ZumoLabs/zpy/issues) or open your own.
 
-## Licence
+## License
 
 This release of zpy is under the GPLv3 license, a free copyleft license used by Blender. TLDR: Its free, use it!
 
