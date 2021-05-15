@@ -1,0 +1,75 @@
+site_name: Zumo Labs Documentation
+site_description: 'Create, Generate, and Iterate Synthetic Data.'
+site_url: 'https://zpy.github.io/'
+repo_name: 'zumolabs/zpy'
+repo_url: 'https://github.com/ZumoLabs/zpy'
+copyright: 'Copyright &copy; 2021 Zumo Labs'
+site_dir: 'docs'
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - tabs
+    - instant
+  palette:
+    primary: light blue
+    accent: orange
+  font: 
+    text: Consolas
+  logo: assets/logo.png
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+      options:
+        custom_icons:
+          - site/overrides/.icons
+
+nav:
+  - Home: index.md
+  - Overview:
+    - Why use Synthetic Data: overview/why.md
+    - Does it Work?: overview/work.md
+    - Workflow:
+        - sim: overview/sim.md
+        - cli: overview/cli.md
+        - webapp: overview/webapp.md
+    - Training with Synthetic Data: overview/training.md
+  - Zpy:
+    - About: zpy/about.md
+    - Install:
+        - script: zpy/install/script.md
+        - pip: zpy/install/pip.md
+        - linux developer: zpy/install/linux.md
+        - windows developer: zpy/install/windows.md
+    - Video Tutorials:
+        - Script Templates: zpy/tutorials/template.md
+        - Running Sim: zpy/tutorials/sim.md
+        - Segmentation Images: zpy/tutorials/segmentation.md
+        - Depth Images: zpy/tutorials/depth.md
+        - Jittering Object Pose: zpy/tutorials/jitterpose.md
+        - Jitering Materials: zpy/tutorials/jittermat.md
+        - Random HDRI Backgrounds: zpy/tutorials/hdri.md
+    - Suzanne Code-Alongs:
+        - part 1: zpy/example/part1.md
+        - part 2: zpy/example/part2.md
+        - part 3: zpy/example/part3.md
+  - CLI:
+    - zpy: cli/zpy.md
+    - zpy login: cli/login.md
+    - zpy list: cli/list.md
+    - zpy get: cli/get.md
+    - zpy upload: cli/upload.md
+    - zpy create: cli/create.md
+    - zpy logs: cli/logs.md
+  - Web App:
+    - About: app/about.md
+  - Blender Addon: zpy/addon.md
+  - Releases:
+    - v1.1: releases/1.1-NOTES.md
