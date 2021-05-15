@@ -1,4 +1,4 @@
-The zumolabs web app [app.zumolabs.ai](app.zumolabs.ai) is your tool for understanding your data
+The zumolabs web app [app.zumolabs.ai](https://app.zumolabs.ai) is your tool for understanding your data
 
 ## Features
 

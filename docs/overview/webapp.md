@@ -1,4 +1,4 @@
-The web app is available at app.zumolabs.ai. The app is used to visualize dataset and jobs on the backend and get insights on why your synthetic data is not giving you the desired performance.
+The web app is available at [app.zumolabs.ai](https://app.zumolabs.ai). The app is used to visualize dataset and jobs on the backend and get insights on why your synthetic data is not giving you the desired performance.
 
 ## How-To
 

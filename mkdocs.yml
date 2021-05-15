@@ -4,7 +4,6 @@ site_url: 'https://zpy.github.io/'
 repo_name: 'zumolabs/zpy'
 repo_url: 'https://github.com/ZumoLabs/zpy'
 copyright: 'Copyright &copy; 2021 Zumo Labs'
-site_dir: 'docs'
 
 theme:
   name: material
