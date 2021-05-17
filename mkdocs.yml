@@ -34,19 +34,19 @@ nav:
   - Home: index.md
   - Overview:
     - Why use Synthetic Data: overview/why.md
-    - Does it Work?: overview/work.md
+    - Using Synthetic Data: overview/using.md
     - Workflow:
         - sim: overview/sim.md
         - cli: overview/cli.md
         - webapp: overview/webapp.md
-    - Training with Synthetic Data: overview/training.md
   - Zpy:
     - About: zpy/about.md
     - Install:
-        - script: zpy/install/script.md
         - pip: zpy/install/pip.md
-        - linux developer: zpy/install/linux.md
-        - windows developer: zpy/install/windows.md
+        - script: zpy/install/script.md
+        - Linux developer: zpy/install/linux.md
+        - Windows developer: zpy/install/windows.md
+        - Blender Python Path: zpy/install/blender_python_path.md
     - Video Tutorials:
         - Script Templates: zpy/tutorials/template.md
         - Running Sim: zpy/tutorials/sim.md
