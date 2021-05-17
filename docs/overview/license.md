@@ -1,3 +1,3 @@
 # License
 
-This release of zpy is under the GPLv3 license, the same free copyleft license used by Blender. TLDR: Its free, use it!
+This release of zpy is under the GPLv3 license, the [same license used by Blender](https://www.blender.org/about/license/). TLDR: Its free, use it!

@@ -52,11 +52,12 @@ nav:
     - Examples:
       - Package Sim: zpy/example/package.md
       - RPI Sim: zpy/example/rpi.md
-      - Suzanne Code-Along Part 1: zpy/example/part1.md
-      - Suzanne Code-Along Part 2: zpy/example/part2.md
-      - Suzanne Code-Along Part 3: zpy/example/part3.md
+      - Suzanne Code-Along:
+        - Part 1: zpy/example/part1.md
+        - Part 2: zpy/example/part2.md
+        - Part 3: zpy/example/part3.md
     - Guides:
-      - Make a Sim: zpy/tutorials/make_a_sim.md
+      - What is a Sim?: zpy/tutorials/what_is_a_sim.md
       - Running a Sim: zpy/tutorials/run_a_sim.md
       - Using Script Templates: zpy/tutorials/template.md
       - Saving Segmentation Images: zpy/tutorials/segmentation.md

@@ -6,4 +6,6 @@ Once you have installed the `zpy` module into Blender's python, download the lat
 
 # Video Tutorial
 
+You can watch this tutorial as a video on YouTube:
+
 [![Loading the Addon](https://img.youtube.com/vi/xipj3jFsZyY/0.jpg)](https://www.youtube.com/watch?v=xipj3jFsZyY "Loading the Addon")
