@@ -35,10 +35,9 @@ nav:
     - About: index.md
     - Why use Synthetic Data: overview/why.md
     - Using Synthetic Data: overview/using.md
-    - Workflow:
-        - sim: overview/sim.md
-        - cli: overview/cli.md
-        - webapp: overview/webapp.md
+    - Contribute: overview/contribute.md
+    - License: overview/license.md
+    - Citation: overview/citation.md
     - Code of Conduct: overview/code_of_conduct.md
   - Zpy:
     - About: zpy/about.md
@@ -57,11 +56,11 @@ nav:
         - Jitering Materials: zpy/tutorials/jittermat.md
         - Random HDRI Backgrounds: zpy/tutorials/hdri.md
     - Suzanne Code-Alongs:
-        - part 1: zpy/example/part1.md
-        - part 2: zpy/example/part2.md
-        - part 3: zpy/example/part3.md
+        - Part 1: zpy/example/part1.md
+        - Part 2: zpy/example/part2.md
+        - Part 3: zpy/example/part3.md
   - CLI:
-    - zpy: cli/zpy.md
+    - About: cli/about.md
     - zpy login: cli/login.md
     - zpy list: cli/list.md
     - zpy get: cli/get.md
@@ -70,6 +69,11 @@ nav:
     - zpy logs: cli/logs.md
   - Web App:
     - About: app/about.md
-  - Blender Addon: zpy/addon.md
+    - Create an Account: app/create_an_account.md
+  - Blender Addon:
+    - About: addon/about.md
+    - Install: addon/install.md
   - Releases:
+    - v1.3: releases/1.3-NOTES.md
+    - v1.2: releases/1.2-NOTES.md
     - v1.1: releases/1.1-NOTES.md

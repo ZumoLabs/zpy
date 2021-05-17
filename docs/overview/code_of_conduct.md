@@ -1,14 +1,8 @@
-
-ZPY Discord Code of Conduct
-===========================  
+# Code of Conduct
 
 Zumo Labs is committed to providing a friendly, safe and welcoming environment for all, regardless of level of experience, gender identity and expression, sexual orientation, disability, personal appearance, body size, race, ethnicity, age, religion, nationality, or other traits or characteristics.
 
-  
-
 We ask that you contribute to maintaining a positive environment. We do not tolerate harassment of participants in any form. Participants asked to stop any harassing behavior are expected to comply immediately.
-
-  
 
 **Examples of behavior that contributes to creating a positive environment include:**
 
@@ -19,8 +13,6 @@ We ask that you contribute to maintaining a positive environment. We do not tole
 * Gracefully accepting constructive criticism
 * Focusing on what is best for the community
 * Showing empathy towards other community members
-
-  
 
 **Examples of unacceptable behavior by participants include:**
 
@@ -34,20 +26,15 @@ We ask that you contribute to maintaining a positive environment. We do not tole
 * Discussing topics that are overly polarizing, sensitive, or incite arguments. This includes the discussion of polarizing political views, violence, suicide, and rape.
 * Responding with “RTFM”, "just google it” or similar phrases in response to help requests
 * Other conduct which could reasonably be considered inappropriate
-
   
-
 Our Goal
 ------------
 
 The goal of this document is to set the overall tone for our community. This isn’t an exhaustive list of things you can and can't do. Rather, take this document in the spirit in which it’s intended, and try to be your best self.
 
-  
-
 We value many things beyond technical expertise, including collaboration and supporting others within our community. Providing a positive experience for other community members can have a much more significant impact than simply providing the correct answer.
 
   
-
 Scope
 ------------
 

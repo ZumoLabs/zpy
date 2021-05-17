@@ -1,16 +1,8 @@
 <div align="center">
 
-<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/assets/zl_tile_logo.png" width="100px">
+<a href="https://www.zumolabs.ai/?utm_source=github.com&utm_medium=referral&utm_campaign=zpy"><img src="https://github.com/ZumoLabs/zpy/raw/main/docs/assets/zl_tile_logo.png" width="100px"/></a>
 
 **`zpy`: Synthetic data in Blender.**
-
-<p align="center">
-  <a href="https://www.zumolabs.ai/?utm_source=github.com&utm_medium=referral&utm_campaign=zpy">Website</a> •
-  <a href="https://zumolabs.github.io/zpy/">Documentation</a> •
-  <a href="#Install">Install</a> •
-  <a href="#Contribute">Contribute</a> •
-  <a href="#License">License</a>
-</p>
 
 <p align="center">
   <a href="https://discord.gg/nXvXweHtG8"><img alt="Discord" title="Discord" src="https://img.shields.io/badge/-ZPY Devs-grey?style=for-the-badge&logo=discord&logoColor=white"/></a>
@@ -22,6 +14,8 @@
 
 </div>
 
+![Synthetic raspberry pi](https://github.com/ZumoLabs/zpy/raw/main/docs/assets/promo_image.png)
+
 ## Abstract
 
 Collecting, labeling, and cleaning data for computer vision is a pain. Jump into the future and create your own data instead! Synthetic data is faster to develop with, effectively infinite, and gives you full control to prevent bias and privacy issues from creeping in. We created `zpy` to make synthetic data easy, by simplifying the simulation (sim) creation process and providing an easy way to generate synthetic data at scale.
@@ -30,51 +24,29 @@ Check out our full [**documentation** :page_facing_up:](https://zumolabs.github.
 
 ## Install
 
-- [Install using pip **(Windows/Mac/Linux)**](#installpip).
-- [Install Blender Addon from .zip **(Windows/Mac/Linux)**](#installzip).
-- [Install from script **(Mac/Linux)**](#installscript_linux)
-- [Developer mode **(Linux)**](https://github.com/ZumoLabs/zpy/tree/main/docs/developer_mode.md#install-linux-developer-environment-)
-- [Developer mode **(Windows)**](https://github.com/ZumoLabs/zpy/tree/main/docs/developer_mode.md#install-windows-developer-environment-)
-
-### Install: Using Pip <a name="installpip"></a>
-
 You can install `zpy` with pip:
 
 ``` 
 pip install zpy-zumo
 ```
 
-Note that [Blender has it's own python](https://github.com/ZumoLabs/zpy/tree/main/docs/blender_python_path.md), seperate from your system/venv/conda python. You will have to install it into both.
+More installation instructions can be found in the docs:
 
-### Install: Blender Addon <a name="installzip"></a>
+- [Install using pip **(Windows/Mac/Linux)**](https://github.com/ZumoLabs/zpy/raw/main/docs/zpy/install/pip.md)
+- [Install Blender Addon from .zip **(Windows/Mac/Linux)**](https://github.com/ZumoLabs/zpy/raw/main/docs/addon/install.md)
+- [Install from script **(Mac/Linux)**](https://github.com/ZumoLabs/zpy/raw/main/docs/zpy/install/script.md)
+- [Developer mode **(Linux)**](https://github.com/ZumoLabs/zpy/tree/main/docs/zpy/install/linux.md)
+- [Developer mode **(Windows)**](https://github.com/ZumoLabs/zpy/tree/main/docs/zpy/install/windows.md)
 
-Once you have installed the `zpy` module into Blender's python, download the latest [zip](https://github.com/ZumoLabs/zpy/releases) (you want the one called `zpy_addon-v*.zip`). Then open up Blender. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there.
-
-![Enabling the addon](https://github.com/ZumoLabs/zpy/raw/main/docs/assets/install_zpy.png)
-
-### Install: Linux: Using Install Script <a name="installscript_linux"></a>
-
-``` 
-$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ZumoLabs/zpy/main/install.sh)"
-```
-
-Set these environment variables for specific versions:
-
-```
-export BLENDER_VERSION="2.92"
-export BLENDER_VERSION_FULL="2.92.0"
-export ZPY_VERSION="v1.1.3"
-```
-
-## Contributing
+## Contribute [:page_facing_up:](https://github.com/ZumoLabs/zpy/raw/main/docs/overview/contribute.md)
 
 We welcome community contributions! Search through the [current issues](https://github.com/ZumoLabs/zpy/issues) or open your own.
 
-## License
+## License [:page_facing_up:](https://github.com/ZumoLabs/zpy/raw/main/docs/overview/license.md)
 
 This release of zpy is under the GPLv3 license, a free copyleft license used by Blender. TLDR: Its free, use it!
 
-## BibTeX
+## Citation [:page_facing_up:](https://github.com/ZumoLabs/zpy/raw/main/docs/overview/citation.md)
 
 If you use `zpy` in your research, we would appreciate the citation!
 

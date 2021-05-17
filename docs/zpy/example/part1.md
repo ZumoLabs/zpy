@@ -1,4 +1,4 @@
-# Suzanne: Part 1
+# Suzanne Code-Along: Part 1
 
 Welcome to the first `zpy` tutorial! In this tutorial we will introduce the following concepts:
 
