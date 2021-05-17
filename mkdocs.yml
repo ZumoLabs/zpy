@@ -32,7 +32,7 @@ markdown_extensions:
 
 nav:
   - Home:
-    - Overview: index.md
+    - About: overview/about.md
     - Why use Synthetic Data: overview/why.md
     - Using Synthetic Data: overview/using.md
     - Workflow:
