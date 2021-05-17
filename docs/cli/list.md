@@ -3,7 +3,7 @@
 ```zpy list datasets```
 
 <p align="center">
-<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/listdataset.gif?raw=true"/>
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/listdataset.svg?raw=true"/>
 </p>
 
 #### List Sims
@@ -19,5 +19,5 @@
 ```zpy list jobs```
 
 <p align="center">
-<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/listjob.gif?raw=true"/>
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/listjob.svg?raw=true"/>
 </p>
