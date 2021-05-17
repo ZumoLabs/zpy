@@ -26,7 +26,7 @@
 
 Collecting, labeling, and cleaning data for computer vision is a pain. Jump into the future and create your own data instead! Synthetic data is faster to develop with, effectively infinite, and gives you full control to prevent bias and privacy issues from creeping in. We created `zpy` to make synthetic data easy, by simplifying the simulation (sim) creation process and providing an easy way to generate synthetic data at scale.
 
-Check out our full [**documentation**](https://zumolabs.github.io/zpy/).
+Check out our full [**documentation** :page_facing_up:](https://zumolabs.github.io/zpy/) .
 
 ## Install
 
