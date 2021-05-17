@@ -20,14 +20,15 @@
 
 Collecting, labeling, and cleaning data for computer vision is a pain. Jump into the future and create your own data instead! Synthetic data is faster to develop with, effectively infinite, and gives you full control to prevent bias and privacy issues from creeping in. We created `zpy` to make synthetic data easy, by simplifying the simulation (sim) creation process and providing an easy way to generate synthetic data at scale.
 
-Check out our full [**documentation** :bookmark_tabs:](https://zumolabs.github.io/zpy/).
+Check out our full [**documentation** :bookmark_tabs:](https://zumolabs.github.io/zpy/)
 
-## What's New? [:rocket:]
+## What's New? :rocket:
 
 - (05/17/21) A new template sim :package:`package`:package: is available, [check it out](https://zumolabs.github.io/zpy/).
 - (05/14/21) Check out our new [documentation](https://zumolabs.github.io/zpy/)
 
 ## Install [:thinking:](https://zumolabs.github.io/zpy/install/pip.md)
+
 You can install `zpy` with pip:
 
 ``` 
@@ -36,11 +37,11 @@ pip install zpy-zumo
 
 More installation instructions can be found in the docs:
 
-- [Install using pip **(Windows/Mac/Linux)**](https://zumolabs.github.io/zpy/install/pip.md)
-- [Install Blender Addon from .zip **(Windows/Mac/Linux)**](https://zumolabs.github.io/addon/install.md)
-- [Install from script **(Mac/Linux)**](https://zumolabs.github.io/zpy/install/script.md)
-- [Developer mode **(Linux)**](https://zumolabs.github.io/zpy/install/linux.md)
-- [Developer mode **(Windows)**](https://zumolabs.github.io/zpy/install/windows.md)
+- [Install using pip **(Windows/Mac/Linux)**](https://zumolabs.github.io/zpy/zpy/install/pip/)
+- [Install Blender Addon from .zip **(Windows/Mac/Linux)**](https://zumolabs.github.io/zpy/addon/install/)
+- [Install from script **(Mac/Linux)**](https://zumolabs.github.io/zpy/zpy/install/script/)
+- [Developer mode **(Linux)**](https://zumolabs.github.io/zpy/zpy/install/linux/)
+- [Developer mode **(Windows)**](https://zumolabs.github.io/zpy/zpy/install/windows/)
 
 ## Contribute [:busts_in_silhouette:](https://github.com/ZumoLabs/zpy/raw/main/docs/overview/contribute.md)
 
