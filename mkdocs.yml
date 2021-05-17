@@ -41,6 +41,10 @@ nav:
     - Code of Conduct: overview/code_of_conduct.md
   - Zpy:
     - About: zpy/about.md
+    - Workflow:
+      - Make a Sim: zpy/tutorials/make_a_sim.md
+    - Examples:
+      - Package: zpy/example/package.md
     - Install:
         - pip: zpy/install/pip.md
         - script: zpy/install/script.md
@@ -49,7 +53,7 @@ nav:
         - Blender Python Path: zpy/install/blender_python_path.md
     - Video Tutorials:
         - Script Templates: zpy/tutorials/template.md
-        - Running Sim: zpy/tutorials/sim.md
+        - Running a Sim: zpy/tutorials/sim.md
         - Segmentation Images: zpy/tutorials/segmentation.md
         - Depth Images: zpy/tutorials/depth.md
         - Jittering Object Pose: zpy/tutorials/jitterpose.md
