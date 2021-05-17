@@ -7,9 +7,9 @@ If you are new we recommend [Part 1 of this tutorial](https://github.com/ZumoLab
 - Object jittering
 - Depth images
 
-## Github
+## Code
 
-[Suzanne: Part 2](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_2)
+The code for this example can be found [here](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne_2)
 
 ## Video
 

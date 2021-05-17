@@ -1,10 +1,3 @@
-## Articles
-
-[Training AI with CGI](https://www.zumolabs.ai/post/training-ai-with-cgi)
-
-[Patrick vs Squidward: Training Vote Detection AI with Synthetic Data](https://www.zumolabs.ai/post/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data)
-
-
 ## Papers
 
 [Using Synthetic Data to Train Neural Networks is Model-Based Reasoning](https://arxiv.org/pdf/1703.00868.pdf)
@@ -25,6 +18,8 @@
 
 [Learning from Simulated and Unsupervised Images through Adversarial Training](https://arxiv.org/pdf/1612.07828.pdf)
 
-## Case Studies
+## Blogs
 
-Coming Soon
+[Synthetic Data is Dynamic Data](https://www.zumolabs.ai/post/five-big-problems-with-labeled-data)
+
+[Patrick vs Squidward: Training Vote Detection AI with Synthetic Data](https://www.zumolabs.ai/post/patrick-vs-squidward-training-vote-detection-ai-with-synthetic-data)

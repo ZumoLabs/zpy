@@ -6,9 +6,9 @@ Welcome to the first `zpy` tutorial! In this tutorial we will introduce the foll
 - Script the sim with python and zpy
 - Generate synthetic data
 
-## Github
+## Code
 
-[Suzanne: Part 1](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne)
+The code for this example can be found [here](https://github.com/ZumoLabs/zpy/tree/main/examples/suzanne)
 
 ## Video
 
