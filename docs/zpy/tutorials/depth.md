@@ -1,6 +1,6 @@
 # Saving Depth Images
 
-
+Depth images are single-channel images that indicate how far each pixel is from the camera.
 
 ## Video
 

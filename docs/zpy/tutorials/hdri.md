@@ -1,6 +1,6 @@
 # Random HDRI Backgrounds
 
-
+An HDRI is an asset which contains an image (360 sphere) along with lighting information. These are used as backgrounds in sims.
 
 ## Video
 

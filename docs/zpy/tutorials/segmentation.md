@@ -1,6 +1,6 @@
 # Save Segmentation Images
 
-
+Segmentation images mask out different objects in the image such that neural networks can train on the image.
 
 ## Video
 

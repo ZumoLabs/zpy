@@ -1,6 +1,6 @@
 # Using Script Templates
 
-
+Script templates in Blender are an easy way to start writing your script without having to write boiler plate. 
 
 ## Video
 

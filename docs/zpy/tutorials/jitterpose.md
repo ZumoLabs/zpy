@@ -1,6 +1,6 @@
 # Jittering Object Pose
 
-
+Object pose is the position and rotation of an object in 3D space. Jittering object pose is the process of procedurally randomizing the position of an object (or set of objects) during runtime.
 
 ## Video
 

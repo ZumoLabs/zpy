@@ -1,6 +1,6 @@
 # Run a Sim
 
-
+Running a simulation can be done inside the Blender UI by clicking the zpy_addon panel button or Blender's "script run" button.
 
 ## Video
 

@@ -1,6 +1,6 @@
 # Jittering Materials
 
-
+Materials are properties of 3D assets that determine their appearance when rendered. Jittering materials is the process of procedurally randomizing materials during runtime.
 
 ## Video
 

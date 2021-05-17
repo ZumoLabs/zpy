@@ -1,13 +1,7 @@
 # Abstract
 
-`zpy` is a python package that makes synthetic data easy, by simplifying the simulation (sim) creation process. The `zpy` module contains multiple pieces:
+`zpy` is a python package that makes synthetic data easy, by simplifying the process of creating simulations, or [sims](https://zumolabs.github.io/zpy/zpy/tutorials/what_is_a_sim/). The `zpy` module contains multiple pieces:
 
-- [Blender Addon](https://zumolabs.github.io/zpy/addon/about/)
-- [CLI](https://zumolabs.github.io/zpy/cli/about/)
-
-## How-To
-
-1. In order to create a sim you collect 3D assets and then import them into blender
-2. Using the zpy blender addon you can segment objects within the scene
-3. Use the zpy python dsl you can apply randomization and specify the output of the sim
-4. Using the blender addon you can then export the scene
+- A [Blender Addon](https://zumolabs.github.io/zpy/addon/about/) for creating and debugging [sims](https://zumolabs.github.io/zpy/zpy/tutorials/what_is_a_sim/) inside the Blender UI.
+- A [CLI](https://zumolabs.github.io/zpy/cli/about/) for things like uploading [sims](https://zumolabs.github.io/zpy/zpy/tutorials/what_is_a_sim/) and generating datasets.
+- A [WebApp](https://zumolabs.github.io/zpy/app/about/) for a GUI version of the API and CLI.
