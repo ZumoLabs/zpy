@@ -11,5 +11,5 @@
 ```zpy upload dataset <name> /path/to/dataset```
 
 <p align="center">
-<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/uploaddataset.gif?raw=true"/>
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/uploaddataset.svg?raw=true"/>
 </p>

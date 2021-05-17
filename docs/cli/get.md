@@ -3,7 +3,7 @@
 ```zpy get dataset <name> <dataset_type> /output/directory```
 
 <p align="center">
-<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/getdataset.gif?raw=true"/>
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/getdataset.svg?raw=true"/>
 </p>
 
 #### Download Sim
