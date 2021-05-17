@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/zl_tile_logo.png" width="100px">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/assets/zl_tile_logo.png" width="100px">
 
 **`zpy`: Synthetic data in Blender.**
 
@@ -50,7 +50,7 @@ Note that [Blender has it's own python](https://github.com/ZumoLabs/zpy/tree/mai
 
 Once you have installed the `zpy` module into Blender's python, download the latest [zip](https://github.com/ZumoLabs/zpy/releases) (you want the one called `zpy_addon-v*.zip`). Then open up Blender. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there.
 
-![Enabling the addon](https://github.com/ZumoLabs/zpy/raw/main/docs/install_zpy.png)
+![Enabling the addon](https://github.com/ZumoLabs/zpy/raw/main/docs/assets/install_zpy.png)
 
 ### Install: Linux: Using Install Script <a name="installscript_linux"></a>
 
