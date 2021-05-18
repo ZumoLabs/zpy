@@ -1,3 +1,1 @@
-## What is Synthetic Data?
-
 Synthetic data is data that is *created* as opposed to *collected*. Synthetic data can be used in any of the flavors of Machine Learning.

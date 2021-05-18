@@ -1,4 +1,4 @@
-# Using Install Script
+# Install using script
 
 We provide a install script for linux-subsystems (macos/linux).
 

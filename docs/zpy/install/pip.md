@@ -1,4 +1,4 @@
-# Install Using pip
+# Install using pip
 
 You can install `zpy` with pip:
 

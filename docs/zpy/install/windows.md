@@ -1,4 +1,4 @@
-# Install: Windows: Developer Environment
+# Install Developer Environment on Windows
 
 These instructions use GitBash terminal, make sure to run as administrator!
 

@@ -1,4 +1,4 @@
-# Install Linux Developer Environment
+# Install Developer Environment on Linux
 
 First clone the zpy repository:
 
