@@ -565,7 +565,7 @@ _SAVED_POSES = {}
 
 def save_pose(
     obj: Union[bpy.types.Object, str],
-    pose_name: str,
+    pose_name: str = None,
 ) -> None:
     """Save a pose (rot and pos) to dict.
 
@@ -575,12 +575,14 @@ def save_pose(
     """
     obj = verify(obj)
     log.info(f"Saving pose {pose_name} based on object {obj.name}")
+    if pose_name is None:
+        pose_name = obj.name
     _SAVED_POSES[pose_name] = obj.matrix_world.copy()
 
 
 def restore_pose(
     obj: Union[bpy.types.Object, str],
-    pose_name: str,
+    pose_name: str = None,
 ) -> None:
     """Restore an object to a position.
 
@@ -590,16 +592,22 @@ def restore_pose(
     """
     obj = verify(obj)
     log.info(f"Restoring pose {pose_name} to object {obj.name}")
+    if pose_name is None:
+        pose_name = obj.name
     obj.matrix_world = _SAVED_POSES[pose_name]
 
 
 def lighting_randomize(
     energy_jitter: bool = True,
     jitter: bool = True,
+    energy_range_sun: Tuple[int] = (1, 20),
+    energy_range_point: Tuple[int] = (100, 500),
 ) -> None:
     """Randomizes Lighting.
     Args:
         energy_jitter: bool: Whether to jitter the lighting intensity for lights in scene. Defaults to True
+        energy_range_sun: Tuple[int]: Range for intensity for SUN lights in scene.
+        energy_range_point: Tuple[int]: Range for intensity for POINT, SPOT, and AREA lights in scene.
     """
     # check if lights are in the scene, if not log error
     for obj in bpy.context.scene.objects:
@@ -613,11 +621,13 @@ def lighting_randomize(
         if obj.type == "POINT" or obj.type == "SPOT" or obj.type == "AREA":
             bpy.data.objects[obj.name].hide_render = bool(random.randint(0, 1))
             if energy_jitter:
-                bpy.data.objects[obj.name].data.energy = random.randint(100, 500)
+                bpy.data.objects[obj.name].data.energy = random.randint(
+                    *energy_range_point)
         if obj.type == "SUN":
             bpy.data.objects[obj.name].hide_render = bool(random.randint(0, 1))
             if energy_jitter:
-                bpy.data.objects[obj.name].data.energy = random.randint(1, 20)
+                bpy.data.objects[obj.name].data.energy = random.randint(
+                    *energy_range_sun)
             # bpy.data.scenes["Scene"].world.use_nodes = True
         if jitter:
             zpy.objects.jitter(
