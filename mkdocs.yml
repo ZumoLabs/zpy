@@ -36,6 +36,7 @@ nav:
     - Synthetic Data 101:
       - What is it?: overview/what.md
       - Why use it?: overview/why.md
+      - Domain Randomization: overview/domain_randomization.md
       - Literature: overview/literature.md
     - Contribute: overview/contribute.md
     - License: overview/license.md
@@ -60,8 +61,8 @@ nav:
       - What is a Sim?: zpy/tutorials/what_is_a_sim.md
       - Running a Sim: zpy/tutorials/run_a_sim.md
       - Using Script Templates: zpy/tutorials/template.md
-      - Saving Segmentation Images: zpy/tutorials/segmentation.md
-      - Saving Depth Images: zpy/tutorials/depth.md
+      - Segmentation Images: zpy/tutorials/segmentation.md
+      - Depth Images: zpy/tutorials/depth.md
       - Jittering Object Pose: zpy/tutorials/jitterpose.md
       - Jitering Materials: zpy/tutorials/jittermat.md
       - Random HDRI Backgrounds: zpy/tutorials/hdri.md

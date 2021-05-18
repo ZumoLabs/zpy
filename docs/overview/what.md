@@ -1,3 +1,3 @@
 ## What is Synthetic Data?
 
-Synthetic data makes it easy to change the annotation style, or add an additional label which can be used as an additional training loss for the model. It also makes it easy to generate more examples of a specific edge case that may be causing issues in production. Synthetic data generation and iteration should be easy, and used in concert with adjustments to the model in order to achieve one’s goals.
+Synthetic data is data that is *created* as opposed to *collected*. Synthetic data can be used in any of the flavors of Machine Learning.
