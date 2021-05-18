@@ -1,0 +1,86 @@
+site_name: Zumo Labs Documentation
+site_description: 'Create, Generate, and Iterate Synthetic Data.'
+site_url: 'https://zpy.github.io/'
+repo_name: 'zumolabs/zpy'
+repo_url: 'https://github.com/ZumoLabs/zpy'
+copyright: 'Copyright &copy; 2021 Zumo Labs'
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - tabs
+    - instant
+  palette:
+    primary: light blue
+    accent: orange
+  font: 
+    text: Fira Mono
+  logo: assets/logo.png
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+      options:
+        custom_icons:
+          - site/overrides/.icons
+
+nav:
+  - Home:
+    - About: index.md
+    - Synthetic Data 101:
+      - What is it?: overview/what.md
+      - Why use it?: overview/why.md
+      - Domain Randomization: overview/domain_randomization.md
+      - Literature: overview/literature.md
+    - Contribute: overview/contribute.md
+    - License: overview/license.md
+    - Citation: overview/citation.md
+    - Code of Conduct: overview/code_of_conduct.md
+  - Zpy:
+    - About: zpy/about.md
+    - Install:
+        - pip: zpy/install/pip.md
+        - script: zpy/install/script.md
+        - Linux developer: zpy/install/linux.md
+        - Windows developer: zpy/install/windows.md
+        - Blender Python Path: zpy/install/blender_python_path.md
+    - Examples:
+      - Package Sim: zpy/example/package.md
+      - RPI Sim: zpy/example/rpi.md
+      - Suzanne Code-Along:
+        - Part 1: zpy/example/part1.md
+        - Part 2: zpy/example/part2.md
+        - Part 3: zpy/example/part3.md
+    - Guides:
+      - What is a Sim?: zpy/tutorials/what_is_a_sim.md
+      - Running a Sim: zpy/tutorials/run_a_sim.md
+      - Using Script Templates: zpy/tutorials/template.md
+      - Segmentation Images: zpy/tutorials/segmentation.md
+      - Depth Images: zpy/tutorials/depth.md
+      - Jittering Object Pose: zpy/tutorials/jitterpose.md
+      - Jitering Materials: zpy/tutorials/jittermat.md
+      - Random HDRI Backgrounds: zpy/tutorials/hdri.md
+  - CLI:
+    - About: cli/about.md
+    - zpy login: cli/login.md
+    - zpy list: cli/list.md
+    - zpy get: cli/get.md
+    - zpy upload: cli/upload.md
+    - zpy create: cli/create.md
+    - zpy logs: cli/logs.md
+  - Web App:
+    - About: app/about.md
+    - Create an Account: app/create_an_account.md
+  - Blender Addon:
+    - About: addon/about.md
+    - Install: addon/install.md
+  - Releases:
+    - v1.3: releases/1.3-NOTES.md
+    - v1.2: releases/1.2-NOTES.md
+    - v1.1: releases/1.1-NOTES.md

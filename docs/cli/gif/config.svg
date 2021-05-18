@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="terminal" baseProfile="full" viewBox="0 0 960 172" width="960" version="1.1">
+    <defs>
+        <termtosvg:template_settings xmlns:termtosvg="https://github.com/nbedos/termtosvg">
+            <termtosvg:screen_geometry columns="120" rows="10"/>
+            <termtosvg:animation type="css"/>
+        </termtosvg:template_settings>
+        <style type="text/css" id="generated-style"><![CDATA[#screen {
+                font-family: 'DejaVu Sans Mono', monospace;
+                font-style: normal;
+                font-size: 14px;
+            }
+
+        text {
+            dominant-baseline: text-before-edge;
+            white-space: pre;
+        }
+    
+            :root {
+                --animation-duration: 10536ms;
+            }
+
+            @keyframes roll {
+                0.000%{transform:translateY(0px)}
+0.019%{transform:translateY(-204px)}
+0.057%{transform:translateY(-408px)}
+11.076%{transform:translateY(-612px)}
+18.641%{transform:translateY(-816px)}
+22.950%{transform:translateY(-1020px)}
+26.310%{transform:translateY(-1224px)}
+29.964%{transform:translateY(-1428px)}
+32.432%{transform:translateY(-1632px)}
+35.792%{transform:translateY(-1836px)}
+39.057%{transform:translateY(-2040px)}
+41.306%{transform:translateY(-2244px)}
+44.068%{transform:translateY(-2448px)}
+54.897%{transform:translateY(-2652px)}
+54.916%{transform:translateY(-2856px)}
+54.945%{transform:translateY(-3060px)}
+66.619%{transform:translateY(-3264px)}
+68.195%{transform:translateY(-3468px)}
+68.261%{transform:translateY(-3672px)}
+68.309%{transform:translateY(-3876px)}
+90.509%{transform:translateY(-4080px)}
+100.000%{transform:translateY(-4080px)}
+            }
+
+            #screen_view {
+                animation-duration: 10536ms;
+                animation-iteration-count:infinite;
+                animation-name:roll;
+                animation-timing-function: steps(1,end);
+                animation-fill-mode: forwards;
+            }
+        ]]></style>
+        <style type="text/css" id="user-style">
+            /* The colors defined below are the default 16 colors used for rendering text of the terminal. Adjust
+               them as needed.
+               PowerShell colors based on https://en.wikipedia.org/wiki/ANSI_escape_code#Colors */
+            .foreground {fill: #cccccc;}
+            .background {fill: #0c0c0c;}
+            .color0 {fill: #0c0c0c;}
+            .color1 {fill: #c50f1f;}
+            .color2 {fill: #13a10e;}
+            .color3 {fill: #c19c00;}
+            .color4 {fill: #0037da;}
+            .color5 {fill: #881798;}
+            .color6 {fill: #3a96dd;}
+            .color7 {fill: #cccccc;}
+            .color8 {fill: #767676;}
+            .color9 {fill: #e74856;}
+            .color10 {fill: #16c60c;}
+            .color11 {fill: #f9f1a5;}
+            .color12 {fill: #3b78ff;}
+            .color13 {fill: #b4009e;}
+            .color14 {fill: #61d6d6;}
+            .color15 {fill: #f2f2f2;}
+        </style>
+    </defs>
+    <svg id="screen" width="960" height="170" viewBox="0 0 960 170" preserveAspectRatio="xMidYMin slice">
+    <rect class="background" height="100%" width="100%" x="0" y="0"/><defs><g id="g1"><text x="0" textLength="8" class="background"> </text><text x="8" textLength="952" class="foreground">                                                                                                                       </text></g><g id="g2"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="8" class="foreground"> </text><text x="64" textLength="8" class="background"> </text><text x="72" textLength="888" class="foreground">                                                                                                               </text></g><g id="g3"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="8" class="foreground"> </text><text x="64" textLength="8" class="background"> </text><text x="72" textLength="816" class="foreground">                                                                                                      </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g4"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="16" class="foreground"> z</text><text x="72" textLength="8" class="background"> </text><text x="80" textLength="808" class="foreground">                                                                                                     </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g5"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="24" class="foreground"> zp</text><text x="80" textLength="8" class="background"> </text><text x="88" textLength="800" class="foreground">                                                                                                    </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g6"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="32" class="foreground"> zpy</text><text x="88" textLength="8" class="background"> </text><text x="96" textLength="792" class="foreground">                                                                                                   </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g7"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="40" class="foreground"> zpy </text><text x="96" textLength="8" class="background"> </text><text x="104" textLength="784" class="foreground">                                                                                                  </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g8"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="48" class="foreground"> zpy c</text><text x="104" textLength="8" class="background"> </text><text x="112" textLength="776" class="foreground">                                                                                                 </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g9"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="56" class="foreground"> zpy co</text><text x="112" textLength="8" class="background"> </text><text x="120" textLength="768" class="foreground">                                                                                                </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g10"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="64" class="foreground"> zpy con</text><text x="120" textLength="8" class="background"> </text><text x="128" textLength="760" class="foreground">                                                                                               </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g11"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="72" class="foreground"> zpy conf</text><text x="128" textLength="8" class="background"> </text><text x="136" textLength="752" class="foreground">                                                                                              </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g12"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="80" class="foreground"> zpy confi</text><text x="136" textLength="8" class="background"> </text><text x="144" textLength="744" class="foreground">                                                                                             </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g13"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="88" class="foreground"> zpy config</text><text x="144" textLength="8" class="background"> </text><text x="152" textLength="736" class="foreground">                                                                                            </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g14"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="832" class="foreground"> zpy config                                                                                             </text><text x="888" textLength="64" class="color2">10:58:57</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g15"><text x="0" textLength="8" class="background"> </text></g><g id="g16"><text x="0" textLength="176" class="foreground">Zpy cli configuration:</text></g><g id="g17"><text x="0" textLength="8" class="foreground">{</text></g><g id="g18"><text x="0" textLength="408" class="foreground">  "ENDPOINT": "https://ragnarok.stage.zumok8s.org",</text></g><g id="g19"><text x="0" textLength="200" class="foreground">  "ENVIRONMENT": "stage",</text></g><g id="g20"><text x="0" textLength="616" class="foreground">  "TOKEN": "b91601310a3399a333f6fcaf1a79eb3a4009ec28e3c1f35b4857c6d87472e0fc"</text></g><g id="g21"><text x="0" textLength="8" class="foreground">}</text></g><g id="g22"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="8" class="foreground"> </text><text x="64" textLength="8" class="background"> </text><text x="72" textLength="816" class="foreground">                                                                                                      </text><text x="888" textLength="64" class="color2">10:59:04</text><text x="952" textLength="8" class="foreground"> </text></g><g id="g23"><text x="0" textLength="24" font-weight="bold" class="color10">&#10140;  </text><text x="24" textLength="32" font-weight="bold" class="color14">demo</text><text x="56" textLength="832" class="foreground">                                                                                                        </text><text x="888" textLength="64" class="color2">10:59:04</text><text x="952" textLength="8" class="foreground"> </text></g></defs><g id="screen_view"><g><rect x="0" y="0" width="8" height="17" class="foreground"/><use xlink:href="#g1" y="0"/></g><g><rect x="64" y="204" width="8" height="17" class="foreground"/><use xlink:href="#g2" y="204"/></g><g><rect x="64" y="408" width="8" height="17" class="foreground"/><use xlink:href="#g3" y="408"/></g><g><rect x="72" y="612" width="8" height="17" class="foreground"/><use xlink:href="#g4" y="612"/></g><g><rect x="80" y="816" width="8" height="17" class="foreground"/><use xlink:href="#g5" y="816"/></g><g><rect x="88" y="1020" width="8" height="17" class="foreground"/><use xlink:href="#g6" y="1020"/></g><g><rect x="96" y="1224" width="8" height="17" class="foreground"/><use xlink:href="#g7" y="1224"/></g><g><rect x="104" y="1428" width="8" height="17" class="foreground"/><use xlink:href="#g8" y="1428"/></g><g><rect x="112" y="1632" width="8" height="17" class="foreground"/><use xlink:href="#g9" y="1632"/></g><g><rect x="120" y="1836" width="8" height="17" class="foreground"/><use xlink:href="#g10" y="1836"/></g><g><rect x="128" y="2040" width="8" height="17" class="foreground"/><use xlink:href="#g11" y="2040"/></g><g><rect x="136" y="2244" width="8" height="17" class="foreground"/><use xlink:href="#g12" y="2244"/></g><g><rect x="144" y="2448" width="8" height="17" class="foreground"/><use xlink:href="#g13" y="2448"/></g><g><rect x="144" y="2652" width="8" height="17" class="foreground"/><use xlink:href="#g13" y="2652"/></g><g><use xlink:href="#g14" y="2856"/><rect x="0" y="2873" width="8" height="17" class="foreground"/><use xlink:href="#g15" y="2873"/></g><g><use xlink:href="#g14" y="3060"/><rect x="0" y="3077" width="8" height="17" class="foreground"/><use xlink:href="#g15" y="3077"/></g><g><use xlink:href="#g14" y="3264"/><use xlink:href="#g16" y="3281"/><use xlink:href="#g17" y="3298"/><use xlink:href="#g18" y="3315"/><use xlink:href="#g19" y="3332"/><use xlink:href="#g20" y="3349"/><use xlink:href="#g21" y="3366"/><rect x="0" y="3383" width="8" height="17" class="foreground"/><use xlink:href="#g15" y="3383"/></g><g><use xlink:href="#g14" y="3468"/><use xlink:href="#g16" y="3485"/><use xlink:href="#g17" y="3502"/><use xlink:href="#g18" y="3519"/><use xlink:href="#g19" y="3536"/><use xlink:href="#g20" y="3553"/><use xlink:href="#g21" y="3570"/><rect x="0" y="3587" width="8" height="17" class="foreground"/><use xlink:href="#g1" y="3587"/></g><g><use xlink:href="#g14" y="3672"/><use xlink:href="#g16" y="3689"/><use xlink:href="#g17" y="3706"/><use xlink:href="#g18" y="3723"/><use xlink:href="#g19" y="3740"/><use xlink:href="#g20" y="3757"/><use xlink:href="#g21" y="3774"/><rect x="0" y="3791" width="8" height="17" class="foreground"/><use xlink:href="#g1" y="3791"/></g><g><use xlink:href="#g14" y="3876"/><use xlink:href="#g16" y="3893"/><use xlink:href="#g17" y="3910"/><use xlink:href="#g18" y="3927"/><use xlink:href="#g19" y="3944"/><use xlink:href="#g20" y="3961"/><use xlink:href="#g21" y="3978"/><rect x="64" y="3995" width="8" height="17" class="foreground"/><use xlink:href="#g22" y="3995"/></g><g><use xlink:href="#g14" y="4080"/><use xlink:href="#g16" y="4097"/><use xlink:href="#g17" y="4114"/><use xlink:href="#g18" y="4131"/><use xlink:href="#g19" y="4148"/><use xlink:href="#g20" y="4165"/><use xlink:href="#g21" y="4182"/><use xlink:href="#g23" y="4199"/><rect x="0" y="4216" width="8" height="17" class="foreground"/><use xlink:href="#g15" y="4216"/></g></g></svg>
+</svg>
