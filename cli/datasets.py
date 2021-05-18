@@ -34,6 +34,27 @@ def filter_datasets(dfilter, url, auth_headers):
 
 
 @fetch_auth
+def fetch_dataset(name, url, auth_headers):
+    """fetch dataset
+
+    Fetch info on a dataset by name from backend.
+
+    Args:
+        name (str): name of dataset
+        url (str): backend endpoint
+        auth_headers: authentication for backend
+    """
+    endpoint = f"{url}/api/v1/datasets/"
+    r = requests.get(endpoint, params={"name": name}, headers=auth_headers)
+    if r.status_code != 200:
+        r.raise_for_status()
+    response = json.loads(r.text)
+    if response["count"] != 1:
+        raise NameError(f"found {response['count']} datasets for name {name}")
+    return response["results"][0]
+
+
+@fetch_auth
 def create_dataset(name, files, url, auth_headers):
     """create dataset
 
@@ -74,21 +95,9 @@ def generate_dataset(dataset_name, sim_name, count, config, url, auth_headers):
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
-    endpoint = f"{url}/api/v1/datasets/"
-    r = requests.get(endpoint, params={"name": dataset_name}, headers=auth_headers)
-    if r.status_code != 200:
-        r.raise_for_status()
-    response = json.loads(r.text)
-    if response["count"] != 1:
-        raise NameError(f"found {response['count']} datasets for name {dataset_name}")
-    dataset = response["results"][0]
-    endpoint = f"{url}/api/v1/sims/"
-    r = requests.get(endpoint, params={"name": sim_name}, headers=auth_headers)
-    if r.status_code != 200:
-        r.raise_for_status()
-    response = json.loads(r.text)
-    if response["count"] != 1:
-        raise NameError(f"found {response['count']} sims for name {sim_name}")
+    from cli.sims import fetch_sim
+    dataset = fetch_dataset(dataset_name)
+    fetch_sim(sim_name)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/generate/"
     data = {
         "sim": sim_name,
@@ -105,7 +114,7 @@ def generate_dataset(dataset_name, sim_name, count, config, url, auth_headers):
         
 
 @fetch_auth
-def download_dataset(name, path, dataset_type, url, auth_headers):
+def download_dataset(name, path, style, url, auth_headers):
     """download dataset
 
     Download dataset object from S3 through ZumoLabs backend.
@@ -113,25 +122,18 @@ def download_dataset(name, path, dataset_type, url, auth_headers):
     Args:
         name (str): name of dataset to download
         path (str): output directory
-        dataset_type (str): type of dataset to download
+        style (str): type of packaged version to download
         url (str): backend endpoint
         auth_headers: authentication for backend
 
     Returns:
         str: output file path
     """
-    endpoint = f"{url}/api/v1/{dataset_type}-data-sets/"
-    r = requests.get(endpoint, params={"name": name}, headers=auth_headers)
-    if r.status_code != 200:
-        r.raise_for_status()
-    response = json.loads(r.text)
-    if response["count"] != 1:
-        raise NameError(f"found {response['count']} datasets for name {name}")
-    dataset = response["results"][0]
+    dataset = fetch_dataset(name)
     endpoint = (
-        f"{url}/api/v1/{dataset['dataset_type']}-data-sets/{dataset['id']}/download"
+        f"{url}/api/v1/datasets/{dataset['id']}/download/"
     )
-    r = requests.get(endpoint, headers=auth_headers)
+    r = requests.get(endpoint, params={"type": style}, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
     response = json.loads(r.text)

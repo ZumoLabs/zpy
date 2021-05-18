@@ -205,27 +205,26 @@ def get():
 
 @get.command("dataset")
 @click.argument("name")
-@click.argument("dtype", type=click.Choice(["job", "generated", "uploaded"]))
 @click.argument(
     "path",
     type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
 )
-def get_dataset(name, dtype, path):
+@click.argument("style", default="simple")
+def get_dataset(name, path, style):
     """get dataset
 
     Download dataset from backend.
 
     Args:
         name (str): name of dataset
-        dtype (str): type of dataset
         path (str): directory to put zipped dataset
+        style (str): format for packaging
     """
-    # TODO: FIX THIS
     from cli.datasets import download_dataset
 
     try:
-        output_path = download_dataset(name, path, dtype)
-        click.echo(f"Downloaded {dtype} dataset '{name}' to {output_path}")
+        output_path = download_dataset(name, path, style)
+        click.echo(f"Downloaded dataset '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to download dataset: {e}", fg="red", err=True)
     except NameError as e:
@@ -338,7 +337,6 @@ def create_dataset(name, sim, number, args):
         number (str): number of datasets to create
         args (List(str)): configuration of sim for this dataset
     """
-    # TODO: hit the sim create endpoint
     from cli.datasets import create_dataset, generate_dataset
     
     try:
@@ -352,7 +350,7 @@ def create_dataset(name, sim, number, args):
         click.secho(f"Created dataset '{name}'", fg="green")
         generate_dataset(name, sim, number, parse_args(args))
         click.secho(
-            f"Generating data from sim '{sim}' with config {dataset_config}",
+            f"Generating {number} from sim '{sim}' with config {dataset_config}",
             fg="green",
         )
     except requests.exceptions.HTTPError as e:
