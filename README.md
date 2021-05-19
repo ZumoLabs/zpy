@@ -24,10 +24,10 @@ Check out our full [**documentation** :bookmark_tabs:](https://zumolabs.github.i
 
 ## What's New? :rocket:
 
-- (05/17/21) A new template sim :package:`package`:package: is available, [check it out](https://zumolabs.github.io/zpy/).
+- (05/17/21) A new template sim :package:`package`:package: is available, [check it out](https://zumolabs.github.io/zpy/zpy/example/package/).
 - (05/14/21) Check out our new [documentation](https://zumolabs.github.io/zpy/)
 
-## Install [:thinking:](https://zumolabs.github.io/zpy/install/pip.md)
+## Install [:thinking:](https://zumolabs.github.io/zpy/zpy/install/pip/)
 
 You can install `zpy` with pip:
 
@@ -43,15 +43,15 @@ More installation instructions can be found in the docs:
 - [Developer mode **(Linux)**](https://zumolabs.github.io/zpy/zpy/install/linux/)
 - [Developer mode **(Windows)**](https://zumolabs.github.io/zpy/zpy/install/windows/)
 
-## Contribute [:busts_in_silhouette:](https://github.com/ZumoLabs/zpy/raw/main/docs/overview/contribute.md)
+## Contribute [:busts_in_silhouette:](https://zumolabs.github.io/zpy/overview/contribute/)
 
 We welcome community contributions! Search through the [current issues](https://github.com/ZumoLabs/zpy/issues) or open your own.
 
-## License [:page_facing_up:](https://github.com/ZumoLabs/zpy/raw/main/docs/overview/license.md)
+## License [:page_facing_up:](https://zumolabs.github.io/zpy/overview/license/)
 
 This release of zpy is under the GPLv3 license, a free copyleft license used by Blender. TLDR: Its free, use it!
 
-## Citation [:writing_hand:](https://github.com/ZumoLabs/zpy/raw/main/docs/overview/citation.md)
+## Citation [:writing_hand:](https://zumolabs.github.io/zpy/overview/citation/)
 
 If you use `zpy` in your research, we would appreciate the citation!
 
