@@ -1,6 +1,6 @@
 # Install the Blender Addon
 
-Once you have installed the `zpy` module into Blender's python, download the latest [zip](https://github.com/ZumoLabs/zpy/releases) (you want the one called `zpy_addon-v*.zip`). Then open up Blender. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there.
+Once you have installed the `zpy` module into [Blender's python](https://zumolabs.github.io/zpy/zpy/install/blender_python_path/), download the latest [zip](https://github.com/ZumoLabs/zpy/releases) (you want the one called `zpy_addon-v*.zip`). Then open up Blender. Navigate to `Edit` -> `Preferences` -> `Add-ons`. You should be able to install and enable the addon from there.
 
 ![Enabling the addon](https://github.com/ZumoLabs/zpy/raw/main/docs/assets/install_zpy.png)
 
