@@ -7,7 +7,7 @@
 - Debug Locally:
     - [Run simulations locally](https://zumolabs.github.io/zpy/zpy/tutorials/run_a_sim/) for debugging.
     - Render a single frame from a [sim](https://zumolabs.github.io/zpy/zpy/tutorials/what_is_a_sim/).
-- Segmenting: 
+- [Segmenting](https://zumolabs.github.io/zpy/zpy/tutorials/segmentation/): 
     - Individual objects or groups of objects as single instances or categories.
     - Import categories from `.txt` or `.json`.
 - Scripting:
