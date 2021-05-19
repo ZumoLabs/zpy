@@ -209,8 +209,8 @@ def get():
     "path",
     type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
 )
-@click.argument("style", default="simple")
-def get_dataset(name, path, style):
+@click.argument("format", default="archive")
+def get_dataset(name, path, format):
     """get dataset
 
     Download dataset from backend.
@@ -218,12 +218,12 @@ def get_dataset(name, path, style):
     Args:
         name (str): name of dataset
         path (str): directory to put zipped dataset
-        style (str): format for packaging
+        format (str): format for packaging
     """
     from cli.datasets import download_dataset
-
+    print (format)
     try:
-        output_path = download_dataset(name, path, style)
+        output_path = download_dataset(name, path, format)
         click.echo(f"Downloaded dataset '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to download dataset: {e}", fg="red", err=True)
