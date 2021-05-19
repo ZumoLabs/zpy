@@ -43,6 +43,7 @@ def generate_dataset(dataset_name, sim_name, count, config, url, auth_headers):
         auth_headers: authentication for backend
     """
     from cli.sims import fetch_sim
+
     dataset = fetch_dataset(dataset_name)
     fetch_sim(sim_name)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/generate/"
@@ -73,9 +74,7 @@ def download_dataset(name, path, format, url, auth_headers):
         str: output file path
     """
     dataset = fetch_dataset(name)
-    endpoint = (
-        f"{url}/api/v1/datasets/{dataset['id']}/download/"
-    )
+    endpoint = f"{url}/api/v1/datasets/{dataset['id']}/download/"
     r = requests.get(endpoint, params={"format": format}, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()

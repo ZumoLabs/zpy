@@ -221,7 +221,8 @@ def get_dataset(name, path, format):
         format (str): format for packaging
     """
     from cli.datasets import download_dataset
-    print (format)
+
+    print(format)
     try:
         output_path = download_dataset(name, path, format)
         click.echo(f"Downloaded dataset '{name}' to {output_path}")
