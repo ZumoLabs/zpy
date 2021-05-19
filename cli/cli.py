@@ -338,7 +338,7 @@ def create_dataset(name, sim, number, args):
         args (List(str)): configuration of sim for this dataset
     """
     from cli.datasets import create_dataset, generate_dataset
-    
+
     try:
         dataset_config = parse_args(args)
     except Exception:

@@ -17,10 +17,7 @@ def create_dataset(name, files, url, auth_headers):
         auth_headers: authentication for backend
     """
     endpoint = f"{url}/api/v1/datasets/"
-    data = {
-        "name": name,
-        "files": files
-    }
+    data = {"name": name, "files": files}
     r = requests.post(
         endpoint,
         data=data,
@@ -49,11 +46,7 @@ def generate_dataset(dataset_name, sim_name, count, config, url, auth_headers):
     dataset = fetch_dataset(dataset_name)
     fetch_sim(sim_name)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/generate/"
-    data = {
-        "sim": sim_name,
-        "amount": count,
-        "config": json.dumps(config)
-    }
+    data = {"sim": sim_name, "amount": count, "config": json.dumps(config)}
     r = requests.post(
         endpoint,
         data=data,
@@ -61,7 +54,7 @@ def generate_dataset(dataset_name, sim_name, count, config, url, auth_headers):
     )
     if r.status_code != 200:
         r.raise_for_status()
-        
+
 
 @fetch_auth
 def download_dataset(name, path, format, url, auth_headers):
