@@ -338,7 +338,7 @@ def create_dataset(name, sim, number, args):
         number (str): number of datasets to create
         args (List(str)): configuration of sim for this dataset
     """
-    from cli.datasets import create_dataset, generate_dataset
+    from cli.datasets import create_dataset, generate_dataset, package_dataset
 
     try:
         dataset_config = parse_args(args)
@@ -355,6 +355,7 @@ def create_dataset(name, sim, number, args):
             fg="green",
         )
     except requests.exceptions.HTTPError as e:
+        package_dataset(name)
         click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
