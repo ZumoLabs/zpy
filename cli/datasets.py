@@ -29,8 +29,7 @@ def create_dataset(name, files, url, auth_headers):
 
 @fetch_auth
 def package_dataset(name, url, auth_headers):
-    """
-    """
+    """ """
     dataset = fetch_dataset(name)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/package/"
     r = requests.post(endpoint, data={"format": "archive"}, headers=auth_headers)
