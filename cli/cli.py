@@ -136,9 +136,9 @@ def list_datasets():
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="name", default_colwidth=30)
+    tbl = TableLogger(columns="name,packaged", default_colwidth=30)
     for d in datasets:
-        tbl(d["name"])
+        tbl(d["name"], d["formats"])
 
 
 @list.command("sims")
@@ -338,7 +338,7 @@ def create_dataset(name, sim, number, args):
         number (str): number of datasets to create
         args (List(str)): configuration of sim for this dataset
     """
-    from cli.datasets import create_dataset, generate_dataset, package_dataset
+    from cli.datasets import create_dataset, generate_dataset
 
     try:
         dataset_config = parse_args(args)
@@ -355,7 +355,6 @@ def create_dataset(name, sim, number, args):
             fg="green",
         )
     except requests.exceptions.HTTPError as e:
-        package_dataset(name)
         click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
@@ -500,3 +499,38 @@ def logs_job(name, path):
         click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
+
+
+# ------- LOGS
+
+
+@cli.group()
+def format():
+    """format
+
+    Format group is used for formatting of objects.
+    """
+    pass
+
+
+@format.command("dataset")
+@click.argument("name")
+@click.argument("format", default="archive")
+def format_dataset(name, format): 
+    """format dataset
+
+    Format a dataset.
+
+    Args:
+        name (str): name of dataset to format
+        format (str): output format
+    """
+    from cli.datasets import package_dataset
+
+    try:
+        package_dataset(name, format)
+        click.echo(f"Creating {format} for dataset '{name}'.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to format dataset: {e}", fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to format dataset: {e}", fg="yellow", err=True)

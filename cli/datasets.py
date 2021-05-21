@@ -28,12 +28,12 @@ def create_dataset(name, files, url, auth_headers):
 
 
 @fetch_auth
-def package_dataset(name, url, auth_headers):
+def package_dataset(name, format, url, auth_headers):
     """
     """
     dataset = fetch_dataset(name)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/package/"
-    r = requests.post(endpoint, data={"format": "archive"}, headers=auth_headers)
+    r = requests.post(endpoint, data={"format": format}, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
 
