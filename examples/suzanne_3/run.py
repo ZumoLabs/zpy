@@ -31,9 +31,6 @@ def run():
     zpy.objects.save_pose("Camera", "cam_pose")
     zpy.objects.save_pose("Suzanne", "suzanne_pose")
 
-    # Set the asset directory (location of textures and hdris)
-    os.environ["ASSETS"] = str(Path(bpy.data.filepath).parent)
-
     # Run the sim.
     for step_idx in zpy.blender.step():
 
@@ -69,13 +66,12 @@ def run():
         # Camera should be looking at Suzanne
         zpy.camera.look_at("Camera", bpy.data.objects["Suzanne"].location)
 
-        # Pick and load a random HDRI from the 'hdri' folder (relative to blendfile)
         # HDRIs are like a pre-made background with lighting
-        zpy.hdris.random_hdri(hdri_dir="hdris")
+        zpy.hdris.random_hdri()
 
         # Pick a random texture from the 'textures' folder (relative to blendfile)
         # Textures are images that we will map onto a material
-        new_mat = zpy.material.random_texture_mat(texture_dir="textures")
+        new_mat = zpy.material.random_texture_mat()
         zpy.material.set_mat("Suzanne", new_mat)
 
         # Have to segment the new material

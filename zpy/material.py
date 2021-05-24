@@ -201,30 +201,16 @@ def random_mat(
 
 
 @gin.configurable
-def random_texture_mat(
-    texture_dir: Union[Path, str] = "lib/textures/random_512p",
-    relative_to_assets_dir: bool = True,
-) -> bpy.types.Material:
-    """Generate a random material from a directory of random texture images.
-
-    Args:
-        texture_dir (Union[Path, str], optional): Path to directory with texture images.
-        relative_to_assets_dir (bool, optional): Path is relative to the $ASSETS directory. Defaults to False.
+def random_texture_mat() -> bpy.types.Material:
+    """Generate a random material from a random texture image.
 
     Returns:
         bpy.types.Material: The newly created material.
     """
-    if relative_to_assets_dir:
-        texture_dir = zpy.blender.get_asset_lib_path().joinpath(texture_dir)
-    texture_dir = zpy.files.verify_path(texture_dir, check_dir=True)
-    # Create list of texture images in directory
-    texture_paths = []
-    for _path in texture_dir.iterdir():
-        if _path.is_file() and _path.suffix in [".jpg", ".png"]:
-            texture_paths.append(_path)
-    texture_path = random.choice(texture_paths)
-    log.info(f"Found {len(texture_paths)} Textures at {texture_dir}")
-    log.info(f"Randomly picked {texture_path.stem}")
+    texture_dir = zpy.assets.texture_dir()
+    texture_path = zpy.files.pick_random_from_dir(
+        texture_dir, suffixes=[".jpg", ".png"]
+    )
     return make_mat_from_texture(texture_path, name=texture_path.stem)
 
 
