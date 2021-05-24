@@ -622,12 +622,14 @@ def lighting_randomize(
             bpy.data.objects[obj.name].hide_render = bool(random.randint(0, 1))
             if energy_jitter:
                 bpy.data.objects[obj.name].data.energy = random.randint(
-                    *energy_range_point)
+                    *energy_range_point
+                )
         if obj.type == "SUN":
             bpy.data.objects[obj.name].hide_render = bool(random.randint(0, 1))
             if energy_jitter:
                 bpy.data.objects[obj.name].data.energy = random.randint(
-                    *energy_range_sun)
+                    *energy_range_sun
+                )
             # bpy.data.scenes["Scene"].world.use_nodes = True
         if jitter:
             zpy.objects.jitter(
