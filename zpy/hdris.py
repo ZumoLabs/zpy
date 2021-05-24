@@ -75,22 +75,9 @@ def random_hdri(
     Returns:
         Path: Path to the random HDRI.
     """
-    asset_path = zpy.blender.get_asset_lib_path()
-    if asset_path is None:
-        # Path to directory containing default Blender HDRIs (exr)
-        _path = Path(bpy.utils.resource_path('LOCAL'))
-        hdri_dir = _path / 'datafiles' / 'studiolights' / 'world'
-    else:
-        hdri_dir = asset_path / 'lib' / 'hdris' / '1k'
-    hdri_dir = zpy.files.verify_path(hdri_dir, check_dir=True)
-    # Create list of HDRIs in directory
-    hdri_paths = []
-    for _path in hdri_dir.iterdir():
-        if _path.is_file() and _path.suffix in [".exr", ".hdri", ".hdr"]:
-            hdri_paths.append(_path)
-    hdri_path = random.choice(hdri_paths)
-    log.info(f"Found {len(hdri_paths)} HDRIs at {hdri_dir}")
-    log.info(f"Randomly picked {hdri_path.stem}")
+    hdri_dir = zpy.assets.hdri_dir()
+    hdri_path = zpy.files.pick_random_from_dir(
+        hdri_dir, suffixes=[".exr", ".hdri", ".hdr"])
     if apply_to_scene:
         load_hdri(hdri_path)
     return hdri_path

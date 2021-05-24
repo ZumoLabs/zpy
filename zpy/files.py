@@ -393,6 +393,30 @@ def read_csv(path: Union[Path, str], delimiter: str = ",", **kwargs) -> List[Lis
     return data
 
 
+def pick_random_from_dir(
+    dir_path: Union[Path, str],
+    suffixes: List[str] = ['.txt'],
+) -> Path:
+    """ Pick random file of suffix in a directory.
+
+    Args:
+        dir_path (Union[Path, str]): Path to the directory containing files.
+        suffixes (List[str], optional): Filter files by these suffixes. Defaults to [].
+
+    Returns:
+        Path: Path to randomly chosen file with given suffix.
+    """
+    _paths = []
+    for _path in dir_path.iterdir():
+        if _path.is_file() and _path.suffix in suffixes:
+            _paths.append(_path)
+    _path = random.choice(_paths)
+    log.debug(
+        f"Found {len(_paths)} files with suffix {suffixes} at {dir_path}")
+    log.info(f"Randomly chose {_path}")
+    return _path
+
+
 def sample(
     things: List,
     sample_size: int = None,
@@ -487,8 +511,10 @@ def unzip_file(
     if not zip_path.suffix == ".zip":
         raise ValueError(f"{zip_path} is not a zip file")
     zf = zipfile.ZipFile(str(zip_path))
-    zipped_size_mb = round(sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)
-    unzipped_size_mb = round(sum([i.file_size for i in zf.infolist()]) / 1024 / 1024)
+    zipped_size_mb = round(
+        sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)
+    unzipped_size_mb = round(
+        sum([i.file_size for i in zf.infolist()]) / 1024 / 1024)
     log.info(f"Compressed: {zipped_size_mb}MB, actual: {unzipped_size_mb}MB.")
     zf.extractall(out_path)
     log.info(f"Done extracting to {out_path}.")
@@ -517,6 +543,8 @@ def zip_file(
     )
     log.info(f"Done zipping to {zip_path}.")
     zf = zipfile.ZipFile(str(zip_path))
-    zipped_size_mb = round(sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)
-    unzipped_size_mb = round(sum([i.file_size for i in zf.infolist()]) / 1024 / 1024)
+    zipped_size_mb = round(
+        sum([i.compress_size for i in zf.infolist()]) / 1024 / 1024)
+    unzipped_size_mb = round(
+        sum([i.file_size for i in zf.infolist()]) / 1024 / 1024)
     log.info(f"Compressed: {zipped_size_mb}MB, actual: {unzipped_size_mb}MB.")

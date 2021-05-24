@@ -235,17 +235,6 @@ def load_text_from_file(
                 area.spaces[0].text = bpy.data.texts[text_name]
 
 
-def default_script_template_dir() -> Path:
-    """Path to the script templates for zpy addon.
-
-    Returns:
-        pathlib.Path: Path to script templates for zpy addon.
-    """
-    script_path = Path(bpy.utils.script_path_user())
-    template_dir = script_path / "addons" / "zpy_addon" / "templates"
-    return zpy.files.verify_path(template_dir, check_dir=True)
-
-
 @gin.configurable
 def connect_addon(
     name: str = "zpy_addon", addon_dir: Union[Path, str] = "$BLENDERADDONS"
