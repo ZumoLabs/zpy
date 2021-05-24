@@ -77,7 +77,8 @@ def random_hdri(
     """
     hdri_dir = zpy.assets.hdri_dir()
     hdri_path = zpy.files.pick_random_from_dir(
-        hdri_dir, suffixes=[".exr", ".hdri", ".hdr"])
+        hdri_dir, suffixes=[".exr", ".hdri", ".hdr"]
+    )
     if apply_to_scene:
         load_hdri(hdri_path)
     return hdri_path
