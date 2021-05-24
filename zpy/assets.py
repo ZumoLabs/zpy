@@ -20,7 +20,6 @@ def get_asset_lib_path() -> Path:
     Returns:
         Path: pathlib.Path object to library location.
     """
-
     assets_env_path = os.environ.get("ASSETS", None)
     if assets_env_path is None:
         log.warning("Could not find environment variable $ASSETS")

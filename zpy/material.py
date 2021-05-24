@@ -207,7 +207,7 @@ def random_texture_mat() -> bpy.types.Material:
     Returns:
         bpy.types.Material: The newly created material.
     """
-    texture_dir = zpy.assets.texture_dir_path()
+    texture_dir = zpy.assets.texture_dir()
     texture_path = zpy.files.pick_random_from_dir(
         texture_dir, suffixes=[".jpg", ".png"]
     )
