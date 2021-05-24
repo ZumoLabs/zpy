@@ -57,9 +57,6 @@ def run(
     zpy.objects.save_pose('Camera')
     zpy.objects.save_pose('Sun')
 
-    # # Set the asset directory (location of textures and hdris)
-    # os.environ['ASSETS'] = str(Path(bpy.data.filepath).parent)
-
     # Run the sim.
     for step_idx in zpy.blender.step():
 
