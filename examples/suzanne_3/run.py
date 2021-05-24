@@ -71,7 +71,7 @@ def run():
 
         # Pick a random texture from the 'textures' folder (relative to blendfile)
         # Textures are images that we will map onto a material
-        new_mat = zpy.material.random_texture_mat(texture_dir="textures")
+        new_mat = zpy.material.random_texture_mat()
         zpy.material.set_mat("Suzanne", new_mat)
 
         # Have to segment the new material
