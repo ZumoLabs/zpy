@@ -107,7 +107,7 @@ class ExportOperator(bpy.types.Operator):
         bpy.context.window_manager.progress_update(10)
         _path = zpy.assets.get_asset_lib_path()
         if _path is not None:
-            log.info(f'Running find missing files in {_path}')
+            log.info(f"Running find missing files in {_path}")
             bpy.ops.file.find_missing_files(directory=str(_path))
 
         # Fix all the asset paths by packing them into the .blend
