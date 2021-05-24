@@ -121,26 +121,6 @@ def step(
             refresh_blender_ui()
 
 
-def get_asset_lib_path() -> Path:
-    """Returns path to asset library location.
-
-    Defaults to the directory of the blenderfile.
-
-    Returns:
-        Path: pathlib.Path object to library location.
-    """
-
-    assets_env_path = os.environ.get("ASSETS", None)
-    if assets_env_path is None:
-        log.warning("Could not find environment variable $ASSETS")
-        blendfile_path = bpy.path.abspath(bpy.data.filepath)
-        return Path(blendfile_path).parent
-    else:
-        assets_env_path = zpy.files.verify_path(assets_env_path, check_dir=True)
-        log.debug(f"Found assets path at {assets_env_path}")
-        return assets_env_path
-
-
 @gin.configurable
 def verify_view_layer(
     view_layer_name: str = "View Layer",
