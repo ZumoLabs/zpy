@@ -105,8 +105,10 @@ class ExportOperator(bpy.types.Operator):
         # Find missing files before export
         log.info("Export Step 1 of 4: Checking for any missing files.")
         bpy.context.window_manager.progress_update(10)
-        _path = zpy.files.verify_path("$ASSETS", make=False)
-        bpy.ops.file.find_missing_files(directory=str(_path))
+        _path = zpy.assets.get_asset_lib_path()
+        if _path is not None:
+            log.info(f'Running find missing files in {_path}')
+            bpy.ops.file.find_missing_files(directory=str(_path))
 
         # Fix all the asset paths by packing them into the .blend
         # file and then un-packing them into a 'textures' folder.

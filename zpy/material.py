@@ -214,6 +214,7 @@ def random_texture_mat(
     Returns:
         bpy.types.Material: The newly created material.
     """
+    # TODO: Local Fake Assets
     if relative_to_assets_dir:
         texture_dir = zpy.blender.get_asset_lib_path().joinpath(texture_dir)
     texture_dir = zpy.files.verify_path(texture_dir, check_dir=True)
