@@ -138,7 +138,7 @@ def list_datasets():
 
     tbl = TableLogger(columns="name,packaged,files,generation", default_colwidth=30)
     for d in datasets:
-        tbl(d["name"], ','.join(d["formats"]), len(d["files"]), d["runs"])
+        tbl(d["name"], ",".join(d["formats"]), len(d["files"]), d["runs"])
 
 
 @list.command("sims")
