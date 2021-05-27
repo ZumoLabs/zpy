@@ -3,7 +3,6 @@
 """
 import inspect
 import logging
-import os
 import random
 import time
 from functools import wraps
@@ -11,10 +10,10 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 import bpy
+import gin
 import mathutils
 import numpy as np
 
-import gin
 import zpy
 
 log = logging.getLogger(__name__)
