@@ -5,24 +5,32 @@ import requests
 
 
 @fetch_auth
-def create_dataset(name, files, url, auth_headers):
+def create_dataset(name, file_path, url, auth_headers):
     """create dataset
 
     Create dataset on ZumoLabs backend which groups files.
 
     Args:
         name (str): name of dataset
-        files (list): list of file obj to associate with dataset
+        file_path (list): zip file to upload
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
     endpoint = f"{url}/api/v1/datasets/"
-    data = {"name": name, "files": files}
-    r = requests.post(
-        endpoint,
-        data=data,
-        headers=auth_headers,
-    )
+    data = {"name": name}
+    if file_path:
+        r = requests.post(
+            endpoint,
+            data=data,
+            files={"file": open(file_path, "rb")},
+            headers=auth_headers,
+        )
+    else:
+        r = requests.post(
+            endpoint,
+            data=data,
+            headers=auth_headers,
+        )
     if r.status_code != 201:
         r.raise_for_status()
 
@@ -77,7 +85,7 @@ def download_dataset(name, path, format, url, auth_headers):
     Args:
         name (str): name of dataset to download
         path (str): output directory
-        format (str): type of packaged version to download
+        format (str): download format
         url (str): backend endpoint
         auth_headers: authentication for backend
 
@@ -85,14 +93,14 @@ def download_dataset(name, path, format, url, auth_headers):
         str: output file path
     """
     dataset = fetch_dataset(name)
-    endpoint = f"{url}/api/v1/datasets/{dataset['id']}/download/"
-    r = requests.get(endpoint, params={"format": format}, headers=auth_headers)
+    endpoint = f"{url}/api/v1/datasets/{dataset['id']}/download/{format}/"
+    r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
-    response = json.loads(r.text)
-    name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
+    dataset = json.loads(r.text)
+    name_slug = f"{name.replace(' ', '_')}.zip"
     output_path = to_pathlib_path(path) / name_slug
-    download_url(response["redirect_link"], output_path)
+    download_url(dataset["redirect_link"], output_path)
     return output_path
 
 

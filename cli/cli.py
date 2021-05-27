@@ -136,9 +136,9 @@ def list_datasets():
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="name,packaged", default_colwidth=30)
+    tbl = TableLogger(columns="name,packaged,files,generation", default_colwidth=30)
     for d in datasets:
-        tbl(d["name"], d["formats"])
+        tbl(d["name"], ','.join(d["formats"]), len(d["files"]), d["runs"])
 
 
 @list.command("sims")
@@ -221,8 +221,8 @@ def get_dataset(name, path, format):
         format (str): format for packaging
     """
     from cli.datasets import download_dataset
+    from cli.utils import download_url
 
-    print(format)
     try:
         output_path = download_dataset(name, path, format)
         click.echo(f"Downloaded dataset '{name}' to {output_path}")
@@ -306,7 +306,16 @@ def upload_dataset(name, path):
         name (str): name of dataset
         path (str): path to dataset
     """
-    # TODO Upload Files and Tag
+    from cli.datasets import create_dataset
+
+    if to_pathlib_path(path).suffix != ".zip":
+        click.secho(f"File {path} must be of type zip", fg="red", err=True)
+    try:
+        with Loader("Uploading dataset..."):
+            create_dataset(name, path)
+        click.secho(f"Uploaded dataset {path} with name '{name}'", fg="green")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to upload dataset: {e}", fg="red", err=True)
 
 
 # ------- CREATE
