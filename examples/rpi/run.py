@@ -10,13 +10,13 @@ import bpy
 import gin
 import zpy
 
-log = logging.getLogger('zpy')
+log = logging.getLogger("zpy")
 
 
-@gin.configurable('run')
+@gin.configurable("run")
 @zpy.blender.save_and_revert
 def run():
-    """ Main run function.
+    """Main run function.
 
     Any kwargs you put here will show up
     on the Data Portal. Give them types!
@@ -27,15 +27,15 @@ def run():
 
     # Create the saver object
     saver = zpy.saver_image.ImageSaver(
-        description='Raspberry Pi component detection.',
+        description="Raspberry Pi component detection.",
     )
 
     camera = bpy.data.objects["Camera"]
     rpi_parts = {
-        'rpi': bpy.data.collections['rpi'],
-        'ethernet': bpy.data.collections['ethernet'],
-        'pins': bpy.data.collections['pins'],
-        'audio': bpy.data.collections['audio'],
+        "rpi": bpy.data.collections["rpi"],
+        "ethernet": bpy.data.collections["ethernet"],
+        "pins": bpy.data.collections["pins"],
+        "audio": bpy.data.collections["audio"],
     }
 
     # Add the categories from the scene-level object
@@ -68,25 +68,25 @@ def run():
         # Add images to saver
         saver.add_image(
             name=rgb_image_name,
-            style='default',
+            style="default",
             output_path=saver.output_dir / rgb_image_name,
             frame=step_idx,
         )
         saver.add_image(
             name=iseg_image_name,
-            style='segmentation',
+            style="segmentation",
             output_path=saver.output_dir / iseg_image_name,
             frame=step_idx,
         )
         saver.add_image(
             name=cseg_image_name,
-            style='segmentation',
+            style="segmentation",
             output_path=saver.output_dir / cseg_image_name,
             frame=step_idx,
         )
         saver.add_image(
             name=depth_image_name,
-            style='depth',
+            style="depth",
             output_path=saver.output_dir / depth_image_name,
             frame=step_idx,
         )
@@ -118,16 +118,16 @@ def run():
     # COCO Annotations
     zpy.output_coco.OutputCOCO(saver).output_annotations()
 
-    log.info('Simulation complete.')
+    log.info("Simulation complete.")
 
 
 if __name__ == "__main__":
 
     # Set the logger levels
-    zpy.logging.set_log_levels('info')
+    zpy.logging.set_log_levels("info")
 
     # Parse the gin-config text block
-    zpy.blender.parse_config('config')
+    zpy.blender.parse_config("config")
 
     # Run the sim
     run()
