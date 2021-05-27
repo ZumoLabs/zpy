@@ -525,7 +525,7 @@ def format():
 @format.command("dataset")
 @click.argument("name")
 @click.argument("format", default="archive")
-def format_dataset(name, format): 
+def format_dataset(name, format):
     """format dataset
 
     Format a dataset.
