@@ -149,9 +149,18 @@ def list_datasets(args):
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="id,project,name,state,type,created", default_colwidth=UUID_WIDTH)
+    tbl = TableLogger(
+        columns="id,project,name,state,type,created", default_colwidth=UUID_WIDTH
+    )
     for d in datasets:
-        tbl(d["id"], d["project"], d["name"], d["state"].lower(), d["type"], d["created_at"])
+        tbl(
+            d["id"],
+            d["project"],
+            d["name"],
+            d["state"].lower(),
+            d["type"],
+            d["created_at"],
+        )
 
 
 @list.command("sims")
@@ -178,7 +187,8 @@ def list_sims(args):
         return
 
     tbl = TableLogger(
-        columns="id,project,name,state,zpy_version,blender_version,created", default_colwidth=UUID_WIDTH
+        columns="id,project,name,state,zpy_version,blender_version,created",
+        default_colwidth=UUID_WIDTH,
     )
     for s in sims:
         tbl(
@@ -250,8 +260,15 @@ def list_accounts(args):
         click.secho(f"Failed to fetch accounts {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="id,type,email,created_at",
-                      colwidth={'id': UUID_WIDTH, 'type': 10, 'email': 35, 'created_at': DATETIME_WIDTH})
+    tbl = TableLogger(
+        columns="id,type,email,created_at",
+        colwidth={
+            "id": UUID_WIDTH,
+            "type": 10,
+            "email": 35,
+            "created_at": DATETIME_WIDTH,
+        },
+    )
     for p in projects:
         tbl(
             p["id"],
@@ -285,7 +302,9 @@ def list_jobs(args):
         click.secho(f"Failed to fetch jobs {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="state,name,operation,created", default_colwidth=UUID_WIDTH)
+    tbl = TableLogger(
+        columns="state,name,operation,created", default_colwidth=UUID_WIDTH
+    )
     for j in jobs:
         tbl(j["state"], j["name"], j["operation"], j["created_at"])
 
