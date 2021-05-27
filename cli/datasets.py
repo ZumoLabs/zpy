@@ -1,7 +1,9 @@
+import json
+
+import requests
+
 from cli.utils import download_url, fetch_auth, parse_filter
 from zpy.files import to_pathlib_path
-import json
-import requests
 
 DATASET_TYPES = ["uploaded-data-sets", "generated-data-sets", "job-data-sets"]
 
@@ -70,13 +72,14 @@ def create_generated_dataset(name, sim_name, config, url, auth_headers):
 
 
 @fetch_auth
-def create_uploaded_dataset(name, path, url, auth_headers):
+def create_uploaded_dataset(project, name, path, url, auth_headers):
     """upload dataset
 
     Upload dataset to S3 through ZumoLabs backend and
     create object.
 
     Args:
+        project (str): uuid of project
         name (str): name of dataset
         path (str): path to dataset
         url (str): backend endpoint
@@ -85,7 +88,7 @@ def create_uploaded_dataset(name, path, url, auth_headers):
     endpoint = f"{url}/api/v1/uploaded-data-sets/"
     r = requests.post(
         endpoint,
-        data={"name": name},
+        data={"name": name, "project": project},
         files={"file": open(path, "rb")},
         headers=auth_headers,
     )
@@ -130,12 +133,14 @@ def download_dataset(name, path, dataset_type, url, auth_headers):
     return output_path
 
 
-def fetch_datasets():
+def fetch_datasets(filters):
     """fetch datasets
 
     Fetch dataset objects from ZumoLabs backend. Fetches all three
     datasets types uploaded, generated, and job.
 
+    Args:
+        filters (dict): query param filters for API call
     Returns:
         list: paginated sorted datasets for all types
     """
@@ -144,17 +149,18 @@ def fetch_datasets():
         short_dataset_type = dataset_type.split("-")[0]
         datasets += [
             (lambda d: d.update({"type": short_dataset_type}) or d)(d)
-            for d in _fetch_type_datasets(dataset_type)
+            for d in _fetch_type_datasets(dataset_type, filters)
         ]
     return sorted(datasets, key=lambda i: i["created_at"], reverse=True)
 
 
 @fetch_auth
-def _fetch_type_datasets(dataset_type, url, auth_headers):
+def _fetch_type_datasets(dataset_type, filters, url, auth_headers):
     """fetch type of datasets
 
     Args:
         dataset_type (str): type of dataset to fetch
+        filters (dict): query param filters for API call
         url (str): backend endpoint
         auth_headers: authentication for backend
 
@@ -162,7 +168,7 @@ def _fetch_type_datasets(dataset_type, url, auth_headers):
         list: paginated datasets for given type
     """
     endpoint = f"{url}/api/v1/{dataset_type}/"
-    r = requests.get(endpoint, headers=auth_headers)
+    r = requests.get(endpoint, headers=auth_headers, params=filters)
     if r.status_code != 200:
         r.raise_for_status()
     return json.loads(r.text)["results"]

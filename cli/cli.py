@@ -1,12 +1,17 @@
-from cli.loader import Loader
-from cli.utils import parse_args, resolve_sweep
-from cli.config import initialize_config, read_config, write_config, get_endpoint
+import json
+
+import click
+import requests
 from requests.auth import HTTPBasicAuth
 from table_logger import TableLogger
+
+from cli.config import initialize_config, read_config, write_config, get_endpoint
+from cli.loader import Loader
+from cli.utils import parse_args, resolve_sweep
 from zpy.files import read_json, to_pathlib_path
-import click
-import json
-import requests
+
+UUID_WIDTH = 36
+DATETIME_WIDTH = 27
 
 
 @click.group(context_settings=dict(token_normalize_func=str.lower))
@@ -122,7 +127,8 @@ def list():
 
 
 @list.command("datasets")
-def list_datasets():
+@click.argument("args", nargs=-1)
+def list_datasets(args):
     """list datasets
 
     List datasets from backend.
@@ -130,20 +136,27 @@ def list_datasets():
     from cli.datasets import fetch_datasets
 
     try:
+        filters = parse_args(args)
+    except Exception:
+        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
+        return
+
+    try:
         with Loader("Fetching datasets..."):
-            datasets = fetch_datasets()
-        click.echo("Fetched datasets succesfully.")
+            datasets = fetch_datasets(filters)
+        click.echo("Fetched datasets successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="name,state,type,created,id", default_colwidth=30)
+    tbl = TableLogger(columns="id,project,name,state,type,created", default_colwidth=UUID_WIDTH)
     for d in datasets:
-        tbl(d["name"], d["state"].lower(), d["type"], d["created_at"], d["id"])
+        tbl(d["id"], d["project"], d["name"], d["state"].lower(), d["type"], d["created_at"])
 
 
 @list.command("sims")
-def list_sims():
+@click.argument("args", nargs=-1)
+def list_sims(args):
     """list sims
 
     List sims from backend.
@@ -151,18 +164,26 @@ def list_sims():
     from cli.sims import fetch_sims
 
     try:
+        filters = parse_args(args)
+    except Exception:
+        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
+        return
+
+    try:
         with Loader("Fetching sims..."):
-            sims = fetch_sims()
-        click.echo("Fetched sims succesfully.")
+            sims = fetch_sims(filters)
+        click.echo("Fetched sims successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch sims {e}.", fg="red", err=True)
         return
 
     tbl = TableLogger(
-        columns="name,state,zpy_version,blender_version,created", default_colwidth=30
+        columns="id,project,name,state,zpy_version,blender_version,created", default_colwidth=UUID_WIDTH
     )
     for s in sims:
         tbl(
+            s["id"],
+            s["project"],
             s["name"],
             s["state"],
             s["zpy_version"],
@@ -171,23 +192,100 @@ def list_sims():
         )
 
 
+@list.command("projects")
+@click.argument("args", nargs=-1)
+def list_projects(args):
+    """
+    list projects
+
+    List projects from backend.
+    """
+    from cli.projects import fetch_projects
+
+    try:
+        filters = parse_args(args)
+    except Exception:
+        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
+        return
+
+    try:
+        with Loader("Fetching projects..."):
+            projects = fetch_projects(filters)
+        click.echo("Fetched projects successfully.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch projects {e}.", fg="red", err=True)
+        return
+
+    tbl = TableLogger(columns="id,name,account,created_at", default_colwidth=UUID_WIDTH)
+    for p in projects:
+        tbl(
+            p["id"],
+            p["name"],
+            p["account"],
+            p["created_at"],
+        )
+
+
+@list.command("accounts")
+@click.argument("args", nargs=-1)
+def list_accounts(args):
+    """
+    list user payment accounts
+
+    List user payment accounts from backend.
+    """
+    from cli.accounts import fetch_accounts
+
+    try:
+        filters = parse_args(args)
+    except Exception:
+        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
+        return
+
+    try:
+        with Loader("Fetching accounts..."):
+            projects = fetch_accounts(filters)
+        click.echo("Fetched accounts successfully.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch accounts {e}.", fg="red", err=True)
+        return
+
+    tbl = TableLogger(columns="id,type,email,created_at",
+                      colwidth={'id': UUID_WIDTH, 'type': 10, 'email': 35, 'created_at': DATETIME_WIDTH})
+    for p in projects:
+        tbl(
+            p["id"],
+            p["type"],
+            p["email"],
+            p["created_at"],
+        )
+
+
 @list.command("jobs")
-def list_jobs():
-    """list jobs
+@click.argument("args", nargs=-1)
+def list_jobs(args):
+    """
+    list jobs
 
     List jobs from backend.
     """
     from cli.jobs import fetch_jobs
 
     try:
+        filters = parse_args(args)
+    except Exception:
+        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
+        return
+
+    try:
         with Loader("Fetching jobs..."):
-            jobs = fetch_jobs()
-        click.echo("Fetched jobs succesfully.")
+            jobs = fetch_jobs(filters)
+        click.echo("Fetched jobs successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch jobs {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="state,name,operation,created", default_colwidth=30)
+    tbl = TableLogger(columns="state,name,operation,created", default_colwidth=UUID_WIDTH)
     for j in jobs:
         tbl(j["state"], j["name"], j["operation"], j["created_at"])
 
@@ -271,14 +369,16 @@ def upload():
 
 
 @upload.command("sim")
+@click.argument("project")
 @click.argument("name")
 @click.argument("path", type=click.Path(exists=True, dir_okay=False, resolve_path=True))
-def upload_sim(name, path):
+def upload_sim(project, name, path):
     """upload sim
 
-    Upload sim to backend.
+    Upload sim to a project.
 
     Args:
+        project (str): project uuid
         name (str): name of sim
         path (str): path to sim
     """
@@ -288,21 +388,23 @@ def upload_sim(name, path):
         click.secho(f"File {path} must be of type zip", fg="red", err=True)
     try:
         with Loader("Uploading sim..."):
-            create_sim(name, path)
+            create_sim(project, name, path)
         click.secho(f"Uploaded sim {path} with name '{name}'", fg="green")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to upload sim: {e}", fg="red", err=True)
 
 
 @upload.command("dataset")
+@click.argument("project")
 @click.argument("name")
 @click.argument("path", type=click.Path(exists=True, dir_okay=False, resolve_path=True))
-def upload_dataset(name, path):
+def upload_dataset(project, name, path):
     """upload dataset
 
-    Upload dataset to backend.
+    Upload dataset to a project.
 
     Args:
+        project (str): project uuid
         name (str): name of dataset
         path (str): path to dataset
     """
@@ -312,7 +414,7 @@ def upload_dataset(name, path):
         click.secho(f"File {path} must be of type zip", fg="red", err=True)
     try:
         with Loader("Uploading dataset..."):
-            create_uploaded_dataset(name, path)
+            create_uploaded_dataset(project, name, path)
         click.secho(f"Uploaded dataset {path} with name '{name}'", fg="green")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to upload dataset: {e}", fg="red", err=True)
