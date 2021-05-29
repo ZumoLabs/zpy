@@ -4,7 +4,7 @@ import json
 
 
 @fetch_auth
-def create_new_job(name, operation, config, datasets, url, auth_headers):
+def create_new_job(name, operation, config, datasets, project, url, auth_headers):
     """create job
 
     Create a job object on ZumoLabs backend. This will trigger the backend
@@ -17,9 +17,11 @@ def create_new_job(name, operation, config, datasets, url, auth_headers):
         datasets (dict): list of dataset ids
         url (str): backend endpoint
         auth_headers: authentication for backend
+        project (str): project uuid
     """
     endpoint = f"{url}/api/v1/jobs/"
     data = {
+        "project": project,
         "operation": operation.upper(),
         "name": name,
         "input_data_sets": datasets,

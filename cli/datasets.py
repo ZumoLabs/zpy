@@ -9,7 +9,7 @@ DATASET_TYPES = ["uploaded-data-sets", "generated-data-sets", "job-data-sets"]
 
 
 @fetch_auth
-def filter_datasets(dfilter, url, auth_headers):
+def filter_datasets(dfilter, project, url, auth_headers):
     """filter datasets
 
     Filter dataset objects on ZumoLabs backend by given dfilter.
@@ -18,6 +18,7 @@ def filter_datasets(dfilter, url, auth_headers):
 
     Args:
         dfilter (str): filter query for datasets
+        project (str): project uuid
         url (str): backend endpoint
         auth_headers: authentication for backend
 
@@ -27,9 +28,14 @@ def filter_datasets(dfilter, url, auth_headers):
     filtered_datasets = {}
     field, pattern, regex = parse_filter(dfilter)
     for dataset_type in DATASET_TYPES:
-        endpoint = f"{url}/api/v1/{dataset_type}/?{field}__{pattern}={regex}"
+        endpoint = f"{url}/api/v1/{dataset_type}/"
+        params = {
+            **params,
+            f'{field}__{pattern}': regex,
+        }
+
         while endpoint is not None:
-            r = requests.get(endpoint, headers=auth_headers)
+            r = requests.get(endpoint, params=params, headers=auth_headers)
             if r.status_code != 200:
                 r.raise_for_status()
             response = json.loads(r.text)
@@ -40,7 +46,7 @@ def filter_datasets(dfilter, url, auth_headers):
 
 
 @fetch_auth
-def create_generated_dataset(name, sim_name, config, url, auth_headers):
+def create_generated_dataset(name, sim_name, config, project, url, auth_headers):
     """create dataset
 
     Create generated dataset on ZumoLabs backend which will launch
@@ -50,6 +56,7 @@ def create_generated_dataset(name, sim_name, config, url, auth_headers):
         name (str): name of dataset
         sim_name (str): name of sim the dataset is built from
         config (dict): configration of sim for this dataset
+        project (str): project uuid
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
@@ -64,7 +71,7 @@ def create_generated_dataset(name, sim_name, config, url, auth_headers):
     endpoint = f"{url}/api/v1/generated-data-sets/"
     r = requests.post(
         endpoint,
-        data={"sim": sim["id"], "config": json.dumps(config), "name": name},
+        data={"project": project, "sim": sim["id"], "config": json.dumps(config), "name": name},
         headers=auth_headers,
     )
     if r.status_code != 201:
@@ -72,16 +79,16 @@ def create_generated_dataset(name, sim_name, config, url, auth_headers):
 
 
 @fetch_auth
-def create_uploaded_dataset(project, name, path, url, auth_headers):
+def create_uploaded_dataset(name, path, project, url, auth_headers):
     """upload dataset
 
     Upload dataset to S3 through ZumoLabs backend and
     create object.
 
     Args:
-        project (str): uuid of project
         name (str): name of dataset
         path (str): path to dataset
+        project (str): project uuid
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
