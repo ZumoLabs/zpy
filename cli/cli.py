@@ -10,6 +10,9 @@ from cli.loader import Loader
 from cli.utils import parse_args, resolve_sweep, use_project
 from zpy.files import read_json, to_pathlib_path
 
+SMALL_WIDTH = 12
+MEDIUM_WIDTH = 24
+LARGE_WIDTH = 36
 UUID_WIDTH = 36
 DATETIME_WIDTH = 27
 
@@ -180,7 +183,9 @@ def list_datasets(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="id,project,name,state,type,created", default_colwidth=UUID_WIDTH
+        columns="id,project,name,state,type,created_at",
+        colwidth={'id': UUID_WIDTH, 'project': UUID_WIDTH, 'name': LARGE_WIDTH, 'state': SMALL_WIDTH,
+                  'type': SMALL_WIDTH, 'created_at': DATETIME_WIDTH}
     )
     for d in datasets:
         tbl(
@@ -220,8 +225,9 @@ def list_sims(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="id,project,name,state,zpy_version,blender_version,created",
-        default_colwidth=UUID_WIDTH,
+        columns="id,project,name,state,zpy_version,blender_version,created_at",
+        colwidth={'id': UUID_WIDTH, 'project': UUID_WIDTH, 'name': LARGE_WIDTH, 'state': SMALL_WIDTH,
+                  'zpy_version': MEDIUM_WIDTH, 'blender_version': SMALL_WIDTH, 'created_at': DATETIME_WIDTH},
     )
     for s in sims:
         tbl(
@@ -259,7 +265,9 @@ def list_projects(filters):
         click.secho(f"Failed to fetch projects {e}.", fg="red", err=True)
         return
 
-    tbl = TableLogger(columns="id,name,account,created_at", default_colwidth=UUID_WIDTH)
+    tbl = TableLogger(columns="id,name,account,created_at",
+                      colwidth={'id': UUID_WIDTH, 'name': LARGE_WIDTH, 'account': UUID_WIDTH,
+                                'created_at': DATETIME_WIDTH}, )
     for p in projects:
         tbl(
             p["id"],
@@ -297,10 +305,12 @@ def list_jobs(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="state,name,operation,created", default_colwidth=UUID_WIDTH
+        columns="id,state,name,operation,created_at",
+        colwidth={'id': UUID_WIDTH, 'state': SMALL_WIDTH, 'name': LARGE_WIDTH,
+                  'operation': SMALL_WIDTH, 'created_at': DATETIME_WIDTH}
     )
     for j in jobs:
-        tbl(j["state"], j["name"], j["operation"], j["created_at"])
+        tbl(j["id"], j["state"], j["name"], j["operation"], j["created_at"])
 
 
 # ------- GET
