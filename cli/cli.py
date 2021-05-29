@@ -73,7 +73,7 @@ def project():
     pass
 
 
-@project.command('set')
+@project.command("set")
 @click.argument("project_uuid", type=click.UUID)
 def set_project(project_uuid):
     """Set global PROJECT uuid."""
@@ -89,7 +89,7 @@ def set_project(project_uuid):
 def set_project():
     """Clear global PROJECT uuid."""
     config = read_config()
-    config.pop('PROJECT')
+    config.pop("PROJECT")
     write_config(config)
     click.echo("Cleared global project namespace.")
 
@@ -166,7 +166,7 @@ def list_datasets(filters, project=None):
     try:
         filters = parse_args(filters)
         if project:
-            filters['project'] = project
+            filters["project"] = project
     except Exception:
         click.secho(f"Failed to parse filters: {filters}", fg="yellow", err=True)
         return
@@ -206,7 +206,7 @@ def list_sims(filters, project=None):
     try:
         filters = parse_args(filters)
         if project:
-            filters['project'] = project
+            filters["project"] = project
     except Exception:
         click.secho(f"Failed to parse filters: {filters}", fg="yellow", err=True)
         return
@@ -283,7 +283,7 @@ def list_jobs(filters, project=None):
     try:
         filters = parse_args(filters)
         if project:
-            filters['project'] = project
+            filters["project"] = project
     except Exception:
         click.secho("Failed to parse filters: {args}", fg="yellow", err=True)
         return

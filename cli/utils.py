@@ -157,7 +157,11 @@ def use_project(required=False):
                 return func(*args, **kwargs, project=project)
             else:
                 if required:
-                    click.secho('Project is not set. See `zpy project --help`', fg="red", err=True)
+                    click.secho(
+                        "Project is not set. See `zpy project --help`",
+                        fg="red",
+                        err=True,
+                    )
                     return
 
                 return func(*args, **kwargs)

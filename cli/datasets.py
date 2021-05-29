@@ -31,7 +31,7 @@ def filter_datasets(dfilter, project, url, auth_headers):
         endpoint = f"{url}/api/v1/{dataset_type}/"
         params = {
             **params,
-            f'{field}__{pattern}': regex,
+            f"{field}__{pattern}": regex,
         }
 
         while endpoint is not None:
@@ -71,7 +71,12 @@ def create_generated_dataset(name, sim_name, config, project, url, auth_headers)
     endpoint = f"{url}/api/v1/generated-data-sets/"
     r = requests.post(
         endpoint,
-        data={"project": project, "sim": sim["id"], "config": json.dumps(config), "name": name},
+        data={
+            "project": project,
+            "sim": sim["id"],
+            "config": json.dumps(config),
+            "name": name,
+        },
         headers=auth_headers,
     )
     if r.status_code != 201:
