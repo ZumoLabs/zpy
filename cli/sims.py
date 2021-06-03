@@ -5,7 +5,7 @@ import requests
 
 
 @fetch_auth
-def create_sim(project, name, path, url, auth_headers):
+def create_sim(name, path, project, url, auth_headers):
     """create sim
 
     Upload sim object to S3 through ZumoLabs backend and create

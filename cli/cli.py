@@ -442,7 +442,6 @@ def upload_sim(name, path, project=None):
 
 
 @upload.command("dataset")
-@click.argument("project")
 @click.argument("name")
 @click.argument("path", type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 @use_project(required=True)
