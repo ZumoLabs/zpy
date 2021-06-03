@@ -7,16 +7,17 @@ Many papers have been written about synthetic data over the years. If academic p
 - Robotics: [1](#ref1), [3](#ref3), [4](#ref4),
 - Autonomous Vehicles: [5](#ref5), [8](#ref8), [9](#ref9),
 - Humans: [2](#ref2), [7](#ref7),
-- Space:
+- Climate: [11](#ref11),
 - ML Theory: [6](#ref6),
 - Overview: [10](#ref10),
+
 
 **... year:**
 
 - 2017: [2](#ref2), [3](#ref3), [6](#ref6),
 - 2018: [7](#ref7),
-- 2019: [1](#ref1), [4](#ref4), [8](#ref8),
-- 2020: [5](#ref5), [9](#ref9),
+- 2019: [1](#ref1), [4](#ref4), [8](#ref8), [10](#ref10),
+- 2020: [5](#ref5), [9](#ref9), [11](#ref11),
 - 2021:
 
 **TIP** The abstracts are also included with the paper links, so a good way to use this document is to `ctrl-F` the key words relevant to your usecase.
@@ -119,5 +120,95 @@ Many papers have been written about synthetic data over the years. If academic p
 **Year** 2019
 
 **Abstract** Synthetic data is an increasingly popular tool for training deep learning models, especially in computer vision but also in other areas. In this work, we attempt to provide a comprehensive survey of the various directions in the development and application of synthetic data. First, we discuss synthetic datasets for basic computer vision problems, both low-level (e.g., optical flow estimation) and high-level (e.g., semantic segmentation), synthetic environments and datasets for outdoor and urban scenes (autonomous driving), indoor scenes (indoor navigation), aerial navigation, simulation environments for robotics, applications of synthetic data outside computer vision (in neural programming, bioinformatics, NLP, and more); we also survey the work on improving synthetic data development and alternative ways to produce it such as GANs. Second, we discuss in detail the synthetic-to-real domain adaptation problem that inevitably arises in applications of synthetic data, including syntheticto-real refinement with GAN-based models and domain adaptation at the feature/model level without explicit data transformations. Third, we turn to privacy-related applications of synthetic data and review the work on generating synthetic datasets with differential privacy guarantees. We conclude by highlighting the most promising directions for further work in synthetic data studies.
+
+---
+
+## [Learning color space adaptation from synthetic to real images of cirrus clouds](https://arxiv.org/pdf/1810.10286v2.pdf) <a name="ref11"></a>
+
+**Usecase** Cloud Detection
+
+**Year** 2020
+
+**Abstract** Cloud segmentation plays a crucial role in image analysis for climate modeling. Manually labeling the training data for cloud segmentation is time-consuming and error-prone. We explore to train segmentation networks with synthetic data due to the natural acquisition of pixel-level labels. Nevertheless, the domain gap between synthetic and real images significantly degrades the performance of the trained model. We propose a color space adaptation method to bridge the gap, by training a color-sensitive generator and discriminator to adapt synthetic data to real images in color space. Instead of transforming images by general convolutional kernels, we adopt a set of closed-form operations to make color-space adjustments while preserving the labels. We also construct a synthetic-to-real cirrus cloud dataset SynCloud and demonstrate the adaptation efficacy on the semantic segmentation task of cirrus clouds. With our adapted synthetic data for training the semantic segmentation, we achieve an improvement of 6:59% when applied to real images, superior to alternative methods.
+
+---
+
+## [Title](arxivlink) <a name="ref"></a>
+
+**Usecase** 
+
+**Year** 
+
+**Abstract** 
+
+---
+
+## [Title](arxivlink) <a name="ref"></a>
+
+**Usecase** 
+
+**Year** 
+
+**Abstract** 
+
+---
+
+## [Title](arxivlink) <a name="ref"></a>
+
+**Usecase** 
+
+**Year** 
+
+**Abstract** 
+
+---
+
+## [Title](arxivlink) <a name="ref"></a>
+
+**Usecase** 
+
+**Year** 
+
+**Abstract** 
+
+---
+
+## [Title](arxivlink) <a name="ref"></a>
+
+**Usecase** 
+
+**Year** 
+
+**Abstract** 
+
+---
+
+## [Title](arxivlink) <a name="ref"></a>
+
+**Usecase** 
+
+**Year** 
+
+**Abstract** 
+
+---
+
+## [Title](arxivlink) <a name="ref"></a>
+
+**Usecase** 
+
+**Year** 
+
+**Abstract** 
+
+---
+
+## [Title](arxivlink) <a name="ref"></a>
+
+**Usecase** 
+
+**Year** 
+
+**Abstract** 
 
 ---
