@@ -24,6 +24,7 @@ Check out our full [**documentation** :bookmark_tabs:](https://zumolabs.github.i
 
 ## What's New? :rocket:
 
+- (05/28/21) Check out our [latest article](https://www.zumolabs.ai/post/self-supervised-visual-transformers) on our blog on self-supervised ViTs
 - (05/17/21) A new template sim :package:`package`:package: is available, [check it out](https://zumolabs.github.io/zpy/zpy/example/package/).
 - (05/14/21) Check out our new [documentation](https://zumolabs.github.io/zpy/)
 
