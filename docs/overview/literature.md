@@ -5,20 +5,22 @@ Many papers have been written about synthetic data over the years. If academic p
 **... usecase:**
 
 - Robotics: [1](#ref1), [3](#ref3), [4](#ref4),
-- Autonomous Vehicles: [5](#ref5), [8](#ref8), [9](#ref9),
+- Autonomous Vehicles: [5](#ref5), [8](#ref8), [9](#ref9), [13](#ref13),
 - Humans: [2](#ref2), [7](#ref7),
 - Climate: [11](#ref11),
 - ML Theory: [6](#ref6),
 - Overview: [10](#ref10),
+- Frameworks: [12](#ref12),
 
 
 **... year:**
 
+- 2016: [13](#ref13),
 - 2017: [2](#ref2), [3](#ref3), [6](#ref6),
 - 2018: [7](#ref7),
 - 2019: [1](#ref1), [4](#ref4), [8](#ref8), [10](#ref10),
 - 2020: [5](#ref5), [9](#ref9), [11](#ref11),
-- 2021:
+- 2021: [12](#ref12),
 
 **TIP** The abstracts are also included with the paper links, so a good way to use this document is to `ctrl-F` the key words relevant to your usecase.
 
@@ -133,23 +135,23 @@ Many papers have been written about synthetic data over the years. If academic p
 
 ---
 
-## [Title](arxivlink) <a name="ref"></a>
+## [UnrealROX+: An Improved Tool for Acquiring Synthetic Data from Virtual 3D Environments](https://arxiv.org/pdf/2104.11776v1.pdf) <a name="ref12"></a>
 
-**Usecase** 
+**Usecase** Framework
 
-**Year** 
+**Year** 2021
 
-**Abstract** 
+**Abstract** Synthetic data generation has become essential in last years for feeding data-driven algorithms, which surpassed traditional techniques performance in almost every computer vision problem. Gathering and labelling the amount of data needed for these data-hungry models in the real world may become unfeasible and error-prone, while synthetic data give us the possibility of generating huge amounts of data with pixel-perfect annotations. However, most synthetic datasets lack from enough realism in their rendered images. In that context UnrealROX generation tool was presented in 2019, allowing to generate highly realistic data, at high resolutions and framerates, with an efficient pipeline based on Unreal Engine, a cutting-edge videogame engine. UnrealROX enabled robotic vision researchers to generate realistic and visually plausible data with full ground truth for a wide variety of problems such as class and instance semantic segmentation, object detection, depth estimation, visual grasping, and navigation. Nevertheless, its workflow was very tied to generate image sequences from a robotic on-board camera, making hard to generate data for other purposes. In this work, we present UnrealROX+, an improved version of UnrealROX where its decoupled and easy-to-use data acquisition system allows to quickly design and generate data in a much more flexible and customizable way. Moreover, it is packaged as an Unreal plug-in, which makes it more comfortable to use with already existing Unreal projects, and it also includes new features such as generating albedo or a Python API for interacting with the virtual environment from Deep Learning frameworks.
 
 ---
 
-## [Title](arxivlink) <a name="ref"></a>
+## [The SYNTHIA Dataset: A Large Collection of Synthetic Images for Semantic Segmentation of Urban Scenes](arxivlink) <a name="ref13"></a>
 
-**Usecase** 
+**Usecase** Autonomous Vehicles
 
-**Year** 
+**Year** 2016
 
-**Abstract** 
+**Abstract** Vision-based semantic segmentation in urban scenarios is a key functionality for autonomous driving. Recent revolutionary results of deep convolutional neural networks (DCNNs) foreshadow the advent of reliable classifiers to perform such visual tasks. However, DCNNs require learning of many parameters from raw images; thus, having a sufficient amount of diverse images with class annotations is needed. These annotations are obtained via cumbersome, human labour which is particularly challenging for semantic segmentation since pixel-level annotations are required. In this paper, we propose to use a virtual world to automatically generate realistic synthetic images with pixel-level annotations. Then, we address the question of how useful such data can be for semantic segmentation – in particular, when using a DCNN paradigm. In order to answer this question we have generated a synthetic collection of diverse urban images, named SYNTHIA, with automatically generated class annotations. We use SYNTHIA in combination with publicly available real-world urban images with manually provided annotations. Then, we conduct experiments with DCNNs that show how the inclusion of SYNTHIA in the training stage significantly improves performance on the semantic segmentation task.
 
 ---
 
