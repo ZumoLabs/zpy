@@ -1,9 +1,12 @@
-from cli.config import read_config
+import functools
 from copy import deepcopy
 from itertools import product
-from tqdm import tqdm
 from urllib.request import urlopen
-import functools
+
+import click
+from tqdm import tqdm
+
+from cli.config import read_config
 
 
 def parse_filter(str_filter):
@@ -111,7 +114,7 @@ def download_url(url, output_path):
 
 
 def fetch_auth(func):
-    """fetch authetication
+    """fetch authentication
 
     Decorator to wrap functions providing the backend url and the
     correct authorization headers for requests.
@@ -127,7 +130,42 @@ def fetch_auth(func):
     def wrapper(*args, **kwargs):
         config = read_config()
         endpoint = config["ENDPOINT"]
+
         auth_header = {"Authorization": "token {}".format(config["TOKEN"])}
         return func(*args, **kwargs, url=endpoint, auth_headers=auth_header)
 
     return wrapper
+
+
+def use_project(required=False):
+    def use_project_inner(func):
+        """Inject project uuid into function call. Optionally throw an error if it has not been set.
+
+        Args:
+            func: function to wrap
+
+        Returns:
+            wrapped function
+        """
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            config = read_config()
+            project = config.get("PROJECT", None)
+            if project:
+                click.secho(f"Using project workspace {project}.", fg="yellow")
+                return func(*args, **kwargs, project=project)
+            else:
+                if required:
+                    click.secho(
+                        "Project is not set. See `zpy project --help`",
+                        fg="red",
+                        err=True,
+                    )
+                    return
+
+                return func(*args, **kwargs)
+
+        return wrapper
+
+    return use_project_inner

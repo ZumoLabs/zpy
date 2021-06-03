@@ -5,13 +5,14 @@ import requests
 
 
 @fetch_auth
-def create_sim(name, path, url, auth_headers):
+def create_sim(name, path, project, url, auth_headers):
     """create sim
 
     Upload sim object to S3 through ZumoLabs backend and create
     the sim object.
 
     Args:
+        project (str): uuid of parent project
         name (str): name of sim to upload
         path (str): file to upload
         url (str): backend endpoint
@@ -20,7 +21,7 @@ def create_sim(name, path, url, auth_headers):
     endpoint = f"{url}/api/v1/sims/"
     r = requests.post(
         endpoint,
-        data={"name": name},
+        data={"name": name, "project": project},
         files={"file": open(path, "rb")},
         headers=auth_headers,
     )
@@ -63,17 +64,18 @@ def download_sim(name, path, url, auth_headers):
 
 
 @fetch_auth
-def fetch_sims(url, auth_headers):
+def fetch_sims(filters, url, auth_headers):
     """fetch sims
 
     Fetch sim objects from ZumoLabs backend.
 
     Args:
+        filters (dict): query param filters for API call
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
     endpoint = f"{url}/api/v1/sims/"
-    r = requests.get(endpoint, headers=auth_headers)
+    r = requests.get(endpoint, headers=auth_headers, params=filters)
     if r.status_code != 200:
         r.raise_for_status()
     return json.loads(r.text)["results"]

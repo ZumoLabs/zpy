@@ -2,18 +2,16 @@
 
 import logging
 import math
-import os
 import random
-from pathlib import Path
 
 import bpy
+
 import zpy
 
 log = logging.getLogger("zpy")
 
 
 def run():
-
     # Random seed results in unique behavior
     zpy.blender.set_seed()
 
@@ -33,7 +31,6 @@ def run():
 
     # Run the sim.
     for step_idx in zpy.blender.step():
-
         # Example logging
         log.info("This is an info log")
         log.debug("This is a debug log")
@@ -140,7 +137,6 @@ def run():
 
 
 if __name__ == "__main__":
-
     # Set the logger levels
     zpy.logging.set_log_levels("info")
 

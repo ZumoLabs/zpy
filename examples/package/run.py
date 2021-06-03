@@ -5,14 +5,12 @@ Spawns boxes and parcels.
 """
 import logging
 import math
-import os
 import random
-from pathlib import Path
-from typing import List
 
 import bpy
 import gin
 import mathutils
+
 import zpy
 
 log = logging.getLogger("zpy")
