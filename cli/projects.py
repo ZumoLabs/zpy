@@ -24,13 +24,14 @@ def fetch_projects(filters, url, auth_headers):
 
 
 @fetch_auth
-def create_project(name, url, auth_headers):
+def create_project(account_id, name, url, auth_headers):
     """
     create project
 
     Create empty project on ZumoLabs backend.
 
     Args:
+        account_id (str): uuid of account
         name (str): name of project
         url (str): backend endpoint
         auth_headers: authentication for backend
@@ -38,7 +39,7 @@ def create_project(name, url, auth_headers):
     endpoint = f"{url}/api/v1/projects/"
     r = requests.post(
         endpoint,
-        data={"name": name},
+        data={"account": account_id, "name": name},
         headers=auth_headers,
     )
     if r.status_code != 201:

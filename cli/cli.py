@@ -257,8 +257,7 @@ def list_sims(filters, project=None):
 @list.command("projects")
 @click.argument("filters", nargs=-1)
 def list_projects(filters):
-    """
-    list projects
+    """list projects
 
     List projects from backend with optional FILTERS.
     """
@@ -292,6 +291,47 @@ def list_projects(filters):
             p["id"],
             p["name"],
             p["account"],
+            p["created_at"],
+        )
+
+
+@list.command("accounts")
+@click.argument("filters", nargs=-1)
+def list_accounts(filters):
+    """list accounts
+
+    List accounts from backend with optional FILTERS.
+    """
+    from cli.accounts import fetch_accounts
+
+    try:
+        filters = parse_args(filters)
+    except Exception:
+        click.secho("Failed to parse filters: {args}", fg="yellow", err=True)
+        return
+
+    try:
+        with Loader("Fetching accounts..."):
+            accounts = fetch_accounts(filters)
+        click.echo("Fetched accounts successfully.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch accounts {e}.", fg="red", err=True)
+        return
+
+    tbl = TableLogger(
+        columns="id,type,email,created_at",
+        colwidth={
+            "id": UUID_WIDTH,
+            "type": LARGE_WIDTH,
+            "email": UUID_WIDTH,
+            "created_at": DATETIME_WIDTH,
+        },
+    )
+    for p in accounts:
+        tbl(
+            p["id"],
+            p["type"],
+            p["email"],
             p["created_at"],
         )
 
@@ -477,6 +517,23 @@ def create():
     Create group is used for create commands on backend objects.
     """
     pass
+
+
+@create.command("project")
+@click.argument("account", type=click.UUID)
+@click.argument("name")
+def create_project(account, name):
+    """Create a project under ACCOUNT called NAME
+
+    See available accounts: zpy list accounts
+    """
+    from cli.projects import create_project
+
+    try:
+        create_project(account, name)
+        click.secho(f"Created project '{name}'", fg="green")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to create project: {e}", fg="red", err=True)
 
 
 @create.command("dataset")
