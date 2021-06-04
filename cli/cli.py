@@ -89,7 +89,7 @@ def set_project(project_uuid):
 
 
 @project.command("clear")
-def set_project():
+def clear_project():
     """Clear global PROJECT uuid."""
     config = read_config()
     config.pop("PROJECT")
@@ -180,6 +180,8 @@ def list_datasets(filters, project=None):
         click.echo("Fetched datasets successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -228,6 +230,8 @@ def list_sims(filters, project=None):
         click.echo("Fetched sims successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch sims {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -275,6 +279,8 @@ def list_projects(filters):
         click.echo("Fetched projects successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch projects {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -316,6 +322,8 @@ def list_accounts(filters):
         click.echo("Fetched accounts successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch accounts {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -361,6 +369,8 @@ def list_jobs(filters, project=None):
         click.echo("Fetched jobs successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch jobs {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -413,6 +423,8 @@ def get_dataset(name, dtype, path):
         click.echo(f"Downloaded {dtype} dataset '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to download dataset: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to download dataset: {e}", fg="yellow", err=True)
 
@@ -439,6 +451,8 @@ def get_sim(name, path):
         click.echo(f"Downloaded sim '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to download sim: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to download sim: {e}", fg="yellow", err=True)
 
@@ -479,6 +493,8 @@ def upload_sim(name, path, project=None):
         click.secho(f"Uploaded sim {path} with name '{name}'", fg="green")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to upload sim: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
 
 
 @upload.command("dataset")
@@ -505,6 +521,8 @@ def upload_dataset(name, path, project=None):
         click.secho(f"Uploaded dataset {path} with name '{name}'", fg="green")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to upload dataset: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
 
 
 # ------- CREATE
@@ -534,6 +552,8 @@ def create_project(account, name):
         click.secho(f"Created project '{name}'", fg="green")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to create project: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
 
 
 @create.command("dataset")
@@ -568,6 +588,8 @@ def create_dataset(name, sim, args, project=None):
         )
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
 
@@ -610,6 +632,8 @@ def create_sweep(name, sim, number, args, project=None):
             )
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
+            if e.response.status_code == 400:
+                click.secho(str(e.response.json()), fg="red", err=True)
         except NameError as e:
             click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
             return
@@ -691,6 +715,8 @@ def create_job(name, operation, filters, configfile, sweepfile, project=None):
             )
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to create job: {e}", fg="red", err=True)
+            if e.response.status_code == 400:
+                click.secho(str(e.response.json()), fg="red", err=True)
 
     click.echo(f"Finished creating {len(job_configs)} jobs with name '{name}'")
 
@@ -729,6 +755,8 @@ def logs_dataset(name, path):
         click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
 
@@ -755,5 +783,7 @@ def logs_job(name, path):
         click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
