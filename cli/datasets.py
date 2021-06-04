@@ -30,7 +30,7 @@ def filter_datasets(dfilter, project, url, auth_headers):
     for dataset_type in DATASET_TYPES:
         endpoint = f"{url}/api/v1/{dataset_type}/"
         params = {
-            'project': project,
+            "project": project,
             f"{field}__{pattern}": regex,
         }
 
