@@ -13,9 +13,9 @@ Set the following environment variables:
 export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
 export BLENDER_VERSION="2.93"
 export BLENDER_VERSION_FULL="2.93.0"
-export BLENDER_PATH="$HOME/blender-${BLENDER_VERSION_FULL}-linux-x64/${BLENDER_VERSION}"
-export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.7"
-export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.7m"
+export BLENDER_PATH="$HOME/blender-${BLENDER_VERSION_FULL}-linux-x64/blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release/${BLENDER_VERSION}"
+export BLENDER_LIB_PY="${BLENDER_PATH}/python/lib/python3.9"
+export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python3.9"
 export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"
 ```
 
