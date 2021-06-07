@@ -190,8 +190,10 @@ def print_list_as_columns(list_of_strings, num_cols=5, indent_prefix="    "):
         end_index = (i + 1) * num_cols
         if end_index > len(list_of_strings):
             end_index = len(list_of_strings)
-        row = list_of_strings[start_index: end_index]
+        row = list_of_strings[start_index:end_index]
 
-        format_string = indent_prefix + " ".join(["{{:<{}}}".format(col_width) for _ in row])
+        format_string = indent_prefix + " ".join(
+            ["{{:<{}}}".format(col_width) for _ in row]
+        )
 
         click.echo(format_string.format(*row))

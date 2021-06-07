@@ -648,19 +648,19 @@ def create_sweep(name, sim, number, args, project=None):
     "filters",
     "-f",
     multiple=True,
-    help="Key/value pairs separated by spaces. Passed as query params in the API call to filter data sets."
+    help="Key/value pairs separated by spaces. Passed as query params in the API call to filter data sets.",
 )
 @click.option(
     "configfile",
     "--configfile",
     type=click.Path(exists=True, dir_okay=False, resolve_path=True),
-    help="Path to json file"
+    help="Path to json file",
 )
 @click.option(
     "sweepfile",
     "--sweepfile",
     type=click.Path(exists=True, dir_okay=False, resolve_path=True),
-    help="Path to json file"
+    help="Path to json file",
 )
 @use_project(required=True)
 def create_job(name, operation, filters, configfile, sweepfile, project=None):
@@ -688,8 +688,11 @@ def create_job(name, operation, filters, configfile, sweepfile, project=None):
                 dataset_names = list(datasets.values())
                 print_list_as_columns(dataset_names)
 
-            filtered_datasets_ids = [data_set_id for data_sets in datasets_by_type.values() for data_set_id in
-                                     data_sets.keys()]
+            filtered_datasets_ids = [
+                data_set_id
+                for data_sets in datasets_by_type.values()
+                for data_set_id in data_sets.keys()
+            ]
             filtered_datasets.extend(filtered_datasets_ids)
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to filter datasets {e}", fg="red", err=True)
