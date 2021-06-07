@@ -23,25 +23,39 @@ def filter_datasets(dfilter, project, url, auth_headers):
         auth_headers: authentication for backend
 
     Return:
-        dict: filtered datasets by dfilter {'name': 'id'}
+        dict: filtered datasets by dfilter
+        {
+            'uploaded-data-sets': {'id': 'name'},
+            'generated-data-sets': {'id': 'name'},
+            'job-data-sets': {'id': 'name'},
+        }
     """
-    filtered_datasets = {}
+    filtered_datasets = {key: {} for key in DATASET_TYPES}
     field, pattern, regex = parse_filter(dfilter)
     for dataset_type in DATASET_TYPES:
         endpoint = f"{url}/api/v1/{dataset_type}/"
         params = {
-            **params,
+            "project": project,
             f"{field}__{pattern}": regex,
         }
 
-        while endpoint is not None:
-            r = requests.get(endpoint, params=params, headers=auth_headers)
+        # Do initial request
+        r = requests.get(endpoint, params=params, headers=auth_headers)
+        if r.status_code != 200:
+            r.raise_for_status()
+        body = json.loads(r.text)
+        for data_set in body["results"]:
+            filtered_datasets[dataset_type][data_set["id"]] = data_set["name"]
+
+        # Traverse the next links until we've gotten all of the data sets
+        while body["next"] is not None:
+            r = requests.get(body["next"], headers=auth_headers)
             if r.status_code != 200:
                 r.raise_for_status()
-            response = json.loads(r.text)
-            for r in response["results"]:
-                filtered_datasets[r["name"]] = r["id"]
-            endpoint = response["next"]
+            body = json.loads(r.text)
+            for data_set in body["results"]:
+                filtered_datasets[dataset_type][data_set["id"]] = data_set["name"]
+
     return filtered_datasets
 
 
