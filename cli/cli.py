@@ -7,7 +7,7 @@ from table_logger import TableLogger
 
 from cli.config import initialize_config, read_config, write_config, get_endpoint
 from cli.loader import Loader
-from cli.utils import parse_args, resolve_sweep, use_project
+from cli.utils import parse_args, resolve_sweep, use_project, print_list_as_columns
 from zpy.files import read_json, to_pathlib_path
 
 SMALL_WIDTH = 12
@@ -28,7 +28,7 @@ def cli():
 
 
 @cli.command("help")
-def help():
+def cli_help():
     """display help
 
     This will display help in order to provide users with more information
@@ -70,13 +70,13 @@ def set_env(env):
     click.echo("zpy login to fetch token")
 
 
-@cli.group()
-def project():
+@cli.group("project")
+def cli_project():
     """Manage global project workspace."""
     pass
 
 
-@project.command("set")
+@cli_project.command("set")
 @click.argument("project_uuid", type=click.UUID)
 def set_project(project_uuid):
     """Set global PROJECT uuid."""
@@ -88,8 +88,8 @@ def set_project(project_uuid):
     click.echo(f"  {old_project_uuid} -> {config['PROJECT']}")
 
 
-@project.command("clear")
-def set_project():
+@cli_project.command("clear")
+def clear_project():
     """Clear global PROJECT uuid."""
     config = read_config()
     config.pop("PROJECT")
@@ -124,7 +124,7 @@ def login(username, password):
 
 
 @cli.command("config")
-def config():
+def cli_config():
     """display config
 
     Display current configuration file to developer.
@@ -147,8 +147,8 @@ def version():
 # ------- LIST
 
 
-@cli.group()
-def list():
+@cli.group("list")
+def cli_list():
     """List objects.
 
     List group is used for list commands on backend objects.
@@ -156,7 +156,7 @@ def list():
     pass
 
 
-@list.command("datasets")
+@cli_list.command("datasets")
 @click.argument("filters", nargs=-1)
 @use_project()
 def list_datasets(filters, project=None):
@@ -180,6 +180,8 @@ def list_datasets(filters, project=None):
         click.echo("Fetched datasets successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch datasets {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -204,7 +206,7 @@ def list_datasets(filters, project=None):
         )
 
 
-@list.command("sims")
+@cli_list.command("sims")
 @click.argument("filters", nargs=-1)
 @use_project()
 def list_sims(filters, project=None):
@@ -228,6 +230,8 @@ def list_sims(filters, project=None):
         click.echo("Fetched sims successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch sims {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -254,7 +258,7 @@ def list_sims(filters, project=None):
         )
 
 
-@list.command("projects")
+@cli_list.command("projects")
 @click.argument("filters", nargs=-1)
 def list_projects(filters):
     """list projects
@@ -266,7 +270,7 @@ def list_projects(filters):
     try:
         filters = parse_args(filters)
     except Exception:
-        click.secho("Failed to parse filters: {args}", fg="yellow", err=True)
+        click.secho(f"Failed to parse filters: {filters}", fg="yellow", err=True)
         return
 
     try:
@@ -275,6 +279,8 @@ def list_projects(filters):
         click.echo("Fetched projects successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch projects {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -295,7 +301,7 @@ def list_projects(filters):
         )
 
 
-@list.command("accounts")
+@cli_list.command("accounts")
 @click.argument("filters", nargs=-1)
 def list_accounts(filters):
     """list accounts
@@ -307,7 +313,7 @@ def list_accounts(filters):
     try:
         filters = parse_args(filters)
     except Exception:
-        click.secho("Failed to parse filters: {args}", fg="yellow", err=True)
+        click.secho(f"Failed to parse filters: {filters}", fg="yellow", err=True)
         return
 
     try:
@@ -316,6 +322,8 @@ def list_accounts(filters):
         click.echo("Fetched accounts successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch accounts {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -336,7 +344,7 @@ def list_accounts(filters):
         )
 
 
-@list.command("jobs")
+@cli_list.command("jobs")
 @click.argument("filters", nargs=-1)
 @use_project()
 def list_jobs(filters, project=None):
@@ -352,7 +360,7 @@ def list_jobs(filters, project=None):
         if project:
             filters["project"] = project
     except Exception:
-        click.secho("Failed to parse filters: {args}", fg="yellow", err=True)
+        click.secho(f"Failed to parse filters: {filters}", fg="yellow", err=True)
         return
 
     try:
@@ -361,6 +369,8 @@ def list_jobs(filters, project=None):
         click.echo("Fetched jobs successfully.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch jobs {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
         return
 
     tbl = TableLogger(
@@ -380,7 +390,7 @@ def list_jobs(filters, project=None):
 # ------- GET
 
 
-@cli.group()
+@cli.group("get")
 def get():
     """get object
 
@@ -413,6 +423,8 @@ def get_dataset(name, dtype, path):
         click.echo(f"Downloaded {dtype} dataset '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to download dataset: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to download dataset: {e}", fg="yellow", err=True)
 
@@ -439,6 +451,8 @@ def get_sim(name, path):
         click.echo(f"Downloaded sim '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to download sim: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to download sim: {e}", fg="yellow", err=True)
 
@@ -446,7 +460,7 @@ def get_sim(name, path):
 # -------  UPLOAD
 
 
-@cli.group()
+@cli.group("upload")
 def upload():
     """upload object
 
@@ -479,6 +493,8 @@ def upload_sim(name, path, project=None):
         click.secho(f"Uploaded sim {path} with name '{name}'", fg="green")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to upload sim: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
 
 
 @upload.command("dataset")
@@ -505,12 +521,14 @@ def upload_dataset(name, path, project=None):
         click.secho(f"Uploaded dataset {path} with name '{name}'", fg="green")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to upload dataset: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
 
 
 # ------- CREATE
 
 
-@cli.group()
+@cli.group("create")
 def create():
     """create object
 
@@ -534,6 +552,8 @@ def create_project(account, name):
         click.secho(f"Created project '{name}'", fg="green")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to create project: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
 
 
 @create.command("dataset")
@@ -558,7 +578,7 @@ def create_dataset(name, sim, args, project=None):
     try:
         dataset_config = parse_args(args)
     except Exception:
-        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
+        click.secho(f"Failed to parse args: {args}", fg="yellow", err=True)
         return
     try:
         create_generated_dataset(name, sim, parse_args(args), project)
@@ -568,6 +588,8 @@ def create_dataset(name, sim, args, project=None):
         )
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
 
@@ -597,7 +619,7 @@ def create_sweep(name, sim, number, args, project=None):
     try:
         dataset_config = parse_args(args)
     except Exception:
-        click.secho("Failed to parse args: {args}", fg="yellow", err=True)
+        click.secho(f"Failed to parse args: {args}", fg="yellow", err=True)
         return
     for i in range(int(number)):
         dataset_name = f"{name} seed{i}"
@@ -610,6 +632,8 @@ def create_sweep(name, sim, number, args, project=None):
             )
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
+            if e.response.status_code == 400:
+                click.secho(str(e.response.json()), fg="red", err=True)
         except NameError as e:
             click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
             return
@@ -618,48 +642,59 @@ def create_sweep(name, sim, number, args, project=None):
 
 @create.command("job")
 @click.argument("name")
-@click.argument("operation")
-@click.option("filters", "-f", multiple=True)
+@click.argument("operation", type=click.Choice(["package", "tvt", "train"]))
+@click.option(
+    "filters",
+    "-f",
+    multiple=True,
+    help="Key/value pairs separated by spaces. Passed as query params in the API call to filter data sets.",
+)
 @click.option(
     "configfile",
     "--configfile",
     type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    help="Path to json file",
 )
 @click.option(
     "sweepfile",
     "--sweepfile",
     type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    help="Path to json file",
 )
 @use_project(required=True)
 def create_job(name, operation, filters, configfile, sweepfile, project=None):
     """create job
 
-    Create a job object in backend that will trigger an operation on
-    datasets filtered by the filters. Requires PROJECT set via `zpy project`.
-
-    Args:
-        name (str): name of new job
-        operation (str): name of operation to run on datasets
-        filters (str): string filters for dataset names to run job on
-        configfile (str): json configuration for the job
-        sweepfile (str): sweep json to launch a suite of jobs
-        project (str): project uuid
+    Create a job called NAME within PROJECT to perform OPERATION on a group of datasets defined by the FILTERS
+    provided by -f. Requires PROJECT set via `zpy project`.
     """
     from cli.datasets import filter_datasets
     from cli.jobs import create_new_job
 
-    datasets = []
+    filtered_datasets = []
     for dfilter in filters:
         try:
             with Loader(f"Filtering datasets by '{dfilter}'..."):
-                filtered_datasets = filter_datasets(dfilter, project)
-            filtered_datasets_names = [*filtered_datasets.keys()]
-            click.echo(
-                f"Filtered datasets by filter '{dfilter}':\n{filtered_datasets_names}"
-            )
-            datasets.append(filtered_datasets.values())
+                datasets_by_type = filter_datasets(dfilter, project)
+
+            for [dataset_type, datasets] in datasets_by_type.items():
+                count = len(datasets)
+                click.secho(f"Found {count} of type<{dataset_type}>")
+
+                if count == 0:
+                    continue
+
+                dataset_names = list(datasets.values())
+                print_list_as_columns(dataset_names)
+
+            filtered_datasets_ids = [
+                data_set_id
+                for data_sets in datasets_by_type.values()
+                for data_set_id in data_sets.keys()
+            ]
+            filtered_datasets.extend(filtered_datasets_ids)
         except requests.exceptions.HTTPError as e:
-            click.secho(f"Failed to filter datsets {e}", fg="red", err=True)
+            click.secho(f"Failed to filter datasets {e}", fg="red", err=True)
 
     job_configs = []
     if configfile:
@@ -685,12 +720,14 @@ def create_job(name, operation, filters, configfile, sweepfile, project=None):
     for i, config in enumerate(job_configs):
         job_name = name if i == 0 else f"{name} {i}"
         try:
-            create_new_job(job_name, operation, config, datasets, project)
+            create_new_job(job_name, operation, config, filtered_datasets, project)
             click.secho(
                 f"Created {operation} job '{job_name}' with config {config}", fg="green"
             )
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to create job: {e}", fg="red", err=True)
+            if e.response.status_code == 400:
+                click.secho(str(e.response.json()), fg="red", err=True)
 
     click.echo(f"Finished creating {len(job_configs)} jobs with name '{name}'")
 
@@ -698,7 +735,7 @@ def create_job(name, operation, filters, configfile, sweepfile, project=None):
 # ------- LOGS
 
 
-@cli.group()
+@cli.group("logs")
 def logs():
     """logs
 
@@ -729,6 +766,8 @@ def logs_dataset(name, path):
         click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
 
@@ -755,5 +794,7 @@ def logs_job(name, path):
         click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
