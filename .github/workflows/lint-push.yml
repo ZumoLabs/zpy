@@ -1,6 +1,9 @@
 name: lint-push
 
-on: push
+on:
+  push:
+    branches-ignore:
+      - 'gh-pages'
 
 jobs:
   run-linters:
