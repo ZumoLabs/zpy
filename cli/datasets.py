@@ -57,10 +57,10 @@ def generate_dataset(dataset_name, sim_name, count, config, project, url, auth_h
     fetch_sim(sim_name)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/generate/"
     data = {
-        "sim": sim_name, 
-        "amount": count, 
+        "sim": sim_name,
+        "amount": count,
         "config": json.dumps(config),
-        "project": project
+        "project": project,
     }
     r = requests.post(
         endpoint,
