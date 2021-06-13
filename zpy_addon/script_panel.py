@@ -33,7 +33,7 @@ def registerSceneProperties():
     bpy.types.Scene.zpy_template_dir = bpy.props.StringProperty(
         name="",
         description="Path to script template directory.",
-        default=str(zpy.blender.default_script_template_dir()),
+        default=str(zpy.assets.script_template_dir()),
         subtype="DIR_PATH",
     )
 

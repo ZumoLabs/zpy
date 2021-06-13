@@ -73,8 +73,6 @@ class RenderOperator(Operator):
             iseg_path=output_path / iseg_image_name,
             cseg_path=output_path / cseg_image_name,
             depth_path=output_path / depth_image_name,
-            width=640,
-            height=480,
         )
 
         return {"FINISHED"}

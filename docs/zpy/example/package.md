@@ -12,7 +12,7 @@ We trained a CNN on synthetic data produced by this sim. Below are images showin
 
 ## Blog
 
-You can find the full blog post for this project [here]().
+You can find the full blog post for this project [here](https://www.zumolabs.ai/post/synthetic-data-package-detection).
 
 ## Code
 

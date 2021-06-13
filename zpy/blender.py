@@ -3,7 +3,6 @@
 """
 import inspect
 import logging
-import os
 import random
 import time
 from functools import wraps
@@ -11,10 +10,10 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 import bpy
+import gin
 import mathutils
 import numpy as np
 
-import gin
 import zpy
 
 log = logging.getLogger(__name__)
@@ -119,26 +118,6 @@ def step(
         # TODO: This call is not needed in headless instances, makes loop faster
         if refresh_ui:
             refresh_blender_ui()
-
-
-def get_asset_lib_path() -> Path:
-    """Returns path to asset library location.
-
-    Defaults to the directory of the blenderfile.
-
-    Returns:
-        Path: pathlib.Path object to library location.
-    """
-
-    assets_env_path = os.environ.get("ASSETS", None)
-    if assets_env_path is None:
-        log.warning("Could not find environment variable $ASSETS")
-        blendfile_path = bpy.path.abspath(bpy.data.filepath)
-        return Path(blendfile_path).parent
-    else:
-        assets_env_path = zpy.files.verify_path(assets_env_path, check_dir=True)
-        log.debug(f"Found assets path at {assets_env_path}")
-        return assets_env_path
 
 
 @gin.configurable
@@ -253,17 +232,6 @@ def load_text_from_file(
         for area in bpy.context.screen.areas:
             if area.type == "TEXT_EDITOR":
                 area.spaces[0].text = bpy.data.texts[text_name]
-
-
-def default_script_template_dir() -> Path:
-    """Path to the script templates for zpy addon.
-
-    Returns:
-        pathlib.Path: Path to script templates for zpy addon.
-    """
-    script_path = Path(bpy.utils.script_path_user())
-    template_dir = script_path / "addons" / "zpy_addon" / "templates"
-    return zpy.files.verify_path(template_dir, check_dir=True)
 
 
 @gin.configurable

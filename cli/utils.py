@@ -1,9 +1,13 @@
-from cli.config import read_config
+import functools
+import math
 from copy import deepcopy
 from itertools import product
-from tqdm import tqdm
 from urllib.request import urlopen
-import functools
+
+import click
+from tqdm import tqdm
+
+from cli.config import read_config
 
 
 def parse_filter(str_filter):
@@ -111,7 +115,7 @@ def download_url(url, output_path):
 
 
 def fetch_auth(func):
-    """fetch authetication
+    """fetch authentication
 
     Decorator to wrap functions providing the backend url and the
     correct authorization headers for requests.
@@ -127,7 +131,69 @@ def fetch_auth(func):
     def wrapper(*args, **kwargs):
         config = read_config()
         endpoint = config["ENDPOINT"]
+
         auth_header = {"Authorization": "token {}".format(config["TOKEN"])}
         return func(*args, **kwargs, url=endpoint, auth_headers=auth_header)
 
     return wrapper
+
+
+def use_project(required=False):
+    def use_project_inner(func):
+        """Inject project uuid into function call. Optionally throw an error if it has not been set.
+
+        Args:
+            func: function to wrap
+
+        Returns:
+            wrapped function
+        """
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            config = read_config()
+            project = config.get("PROJECT", None)
+            if project:
+                click.secho(f"Using project workspace {project}.", fg="yellow")
+                return func(*args, **kwargs, project=project)
+            else:
+                if required:
+                    click.secho(
+                        "Project is not set. See `zpy project --help`",
+                        fg="red",
+                        err=True,
+                    )
+                    return
+
+                return func(*args, **kwargs)
+
+        return wrapper
+
+    return use_project_inner
+
+
+def print_list_as_columns(list_of_strings, num_cols=5, indent_prefix="    "):
+    """Format and echo a list of strings into nicely formatted columns.
+
+    Args:
+        list_of_strings (list of str): A list of similar strings to format into columns.
+        num_cols (int): Desired number of columns.
+        indent_prefix (str): String to attach to the beginning of every printed line.
+    Returns:
+        None
+    """
+    count = len(list_of_strings)
+    col_width = max(len(string) for string in list_of_strings)
+    num_rows = math.ceil(count / num_cols)
+    for i in range(num_rows):
+        start_index = i * num_cols
+        end_index = (i + 1) * num_cols
+        if end_index > len(list_of_strings):
+            end_index = len(list_of_strings)
+        row = list_of_strings[start_index:end_index]
+
+        format_string = indent_prefix + " ".join(
+            ["{{:<{}}}".format(col_width) for _ in row]
+        )
+
+        click.echo(format_string.format(*row))

@@ -5,14 +5,12 @@ Spawns boxes and parcels.
 """
 import logging
 import math
-import os
 import random
-from pathlib import Path
-from typing import List
 
 import bpy
 import gin
 import mathutils
+
 import zpy
 
 log = logging.getLogger("zpy")
@@ -57,9 +55,6 @@ def run(
     # Save the position of the camera and light
     zpy.objects.save_pose("Camera")
     zpy.objects.save_pose("Sun")
-
-    # # Set the asset directory (location of textures and hdris)
-    # os.environ['ASSETS'] = str(Path(bpy.data.filepath).parent)
 
     # Run the sim.
     for step_idx in zpy.blender.step():

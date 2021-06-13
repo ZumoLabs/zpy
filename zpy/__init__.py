@@ -35,6 +35,7 @@ from zpy import output_csv
 # which may or may not be installed on a user's
 # system, make sure to wrap it in a try-catch
 try:
+    from zpy import assets
     from zpy import blender
     from zpy import hdris
     from zpy import kdtree

@@ -13,7 +13,7 @@ Set the following environment variables:
 
 ```
 export ZPY_SRC_PATH="$HOME/zumolabs/zpy"
-export BLENDER_VERSION="2.92"
+export BLENDER_VERSION="2.93"
 export BLENDER_PATH="/c/Program\ Files/Blender\ Foundation/Blender\ ${BLENDER_VERSION}/${BLENDER_VERSION}"
 export BLENDER_BIN_PY="${BLENDER_PATH}/python/bin/python.exe"
 export BLENDER_BIN_PIP="${BLENDER_PATH}/python/bin/pip3"

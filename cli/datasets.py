@@ -1,7 +1,7 @@
-from cli.utils import download_url, fetch_auth, parse_filter
-from zpy.files import to_pathlib_path
 import json
 import requests
+from cli.utils import download_url, fetch_auth, parse_filter
+from zpy.files import to_pathlib_path
 
 
 @fetch_auth
@@ -36,17 +36,7 @@ def create_dataset(name, file_path, url, auth_headers):
 
 
 @fetch_auth
-def package_dataset(name, format, url, auth_headers):
-    """ """
-    dataset = fetch_dataset(name)
-    endpoint = f"{url}/api/v1/datasets/{dataset['id']}/package/"
-    r = requests.post(endpoint, data={"format": format}, headers=auth_headers)
-    if r.status_code != 200:
-        r.raise_for_status()
-
-
-@fetch_auth
-def generate_dataset(dataset_name, sim_name, count, config, url, auth_headers):
+def generate_dataset(dataset_name, sim_name, count, config, project, url, auth_headers):
     """generate dataset
 
     Generate files for a dataset on ZumoLabs backend which will launch
@@ -57,6 +47,7 @@ def generate_dataset(dataset_name, sim_name, count, config, url, auth_headers):
         sim_name (str): name of sim to generate from
         count (int): number of times to run the sim
         config (dict): configration of sim for this dataset
+        project (str): project uuid
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
@@ -65,7 +56,12 @@ def generate_dataset(dataset_name, sim_name, count, config, url, auth_headers):
     dataset = fetch_dataset(dataset_name)
     fetch_sim(sim_name)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/generate/"
-    data = {"sim": sim_name, "amount": count, "config": json.dumps(config)}
+    data = {
+        "sim": sim_name, 
+        "amount": count, 
+        "config": json.dumps(config),
+        "project": project
+    }
     r = requests.post(
         endpoint,
         data=data,
@@ -104,16 +100,18 @@ def download_dataset(name, path, format, url, auth_headers):
 
 
 @fetch_auth
-def fetch_datasets(url, auth_headers):
+def fetch_datasets(filters, url, auth_headers):
     """fetch datasets
 
     Fetch dataset names from backend. This is done through tags.
 
+    Args:
+        filters (dict): query param filters for API call
     Returns:
         list: paginated sorted datasets for all types
     """
     endpoint = f"{url}/api/v1/datasets/"
-    r = requests.get(endpoint, headers=auth_headers)
+    r = requests.get(endpoint, headers=auth_headers, params=filters)
     if r.status_code != 200:
         r.raise_for_status()
     return json.loads(r.text)["results"]
@@ -141,7 +139,7 @@ def fetch_dataset(name, url, auth_headers):
 
 
 @fetch_auth
-def filter_datasets(dfilter, url, auth_headers):
+def filter_datasets(dfilter, project, url, auth_headers):
     """filter datasets
 
     Filter dataset objects on ZumoLabs backend by given dfilter.
@@ -149,21 +147,26 @@ def filter_datasets(dfilter, url, auth_headers):
 
     Args:
         dfilter (str): filter query for datasets
+        project (str): project uuid
         url (str): backend endpoint
         auth_headers: authentication for backend
 
     Return:
-        dict: filtered datasets by dfilter {'name': 'id'}
+        dict: filtered datasets by dfilter {'id': 'name'}
     """
     filtered_datasets = {}
     field, pattern, regex = parse_filter(dfilter)
-    endpoint = f"{url}/api/v1/datasets/?{field}__{pattern}={regex}"
+    endpoint = f"{url}/api/v1/datasets/"
+    params = {
+        "project": project,
+        f"{field}__{pattern}": regex,
+    }
     while endpoint is not None:
         r = requests.get(endpoint, headers=auth_headers)
         if r.status_code != 200:
             r.raise_for_status()
         response = json.loads(r.text)
-        for r in response["results"]:
-            filtered_datasets[r["name"]] = r["id"]
+        for data_set in response["results"]:
+            filtered_datasets[data_set["id"]] = data_set["name"]
         endpoint = response["next"]
     return filtered_datasets
