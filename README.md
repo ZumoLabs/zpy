@@ -45,6 +45,12 @@ More installation instructions can be found in the docs:
 - [Developer mode **(Linux)**](https://zumolabs.github.io/zpy/zpy/install/linux/)
 - [Developer mode **(Windows)**](https://zumolabs.github.io/zpy/zpy/install/windows/)
 
+    | OS | Status |
+    |:-----------|:-----------|
+    | Linux | :heavy_check_mark: |
+    | MacOS | :heavy_check_mark: |
+    | Windows | [zpy#126](https://github.com/ZumoLabs/zpy/issues/126) |
+
 ## Contribute [:busts_in_silhouette:](https://zumolabs.github.io/zpy/overview/contribute/)
 
 We welcome community contributions! Search through the [current issues](https://github.com/ZumoLabs/zpy/issues) or open your own.
