@@ -14,20 +14,16 @@
 \usepackage{microtype}      % microtypography
 \usepackage{lipsum}		% Can be removed after putting your text content
 \usepackage{graphicx}
-\usepackage{natbib}
+\graphicspath{ {./images/} }
+\usepackage[square,numbers]{natbib}
 \usepackage{doi}
 
-
-
 \title{ZPY: Open Source Synthetic Data for Computer Vision}
-
-% \date{June 18, 2021}
 
 \author{
 	{\hspace{1mm}Hugo Ponte}\thanks{correspondence author} \\ 
 	Zumo Labs \\
 	\texttt{hugo@zumolabs.ai} \\
-	%% examples of more authors
 	\And
 	{\hspace{1mm}Norman Ponte} \\
 	Zumo Labs \\
@@ -53,14 +49,10 @@
 % Uncomment to remove the date
 \date{}
 
-% Uncomment to override  the `A preprint' in the header
 \renewcommand{\headeright}{Technical Report}
 \renewcommand{\undertitle}{Technical Report}
-%\renewcommand{\shorttitle}{\textit{arXiv} Template}
 
-%%% Add PDF metadata to help others organize their library
-%%% Once the PDF is generated, you can check the metadata with
-%%% $ pdfinfo template.pdf
+% PDF metadata
 \hypersetup{
 pdftitle={ZPY: Open Source Synthetic Data for Computer Vision},
 pdfsubject={cs.CV},
@@ -73,11 +65,19 @@ pdfkeywords={Computer Vision, Synthetic Data, Machine Learning, Open Source, Pyt
 
 \begin{abstract}
 Synthetic data presents a unique solution to the huge data requirements of computer vision with deep learning.
-In this work, we present zpy, an open source framework for creating synthetic data. Built on top of Blender,
+In this work, we present zpy \citep{zpy}, an open source framework for creating synthetic data. Built on top of Blender,
 and designed with modularity and readability in mind.
 \end{abstract}
 
 \keywords{Computer Vision \and Synthetic Data \and Machine Learning \and Open Source \and Python \and Blender}
+
+% https://www.overleaf.com/learn/latex/Inserting_Images
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=\textwidth]{cover.png}
+	\caption{Synthetic images of a raspberri pi created with zpy: (A) color image, (B) segmentation image, (C) depth image, (D) prediction image}
+	\label{fig:fig1}
+\end{figure}
 
 \section{Introduction}
 \label{sec:introduction}
@@ -88,10 +88,24 @@ and designed with modularity and readability in mind.
 \lipsum[2]
 
 \subsection{3D}
+
+3D, short for the three dimensions of space we experience,  is a catch-all term used to describe the
+ varied technologies used to create virtual worlds. The earliest uses of 3D were in the engineering 
+ world for design and manufacturing. A huge use case for 3D has emerged in entertainment, where 
+ virtual worlds are created for movies and games. More recently, the 3D stack has been used to power 
+ emerging technologies such as robotics, VR/AR, and deep learning.
+
+\subsubsection{Asset Creation}
+\lipsum[5]
+
+\subsubsection{Asset Scripting}
 \lipsum[5]
 
 \subsection{Deep Learning}
-\lipsum[5]
+Modern deep learning can be implemented in a variety of programming languages including Python, R, Julia,
+ Scala, Ruby, Octave, MATLAB, and even C/C++. Amongst these, Python has emerged as the lingua franca,
+  rising to the top in part due to the popularity of open source frameworks such as
+  TensorFlow \citep{tensorflow}, PyTorch \citep{pytorch}, and Scikit-Learn \citep{scikit-learn}.
 
 \subsection{Synthetic Data}
 \lipsum[5]
@@ -105,7 +119,15 @@ and designed with modularity and readability in mind.
 \subsection{Fairness and Bias}
 \lipsum[2]
 
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{software3.png}
+	\caption{Software 3.0: the developer transitions from writing explicit algorithms to creating and curating datasets which are used to train machine learning models.}
+	\label{fig:fig2}
+\end{figure}
+
 \subsection{Software 3.0}
+See Figure \ref{fig:fig2}. Here is how you add footnotes. \footnote{Sample of the first footnote.}
 \lipsum[2]
 
 \section{Project Features}
@@ -123,63 +145,28 @@ and designed with modularity and readability in mind.
 \section{Design}
 \label{sec:design}
 
-\section{Workflow}
-\label{sec:workflow}
-
-\section{Case Study}
-\label{sec:casestudy}
-
-\section{Conclusion}
-\label{sec:casestudy}
-
-\subsection{Python First}
-\lipsum[2]
-
-\subsection{Headings: second level}
-\lipsum[5]
-\begin{equation}
-	\xi _{ij}(t)=P(x_{t}=i,x_{t+1}=j|y,v,w;\theta)= {\frac {\alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}{\sum _{i=1}^{N} \sum _{j=1}^{N} \alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}}
-\end{equation}
-
-\subsubsection{Headings: third level}
-\lipsum[6]
-
-\paragraph{Paragraph}
-\lipsum[7]
-
-
-
-\section{Examples of citations, figures, tables, references}
-\label{sec:others}
-
-\subsection{Citations}
-Citations use \verb+natbib+. The documentation may be found at
-\begin{center}
-	\url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-\end{center}
-
-Here is an example usage of the two main commands (\verb+citet+ and \verb+citep+): Some people thought a thing \citep{kour2014real, hadash2018estimate} but other people thought something else \citep{kour2014fast}. Many people have speculated that if we knew exactly why \citet{kour2014fast} thought this\dots
-
-\subsection{Figures}
-\lipsum[10]
-See Figure \ref{fig:fig1}. Here is how you add footnotes. \footnote{Sample of the first footnote.}
-\lipsum[11]
-
 \begin{figure}
 	\centering
-	\fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-	\caption{Sample figure caption.}
-	\label{fig:fig1}
+	\includegraphics[width=\textwidth]{workflow.png}
+	\caption{The Synthetic Data Workflow allows for iteration of the dataset.}
+	\label{fig:fig3}
 \end{figure}
 
-\subsection{Tables}
-See awesome Table~\ref{tab:table}.
+\section{Workflow}
+\label{sec:workflow}
+See Figure \ref{fig:fig3}.
 
-The documentation for \verb+booktabs+ (`Publication quality tables in LaTeX') is available from:
-\begin{center}
-	\url{https://www.ctan.org/pkg/booktabs}
-\end{center}
+\section{Example}
+\label{sec:example}
 
+\subsection{Lists}
+\begin{itemize}
+	\item Domain Randomization of background
+	\item Domain Randomization of lighting
+	\item Domain Randomization of object
+\end{itemize}
+
+See results in the Table~\ref{tab:table}.
 
 \begin{table}
 	\caption{Sample table title}
@@ -198,15 +185,11 @@ The documentation for \verb+booktabs+ (`Publication quality tables in LaTeX') is
 	\label{tab:table}
 \end{table}
 
-\subsection{Lists}
-\begin{itemize}
-	\item Lorem ipsum dolor sit amet
-	\item consectetur adipiscing elit.
-	\item Aliquam dignissim blandit est, in dictum tortor gravida eget. In ac rutrum magna.
-\end{itemize}
+\section{Conclusion}
+\label{sec:conclusion}
+\lipsum[2]
 
-
-\bibliographystyle{unsrtnat}
+\bibliographystyle{abbrvnat}
 \bibliography{references}
 
 \end{document}
