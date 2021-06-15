@@ -77,7 +77,7 @@ def set_seed(
 @gin.configurable
 def step(
     num_steps: int = 3,
-    framerate: int = 0,
+    framerate: int = 1,
     start_frame: int = 1,
     refresh_ui: bool = False,
 ) -> int:

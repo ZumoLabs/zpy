@@ -26,18 +26,22 @@ class RunOperator(Operator):
     bl_options = {"REGISTER"}
 
     def execute(self, context):
-        text = bpy.data.texts.get("run", None)
-        if text is None:
+        # Set the logger levels
+        zpy.logging.set_log_levels("info")
+        # Get the run text
+        run_text = bpy.data.texts.get("run", None)
+        if run_text is None:
             raise ValueError(
                 'Running a sim requires a run text, could not find in text with name "run".'
             )
-        # Set the logger levels
-        zpy.logging.set_log_levels("debug")
         # HACK: Gin will complain when this module is re-initialized
+        gin.enter_interactive_mode()
         with gin.unlock_config():
-            text_as_module = text.as_module()
+            run_text_as_module = run_text.as_module()
+        # Parse the gin-config text block
+        zpy.blender.parse_config('config')
         # Execute the run function inside the run text
-        text_as_module.run()
+        run_text_as_module.run()
         return {"FINISHED"}
 
 
@@ -73,8 +77,6 @@ class RenderOperator(Operator):
             iseg_path=output_path / iseg_image_name,
             cseg_path=output_path / cseg_image_name,
             depth_path=output_path / depth_image_name,
-            width=640,
-            height=480,
         )
 
         return {"FINISHED"}

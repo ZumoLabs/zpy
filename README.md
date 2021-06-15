@@ -24,6 +24,7 @@ Check out our full [**documentation** :bookmark_tabs:](https://zumolabs.github.i
 
 ## What's New? :rocket:
 
+- (06/08/21) Blender 2.93 Support is out! Latest features can be found [on blender.org](https://www.blender.org/download/releases/2-93/).
 - (05/28/21) Check out our [latest article](https://www.zumolabs.ai/post/self-supervised-visual-transformers) on our blog on self-supervised ViTs
 - (05/17/21) A new template sim :package:`package`:package: is available, [check it out](https://zumolabs.github.io/zpy/zpy/example/package/).
 - (05/14/21) Check out our new [documentation](https://zumolabs.github.io/zpy/)
@@ -43,6 +44,12 @@ More installation instructions can be found in the docs:
 - [Install from script **(Mac/Linux)**](https://zumolabs.github.io/zpy/zpy/install/script/)
 - [Developer mode **(Linux)**](https://zumolabs.github.io/zpy/zpy/install/linux/)
 - [Developer mode **(Windows)**](https://zumolabs.github.io/zpy/zpy/install/windows/)
+
+    | OS | Status |
+    |:-----------|:-----------|
+    | Linux | :heavy_check_mark: |
+    | MacOS | :heavy_check_mark: |
+    | Windows | [zpy#126](https://github.com/ZumoLabs/zpy/issues/126) |
 
 ## Contribute [:busts_in_silhouette:](https://zumolabs.github.io/zpy/overview/contribute/)
 
