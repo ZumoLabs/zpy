@@ -112,6 +112,7 @@ def version():
     Display the zpy cli version.
     """
     import zpy
+
     click.echo(f"Version: {zpy.__version__}")
 
 
