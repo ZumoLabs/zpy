@@ -154,7 +154,7 @@ def use_project(required=False):
             config = read_config()
             project = config.get("PROJECT", None)
             if project:
-                click.secho(f"Using project workspace {project}.", fg="yellow")
+                click.echo(f"Using project {project}")
                 return func(*args, **kwargs, project=project)
             else:
                 if required:

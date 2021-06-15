@@ -5,7 +5,7 @@ from zpy.files import to_pathlib_path
 
 
 @fetch_auth
-def create_dataset(name, file_path, url, auth_headers):
+def create_dataset(name, file_path, project, url, auth_headers):
     """create dataset
 
     Create dataset on ZumoLabs backend which groups files.
@@ -17,7 +17,7 @@ def create_dataset(name, file_path, url, auth_headers):
         auth_headers: authentication for backend
     """
     endpoint = f"{url}/api/v1/datasets/"
-    data = {"name": name}
+    data = {"name": name, "project": project}
     if file_path:
         r = requests.post(
             endpoint,
@@ -33,6 +33,7 @@ def create_dataset(name, file_path, url, auth_headers):
         )
     if r.status_code != 201:
         r.raise_for_status()
+    return json.loads(r.text)
 
 
 @fetch_auth
@@ -52,9 +53,8 @@ def generate_dataset(dataset_name, sim_name, count, config, project, url, auth_h
         auth_headers: authentication for backend
     """
     from cli.sims import fetch_sim
-
-    dataset = fetch_dataset(dataset_name)
     fetch_sim(sim_name)
+    dataset = create_dataset(dataset_name, None, project)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/generate/"
     data = {
         "sim": sim_name, 
@@ -72,7 +72,7 @@ def generate_dataset(dataset_name, sim_name, count, config, project, url, auth_h
 
 
 @fetch_auth
-def download_dataset(name, path, format, url, auth_headers):
+def download_dataset(name, path, url, auth_headers):
     """download dataset
 
     Download dataset object from S3 through ZumoLabs backend.
@@ -80,7 +80,6 @@ def download_dataset(name, path, format, url, auth_headers):
     Args:
         name (str): name of dataset to download
         path (str): output directory
-        format (str): download format
         url (str): backend endpoint
         auth_headers: authentication for backend
 
@@ -88,7 +87,7 @@ def download_dataset(name, path, format, url, auth_headers):
         str: output file path
     """
     dataset = fetch_dataset(name)
-    endpoint = f"{url}/api/v1/datasets/{dataset['id']}/download/{format}/"
+    endpoint = f"{url}/api/v1/datasets/{dataset['id']}/download/"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
@@ -162,7 +161,7 @@ def filter_datasets(dfilter, project, url, auth_headers):
         f"{field}__{pattern}": regex,
     }
     while endpoint is not None:
-        r = requests.get(endpoint, headers=auth_headers)
+        r = requests.get(endpoint, headers=auth_headers, params=params)
         if r.status_code != 200:
             r.raise_for_status()
         response = json.loads(r.text)

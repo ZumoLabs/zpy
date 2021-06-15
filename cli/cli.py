@@ -69,33 +69,6 @@ def set_env(env):
     click.echo("zpy login to fetch token")
 
 
-@cli.group("project")
-def cli_project():
-    """Manage global project workspace."""
-    pass
-
-
-@cli_project.command("set")
-@click.argument("project_uuid", type=click.UUID)
-def set_project(project_uuid):
-    """Set global PROJECT uuid."""
-    config = read_config()
-    old_project_uuid = config.get("PROJECT", None)
-    config["PROJECT"] = str(project_uuid)
-    write_config(config)
-    click.echo("Switched project:")
-    click.echo(f"  {old_project_uuid} -> {config['PROJECT']}")
-
-
-@cli_project.command("clear")
-def clear_project():
-    """Clear global PROJECT uuid."""
-    config = read_config()
-    config.pop("PROJECT")
-    write_config(config)
-    click.echo("Cleared global project namespace.")
-
-
 @cli.command("login")
 @click.argument("username", required=True)
 @click.password_option(help="The login password.")
@@ -183,10 +156,8 @@ def list_datasets(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="id,project,name,files,created_at",
+        columns="name,files,created_at",
         colwidth={
-            "id": UUID_WIDTH,
-            "project": UUID_WIDTH,
             "name": LARGE_WIDTH,
             "files": SMALL_WIDTH,
             "created_at": DATETIME_WIDTH,
@@ -194,8 +165,6 @@ def list_datasets(filters, project=None):
     )
     for d in datasets:
         tbl(
-            d["id"],
-            d["project"],
             d["name"],
             len(d["files"]),
             d["created_at"],
@@ -223,7 +192,7 @@ def get_dataset(name, path, format):
     from cli.utils import download_url
 
     try:
-        output_path = download_dataset(name, path, format)
+        output_path = download_dataset(name, path)
         click.echo(f"Downloaded dataset '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to download dataset: {e}", fg="red", err=True)
@@ -261,7 +230,7 @@ def upload_dataset(name, path, project=None):
             click.secho(str(e.response.json()), fg="red", err=True)
 
 
-@dataset_group.command("create")
+@dataset_group.command("generate")
 @click.argument("name")
 @click.argument("sim")
 @click.argument("number")
@@ -279,7 +248,7 @@ def create_dataset(name, sim, number, args, project=None):
         args (List(str)): configuration of sim for this dataset
         project (str): project uuid
     """
-    from cli.datasets import create_dataset, generate_dataset
+    from cli.datasets import generate_dataset
 
     try:
         dataset_config = parse_args(args)
@@ -288,9 +257,7 @@ def create_dataset(name, sim, number, args, project=None):
         return
 
     try:
-        create_dataset(name, project)
-        click.secho(f"Created dataset '{name}'", fg="green")
-        generate_dataset(name, sim, number, parse_args(args), project)
+        generate_dataset(name, sim, number, dataset_config, project)
         click.secho(
             f"Generating {number} from sim '{sim}' with config {dataset_config}",
             fg="green",
@@ -308,7 +275,7 @@ def create_dataset(name, sim, number, args, project=None):
 
 @cli.group("project")
 def project_group():
-    """Project object
+    """Project group
 
     Project is a container for the rest of the objects.
     """
@@ -362,7 +329,7 @@ def list_projects(filters):
 @click.argument("account", type=click.UUID)
 @click.argument("name")
 def create_project(account, name):
-    """Create a project under ACCOUNT called NAME
+    """Create a project under ACCOUNT called NAME.
 
     See available accounts: zpy list accounts
     """
@@ -375,6 +342,33 @@ def create_project(account, name):
         click.secho(f"Failed to create project: {e}", fg="red", err=True)
         if e.response.status_code == 400:
             click.secho(str(e.response.json()), fg="red", err=True)
+
+
+@project_group.command("set")
+@click.argument("project_uuid", type=click.UUID)
+def set_project(project_uuid):
+    """Set project
+
+    Set global PROJECT uuid.
+    """
+    config = read_config()
+    old_project_uuid = config.get("PROJECT", None)
+    config["PROJECT"] = str(project_uuid)
+    write_config(config)
+    click.echo("Switched project:")
+    click.echo(f"  {old_project_uuid} -> {config['PROJECT']}")
+
+
+@project_group.command("clear")
+def clear_project():
+    """Clear project
+
+    Clear global PROJECT uuid.
+    """
+    config = read_config()
+    config.pop("PROJECT")
+    write_config(config)
+    click.echo("Cleared global project namespace.")
 
 
 # ------- SIM
@@ -418,12 +412,10 @@ def list_sims(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="id,project,name,state,zpy_version,blender_version,created_at",
+        columns="name,state,zpy_version,blender_version,created_at",
         colwidth={
-            "id": UUID_WIDTH,
-            "project": UUID_WIDTH,
             "name": LARGE_WIDTH,
-            "state": SMALL_WIDTH,
+            "state": MEDIUM_WIDTH,
             "zpy_version": MEDIUM_WIDTH,
             "blender_version": SMALL_WIDTH,
             "created_at": DATETIME_WIDTH,
@@ -431,8 +423,6 @@ def list_sims(filters, project=None):
     )
     for s in sims:
         tbl(
-            s["id"],
-            s["project"],
             s["name"],
             s["state"],
             s["zpy_version"],
@@ -594,17 +584,16 @@ def list_jobs(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="id,state,name,operation,created_at",
+        columns="state,name,operation,created_at",
         colwidth={
-            "id": UUID_WIDTH,
-            "state": SMALL_WIDTH,
+            "state": MEDIUM_WIDTH,
             "name": LARGE_WIDTH,
             "operation": SMALL_WIDTH,
             "created_at": DATETIME_WIDTH,
         },
     )
     for j in jobs:
-        tbl(j["id"], j["state"], j["name"], j["operation"], j["created_at"])
+        tbl(j["state"], j["name"], j["operation"], j["created_at"])
 
 
 @job_group.command("create")
@@ -642,24 +631,18 @@ def create_job(name, operation, filters, configfile, sweepfile, project=None):
     for dfilter in filters:
         try:
             with Loader(f"Filtering datasets by '{dfilter}'..."):
-                datasets_by_type = filter_datasets(dfilter, project)
+                datasets = filter_datasets(dfilter, project)
 
-            for [dataset_type, datasets] in datasets_by_type.items():
-                count = len(datasets)
-                click.secho(f"Found {count} of type<{dataset_type}>")
+            count = len(datasets)
+            click.secho(f"Found {count} matching '{dfilter}'")
 
-                if count == 0:
-                    continue
+            if count == 0:
+                continue
 
-                dataset_names = list(datasets.values())
-                print_list_as_columns(dataset_names)
+            dataset_names = list(datasets.values())
+            print_list_as_columns(dataset_names)
 
-            filtered_datasets_ids = [
-                data_set_id
-                for data_sets in datasets_by_type.values()
-                for data_set_id in data_sets.keys()
-            ]
-            filtered_datasets.extend(filtered_datasets_ids)
+            filtered_datasets.extend(datasets.keys())
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to filter datasets {e}", fg="red", err=True)
 
@@ -699,29 +682,94 @@ def create_job(name, operation, filters, configfile, sweepfile, project=None):
     click.echo(f"Finished creating {len(job_configs)} jobs with name '{name}'")
 
 
-@job_group.command("log")
-@click.argument("name")
-@click.argument(
-    "path",
-    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
-)
-def logs_job(name, path):
-    """job logs
+# ------- TRANSFORM
 
-    Download job run logs.
 
-    Args:
-        name (str): name of job
-        path (str): directory to put logs in
+@cli.group("transform")
+def transform_group():
+    """Transform Operations
+
+    Transforms are used on datasets to output a new dataset.
     """
-    from cli.logs import fetch_logs
+    pass
+
+
+@transform_group.command("list")
+@click.argument("filters", nargs=-1)
+@use_project()
+def list_transforms(filters, project=None):
+    """
+    list transforms
+
+    List transforms from backend with optional FILTERS. Also displays available TRANSFORMS. Uses PROJECT set via `zpy project` command when available.
+    """
+    from cli.transforms import fetch_transforms, available_transforms
 
     try:
-        fetch_logs("jobs", name, path)
-        click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
+        filters = parse_args(filters)
+        if project:
+            filters["project"] = project
+    except Exception:
+        click.secho(f"Failed to parse filters: {filters}", fg="yellow", err=True)
+        return
+
+    try:
+        click.echo(f"Available transforms: {available_transforms()}")
+        with Loader("Fetching transforms..."):
+            transforms = fetch_transforms(filters)
+        click.echo("Fetched transforms successfully.")
     except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+        click.secho(f"Failed to fetch transforms {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+        return
+
+    tbl = TableLogger(
+        columns="state,operation,input_data_set,created_at",
+        colwidth={
+            "state": MEDIUM_WIDTH,
+            "operation": SMALL_WIDTH,
+            "input_data_set": LARGE_WIDTH,
+            "created_at": DATETIME_WIDTH,
+        },
+    )
+    for t in transforms:
+        tbl(t["state"], t["operation"], t["input_data_set"], t["created_at"])
+
+
+@transform_group.command("dataset")
+@click.argument("name")
+@click.argument("operation")
+@click.argument("args", nargs=-1)
+@use_project(required=True)
+def transform_dataset(name, operation, args, project=None):
+    """Transform a dataset.
+
+    Transform a dataset NAME with OPERATION. This will trigger the transformation of this dataset given the input ARGS. Requires PROJECT to be set via `zpy project`.
+
+    Args:
+        name (str): name of new dataset
+        operation (str): operation to run on dataset
+        args (List(str)): configuration of sim for this dataset
+        project (str): project uuid
+    """
+    from cli.transforms import create_transform
+
+    try:
+        transform_config = parse_args(args)
+    except Exception:
+        click.secho(f"Failed to parse args: {args}", fg="yellow", err=True)
+        return
+
+    try:
+        create_transform(name, operation, transform_config, project)
+        click.secho(
+            f"Running {operation} on dataset '{name}' with config {transform_config}",
+            fg="green",
+        )
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to create transform: {e}", fg="red", err=True)
         if e.response.status_code == 400:
             click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
-        click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
+        click.secho(f"Failed to create transform: {e}", fg="yellow", err=True)
