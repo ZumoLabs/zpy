@@ -232,8 +232,7 @@ class Dataset:
         data_sets = get(
             f"{_base_url}/api/v1/generated-data-sets/", params=query_params
         )["results"]
-        
-        
+
         latest_id = data_sets[0]["name"][(len(name) + 1) :] if data_sets else 0
 
         endpoint = f"{_base_url}/api/v1/generated-data-sets/"
