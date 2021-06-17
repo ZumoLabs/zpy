@@ -44,7 +44,7 @@ def get(url, **kwargs):
     """
     headers = {
         **(kwargs["headers"] if "headers" in kwargs else {}),
-        "Authorization": f"Token {_auth_token}"
+        "Authorization": f"Token {_auth_token}",
     }
     r = requests.get(url, headers=headers, **kwargs)
     if r.status_code != 200:
@@ -179,7 +179,9 @@ class Dataset:
             "state": "READY",
             "config": to_query_param_value(self._config),
         }
-        data_sets = get(f"{_base_url}/api/v1/generated-data-sets/", params=filter_params)["results"]
+        data_sets = get(
+            f"{_base_url}/api/v1/generated-data-sets/", params=filter_params
+        )["results"]
 
         if len(data_sets) == 0:
             print(f"No preview available.")
@@ -224,10 +226,12 @@ class Dataset:
             "project": self._project_uuid,
             "sim": self._sim_uuid,
             "name__startswith": name,
-            "ordering": "-created_at"
+            "ordering": "-created_at",
         }
-        data_sets = get(f"{_base_url}/api/v1/generated-data-sets/", params=query_params)["results"]
-        latest_id = data_sets[0]["name"][(len(name) + 1):]
+        data_sets = get(
+            f"{_base_url}/api/v1/generated-data-sets/", params=query_params
+        )["results"]
+        latest_id = data_sets[0]["name"][(len(name) + 1) :]
 
         endpoint = f"{_base_url}/api/v1/generated-data-sets/"
         r = requests.post(
@@ -236,7 +240,7 @@ class Dataset:
                 "project": self._project_uuid,
                 "sim": self._sim_uuid,
                 "config": json.dumps(remove_none_values(self._config)),
-                "name": name + f'.{int(latest_id) + 1}',
+                "name": name + f".{int(latest_id) + 1}",
             },
             headers={"Authorization": f"Token {_auth_token}"},
         )
@@ -249,7 +253,9 @@ class Dataset:
 
         print("Requested new data set:")
         print(json.dumps(r.json(), indent=4, sort_keys=True))
-        print(f"You can follow its progress at app.zumolabs.ai/sims/{self._sim_uuid}/batches")
+        print(
+            f"You can follow its progress at app.zumolabs.ai/sims/{self._sim_uuid}/batches"
+        )
 
 
 def to_query_param_value(config):
@@ -264,8 +270,8 @@ def to_query_param_value(config):
     for django_field_traversal, django_field_value in config.items():
         # Ignore fields set as None. They weren't specifically set or asked for.
         if django_field_value is not None:
-            query_param_values.append(f'{django_field_traversal}:{django_field_value}')
-    return ','.join(query_param_values)
+            query_param_values.append(f"{django_field_traversal}:{django_field_value}")
+    return ",".join(query_param_values)
 
 
 def remove_none_values(obj):
