@@ -198,8 +198,10 @@ class Dataset:
             print("\t(no images found)")
             return
 
-        IMAGES_PER_SAMPLE = 2 # for the iseg and rbg
-        bounded_num_images = min([len(data_set["images"]), num_samples * IMAGES_PER_SAMPLE])
+        IMAGES_PER_SAMPLE = 2  # for the iseg and rbg
+        bounded_num_images = min(
+            [len(data_set["images"]), num_samples * IMAGES_PER_SAMPLE]
+        )
         formatted_samples = {}
         found_images = 0
         for sample in data_set["images"]:
