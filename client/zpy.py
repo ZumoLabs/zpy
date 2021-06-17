@@ -35,6 +35,7 @@ def add_newline(func):
 
 def get(url, **kwargs):
     """Call any rag API url while adding the auth header automatically. Takes any arbitrary requests.get kwargs.
+    TODO: Merge with calling code in zpy/cli/
 
     Args:
         url (str): Ragnarok API url
@@ -219,7 +220,7 @@ class Dataset:
         print(json.dumps(formatted_samples, indent=4, sort_keys=True))
 
     @add_newline
-    def generate(self, name):
+    def generate(self, name, num_samples):
         # Pretty hacky. Grab existing data sets that exist for current project/sim and just increment the number to
         # auto-name them.
         query_params = {
@@ -239,7 +240,10 @@ class Dataset:
             data={
                 "project": self._project_uuid,
                 "sim": self._sim_uuid,
-                "config": json.dumps(remove_none_values(self._config)),
+                "config": json.dumps({
+                    **remove_none_values(self._config),
+                    "num_images": num_samples,
+                }),
                 "name": name + f".{int(latest_id) + 1}",
             },
             headers={"Authorization": f"Token {_auth_token}"},

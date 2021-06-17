@@ -50,7 +50,7 @@ if __name__ == "__main__":
     staging_kwargs = {
         "base_url": "https://ragnarok.stage.zumok8s.org",
         # The rest need to match something on staging
-        "auth_token": "XXXX",  # Auth token from localStorage
+        "auth_token": "959566ff192bf7a2261f28a7f4e9fb43ad63bab6ac58324b2a1bdace135d27de",  # Auth token from localStorage
         "project_uuid": "5eb222e1-45ef-46bb-b999-3e07a948b20b",  # Hugo's project has the most sims
         "sim_uuid": "675b25c5-a497-4111-aeba-8e05cca2d409",  # can_v5 - looked to have the most interesting params
         "sim_specific_properties": {
@@ -66,4 +66,4 @@ if __name__ == "__main__":
     test_params(**staging_kwargs)
     test_preview(**staging_kwargs)
 
-    test_generate("can_v5", **staging_kwargs)
+    test_generate("can_v5", 20, **staging_kwargs)
