@@ -66,4 +66,4 @@ if __name__ == "__main__":
     test_params(**staging_kwargs)
     test_preview(**staging_kwargs)
 
-    test_generate("can_v5", 20, **staging_kwargs)
+    test_generate("can_v5", 50, **staging_kwargs)
