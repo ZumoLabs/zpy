@@ -4,11 +4,11 @@ from random import randrange
 
 import requests
 
-_auth_token: str = ''
-_base_url: str = ''
+_auth_token: str = ""
+_base_url: str = ""
 
 
-def init(auth_token: str, base_url: str = 'http://localhost:8000', **kwargs):
+def init(auth_token: str, base_url: str = "http://localhost:8000", **kwargs):
     global _auth_token, _base_url
     _auth_token = auth_token
     _base_url = base_url
@@ -141,30 +141,30 @@ class Dataset:
     @property
     def _config(self):
         """Returns a dict of gin config values pre-flattened by using django field traversal notation.
-            Ex:
-            {
-                "fieldA": "a",
-                "fieldB1": {
-                    "fieldB2": "b",
-                    "fieldC1: {
-                        "fieldC2": "c"
-                    }
+        Ex:
+        {
+            "fieldA": "a",
+            "fieldB1": {
+                "fieldB2": "b",
+                "fieldC1: {
+                    "fieldC2": "c"
                 }
             }
-            ->
-            {
-                "fieldA": "a",
-                "fieldB1__fieldB2": "b",
-                "fieldB1__fieldC1__fieldC2: "c"
-            }
+        }
+        ->
+        {
+            "fieldA": "a",
+            "fieldB1__fieldB2": "b",
+            "fieldB1__fieldC1__fieldC2: "c"
+        }
         """
         return {
-            'sim': self._sim,
-            'jitter_mesh': self.jitter_mesh,
-            'jitter_material': self.jitter_material,
-            'bool_prop': self.bool_prop,
-            'test_val_1': self.test_val_1,
-            'A__B.1__C.0': self.cool_nested_prop,
+            "sim": self._sim,
+            "jitter_mesh": self.jitter_mesh,
+            "jitter_material": self.jitter_material,
+            "bool_prop": self.bool_prop,
+            "test_val_1": self.test_val_1,
+            "A__B.1__C.0": self.cool_nested_prop,
             **self.sim_specific_params,
         }
 
@@ -202,7 +202,7 @@ class Dataset:
             if sample["name"].startswith("_plot"):
                 continue
 
-            image_category, name, output_type = sample["name"].split('.')
+            image_category, name, output_type = sample["name"].split(".")
 
             if name not in formatted_samples:
                 formatted_samples[name] = {}

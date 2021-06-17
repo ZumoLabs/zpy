@@ -13,15 +13,15 @@ def test_preview(*args, **kwargs):
     dataset = zpy.Dataset(**kwargs)
 
     # Won't exist on anything besides my custom local tests
-    dataset.cool_nested_prop = 'c'
+    dataset.cool_nested_prop = "c"
     dataset.preview()
 
     # Unset it
     dataset.cool_nested_prop = None
 
-    if 'sim_specific_properties' in kwargs:
+    if "sim_specific_properties" in kwargs:
         # Testing sim specific properties
-        for k, v in kwargs['sim_specific_properties'].items():
+        for k, v in kwargs["sim_specific_properties"].items():
             dataset.add_sim_specific_param(k, v)
 
     dataset.preview()
@@ -39,16 +39,16 @@ def test_generate(*args, **kwargs):
     dataset.generate(*args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     local_kwargs = {
-        'base_url': 'http://localhost:8000',
+        "base_url": "http://localhost:8000",
         # The rest need to match something in the dev's local
-        'auth_token': 'c98d1edd78f8e3416c72525942cdb5242b1d518f0582bed8e48ae0fa6be09508',
-        'project_uuid': 'fd914c42-1f50-4b45-82d7-78e9ae440b78',
-        'sim_uuid': 'a7188bb0-07b4-4817-9874-53c684eb4d6c',
+        "auth_token": "c98d1edd78f8e3416c72525942cdb5242b1d518f0582bed8e48ae0fa6be09508",
+        "project_uuid": "fd914c42-1f50-4b45-82d7-78e9ae440b78",
+        "sim_uuid": "a7188bb0-07b4-4817-9874-53c684eb4d6c",
     }
     staging_kwargs = {
-        'base_url': 'https://ragnarok.stage.zumok8s.org',
+        "base_url": "https://ragnarok.stage.zumok8s.org",
         # The rest need to match something on staging
         'auth_token': 'XXXX',  # Auth token from localStorage
         'project_uuid': '5eb222e1-45ef-46bb-b999-3e07a948b20b',  # Hugo's project has the most sims
@@ -57,7 +57,7 @@ if __name__ == '__main__':
             'probability_glass_effect': 0.1,
             # 'use_distractors': False,
             # 'blur_jitter': False,
-        }
+        },
     }
 
     test_params(**local_kwargs)
