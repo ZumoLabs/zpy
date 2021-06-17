@@ -1,6 +1,6 @@
-from random import randrange
-import json
 import functools
+import json
+from random import randrange
 
 import requests
 
@@ -31,6 +31,30 @@ def add_newline(func):
         return ret
 
     return wrapper
+
+
+def get(url, **kwargs):
+    """Call any rag API url while adding the auth header automatically. Takes any arbitrary requests.get kwargs.
+
+    Args:
+        url (str): Ragnarok API url
+        kwargs: Forwarded to the requests.get function call
+    Returns:
+        deserialized API response
+    """
+    headers = {
+        **(kwargs["headers"] if "headers" in kwargs else {}),
+        "Authorization": f"Token {_auth_token}"
+    }
+    r = requests.get(url, headers=headers, **kwargs)
+    if r.status_code != 200:
+        if r.status_code == 400:
+            # Known error
+            print(r.json())
+        else:
+            r.raise_for_status()
+
+    return r.json()
 
 
 class Dataset:
@@ -149,25 +173,14 @@ class Dataset:
         print(f"Generating preview for config:")
         print(json.dumps(self._config, indent=4, sort_keys=True))
 
-        endpoint = f"{_base_url}/api/v1/generated-data-sets/"
         filter_params = {
             "project": self._project_uuid,
             "sim": self._sim_uuid,
             "state": "READY",
             "config": to_query_param_value(self._config),
         }
+        data_sets = get(f"{_base_url}/api/v1/generated-data-sets/", params=filter_params)["results"]
 
-        # Do initial request
-        headers = {"Authorization": f"Token {_auth_token}"}
-        data_set_list_res = requests.get(endpoint, params=filter_params, headers=headers)
-        if data_set_list_res.status_code != 200:
-            if data_set_list_res.status_code == 400:
-                # Known error
-                print(data_set_list_res.json())
-            else:
-                print("Unknown error.")
-
-        data_sets = data_set_list_res.json()["results"]
         if len(data_sets) == 0:
             print(f"No preview available.")
             print("\t(no premade data sets)")
@@ -176,21 +189,12 @@ class Dataset:
         # Choose random data set in page
         data_set_id = data_sets[randrange(len(data_sets))]["id"]
         # Re-request the data set detail (image links aren't included in the list call
-        data_set_detail_res = requests.get(endpoint + data_set_id, headers=headers)
-        if data_set_detail_res.status_code != 200:
-            if data_set_detail_res.status_code == 400:
-                # Known error
-                print(data_set_detail_res.json())
-            else:
-                print("Unknown error.")
-
-        data_set = data_set_detail_res.json()
+        data_set = get(f"{_base_url}/api/v1/generated-data-sets/{data_set_id}/")
         if len(data_set["images"]) == 0:
             print(f"No preview available.")
             print("\t(no images found)")
             return
 
-        # TODO: Print images via matplotlib?
         bounded_num_samples = min([len(data_set["images"]), num_samples])
         formatted_samples = {}
         found_images = 0
@@ -212,6 +216,41 @@ class Dataset:
 
         print(json.dumps(formatted_samples, indent=4, sort_keys=True))
 
+    @add_newline
+    def generate(self, name):
+        # Pretty hacky. Grab existing data sets that exist for current project/sim and just increment the number to
+        # auto-name them.
+        query_params = {
+            "project": self._project_uuid,
+            "sim": self._sim_uuid,
+            "name__startswith": name,
+            "ordering": "-created_at"
+        }
+        data_sets = get(f"{_base_url}/api/v1/generated-data-sets/", params=query_params)["results"]
+        latest_id = data_sets[0]["name"][(len(name) + 1):]
+
+        endpoint = f"{_base_url}/api/v1/generated-data-sets/"
+        r = requests.post(
+            endpoint,
+            data={
+                "project": self._project_uuid,
+                "sim": self._sim_uuid,
+                "config": json.dumps(remove_none_values(self._config)),
+                "name": name + f'.{int(latest_id) + 1}',
+            },
+            headers={"Authorization": f"Token {_auth_token}"},
+        )
+        if r.status_code != 201:
+            if r.status_code == 400:
+                # Known error
+                print(r.json())
+            else:
+                r.raise_for_status()
+
+        print("Requested new data set:")
+        print(json.dumps(r.json(), indent=4, sort_keys=True))
+        print(f"You can follow its progress at app.zumolabs.ai/sims/{self._sim_uuid}/batches")
+
 
 def to_query_param_value(config):
     """Create the special query parameter value string for filtering generated-data-sets via config values.
@@ -227,3 +266,7 @@ def to_query_param_value(config):
         if django_field_value is not None:
             query_param_values.append(f'{django_field_traversal}:{django_field_value}')
     return ','.join(query_param_values)
+
+
+def remove_none_values(obj):
+    return {k: v for k, v in obj.items() if v is not None}

@@ -23,7 +23,20 @@ def test_preview(*args, **kwargs):
         # Testing sim specific properties
         for k, v in kwargs['sim_specific_properties'].items():
             dataset.add_sim_specific_param(k, v)
-        dataset.preview()
+
+    dataset.preview()
+
+
+def test_generate(*args, **kwargs):
+    zpy.init(**kwargs)
+    dataset = zpy.Dataset(**kwargs)
+
+    if 'sim_specific_properties' in kwargs:
+        # Testing sim specific properties
+        for k, v in kwargs['sim_specific_properties'].items():
+            dataset.add_sim_specific_param(k, v)
+
+    dataset.generate(*args)
 
 
 if __name__ == '__main__':
@@ -37,7 +50,7 @@ if __name__ == '__main__':
     staging_kwargs = {
         'base_url': 'https://ragnarok.stage.zumok8s.org',
         # The rest need to match something on staging
-        'auth_token': '28b38f8254997befea0504370e670fdad434a0033f9eaf4b2acdb47d32d2981a',  # Kory's auth token
+        'auth_token': 'XXXX',  # Auth token from localStorage
         'project_uuid': '5eb222e1-45ef-46bb-b999-3e07a948b20b',  # Hugo's project has the most sims
         'sim_uuid': '675b25c5-a497-4111-aeba-8e05cca2d409',  # can_v5 - looked to have the most interesting params
         'sim_specific_properties': {
@@ -52,3 +65,5 @@ if __name__ == '__main__':
 
     test_params(**staging_kwargs)
     test_preview(**staging_kwargs)
+
+    test_generate('can_v5', **staging_kwargs)
