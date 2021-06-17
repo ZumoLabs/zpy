@@ -240,10 +240,12 @@ class Dataset:
             data={
                 "project": self._project_uuid,
                 "sim": self._sim_uuid,
-                "config": json.dumps({
-                    **remove_none_values(self._config),
-                    "num_images": num_samples,
-                }),
+                "config": json.dumps(
+                    {
+                        **remove_none_values(self._config),
+                        "num_images": num_samples,
+                    }
+                ),
                 "name": name + f".{int(latest_id) + 1}",
             },
             headers={"Authorization": f"Token {_auth_token}"},
