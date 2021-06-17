@@ -198,7 +198,8 @@ class Dataset:
             print("\t(no images found)")
             return
 
-        bounded_num_samples = min([len(data_set["images"]), num_samples])
+        IMAGES_PER_SAMPLE = 2 # for the iseg and rbg
+        bounded_num_images = min([len(data_set["images"]), num_samples * IMAGES_PER_SAMPLE])
         formatted_samples = {}
         found_images = 0
         for sample in data_set["images"]:
@@ -213,7 +214,7 @@ class Dataset:
             formatted_samples[name][output_type] = sample["data"]
             found_images += 1
 
-            if found_images == bounded_num_samples:
+            if found_images == bounded_num_images:
                 # Not pulling next page for now. Either find enough samples or we don't.
                 break
 
