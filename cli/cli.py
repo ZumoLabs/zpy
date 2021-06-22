@@ -488,6 +488,26 @@ def upload_sim(name, path, project=None):
             click.secho(str(e.response.json()), fg="red", err=True)
 
 
+@sim_group.command("logs")
+@click.argument("name")
+@click.argument(
+    "path",
+    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
+)
+def logs_sim(name, path):
+    from cli.logs import fetch_logs
+
+    try:
+        fetch_logs("sims", name, path)
+        click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
+
+
 # ------- ACCOUNT
 
 
@@ -681,6 +701,26 @@ def create_job(name, operation, filters, configfile, sweepfile, project=None):
                 click.secho(str(e.response.json()), fg="red", err=True)
 
     click.echo(f"Finished creating {len(job_configs)} jobs with name '{name}'")
+
+
+@job_group.command("logs")
+@click.argument("name")
+@click.argument(
+    "path",
+    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
+)
+def logs_job(name, path):
+    from cli.logs import fetch_logs
+
+    try:
+        fetch_logs("jobs", name, path)
+        click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
 
 
 # ------- TRANSFORM
