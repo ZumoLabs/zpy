@@ -19,13 +19,14 @@ def create_transform(name, operation, config, project, url, auth_headers):
         auth_headers: authentication for backend
     """
     from cli.datasets import fetch_dataset
+
     dataset = fetch_dataset(name)
     endpoint = f"{url}/api/v1/transforms/"
     data = {
         "project": project,
         "operation": operation,
         "name": name,
-        "input_data_set": dataset['id'],
+        "input_data_set": dataset["id"],
         "config": json.dumps(config),
     }
     r = requests.post(endpoint, data=data, headers=auth_headers)

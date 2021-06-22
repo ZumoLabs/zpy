@@ -53,6 +53,7 @@ def generate_dataset(dataset_name, sim_name, count, config, project, url, auth_h
         auth_headers: authentication for backend
     """
     from cli.sims import fetch_sim
+
     fetch_sim(sim_name)
     dataset = create_dataset(dataset_name, None, project)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/generate/"
