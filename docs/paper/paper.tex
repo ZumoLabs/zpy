@@ -143,7 +143,6 @@ A huge market for the selling and reselling of collected data has emerged, which
 
 The high cost of data labeling makes it unavailable to those without huge resources
 
-
 \subsection{Fairness and Bias}
 
 The real world is biased and unfair.
@@ -227,6 +226,18 @@ Zpy modules are independent of each other, a monolithic system is much harder to
 
 See Figure \ref{fig:fig3}.
 
+The full workflow for synthetic data can be reduced into four key steps:
+
+\begin{itemize}
+	\item \emph{Design}.
+	\item \emph{Generation}.
+	\item \emph{Evaluation}.
+	\item \emph{Iteration}.
+\end{itemize}
+
+\subsection{Design}
+\label{sec:worflowdesign}
+
 Design the Sim
 
 Sim is short for simulation.
@@ -237,17 +248,26 @@ Relevant parameters are put as kwargs in the run() function, which allows config
 
 Gin configuration allows for modular python library design
 
+\subsection{Generation}
+\label{sec:generation}
+
 Generate the dataset
 
 Datasets are rendered frame by frame. Separate rendering passes are required for segmentation and color images.
 
 Cycles vs Eevee
 
+\subsection{Evaluation}
+\label{sec:evaluation}
+
 Evaluate the datasets
 
 Sweeping over dataset hyperparameters (much like sweeping over model architecture parameters)
 
 Fine-tuning pre-trained models as a proxy for dataset performance
+
+\subsection{Iteration}
+\label{sec:iteration}
 
 Iterate
 
@@ -260,13 +280,7 @@ The promise of AutoML for datasets
 \label{sec:example}
 
 Package detection
-Effect of domain randomized lighting
-Effect of domain randomized backgrounds
-Pre-training w/ real and fine-tuning on synthetic
-The Cost of Synthetic Data
-Comparison to Data Labeling
 
-\subsection{Lists}
 \begin{itemize}
 	\item Background material and texture.
 	\item Lighting intensity and positioning.
@@ -274,24 +288,21 @@ Comparison to Data Labeling
 	\item Number of objects in view.
 \end{itemize}
 
-See results in the Table~\ref{tab:table}.
+\subsection{Domain Randomization}
+\label{sec:domainrandomization}
 
-\begin{table}
-	\caption{Sample table title}
-	\centering
-	\begin{tabular}{lll}
-		\toprule
-		\multicolumn{2}{c}{Part}                   \\
-		\cmidrule(r){1-2}
-		Name     & Description     & Size ($\mu$m) \\
-		\midrule
-		Dendrite & Input terminal  & $\sim$100     \\
-		Axon     & Output terminal & $\sim$10      \\
-		Soma     & Cell body       & up to $10^6$  \\
-		\bottomrule
-	\end{tabular}
-	\label{tab:table}
-\end{table}
+Effect of domain randomized lighting
+
+Effect of domain randomized backgrounds
+
+\subsection{Training Curicculum}
+\label{sec:curicculum}
+
+Pre-training w/ real and fine-tuning on synthetic
+
+Training only on synthetic
+
+Training on mixed synthetic and real
 
 \section{Conclusion}
 \label{sec:conclusion}
