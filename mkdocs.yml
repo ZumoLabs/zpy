@@ -61,6 +61,7 @@ nav:
       - What is a Sim?: zpy/tutorials/what_is_a_sim.md
       - Running a Sim: zpy/tutorials/run_a_sim.md
       - Using Script Templates: zpy/tutorials/template.md
+      - Script Writing Guide: zpy/tutorials/script_writing_guide.md
       - Segmentation Images: zpy/tutorials/segmentation.md
       - Depth Images: zpy/tutorials/depth.md
       - Jittering Object Pose: zpy/tutorials/jitterpose.md
