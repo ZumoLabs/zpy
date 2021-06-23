@@ -201,7 +201,7 @@ def for_obj_in_collections(
     for collection in collections:
         # TODO: Windows does not like this
         if not len(collection.objects) > 0:
-            log.debug(f'Collection {collection.name} is empty, skipping...')
+            log.debug(f"Collection {collection.name} is empty, skipping...")
             continue
         for obj in collection.all_objects:
             if filter_mesh and obj.type == "MESH":
