@@ -5,7 +5,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from table_logger import TableLogger
 
-from cli.config import initialize_config, read_config, write_config, get_endpoint
+from cli.config import initialize_config, read_config, write_config, add_env, swap_env
 from cli.loader import Loader
 from cli.utils import parse_args, resolve_sweep, use_project, print_list_as_columns
 from zpy.files import read_json, to_pathlib_path
@@ -44,29 +44,6 @@ def cli_help():
         "github - https://github.com/ZumoLabs/zpy\n"
         "docs   - https://github.com/ZumoLabs/zpy/tree/main/docs/cli"
     )
-
-
-@cli.command("env")
-@click.argument("env", type=click.Choice(["local", "stage", "prod"]))
-def set_env(env):
-    """switch target environment
-
-    This command allows zumo labs developers to swap the endpoint that the
-    cli communicates with. Unlikely to be relevant for non-zumo devs.
-
-    Args:
-        env (str): new environment for endpoint
-    """
-    config = read_config()
-    old_env, old_endpoint = config["ENVIRONMENT"], config["ENDPOINT"]
-    config["ENVIRONMENT"] = env
-    config["ENDPOINT"] = get_endpoint(env)
-    config["TOKEN"] = None
-    write_config(config)
-    click.echo("Swapped environment:")
-    click.echo(f"  {old_env} -> {config['ENVIRONMENT']}")
-    click.echo(f"  {old_endpoint} -> {config['ENDPOINT']}")
-    click.echo("zpy login to fetch token")
 
 
 @cli.command("login")
@@ -114,6 +91,56 @@ def version():
     import zpy
 
     click.echo(f"Version: {zpy.__version__}")
+
+
+# ------- ENV
+
+
+@cli.group("env")
+def env_group():
+    """environment configuration.
+
+    Configure the environment for backend calls.
+    """
+    pass
+
+
+@env_group.command("set")
+@click.argument("env")
+def set_env(env):
+    """switch target environment
+
+    This command allows zumo labs developers to swap the endpoint that the cli communicates with.
+
+    Args:
+        env (str): new environment for endpoint
+    """
+    config = read_config()
+    old_env, old_endpoint = config["ENVIRONMENT"], config["ENDPOINT"]
+    swap_env(env)
+    config = read_config()
+    click.echo("Swapped environment:")
+    click.echo(f"  {old_env} -> {config['ENVIRONMENT']}")
+    click.echo(f"  {old_endpoint} -> {config['ENDPOINT']}")
+    click.echo("zpy login to fetch token")
+
+
+@env_group.command("add")
+@click.argument("env")
+@click.argument("endpoint")
+def add_environment(env, endpoint):
+    """add a new environment
+
+    This command allows you to add an environment to target with backend calls.
+
+    Args:
+        env (str): new environment name identifier
+        endpoint (str): endpoint for new environment
+    """
+    click.echo(f"Adding environment:")
+    click.echo(f"  ENVIRONMENT: {env}")
+    click.echo(f"  ENDPOINT: {endpoint}")
+    add_env(env, endpoint)
 
 
 # ------- DATASET
