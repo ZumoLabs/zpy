@@ -39,7 +39,7 @@ class RunOperator(Operator):
         with gin.unlock_config():
             run_text_as_module = run_text.as_module()
         # Parse the gin-config text block
-        zpy.blender.parse_config('config')
+        zpy.blender.parse_config("config")
         # Execute the run function inside the run text
         run_text_as_module.run()
         return {"FINISHED"}
