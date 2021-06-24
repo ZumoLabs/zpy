@@ -48,7 +48,7 @@
 \title{ZPY: Open Source Synthetic Data for Computer Vision}
 
 \author{
-	{\hspace{1mm}Hugo Ponte}\thanks{correspondence author} \\ 
+	{\hspace{1mm}Hugo Ponte}\footnote{Correspondence author} \\ 
 	Zumo Labs \\
 	\texttt{hugo@zumolabs.ai} \\
 	\And
@@ -114,13 +114,16 @@ Synthetic data presents a unique solution to the huge data requirements of compu
 Open source machine learning frameworks (references)
 
 Deep learning has exploded in popularity due to large open source frameworks such as tensorflow and pytorch
-What is synthetic data (references)
+
+What is synthetic data.
 
 Challenges with synthetic data
 
 Sim2Real Gap and domain randomization
 
 Black box nature of ML
+
+For a thorough review of synthetic data literature, we recommend readers go through Nikolenko's 2019 summary paper \citep{nikolenko2019synthetic}.
 
 \section{Background}
 \label{sec:background}
@@ -153,13 +156,7 @@ Blender is an open-source 3D software tool initially released in 1994 \citep{ble
 
 Many of the world’s new 3D developers opt to get started and build their expertise in Blender for its open-source and community-emphasizing offering. This is an example of a common product flywheel: using a growing community of users to improve a product over time. With big industry support from Google, Amazon, and even Unreal, Blender also has the funding required to improve its tools with this user feedback.
 
-In addition to supporting the full breadth of the 3D workflow, Blender has the unique strength of using Python as the programming language of choice for asset scripting. Python has emerged as the lingua franca for modern deep learning, in part due to the popularity of open-source frameworks such as TensorFlow \citep{tensorflow}, PyTorch \citep{pytorch}, and Scikit-Learn \citep{scikit-learn}. Successful adoption of synthetic data will require Machine Learning Engineers to perform asset scripting, and these engineers will be much more comfortable in Blender’s Python environment than Unity’s C# or Unreal Engine’s C++ tools.
-
-
-\subsection{Synthetic Data}
-\label{sec:syntheticdata}
-
-BlenderProc, Synthesis, LexSet
+In addition to supporting the full breadth of the 3D workflow, Blender has the unique strength of using Python as the programming language of choice for asset scripting. Python has emerged as the lingua franca for modern deep learning, in part due to the popularity of open-source frameworks such as TensorFlow \citep{tensorflow}, PyTorch \citep{pytorch}, and Scikit-Learn \citep{scikit-learn}. Successful adoption of synthetic data will require Machine Learning Engineers to perform asset scripting, and these engineers will be much more comfortable in Blender’s Python environment than Unity's C\# environment or Unreal Engine’s C++ tools.
 
 \section{Motivation}
 \label{sec:motivation}
@@ -196,15 +193,26 @@ In the software world today, developers write explicit sets of rules (known as a
 
 In the software of tomorrow, developers will curate a dataset which will be used to train a deep learning model. This model will then be deployed into a production system, which will consume input data and output actions. This changes the workflow of developers from explicitly writing rules to instead creating the datasets which are then parsed to create algorithms.
 
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{webapp.png}
+	\caption{A visual interface for synthetic data creation via a WebApp.}
+	\label{fig:webapp}
+\end{figure}
+
 \section{Project Features}
 \label{sec:projectfeatures}
 
-Given 
+In this section we outline the key features and components of the zpy synthetic data toolkit.
 
 \subsection{Blender Addon}
 \label{sec:blenderaddon}
 
-As explained in section X, deep learning is a python-first discipline. If we wish to include deep learning practitioners in the 3D stack it is thus of critical importance that we provide a python interface for the 3D workflow.
+Blender allows for user-created AddOns, and provides tooling for integrating addon functionality with the Blender UI.
+
+Popular AddOns include X, X, and X.
+
+Those who use Blender in their 3D workflow are
 
 \subsection{Cloud Backend}
 \label{sec:cloudbackend}
@@ -232,16 +240,8 @@ zpy project set $PROJECT_UUID
 zpy create dataset "redbull cans and packs" can_v6 num_images 1000
 \end{lstlisting}
 
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{webapp.png}
-	\caption{A visual interface for synthetic data creation via a WebApp.}
-	\label{fig:webapp}
-\end{figure}
-
-
-\section{Design}
-\label{sec:design}
+\subsection{Python Module}
+\label{sec:python module}
 
 Hidden complexity
 
@@ -249,18 +249,15 @@ When designing software systems, there is usually a tradeoff between flexibility
 
 Random hdri and textures use default random textures unless a specific path is given
 
-Pythonic syntax
+As explained in section X, deep learning is a python-first discipline. If we wish to include deep learning practitioners in the 3D stack it is thus of critical importance that we provide a python interface for the 3D workflow.
 
 One of the core features of Python is the language’s human readable syntax. Python does not enforce function and variable type annotations, which makes it quicker to prototype code.
 
 Functions in zpy are flexible in the arguments that they accept. The `zpy.opject.segment()` function call can accept an object directly of type `bpy.types.Object`, but it will also accept the unique string name of that object. 
 
-Extensibility
-
 Zpy modules are separated by dependencies
 
 Zpy modules are independent of each other, a monolithic system is much harder to update and maintain
-
 
 \begin{figure}
 	\centering
@@ -277,14 +274,12 @@ The full workflow for synthetic data can be reduced into four key steps: \emph{S
 \subsection{Simulation Creation}
 \label{sec:worflowsimcreation}
 
-The first step in the syntehtic data workflow is to design and create the \emph{sim}, short for simulation. A sim is a collection of 3D assets controlled at runtime through a single script called the \emph{run script}. The run script defines a function \lstinline{run(*)}, which acts as the point of entry for any generation process. Important parameters that configure the behavior of the run script are defined as kwargs, short for keyword arguments, in the \lstinline{run(*)} function. These kwargs allow configuration of the simulation through gin-config, a python package for configuration of python libraries \citep{ginconfig}.
+The first step in the syntehtic data workflow is to design and create the \emph{sim}, short for simulation. A sim is a collection of 3D assets controlled at runtime through a single script called the \emph{run script}. The run script defines a function \lstinline{run(**kwargs)}, which acts as the point of entry for any generation process. Important parameters that configure the behavior of the run script are defined as kwargs, short for keyword arguments, in the \lstinline{run(**kwargs)} function. These kwargs allow configuration of the simulation through gin-config, a python package for configuration of python libraries \citep{ginconfig}.
 
 The run script can be broken into two sections: the \emph{setup} and the \emph{loop}. The setup is executed first and typically only once. Setup can include code for creating categories, loading assets, and storing the pose of virtual objects in the scene. The loop, named after the \lstinline{for} loop python pattern, is repeated for some number of frames. Each frame can include code for jittering, saving annotations, and rendering images.
 
-\begin{lstlisting}[language=Python,caption={Basic structure of a run script.},label={lst:setuploop}]
-def run\left(  
-	kwarg_1 : bool = False,
-\right)):
+\begin{lstlisting}[language=Python,caption={Basic structure of the run function in a sim run script.},label={lst:setuploop}]
+def run(**kwargs):
 	# Setup Code
 	for frame in zpy.blender.step():
 		# Loop Code
@@ -301,7 +296,7 @@ Datasets can be generated in parallel, with multiple cloud machines running conc
 \subsection{Model Evaluation}
 \label{sec:evaluation}
 
-Machine learning models are trained on a dataset for some time, and periodically evaluated on validation and test datasets. Model performance in computer vision can be measured in a variety of ways, such as precision and recall, or more aggregate metrics like mean average precision (mAP). Picking the right metric is problem specific and usually comes down to which type of failure is the most important: false positives or false negatives.
+Machine learning models are trained on a dataset for some time, and periodically evaluated on validation and test datasets. Model performance in computer vision can be measured in a variety of ways, such as precision and recall, or more aggregate metrics like mean average precision (mAP). Picking the right metric is problem specific and usually comes down to which type of failure is the most important: false positives or false negatives. It is important to note that though quantitative metrics are convenient, there is no replacement for qualitative analysis of model performance. We recommend that anyone building computer vision models take the time to examine model predictions on real images.
 
 \subsection{Iteration}
 \label{sec:iteration}
@@ -313,21 +308,21 @@ The kwargs of the run function in a sim are effectively additional hyperparamete
 \section{Example}
 \label{sec:example}
 
-Package detection
+To put into practice what this paper has explained, we present an example of how synthetic data can be used to train a computer vision model. In this example, we train a detection model which is tasked with predicting the bounding boxes for packages and parcels in images. In section \ref{sec:domainrandomization} we explore the effect of some key dataset hyperparameters on the final model performance. In section \ref{sec:curicculum} we discuss how training curriculum can affect model performance when using synthetic data.
 
-\begin{itemize}
-	\item Background material and texture.
-	\item Lighting intensity and positioning.
-	\item Object material and texture.
-	\item Number of objects in view.
-\end{itemize}
+Following the synthetic data workflow,
+
+Armed with our synthetic training dataset and our real test dataset, we are ready to do some model training.
+
+We used a ResNet model implemented in PyTorch inside of the Detectron2 computer vision library \citep{wu2019detectron2}.
+
 
 \subsection{Domain Randomization}
 \label{sec:domainrandomization}
 
-Effect of domain randomized lighting
+Domain randomization is a technique commonly used in synthetic data to increase the variance of a dataset distribution. In the field of synthetic data for computer vision, it might refer to randomizing the intensity of lighting in every frame of a simulation. Domain randomization is also important in the space of material assets: using a large variety of textures and material properties will help prevent texture overfitting, a common issue with CNNs \citep{DBLP:journals/corr/abs-1811-12231}. 
 
-Effect of domain randomized backgrounds
+In our package experiment, we expose two boolean toggles as run function kwargs that are categorized as forms of domain randomization. One toggle enables domain randomization in the lighting space: changing the position and intensity of several lights in the sim. The second toggle enables random HDRIs, which change the appearance of the background in the package images.
 
 \subsection{Training Curicculum}
 \label{sec:curicculum}
