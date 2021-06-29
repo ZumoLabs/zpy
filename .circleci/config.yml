@@ -53,7 +53,7 @@ jobs:
       - run:
           name: Tag Branch
           command: |
-            VERSION=$(git rev-parse --abbrev-ref HEAD | awk '{split($0,a,"-"); print a[2]}')
+            VERSION=$(git rev-parse --abbrev-ref HEAD | awk '{split($0,a,"release-"); print a[2]}')
             git config user.email "infra@zumolabs.ai"
             git config user.name "CircleCI"
             git tag -f $VERSION
