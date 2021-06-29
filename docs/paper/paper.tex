@@ -1,6 +1,5 @@
 \documentclass{article}
 
-
 \usepackage{arxiv}
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
@@ -14,8 +13,15 @@
 \usepackage{lipsum}		% Can be removed after putting your text content
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
-\usepackage[square,numbers]{natbib}
 \usepackage{doi}
+
+\usepackage[backend=biber, style=numeric]{biblatex}
+\addbibresource{references.bib}
+% \RequirePackage[backend=biber,
+% style=apa,
+% citestyle=authoryear
+% ]{biblatex}
+% \usepackage[square,numbers]{natbib}
 
 \usepackage{xcolor}
 \usepackage{listings}		% code
@@ -123,7 +129,7 @@ Sim2Real Gap and domain randomization
 
 Black box nature of ML
 
-For a thorough review of synthetic data literature, we recommend readers go through Nikolenko's 2019 summary paper \citep{nikolenko2019synthetic}.
+For a thorough review of synthetic data literature, we recommend readers go through Nikolenkos 2019 summary paper \cite{nikolenko2019synthetic}.
 
 \section{Background}
 \label{sec:background}
@@ -136,7 +142,7 @@ For a thorough review of synthetic data literature, we recommend readers go thro
 \subsubsection{Asset Creation}
 \label{sec:assetcreation}
 
-Assets are digital representations of a 3D object. One type of asset is a mesh: a connected graph of 3D points also called vertices, which define the surface of an object. Edges interconnect vertices, and a closed loop of vertices creates a polygon known as a face. The engineering and manufacturing world creates meshes using computer-aided design (CAD) software such as AutoCAD \citep{autocad}, Solidworks \citep{solidworks}, Onshape \citep{onshape}, and Rhino \citep{rhino}. The entertainment industry creates meshes using modeling software such as Maya \citep{maya}, 3DSMax \citep{3dsmax}, and Cinema4D \citep{cinema4d}.
+Assets are digital representations of a 3D object. One type of asset is a mesh: a connected graph of 3D points also called vertices, which define the surface of an object. Edges interconnect vertices, and a closed loop of vertices creates a polygon known as a face. The engineering and manufacturing world creates meshes using computer-aided design (CAD) software such as AutoCAD \cite{autocad}, Solidworks \cite{solidworks}, Onshape \cite{onshape}, and Rhino \cite{rhino}. The entertainment industry creates meshes using modeling software such as Maya \cite{maya}, 3DSMax \cite{3dsmax}, and Cinema4D \cite{cinema4d}.
 
 Whereas a mesh describes the shape and form of an object, a material asset describes the texture and appearance of a virtual object. A material may define rules for the reflectivity, specularity, and metallic-ness of the object as a function of lighting conditions. Shader programs use materials to calculate the exact pixel values to render for each face of a mesh polygon. Modeling software usually comes packaged with tools for the creation and configuration of materials.
 
@@ -147,35 +153,31 @@ Finally, asset creation encompasses the process of scene composition. Assets can
 
 The fourth perceivable dimension of our reality is time. Asset scripting is the process of defining the behaviors of assets within scenes over time. One type of asset scripting is called animation, which consists of creating sequential mesh deformations that create the illusion of natural movement. Animation is a tedious manual task because an artist must define every frame; expert animators spend decades honing their digital puppeteering skills. Specialized software is often used to automate this task as much as possible, and technologies such as Motion Capture (MoCap) can be used to record the movement of real objects and play those movements back on virtual assets.
 
-Game Engines are software tools that allow for more structured and systematic asset scripting, mostly by providing software interfaces (e.g., code) to control the virtual world. Used extensively in the video game industry after which they were named, examples include Unity \citep{unity3d}, Unreal Engine \citep{unrealengine}, GoDot \citep{godot}, and Roblox \citep{roblox}. These game engines support rule-based spawning, animation, and complex interactions between assets in the virtual world. Programming within game engines is a separate skillset to modeling and animating and is usually done by separate engineers within an organization.
+Game Engines are software tools that allow for more structured and systematic asset scripting, mostly by providing software interfaces (e.g., code) to control the virtual world. Used extensively in the video game industry after which they were named, examples include Unity \cite{unity3d}, Unreal Engine \cite{unrealengine}, GoDot \cite{godot}, and Roblox \cite{roblox}. These game engines support rule-based spawning, animation, and complex interactions between assets in the virtual world. Programming within game engines is a separate skillset to modeling and animating and is usually done by separate engineers within an organization.
 
 \subsubsection{Blender}
 \label{sec:blender}
 
-Blender is an open-source 3D software tool initially released in 1994 \citep{blender}. It has grown steadily over the decades and has become one of the most popular 3D tools available, with a massive online community of users. Blender’s strength is in its breadth: it provides simple tools for every part of the 3D workflow, rather than specializing in a narrow slice. Organizations such as game studios have traditionally preferred specialization, having separate engineers using separate tools (such as Maya for modeling and Unreal Engine for scripting). However, the convenience of using a single tool, and the myriad advantages of a single engineer being able to see a project start to finish, make a strong case for Blender as the ultimate winner in the 3D software tools race. 
+Blender is an open-source 3D software tool initially released in 1994 \cite{blender}. It has grown steadily over the decades and has become one of the most popular 3D tools available, with a massive online community of users. Blender’s strength is in its breadth: it provides simple tools for every part of the 3D workflow, rather than specializing in a narrow slice. Organizations such as game studios have traditionally preferred specialization, having separate engineers using separate tools (such as Maya for modeling and Unreal Engine for scripting). However, the convenience of using a single tool, and the myriad advantages of a single engineer being able to see a project start to finish, make a strong case for Blender as the ultimate winner in the 3D software tools race. 
 
 Many of the world’s new 3D developers opt to get started and build their expertise in Blender for its open-source and community-emphasizing offering. This is an example of a common product flywheel: using a growing community of users to improve a product over time. With big industry support from Google, Amazon, and even Unreal, Blender also has the funding required to improve its tools with this user feedback.
 
-In addition to supporting the full breadth of the 3D workflow, Blender has the unique strength of using Python as the programming language of choice for asset scripting. Python has emerged as the lingua franca for modern deep learning, in part due to the popularity of open-source frameworks such as TensorFlow \citep{tensorflow}, PyTorch \citep{pytorch}, and Scikit-Learn \citep{scikit-learn}. Successful adoption of synthetic data will require Machine Learning Engineers to perform asset scripting, and these engineers will be much more comfortable in Blender’s Python environment than Unity's C\# environment or Unreal Engine’s C++ tools.
+In addition to supporting the full breadth of the 3D workflow, Blender has the unique strength of using Python as the programming language of choice for asset scripting. Python has emerged as the lingua franca for modern deep learning, in part due to the popularity of open-source frameworks such as TensorFlow \cite{tensorflow}, PyTorch \cite{pytorch}, and Scikit-Learn \cite{scikit-learn}. Successful adoption of synthetic data will require Machine Learning Engineers to perform asset scripting, and these engineers will be much more comfortable in Blender’s Python environment than Unity's C\# environment or Unreal Engine’s C++ tools.
 
 \section{Motivation}
 \label{sec:motivation}
 
 \subsection{Democratization of Data}
 
-The datasets used by companies today are almost exclusively collected. Images and annotations are gradually saved as they are generated by users of a product. Collecting a dataset large enough to train a robust machine learning model can take years.
+Modern computer vision systems use learning based methods and thus require large and diverse datasets. These datasets are almost exclusively collected: images are stored in databases as they are cumulatively generated by users of a product over time. Annotations are created by hand, usually by a third party provider using low-skilled labor in third world countries. Collecting and labeling a dataset large enough to train a robust computer vision model can take years. Only companies that have the scale and have set up the infrastructure to collect and store large datasets will have the datasets required to train models.
 
-Only companies that have the scale and have set up the infrastructure to collect and store large datasets will have the datasets required to train models.
-
-In order to compete, small or newly formed companies often resort to purchasing data from a third party supplier. This market for the selling and reselling of collected data presents an existential threat to privacy. Though some regulations have emerged, famously GDPR in Europe, these have yet to change the landscape of the market for collected data.
-
-The high cost of data labeling makes it unavailable to those without huge resources
+In order to compete, small or newly formed companies often resort to purchasing data from a third party supplier. This market for the selling and reselling of collected data presents an existential threat to privacy. Though some regulations have emerged, famously GDPR in Europe, these have yet to change the landscape of the market for collected data. Synthetic data can democratize access to large-scale datasets by reducing the time required to collect these datasets and eliminating the cost of labeling these datasets.
 
 \subsection{Fairness and Bias}
 
-The real world is biased and unfair.
+The large cost to collect and annotate datasets makes it prohibitive for most small organizations to create their own datasets, and as such it is common practice to use one of a small selection of openly available datasets (such as ImageNet). However, because of how these datasets have been collected over time, and due to the unequal global distribution of technologies such as cell phone cameras, these datasets are often biased. The real world is biased and unfair, and these collected datasets do not represent the large variety of cultural, demographic, or gender diversity  in human datasets \cite{shankar2017classification}. These datasets do not capture all geographic differences in object recognition datasets \cite{DBLP:journals/corr/abs-1906-02659}. The nature of statistical learning methods means that training on these biased datasets will result in a biased model: a model is only as good as the data on which it is trained. As such, it follows that the best way to reduce bias in modern computer vision systems is to improve the datasets these systems are trained on.
 
-ML systems trained on this data will reflect the same bias during inference.
+Synthetic datasets offer full control of the distribution and can thus be designed to be more representative. A synthetic human dataset can equally represent cultural, demographic, or gender diversity. Synthetic datasets as a method of reducing bias has been explored in a variety of computer vision domains \cite{DBLP:journals/corr/abs-2004-13866}.
 
 \begin{figure}
 	\centering
@@ -270,7 +272,7 @@ The full workflow for synthetic data can be reduced into four key steps: \emph{S
 \subsection{Simulation Creation}
 \label{sec:worflowsimcreation}
 
-The first step in the syntehtic data workflow is to design and create the \emph{sim}, short for simulation. A sim is a collection of 3D assets controlled at runtime through a single script called the \emph{run script}. The run script defines a function \lstinline{run(**kwargs)}, which acts as the point of entry for any generation process. Important parameters that configure the behavior of the run script are defined as kwargs, short for keyword arguments, in the \lstinline{run(**kwargs)} function. These kwargs allow configuration of the simulation through gin-config, a python package for configuration of python libraries \citep{ginconfig}.
+The first step in the syntehtic data workflow is to design and create the \emph{sim}, short for simulation. A sim is a collection of 3D assets controlled at runtime through a single script called the \emph{run script}. The run script defines a function \lstinline{run(**kwargs)}, which acts as the point of entry for any generation process. Important parameters that configure the behavior of the run script are defined as kwargs, short for keyword arguments, in the \lstinline{run(**kwargs)} function. These kwargs allow configuration of the simulation through gin-config, a python package for configuration of python libraries \cite{ginconfig}.
 
 The run script can be broken into two sections: the \emph{setup} and the \emph{loop}. The setup is executed first and typically only once. Setup can include code for creating categories, loading assets, and storing the pose of virtual objects in the scene. The loop, named after the \lstinline{for} loop python pattern, is repeated for some number of frames. Each frame can include code for jittering, saving annotations, and rendering images.
 
@@ -310,13 +312,13 @@ Following the synthetic data workflow,
 
 Armed with our synthetic training dataset and our real test dataset, we are ready to do some model training.
 
-We used a ResNet model implemented in PyTorch inside of the Detectron2 computer vision library \citep{wu2019detectron2}.
+We used a ResNet model implemented in PyTorch inside of the Detectron2 computer vision library \cite{wu2019detectron2}.
 
 
 \subsection{Domain Randomization}
 \label{sec:domainrandomization}
 
-Domain randomization is a technique commonly used in synthetic data to increase the variance of a dataset distribution. In the field of synthetic data for computer vision, it might refer to randomizing the intensity of lighting in every frame of a simulation. Domain randomization is also important in the space of material assets: using a large variety of textures and material properties will help prevent texture overfitting, a common issue with CNNs \citep{DBLP:journals/corr/abs-1811-12231}. 
+Domain randomization is a technique commonly used in synthetic data to increase the variance of a dataset distribution. In the field of synthetic data for computer vision, it might refer to randomizing the intensity of lighting in every frame of a simulation. Domain randomization is also important in the space of material assets: using a large variety of textures and material properties will help prevent texture overfitting, a common issue with CNNs \cite{DBLP:journals/corr/abs-1811-12231}. 
 
 In our package experiment, we expose two boolean toggles as run function kwargs that are categorized as forms of domain randomization. One toggle enables domain randomization in the lighting space: changing the position and intensity of several lights in the sim. The second toggle enables random HDRIs, which change the appearance of the background in the package images.
 
@@ -334,7 +336,8 @@ Training on mixed synthetic and real
 
 TODO
 
-\bibliographystyle{abbrvnat}
-\bibliography{references}
+% \bibliographystyle{abbrvnat}
+% \bibliography{references}
+\printbibliography
 
 \end{document}
