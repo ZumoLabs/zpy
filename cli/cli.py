@@ -187,6 +187,7 @@ def list_datasets(filters, project=None):
         columns="name,files,created_at",
         colwidth={
             "name": LARGE_WIDTH,
+            "state": MEDIUM_WIDTH,
             "files": SMALL_WIDTH,
             "created_at": DATETIME_WIDTH,
         },
@@ -194,6 +195,7 @@ def list_datasets(filters, project=None):
     for d in datasets:
         tbl(
             d["name"],
+            d["state"],
             len(d["files"]),
             d["created_at"],
         )
