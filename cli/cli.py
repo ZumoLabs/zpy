@@ -184,7 +184,7 @@ def list_datasets(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="name,files,created_at",
+        columns="name,state,files,created_at",
         colwidth={
             "name": LARGE_WIDTH,
             "state": MEDIUM_WIDTH,
@@ -196,7 +196,7 @@ def list_datasets(filters, project=None):
         tbl(
             d["name"],
             d["state"],
-            len(d["files"]),
+            d["num_files"],
             d["created_at"],
         )
 
