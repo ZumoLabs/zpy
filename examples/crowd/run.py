@@ -11,13 +11,13 @@ import gin
 import mathutils
 import zpy
 
-log = logging.getLogger('zpy')
+log = logging.getLogger("zpy")
 
 
-@gin.configurable('run')
+@gin.configurable("run")
 @zpy.blender.save_and_revert
 def run():
-    """ Main run function.
+    """Main run function.
 
     Any kwargs you put here will show up
     on the Data Portal. Give them types!
@@ -28,15 +28,15 @@ def run():
 
     # Create the saver object
     saver = zpy.saver_image.ImageSaver(
-        description='Crowd of humans.',
+        description="Crowd of humans.",
     )
 
     camera = bpy.data.objects["Camera"]
 
     # Make a list of humans and their keypoints
     human_collections = [
-        bpy.data.collections['MOVING'],
-        bpy.data.collections['IDLE'],
+        bpy.data.collections["MOVING"],
+        bpy.data.collections["IDLE"],
     ]
     humans = []
     keypoints = []
@@ -44,9 +44,9 @@ def run():
         for human in _human_collection.all_objects:
             humans.append(human)
             _keypoints = zpy.keypoints.Keypoints(
-                root=bpy.data.objects[f'{human.name}_skeletonRoot'],
-                style='coco',
-                armature='anima',
+                root=bpy.data.objects[f"{human.name}_skeletonRoot"],
+                style="coco",
+                armature="anima",
             )
             keypoints.append(_keypoints)
 
@@ -58,9 +58,9 @@ def run():
     # Add the categories from the sim-level object
     _categories = bpy.context.scene.categories
     saver.add_category(
-        name=_categories['person'].name,
+        name=_categories["person"].name,
         subcategories=_subcategories,
-        color=tuple(_categories['person'].color),
+        color=tuple(_categories["person"].color),
         keypoints=keypoints[0].names,
         skeleton=keypoints[0].connectivity,
     )
@@ -93,25 +93,25 @@ def run():
         # Add images to saver
         saver.add_image(
             name=rgb_image_name,
-            style='default',
+            style="default",
             output_path=saver.output_dir / rgb_image_name,
             frame=step_idx,
         )
         saver.add_image(
             name=iseg_image_name,
-            style='segmentation',
+            style="segmentation",
             output_path=saver.output_dir / iseg_image_name,
             frame=step_idx,
         )
         saver.add_image(
             name=cseg_image_name,
-            style='segmentation',
+            style="segmentation",
             output_path=saver.output_dir / cseg_image_name,
             frame=step_idx,
         )
         saver.add_image(
             name=depth_image_name,
-            style='depth',
+            style="depth",
             output_path=saver.output_dir / depth_image_name,
             frame=step_idx,
         )
@@ -120,9 +120,12 @@ def run():
         for i, human in enumerate(humans):
             # HACK Check that human head and feet are in view
             human_feet_position = human.matrix_world.to_translation()
-            human_head_position = human.matrix_world.to_translation() + \
-                mathutils.Vector((0.0, 0.0, 1.5))
-            if zpy.camera.is_in_view(human_head_position, camera) or zpy.camera.is_in_view(human_feet_position, camera):
+            human_head_position = (
+                human.matrix_world.to_translation() + mathutils.Vector((0.0, 0.0, 1.5))
+            )
+            if zpy.camera.is_in_view(
+                human_head_position, camera
+            ) or zpy.camera.is_in_view(human_feet_position, camera):
                 # Update the keypoints
                 keypoints[i].update()  # world_transform = human.matrix_world)
                 saver.add_annotation(
@@ -158,16 +161,16 @@ def run():
     # MOT Annotations
     zpy.output_mot.OutputMOT(saver).output_annotations()
 
-    log.info('Simulation complete.')
+    log.info("Simulation complete.")
 
 
 if __name__ == "__main__":
 
     # Set the logger levels
-    zpy.logging.set_log_levels('info')
+    zpy.logging.set_log_levels("info")
 
     # Parse the gin-config text block
-    zpy.blender.parse_config('config')
+    zpy.blender.parse_config("config")
 
     # Run the sim
     run()
