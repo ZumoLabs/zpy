@@ -6,6 +6,8 @@ import logging
 from typing import Tuple
 
 import bpy
+
+import client.util
 import zpy
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
@@ -292,8 +294,8 @@ class CategoriesFromZUMOJSON(Operator, ImportHelper):
         for category in categories.values():
             _add_category(
                 context,
-                name=category.get("name", None),
-                color=category.get("color", None),
+                name=client.util.get("name", None),
+                color=client.util.get("color", None),
             )
         return {"FINISHED"}
 

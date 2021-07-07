@@ -6,6 +6,8 @@ import logging
 from pathlib import Path
 
 import bpy
+
+import client.util
 import zpy
 import gin
 from bpy.types import Operator
@@ -26,7 +28,7 @@ class RunOperator(Operator):
     bl_options = {"REGISTER"}
 
     def execute(self, context):
-        text = bpy.data.texts.get("run", None)
+        text = client.util.get("run", None)
         if text is None:
             raise ValueError(
                 'Running a sim requires a run text, could not find in text with name "run".'

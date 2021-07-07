@@ -2,6 +2,8 @@ import functools
 import math
 from copy import deepcopy
 from itertools import product
+from pathlib import Path
+from typing import Union
 from urllib.request import urlopen
 
 import click
@@ -86,14 +88,14 @@ def parse_args(args):
     return dict(zip(keys, vals))
 
 
-def download_url(url, output_path):
+def download_url(url: str, output_path: Union[Path, str]):
     """download url
 
     Download from url to give output path and visualize using tqdm.
 
     Args:
         url (str): url to download
-        output_path (str): path to download file to
+        output_path (Union[Path, str]): path to download file to
     """
     u = urlopen(url)
     h = u.info()
