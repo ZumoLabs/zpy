@@ -10,23 +10,42 @@ from typing import Dict, Union
 import requests
 
 from cli.utils import download_url
-from client.util import add_newline, get, post, to_query_param_value, convert_size, auth_header, \
-    clear_last_print, is_done
+from client.util import (
+    add_newline,
+    get,
+    post,
+    to_query_param_value,
+    convert_size,
+    auth_header,
+    clear_last_print,
+    is_done,
+)
 
 _auth_token: str = ""
 _base_url: str = ""
 _project: Union[Dict, None] = None
 
 
-def init(auth_token: str, project_uuid: str, base_url: str = "http://localhost:8000", **kwargs):
+def init(
+    auth_token: str,
+    project_uuid: str,
+    base_url: str = "http://localhost:8000",
+    **kwargs,
+):
     global _auth_token, _base_url, _project
     _auth_token = auth_token
     _base_url = base_url
 
     try:
-        _project = get(f"{_base_url}/api/v1/projects/{project_uuid}", headers=auth_header(_auth_token))
+        _project = get(
+            f"{_base_url}/api/v1/projects/{project_uuid}",
+            headers=auth_header(_auth_token),
+        )
     except requests.HTTPError:
-        print("Failed to find project, please double check the id and try again.", file=sys.stderr)
+        print(
+            "Failed to find project, please double check the id and try again.",
+            file=sys.stderr,
+        )
 
 
 IMAGES_PER_SAMPLE = 2  # for the iseg and rbg
@@ -58,16 +77,22 @@ class DatasetConfig:
             "project": _project["id"],
             "name": sim_name,
         }
-        sims = get(f"{_base_url}/api/v1/sims/", params=unique_sim_filters, headers=auth_header(_auth_token))["results"]
+        sims = get(
+            f"{_base_url}/api/v1/sims/",
+            params=unique_sim_filters,
+            headers=auth_header(_auth_token),
+        )["results"]
         if len(sims) > 1:
             raise RuntimeError(
-                f"Create DatasetConfig failed: Found more than 1 Sim for unique filters which should not be possible.")
+                f"Create DatasetConfig failed: Found more than 1 Sim for unique filters which should not be possible."
+            )
         elif len(sims) == 1:
             print(f"Found sim <{sim_name}> in project <{_project['name']}>")
             self._sim = sims[0]
         else:
             raise RuntimeError(
-                f"Create DatasetConfig failed: Could not find Sim<{sim_name}> in Project<{_project['name']}>.")
+                f"Create DatasetConfig failed: Could not find Sim<{sim_name}> in Project<{_project['name']}>."
+            )
 
     @property
     def sim(self):
@@ -104,7 +129,7 @@ class DatasetConfig:
 
     def set(self, parameter: str, value: any):
         """Set a value for a configurable parameter.
-        
+
         Args:
             parameter: The flattened gin config path as described in _config.
             value: The value for the gin config path provided.
@@ -133,15 +158,21 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     """
     print(f"Generating preview:")
 
-    config_filters = {} if dataset_config is None else {"config": to_query_param_value(dataset_config.config)}
+    config_filters = (
+        {}
+        if dataset_config is None
+        else {"config": to_query_param_value(dataset_config.config)}
+    )
     filter_params = {
         "project": _project["id"],
         "sim": dataset_config.sim["id"],
         "state": "READY",
-        **config_filters
+        **config_filters,
     }
     data_sets = get(
-        f"{_base_url}/api/v1/datasets/", params=filter_params, headers=auth_header(_auth_token)
+        f"{_base_url}/api/v1/datasets/",
+        params=filter_params,
+        headers=auth_header(_auth_token),
     )["results"]
 
     if len(data_sets) == 0:
@@ -152,21 +183,25 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     # Choose random data set in page
     dataset_id = data_sets[randrange(len(data_sets))]["id"]
     # Re-request the data set detail (image links aren't included in the list call
-    dataset = get(f"{_base_url}/api/v1/datasets/{dataset_id}/", headers=auth_header(_auth_token))
+    dataset = get(
+        f"{_base_url}/api/v1/datasets/{dataset_id}/", headers=auth_header(_auth_token)
+    )
     if len(dataset["files"]) == 0:
         print(f"No preview available.")
         print("\t(no images found)")
         return
 
-    bounded_num_images = min(
-        [len(dataset["files"]), num_samples * IMAGES_PER_SAMPLE]
-    )
+    bounded_num_images = min([len(dataset["files"]), num_samples * IMAGES_PER_SAMPLE])
     formatted_samples = {}
     found_images = 0
     for sample in dataset["files"]:
         path = Path(sample["path"])
         name = path.name
-        if name.startswith("_plot") or name.startswith("_viz") or path.suffix in [".log", ".json"]:
+        if (
+            name.startswith("_plot")
+            or name.startswith("_viz")
+            or path.suffix in [".log", ".json"]
+        ):
             continue
 
         image_category, name, output_type, file_ext = name.split(".")
@@ -185,7 +220,9 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 
 @add_newline
-def generate(name: str, dataset_config: DatasetConfig, num_datapoints: int, materialize=False):
+def generate(
+    name: str, dataset_config: DatasetConfig, num_datapoints: int, materialize=False
+):
     """
     Generate a dataset.
 
@@ -204,7 +241,7 @@ def generate(name: str, dataset_config: DatasetConfig, num_datapoints: int, mate
             "project": _project["id"],
             "name": name,
         },
-        headers=auth_header(_auth_token)
+        headers=auth_header(_auth_token),
     )
     post(
         f"{_base_url}/api/v1/datasets/{dataset['id']}/generate",
@@ -217,37 +254,51 @@ def generate(name: str, dataset_config: DatasetConfig, num_datapoints: int, mate
                     "amount": num_datapoints,
                 }
             ),
-        }
+        },
     )
 
     print("Generating dataset:")
     print(json.dumps(dataset, indent=4, sort_keys=True))
-    print(f"You can follow its progress at app.zumolabs.ai/sims/{dataset_config.sim['id']}/sim-runs")
+    print(
+        f"You can follow its progress at app.zumolabs.ai/sims/{dataset_config.sim['id']}/sim-runs"
+    )
 
     if materialize:
         dataset = get(f"{_base_url}/api/v1/datasets/{dataset['id']}")
-        while 'state' not in dataset or is_done(dataset["state"]):
+        while "state" not in dataset or is_done(dataset["state"]):
             next_check_datetime = datetime.now() + timedelta(seconds=60)
             while datetime.now() < next_check_datetime:
-                print(f"Dataset is not ready. Checking again in {next_check_datetime - datetime.now()}s", end='\r')
+                print(
+                    f"Dataset is not ready. Checking again in {next_check_datetime - datetime.now()}s",
+                    end="\r",
+                )
                 time.sleep(1)
 
             clear_last_print()
-            print("Checking dataset...", end='\r')
-            dataset = get(f"{_base_url}/api/v1/datasets/{dataset['id']}", headers=auth_header(_auth_token)).json()
+            print("Checking dataset...", end="\r")
+            dataset = get(
+                f"{_base_url}/api/v1/datasets/{dataset['id']}",
+                headers=auth_header(_auth_token),
+            ).json()
 
         if dataset["state"] == "READY":
             print("Dataset is ready for download.")
-            dataset_download_res = get(f"{_base_url}/api/v1/datasets/{dataset['id']}/download",
-                                       headers=auth_header(_auth_token)).json()
+            dataset_download_res = get(
+                f"{_base_url}/api/v1/datasets/{dataset['id']}/download",
+                headers=auth_header(_auth_token),
+            ).json()
             name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
             # Throw it in /tmp for now I guess
-            output_path = Path('/tmp') / name_slug
-            print(f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}...")
+            output_path = Path("/tmp") / name_slug
+            print(
+                f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}..."
+            )
             download_url(dataset_download_res["redirect_link"], output_path)
             print("Done.")
         else:
-            print(f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}")
+            print(
+                f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
+            )
 
 
 class Dataset:
@@ -261,9 +312,11 @@ class Dataset:
             "project": _project["id"],
             "name": name,
         }
-        datasets = get(f"{_base_url}/api/v1/datasets/",
-                       params=unique_dataset_filters,
-                       headers=auth_header(_auth_token))["results"]
+        datasets = get(
+            f"{_base_url}/api/v1/datasets/",
+            params=unique_dataset_filters,
+            headers=auth_header(_auth_token),
+        )["results"]
         self._dataset = datasets[0]
 
     @property

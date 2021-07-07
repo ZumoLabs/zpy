@@ -8,9 +8,10 @@ def test_params(*args, **kwargs):
     zpy.init(**kwargs)
     # dataset = zpy.Dataset(**kwargs)
     # dataset.show_params()
-    sim = zpy.Sim('can_v5')
+    sim = zpy.Sim("can_v5")
     sim.show_params()
     sim.preview()
+
 
 def test_preview(*args, **kwargs):
     zpy.init(**kwargs)
@@ -33,22 +34,24 @@ def test_preview(*args, **kwargs):
 
 def test_generate(*args, **kwargs):
     zpy.init(**kwargs)
-    can_v5_sim = zpy.Sim('can_v5')
+    can_v5_sim = zpy.Sim("can_v5")
     can_v5_sim.show_params()
     can_v5_sim.preview({})
 
-    dataset_config = zpy.DatasetConfig('can_v5')
+    dataset_config = zpy.DatasetConfig("can_v5")
     print(json.dumps(dataset_config.available_params, indent=4, sort_keys=True))
     # Won't support "generic" properties yet
     # config.paramA = 1
     # config.paramB = 'blah'
-    dataset_config.set('custom_param', 'custom_val')
-    dataset_config.set('nested__custom__param', 'nested_val')
-    dataset_config.remove('nested__custom__param')
+    dataset_config.set("custom_param", "custom_val")
+    dataset_config.set("nested__custom__param", "nested_val")
+    dataset_config.remove("nested__custom__param")
 
     # Still requires pre-generating datasets, throw warnings if none found
     zpy.preview(dataset_config, num_samples=5)
-    dataset = zpy.generate('can_v5 test', dataset_config, num_datapoints=10, materialize=True)
+    dataset = zpy.generate(
+        "can_v5 test", dataset_config, num_datapoints=10, materialize=True
+    )
     # Return urls or do ipython
     # /api/v1/files?dataset=dataset_id&name_icontains="00000001"
     dataset.sample()

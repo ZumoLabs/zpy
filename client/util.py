@@ -109,7 +109,7 @@ def convert_size(size_bytes: int):
     return "%s %s" % (s, size_name[i])
 
 
-ERASE_LINE = '\x1b[2K'
+ERASE_LINE = "\x1b[2K"
 
 
 def clear_last_print():
