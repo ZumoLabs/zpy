@@ -15,13 +15,7 @@
 \graphicspath{ {./images/} }
 \usepackage{doi}
 
-\usepackage[backend=biber, style=numeric]{biblatex}
-\addbibresource{references.bib}
-% \RequirePackage[backend=biber,
-% style=apa,
-% citestyle=authoryear
-% ]{biblatex}
-% \usepackage[square,numbers]{natbib}
+\usepackage[square,numbers]{natbib}
 
 \usepackage{xcolor}
 \usepackage{listings}		% code
@@ -142,7 +136,9 @@ For a thorough review of synthetic data literature, we recommend readers go thro
 \subsubsection{Asset Creation}
 \label{sec:assetcreation}
 
-Assets are digital representations of a 3D object. One type of asset is a mesh: a connected graph of 3D points also called vertices, which define the surface of an object. Edges interconnect vertices, and a closed loop of vertices creates a polygon known as a face. The engineering and manufacturing world creates meshes using computer-aided design (CAD) software such as AutoCAD \cite{autocad}, Solidworks \cite{solidworks}, Onshape \cite{onshape}, and Rhino \cite{rhino}. The entertainment industry creates meshes using modeling software such as Maya \cite{maya}, 3DSMax \cite{3dsmax}, and Cinema4D \cite{cinema4d}.
+Assets are digital representations of a 3D object. One type of asset is a mesh: a connected graph of 3D points also called vertices, which define the surface of an object. Edges interconnect vertices, and a closed loop of vertices creates a polygon known as a face.
+
+The engineering and manufacturing world creates meshes using computer-aided design (CAD) software such as AutoCAD \cite{autocad}, Solidworks \cite{solidworks}, Onshape \cite{onshape}, and Rhino \cite{rhino}. The entertainment industry creates meshes using modeling software such as Maya \cite{maya}, 3DSMax \cite{3dsmax}, and Cinema4D \cite{cinema4d}.
 
 Whereas a mesh describes the shape and form of an object, a material asset describes the texture and appearance of a virtual object. A material may define rules for the reflectivity, specularity, and metallic-ness of the object as a function of lighting conditions. Shader programs use materials to calculate the exact pixel values to render for each face of a mesh polygon. Modeling software usually comes packaged with tools for the creation and configuration of materials.
 
@@ -182,7 +178,7 @@ Synthetic datasets offer full control of the distribution and can thus be design
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{software3.png}
-	\caption{Software 3.0: the developer transitions from writing explicit algorithms to creating and curating datasets which are used to train machine learning models.}
+	\caption{The developer transitions from writing explicit rule-based algorithms (\emph{Software 2.0}) to creating and curating datasets and labels which are used to train machine learning algorithms (\emph{Software 3.0}).}
 	\label{fig:fig2}
 \end{figure}
 
@@ -326,8 +322,7 @@ Training on mixed synthetic and real
 
 TODO
 
-% \bibliographystyle{abbrvnat}
-% \bibliography{references}
-\printbibliography
+\bibliographystyle{abbrvnat}
+\bibliography{references}
 
 \end{document}
