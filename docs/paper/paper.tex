@@ -205,7 +205,7 @@ In the software of tomorrow, developers will curate a dataset which will be used
 \section{Project Features}
 \label{sec:projectfeatures}
 
-In this section we outline the key features and components of the zpy synthetic data toolkit.
+In this section we outline the key features and components of the zpy synthetic data toolkit: a Blender addon \ref{sec:blenderaddon}, a cloud backend \ref{sec:cloudbackend}, a python module \ref{sec:pythonmodule}, and various types of user interfaces \ref{sec:userinterfaces}.
 
 \subsection{Blender Addon}
 \label{sec:blenderaddon}
@@ -217,12 +217,26 @@ Blender allows for user-created AddOns, and provides tooling for integrating add
 
 Computing has traditionally relied on Moore’s Law to increase the power of individual computers. In the past decade the individual compute power of a single computer has not increased significantly, and instead the ability to coordinate a large number of individual computers on a single task has become the method for increasing computation. This type of parallel computing has been democratized through the availability of cloud computing platforms such as AWS, GCP, and Azure. However, these platforms remain difficult for the average developer to use effectively, and domain experts are usually required to take software running on a single computer and scale it across many computers in parallel.
 
-Abstracting away the difficulties of the cloud workflow and providing an intuitive and convenient interface for parallelizing computation is thus important for the synthetic data workflow. Dataset generation jobs can be made with the zpy CLI and API such that many computers are used, thus speeding up the generation job.
+Abstracting away the difficulties of the cloud workflow and providing an intuitive and convenient interface for parallelizing computation is thus important for the synthetic data workflow. Dataset generation jobs can be made with the zpy Python API \ref{lst:api} and CLI \ref{lst:cli} such that many computers are used, thus speeding up the generation job. The ZumoLabs cloud uses orchestration technology, e.g. Kubernetes, to spin up and manage new image generation nodes.
+
+\subsection{Python Module}
+\label{sec:pythonmodule}
+
+Python is the most popular programming language for creating and training deep learning systems, which are the primary consumers of synthetic image datasets. The zpy synthetic data toolkit is thus written in python, and is available and installable through the Python Package Index PyPI \ref{lst:pipinstall}.
+
+\begin{lstlisting}[language=bash,caption={Installing the zpy python module.},label={lst:pipinstall}]
+pip install zpy-zumo
+\end{lstlisting}
+
+When designing software systems, there is usually a tradeoff between \emph{flexibility} and \emph{simplicity}. Simplicity is the ability to perform a task with minimal amount of work and a limited understanding of the software package. Flexibility is the ability to support many different tasks and allow for customization. To balance these two competing objectives, we opted for the principle of \emph{hidden complexity} when designing the zpy python package. One such example is the function calls for random HDRIs and textures: these will default to pre-selected random textures unless a specific path is given. Another manifestation of this design principle is in the flexibility of function arguments: the `zpy.opject.segment()` function call can accept an object directly of type `bpy.types.Object`, but it will also accept the unique string name of that object. These design principles reinforce one of the core principles of Python: \emph{readability}. Python insists on human readable syntax, and does not enforce function and variable type annotations, which makes it quicker to prototype code.
+
+
+The zpy python package is organized as a collection of seperate modules. These modules are separated based on their dependencies and functionality. This makes it easier for end users to add custom functionality, or ignore modules with dependencies they do not want. This type of modular design can be seen in other popular python libraries, such as Matplotlib \cite{Hunter:2007}.
 
 \subsection{User Interfaces}
 \label{sec:userinterfaces}
 
-We provide three different interfaces to interact with our product: a Python API \ref{lst:api}, a CLI \ref{lst:cli}, and a graphical WebApp \ref{fig:webapp}. Power users want an API (application programming interface) and CLI (command line interface). Building a ramp for the bulk of the developer community requires a GUI.
+We provide three different interfaces to interact with our product: a Python API \ref{lst:api}, a CLI \ref{lst:cli}, and a graphical WebApp \ref{fig:webapp}. The Python API (application programming interface) allows users to generate custom datasets directly inside a python script, which means that model training code and data generation code can be tied together. This is especially important for using automatic hyperparameter tuning frameworks. The CLI (command line interface) allows for users to generate and manipulate their datasets with unix terminal commands. The terminal is extremely popular as an interface for computation tasks and thus a CLI is a must-have for a large swath of the developer community. Finally, we also provide a graphical interface in the form of a WebApp. Graphical interfaces can provide powerful visualization tools, and are generally more approachable for those less comfortable with code-like interfaces such as an API or CLI. 
 
 \begin{lstlisting}[language=Python,caption={Generating a dataset using the zpy python API.},label={lst:api}]
 import zpy
@@ -230,32 +244,8 @@ zpy.generate()
 \end{lstlisting}
 
 \begin{lstlisting}[language=bash,caption={Generating a dataset using the zpy CLI},label={lst:cli}]
-# First you will need to log in and set the project (image generation gets billed according to project)
-zpy login $USERNAME 
-zpy project set $PROJECT_UUID
-
-# Generate the dataset
-zpy create dataset "redbull cans and packs" can_v6 num_images 1000
+zpy create dataset "hello world dataset" my_sim num_images 1000
 \end{lstlisting}
-
-\subsection{Python Module}
-\label{sec:python module}
-
-Hidden complexity
-
-When designing software systems, there is usually a tradeoff between flexibility and simplicity. Simplicity is the ability to perform a task with minimal amount of work and a limited understanding of the software package. Flexibility is the ability to support many different tasks and allow for customization.
-
-Random hdri and textures use default random textures unless a specific path is given
-
-As explained in section X, deep learning is a python-first discipline. If we wish to include deep learning practitioners in the 3D stack it is thus of critical importance that we provide a python interface for the 3D workflow.
-
-One of the core features of Python is the language’s human readable syntax. Python does not enforce function and variable type annotations, which makes it quicker to prototype code.
-
-Functions in zpy are flexible in the arguments that they accept. The `zpy.opject.segment()` function call can accept an object directly of type `bpy.types.Object`, but it will also accept the unique string name of that object. 
-
-Zpy modules are separated by dependencies
-
-Zpy modules are independent of each other, a monolithic system is much harder to update and maintain
 
 \begin{figure}
 	\centering
