@@ -95,7 +95,7 @@ pdfkeywords={Computer Vision, Synthetic Data, Machine Learning, Open Source, Pyt
 \maketitle
 
 \begin{abstract}
-Synthetic data presents a unique solution to the huge data requirements of computer vision with deep learning. In this work, we present zpy \footnote{All code is available on GitHub at \url{http://github.com/ZumoLabs/zpy}}, an open source framework for creating synthetic data. Built on top of Blender, and designed with modularity and readability in mind.
+Synthetic data presents a unique solution to the huge data requirements of computer vision with deep learning. In this work, we present zpy \footnote{All code is available on GitHub at \url{http://github.com/ZumoLabs/zpy}}, an open source framework for creating synthetic data. Built on top of the popular open source 3D platform Blender. And designed with modularity and readability in mind.
 \end{abstract}
 
 \keywords{Computer Vision \and Synthetic Data \and Machine Learning \and Open Source \and Python \and Blender}
@@ -117,11 +117,29 @@ Deep learning has exploded in popularity due to large open source frameworks suc
 
 What is synthetic data.
 
+Usecases for synthetic data
+
+autonomous vehicles \ref{shermeyer2020rareplanes}, \ref{shermeyer2020rareplanes}, \ref{shermeyer2020rareplanes}, \ref{shermeyer2020rareplanes}
+
+pose estimation for humans \ref{shermeyer2020rareplanes}, \ref{shermeyer2020rareplanes}
+
+person re-id \ref{shermeyer2020rareplanes}
+
+detection in overhead satellite imagery \ref{shermeyer2020rareplanes}
+
+pose estimation of satellites in space \ref{kisantal2020satellite}
+
+segmentation of clouds \ref{shermeyer2020rareplanes}
+
 Challenges with synthetic data
 
-Sim2Real Gap and domain randomization
+We dive deeper into the effects of training curriculum on synthetic data in \ref{sec:curicculum}.
+
+Sim2Real Gap and domain randomization. We perform an ablation study on different types of domain randomization in \ref{sec:domainrandomization}
 
 Black box nature of ML
+
+Other attempts at open source synthetic data \cite{denninger2019blenderproc} \cite{bpycv}
 
 For a thorough review of synthetic data literature, we recommend readers go through Nikolenkos 2019 summary paper \cite{nikolenko2019synthetic}.
 
@@ -289,6 +307,13 @@ Those familiar with machine learning model development are aware of \emph{hyperp
 
 The kwargs of the run function in a sim are effectively additional hyperparameters that can also be tuned. The human designer of the sim can define plausible values and ranges for these sim hyperparameters, and then use an AutoML-like system to discover the values that result in the best model. This presents a unique opportunity in the machine learning workflow, where the dataset used to train a model is no longer static, and can be tuned and improved over time.
 
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{results.png}
+	\caption{Each type of domain randomization is used to create a fully synthetic dataset, which is used to fine-tune a pre-trained model on the task of package detection. Results of the model on a manually labeled test dataset of real images are compared.}
+	\label{fig:results}
+\end{figure}
+
 \section{Example}
 \label{sec:example}
 
@@ -300,27 +325,40 @@ Armed with our synthetic training dataset and our real test dataset, we are read
 
 We used a ResNet model implemented in PyTorch inside of the Detectron2 computer vision library \cite{wu2019detectron2}.
 
+Each individual training run 
+
+Details on the training setup: GPU, total training time, total number of sweeps, epoch and batch size.
+
 
 \subsection{Domain Randomization}
 \label{sec:domainrandomization}
 
 Domain randomization is a technique commonly used in synthetic data to increase the variance of a dataset distribution. In the field of synthetic data for computer vision, it might refer to randomizing the intensity of lighting in every frame of a simulation. Domain randomization is also important in the space of material assets: using a large variety of textures and material properties will help prevent texture overfitting, a common issue with CNNs \cite{DBLP:journals/corr/abs-1811-12231}. 
 
-In our package experiment, we expose two boolean toggles as run function kwargs that are categorized as forms of domain randomization. One toggle enables domain randomization in the lighting space: changing the position and intensity of several lights in the sim. The second toggle enables random HDRIs, which change the appearance of the background in the package images.
+In our package experiment, we expose boolean toggles as run function kwargs that unlock certain forms of domain randomization. One toggle enables domain randomization in the lighting space: changing the position and intensity of several lights in the sim. The second toggle enables random HDRIs, which change the appearance of the background in the package images. The third toggle enables domain randomization for materials, which changes the appearance of the packages themselves, both the texture as well as the material properties. We perform an ablation study to pick appart the contributions of each type of domain randomization to the performance of a detection model trained on synthetic data with each respective form of domain randomization \ref{fig:results}.
+
+Deeper discussion of results
 
 \subsection{Training Curicculum}
 \label{sec:curicculum}
 
 Pre-training w/ real and fine-tuning on synthetic
 
-Training only on synthetic
+Training only on Synthetic
 
-Training on mixed synthetic and real
+ref to rare planes
+
+ref to mixed synthetic data
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-TODO
+
+
+\section{Thanks}
+\label{sec:thanks}
+
+Thanks to Aaron Dant and his team at ASRC Federal for discussions about synthetic data and comments on this paper. Thanks to the developer community of zpy for their feedback and contributions. Thanks to the investors and supporters of Zumo Labs for believing in the future of synthetic data.
 
 \bibliographystyle{abbrvnat}
 \bibliography{references}
