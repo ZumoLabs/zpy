@@ -14,10 +14,18 @@
 <img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/config.svg?raw=true"/>
 </p>
 
-#### switch target environment
+#### Display help
 
- ```zpy env <newenv>```
+```zpy help```
 
 <p align="center">
-<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/env.svg?araw=true"/>
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/help.svg?araw=true"/>
+</p>
+
+#### Display zpy version
+
+```zpy version```
+
+<p align="center">
+<img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/version.svg?araw=true"/>
 </p>
