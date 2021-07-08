@@ -16,7 +16,7 @@
 
 #### Set current project
 
-```zpy project set <uuid>````
+```zpy project set <uuid>```
 
 <p align="center">
 <img src="https://github.com/ZumoLabs/zpy/raw/main/docs/cli/gif/projectset.svg?raw=true"/>
