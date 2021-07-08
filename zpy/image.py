@@ -6,14 +6,15 @@ from itertools import groupby
 from pathlib import Path
 from typing import Dict, List, Union
 
-import gin
 import numpy as np
+from PIL import Image
 from scipy import ndimage as ndi
 from shapely.geometry import MultiPolygon, Polygon
 from skimage import color, exposure, img_as_uint, io, measure
 from skimage.morphology import binary_closing, binary_opening
 from skimage.transform import resize
 
+import gin
 import zpy
 
 log = logging.getLogger(__name__)
@@ -71,10 +72,12 @@ def jpeg_compression(
     """
     image_path = zpy.files.verify_path(image_path, make=False)
     img = io.imread(image_path)
+    # img = Image.open(image_path)
     # Make sure image is jpeg
     if not image_path.suffix == ".jpeg":
         image_path = image_path.with_suffix(".jpeg")
     io.imsave(image_path, arr=img, quality=quality)
+    # img.save(image_path, "JPEG")
     log.info(f"Saving compressed image at {image_path}")
     return image_path
 
