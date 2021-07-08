@@ -795,16 +795,16 @@ def list_transforms(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="state,operation,input_data_set,created_at",
+        columns="state,operation,input_dataset,created_at",
         colwidth={
             "state": MEDIUM_WIDTH,
             "operation": SMALL_WIDTH,
-            "input_data_set": LARGE_WIDTH,
+            "input_dataset": LARGE_WIDTH,
             "created_at": DATETIME_WIDTH,
         },
     )
     for t in transforms:
-        tbl(t["state"], t["operation"], t["input_data_set"], t["created_at"])
+        tbl(t["state"], t["operation"], t["input_dataset"], t["created_at"])
 
 
 @transform_group.command("dataset")

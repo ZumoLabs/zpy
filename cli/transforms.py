@@ -26,7 +26,7 @@ def create_transform(name, operation, config, project, url, auth_headers):
         "project": project,
         "operation": operation,
         "name": name,
-        "input_data_set": dataset["id"],
+        "input_dataset": dataset["id"],
         "config": json.dumps(config),
     }
     r = requests.post(endpoint, data=data, headers=auth_headers)

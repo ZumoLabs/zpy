@@ -166,7 +166,7 @@ def filter_datasets(dfilter, project, url, auth_headers):
         if r.status_code != 200:
             r.raise_for_status()
         response = json.loads(r.text)
-        for data_set in response["results"]:
-            filtered_datasets[data_set["id"]] = data_set["name"]
+        for dataset in response["results"]:
+            filtered_datasets[dataset["id"]] = dataset["name"]
         endpoint = response["next"]
     return filtered_datasets
