@@ -324,9 +324,11 @@ class Dataset:
                 "project": _project["id"],
                 "name": name,
             }
-            datasets = get(f"{_base_url}/api/v1/datasets/",
-                           params=unique_dataset_filters,
-                           headers=auth_header(_auth_token))["results"]
+            datasets = get(
+                f"{_base_url}/api/v1/datasets/",
+                params=unique_dataset_filters,
+                headers=auth_header(_auth_token),
+            )["results"]
             self._dataset = datasets[0]
 
     @property
@@ -349,4 +351,3 @@ class Dataset:
 
     def view(self):
         return
-
