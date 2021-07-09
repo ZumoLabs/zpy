@@ -4,9 +4,9 @@ The zpy cli is a **C**ommand **L**ine **I**nterface to interact with datasets an
 
 ### Usage
 
-* [zpy login](login.md) - Authenticate with backend. 
-* [zpy list](list.md) - List objects from backend.
-* [zpy get](get.md) - Download objects from backend.
-* [zpy upload](upload.md) - Upload files and [sims](https://zumolabs.github.io/zpy/zpy/tutorials/what_is_a_sim/) to backend.
-* [zpy create](create.md) - Create objects on backend to trigger workflows.
-* [zpy logs](logs.md) - Fetch logs for backend workflows.
+* [zpy config](basic.md) - Authenticate with backend. 
+* [zpy project](project.md) - Swap between projects.
+* [zpy dataset](dataset.md) - Upload or generate datasets.
+* [zpy sim](sim.md) - [sims](https://zumolabs.github.io/zpy/zpy/tutorials/what_is_a_sim/)
+* [zpy job](job.md) - Run jobs on datasets to product output datasets.
+* [zpy transform](transform.md) - Format datasets.
