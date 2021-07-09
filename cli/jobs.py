@@ -24,7 +24,7 @@ def create_new_job(name, operation, config, datasets, project, url, auth_headers
         "project": project,
         "operation": operation.upper(),
         "name": name,
-        "input_data_sets": datasets,
+        "input_datasets": datasets,
         "config": json.dumps(config),
     }
     r = requests.post(endpoint, data=data, headers=auth_headers)
