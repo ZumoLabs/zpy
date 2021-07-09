@@ -5,6 +5,27 @@ import requests
 
 
 @fetch_auth
+def fetch_sim(name, url, auth_headers):
+    """fetch sim
+
+    Fetch info on a sim by name from backend.
+
+    Args:
+        name (str): name of sim
+        url (str): backend endpoint
+        auth_headers: authentication for backend
+    """
+    endpoint = f"{url}/api/v1/sims/"
+    r = requests.get(endpoint, params={"name": name}, headers=auth_headers)
+    if r.status_code != 200:
+        r.raise_for_status()
+    response = json.loads(r.text)
+    if response["count"] != 1:
+        raise NameError(f"found {response['count']} sims for name {name}")
+    return response["results"][0]
+
+
+@fetch_auth
 def create_sim(name, path, project, url, auth_headers):
     """create sim
 
@@ -44,14 +65,7 @@ def download_sim(name, path, url, auth_headers):
     Returns:
         str: output file path
     """
-    endpoint = f"{url}/api/v1/sims/"
-    r = requests.get(endpoint, params={"name": name}, headers=auth_headers)
-    if r.status_code != 200:
-        r.raise_for_status()
-    response = json.loads(r.text)
-    if response["count"] != 1:
-        raise NameError(f"found {response['count']} sims for name {name}")
-    sim = response["results"][0]
+    sim = fetch_sim(name)
     endpoint = f"{url}/api/v1/sims/{sim['id']}/download"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:

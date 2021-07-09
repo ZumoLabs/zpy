@@ -1,0 +1,49 @@
+#
+#  Default configuration for run script
+#
+#  This is a gin-config file (https://github.com/google/gin-config)
+#
+
+import zpy
+
+# ----------- STEPS
+
+zpy.blender.step.num_steps = 3
+
+# ----------- IMAGE
+
+image_size_width/macro.value = 280
+image_size_height/macro.value = 450
+zpy.saver_image.add_image.width = @image_size_width/macro()
+zpy.saver_image.add_image.height = @image_size_height/macro()
+zpy.render.render.width = @image_size_width/macro()
+zpy.render.render.height = @image_size_height/macro()
+zpy.camera.camera_xyv.width = @image_size_width/macro()
+zpy.camera.camera_xyv.height = @image_size_height/macro()
+
+# ------------ ANNOTATIONS
+
+zpy.saver.remap_filter_categories.category_remap = {
+    0: 'cerealbox',
+    1: 'box',
+}
+
+zpy.output_coco.coco_images.only_default_images = True
+zpy.output_coco.coco_images.keys_to_add = @images_keys_to_add/macro()
+zpy.output_coco.parse_coco_annotations.image_keys_to_add = @images_keys_to_add/macro()
+
+zpy.output_coco.coco_annotations.only_default_images = True
+zpy.output_coco.coco_annotations.keys_to_add = @annotations_keys_to_add/macro()
+
+images_keys_to_add/macro.value = [
+    'area',
+]
+
+annotations_keys_to_add/macro.value = [
+    'area',
+    'bbox',
+    'segmentation',
+    'num_keypoints',
+    'keypoints_xyv',
+    'keypoints_xyz',
+]

@@ -215,6 +215,28 @@ def random_texture_mat() -> bpy.types.Material:
 
 
 @gin.configurable
+def filtered_dir_texture_mat(dir_name: Union[Path, str] = None) -> bpy.types.Material:
+    """Generate a material based on a word, which searches for related texture images.
+
+    TODO: Requires Zumo Labs Asset Library
+
+    Args:
+        dir_name (Union[Path, str]): Path of directory in $ASSETS
+
+    Returns:
+        bpy.types.Material: The newly created material.
+    """
+    if dir_name is None:
+        log.warning("No filter provided, using random texture mat instead.")
+        return random_texture_mat()
+    texture_dir = zpy.assets.texture_dir() / dir_name
+    texture_path = zpy.files.pick_random_from_dir(
+        texture_dir, suffixes=[".jpg", ".png"]
+    )
+    return make_mat_from_texture(texture_path, name=texture_path.stem)
+
+
+@gin.configurable
 def make_mat_from_texture(
     texture_path: Union[Path, str],
     name: str = None,

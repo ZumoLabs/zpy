@@ -66,6 +66,7 @@ def load_hdri(
 @gin.configurable
 def random_hdri(
     apply_to_scene: bool = True,
+    scale: Tuple[float] = (1.0, 1.0, 1.0),
 ) -> Path:
     """Generate a random HDRI from an asset path.
 
@@ -80,5 +81,5 @@ def random_hdri(
         hdri_dir, suffixes=[".exr", ".hdri", ".hdr"]
     )
     if apply_to_scene:
-        load_hdri(hdri_path)
+        load_hdri(hdri_path, scale=scale)
     return hdri_path

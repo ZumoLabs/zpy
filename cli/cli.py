@@ -5,7 +5,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from table_logger import TableLogger
 
-from cli.config import initialize_config, read_config, write_config, get_endpoint
+from cli.config import initialize_config, read_config, write_config, add_env, swap_env
 from cli.loader import Loader
 from cli.utils import parse_args, resolve_sweep, use_project, print_list_as_columns
 from zpy.files import read_json, to_pathlib_path
@@ -34,7 +34,6 @@ def cli_help():
     This will display help in order to provide users with more information
     on how to use this tool.
     """
-    # TODO: spec this out
     click.echo(
         "zpy - ZumoLabs command line interface\n"
         "\n"
@@ -45,56 +44,6 @@ def cli_help():
         "github - https://github.com/ZumoLabs/zpy\n"
         "docs   - https://github.com/ZumoLabs/zpy/tree/main/docs/cli"
     )
-
-
-@cli.command("env")
-@click.argument("env", type=click.Choice(["local", "stage", "prod"]))
-def set_env(env):
-    """switch target environment
-
-    This command allows zumo labs developers to swap the endpoint that the
-    cli communicates with. Unlikely to be relevant for non-zumo devs.
-
-    Args:
-        env (str): new environment for endpoint
-    """
-    config = read_config()
-    old_env, old_endpoint = config["ENVIRONMENT"], config["ENDPOINT"]
-    config["ENVIRONMENT"] = env
-    config["ENDPOINT"] = get_endpoint(env)
-    config["TOKEN"] = None
-    write_config(config)
-    click.echo("Swapped environment:")
-    click.echo(f"  {old_env} -> {config['ENVIRONMENT']}")
-    click.echo(f"  {old_endpoint} -> {config['ENDPOINT']}")
-    click.echo("zpy login to fetch token")
-
-
-@cli.group("project")
-def cli_project():
-    """Manage global project workspace."""
-    pass
-
-
-@cli_project.command("set")
-@click.argument("project_uuid", type=click.UUID)
-def set_project(project_uuid):
-    """Set global PROJECT uuid."""
-    config = read_config()
-    old_project_uuid = config.get("PROJECT", None)
-    config["PROJECT"] = str(project_uuid)
-    write_config(config)
-    click.echo("Switched project:")
-    click.echo(f"  {old_project_uuid} -> {config['PROJECT']}")
-
-
-@cli_project.command("clear")
-def clear_project():
-    """Clear global PROJECT uuid."""
-    config = read_config()
-    config.pop("PROJECT")
-    write_config(config)
-    click.echo("Cleared global project namespace.")
 
 
 @cli.command("login")
@@ -144,19 +93,69 @@ def version():
     click.echo(f"Version: {zpy.__version__}")
 
 
-# ------- LIST
+# ------- ENV
 
 
-@cli.group("list")
-def cli_list():
-    """List objects.
+@cli.group("env")
+def env_group():
+    """environment configuration.
 
-    List group is used for list commands on backend objects.
+    Configure the environment for backend calls.
     """
     pass
 
 
-@cli_list.command("datasets")
+@env_group.command("set")
+@click.argument("env")
+def set_env(env):
+    """switch target environment
+
+    This command allows zumo labs developers to swap the endpoint that the cli communicates with.
+
+    Args:
+        env (str): new environment for endpoint
+    """
+    config = read_config()
+    old_env, old_endpoint = config["ENVIRONMENT"], config["ENDPOINT"]
+    swap_env(env)
+    config = read_config()
+    click.echo("Swapped environment:")
+    click.echo(f"  {old_env} -> {config['ENVIRONMENT']}")
+    click.echo(f"  {old_endpoint} -> {config['ENDPOINT']}")
+    click.echo("zpy login to fetch token")
+
+
+@env_group.command("add")
+@click.argument("env")
+@click.argument("endpoint")
+def add_environment(env, endpoint):
+    """add a new environment
+
+    This command allows you to add an environment to target with backend calls.
+
+    Args:
+        env (str): new environment name identifier
+        endpoint (str): endpoint for new environment
+    """
+    click.echo(f"Adding environment:")
+    click.echo(f"  ENVIRONMENT: {env}")
+    click.echo(f"  ENDPOINT: {endpoint}")
+    add_env(env, endpoint)
+
+
+# ------- DATASET
+
+
+@cli.group("dataset")
+def dataset_group():
+    """dataset object.
+
+    Dataset is a collection of files.
+    """
+    pass
+
+
+@dataset_group.command("list")
 @click.argument("filters", nargs=-1)
 @use_project()
 def list_datasets(filters, project=None):
@@ -185,80 +184,135 @@ def list_datasets(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="id,project,name,state,type,created_at",
+        columns="name,state,files,created_at",
         colwidth={
-            "id": UUID_WIDTH,
-            "project": UUID_WIDTH,
             "name": LARGE_WIDTH,
-            "state": SMALL_WIDTH,
-            "type": SMALL_WIDTH,
+            "state": MEDIUM_WIDTH,
+            "files": SMALL_WIDTH,
             "created_at": DATETIME_WIDTH,
         },
     )
     for d in datasets:
         tbl(
-            d["id"],
-            d["project"],
             d["name"],
-            d["state"].lower(),
-            d["type"],
+            d["state"],
+            d["num_files"],
             d["created_at"],
         )
 
 
-@cli_list.command("sims")
-@click.argument("filters", nargs=-1)
-@use_project()
-def list_sims(filters, project=None):
-    """list sims
+@dataset_group.command("get")
+@click.argument("name")
+@click.argument(
+    "path",
+    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
+)
+@click.argument("format", default="archive")
+def get_dataset(name, path, format):
+    """get dataset
 
-    List sims from backend with optional FILTERS. Uses PROJECT set via zpy project command when available.
+    Download dataset of type DTYPE and name NAME to local PATH from backend.
+
+    Args:
+        name (str): name of dataset
+        path (str): directory to put zipped dataset
+        format (str): format for packaging
     """
-    from cli.sims import fetch_sims
+    from cli.datasets import download_dataset
+    from cli.utils import download_url
 
     try:
-        filters = parse_args(filters)
-        if project:
-            filters["project"] = project
-    except Exception:
-        click.secho(f"Failed to parse filters: {filters}", fg="yellow", err=True)
-        return
-
-    try:
-        with Loader("Fetching sims..."):
-            sims = fetch_sims(filters)
-        click.echo("Fetched sims successfully.")
+        output_path = download_dataset(name, path)
+        click.echo(f"Downloaded dataset '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to fetch sims {e}.", fg="red", err=True)
+        click.secho(f"Failed to download dataset: {e}", fg="red", err=True)
         if e.response.status_code == 400:
             click.secho(str(e.response.json()), fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to download dataset: {e}", fg="yellow", err=True)
+
+
+@dataset_group.command("upload")
+@click.argument("name")
+@click.argument("path", type=click.Path(exists=True, dir_okay=False, resolve_path=True))
+@use_project(required=True)
+def upload_dataset(name, path, project=None):
+    """upload dataset
+
+    Upload dataset located at PATH to PROJECT and call it NAME. Requires PROJECT to be set via `zpy project`.
+
+    Args:
+        name (str): name of dataset
+        path (str): path to dataset
+        project (str): project uuid
+    """
+    from cli.datasets import create_dataset
+
+    if to_pathlib_path(path).suffix != ".zip":
+        click.secho(f"File {path} must be of type zip", fg="red", err=True)
+    try:
+        with Loader("Uploading dataset..."):
+            create_dataset(name, path, project)
+        click.secho(f"Uploaded dataset {path} with name '{name}'", fg="green")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to upload dataset: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+
+
+@dataset_group.command("generate")
+@click.argument("name")
+@click.argument("sim")
+@click.argument("number")
+@click.argument("args", nargs=-1)
+@use_project(required=True)
+def create_dataset(name, sim, number, args, project=None):
+    """Create a dataset.
+
+    Create a dataset object called NAME. This will trigger the generation of data from SIM with NUMBER of runs given the input ARGS. Requires PROJECT to be set via `zpy project`.
+
+    Args:
+        name (str): name of new dataset
+        sim (str): name of sim dataset is built with
+        number (str): number of datasets to create
+        args (List(str)): configuration of sim for this dataset
+        project (str): project uuid
+    """
+    from cli.datasets import generate_dataset
+
+    try:
+        dataset_config = parse_args(args)
+    except Exception:
+        click.secho(f"Failed to parse args: {args}", fg="yellow", err=True)
         return
 
-    tbl = TableLogger(
-        columns="id,project,name,state,zpy_version,blender_version,created_at",
-        colwidth={
-            "id": UUID_WIDTH,
-            "project": UUID_WIDTH,
-            "name": LARGE_WIDTH,
-            "state": SMALL_WIDTH,
-            "zpy_version": MEDIUM_WIDTH,
-            "blender_version": SMALL_WIDTH,
-            "created_at": DATETIME_WIDTH,
-        },
-    )
-    for s in sims:
-        tbl(
-            s["id"],
-            s["project"],
-            s["name"],
-            s["state"],
-            s["zpy_version"],
-            s["blender_version"],
-            s["created_at"],
+    try:
+        generate_dataset(name, sim, number, dataset_config, project)
+        click.secho(
+            f"Generating {number} from sim '{sim}' with config {dataset_config}",
+            fg="green",
         )
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
 
 
-@cli_list.command("projects")
+# ------- PROJECT
+
+
+@cli.group("project")
+def project_group():
+    """Project group
+
+    Project is a container for the rest of the objects.
+    """
+    pass
+
+
+@project_group.command("list")
 @click.argument("filters", nargs=-1)
 def list_projects(filters):
     """list projects
@@ -301,7 +355,201 @@ def list_projects(filters):
         )
 
 
-@cli_list.command("accounts")
+@project_group.command("create")
+@click.argument("account", type=click.UUID)
+@click.argument("name")
+def create_project(account, name):
+    """Create a project under ACCOUNT called NAME.
+
+    See available accounts: zpy list accounts
+    """
+    from cli.projects import create_project
+
+    try:
+        create_project(account, name)
+        click.secho(f"Created project '{name}'", fg="green")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to create project: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+
+
+@project_group.command("set")
+@click.argument("project_uuid", type=click.UUID)
+def set_project(project_uuid):
+    """Set project
+
+    Set global PROJECT uuid.
+    """
+    config = read_config()
+    old_project_uuid = config.get("PROJECT", None)
+    config["PROJECT"] = str(project_uuid)
+    write_config(config)
+    click.echo("Switched project:")
+    click.echo(f"  {old_project_uuid} -> {config['PROJECT']}")
+
+
+@project_group.command("clear")
+def clear_project():
+    """Clear project
+
+    Clear global PROJECT uuid.
+    """
+    config = read_config()
+    config.pop("PROJECT")
+    write_config(config)
+    click.echo("Cleared global project namespace.")
+
+
+# ------- SIM
+
+
+@cli.group("sim")
+def sim_group():
+    """Sim object
+
+    Sim is a 3D scene which is used to generate images.
+    """
+    pass
+
+
+@sim_group.command("list")
+@click.argument("filters", nargs=-1)
+@use_project()
+def list_sims(filters, project=None):
+    """list sims
+
+    List sims from backend with optional FILTERS. Uses PROJECT set via zpy project command when available.
+    """
+    from cli.sims import fetch_sims
+
+    try:
+        filters = parse_args(filters)
+        if project:
+            filters["project"] = project
+    except Exception:
+        click.secho(f"Failed to parse filters: {filters}", fg="yellow", err=True)
+        return
+
+    try:
+        with Loader("Fetching sims..."):
+            sims = fetch_sims(filters)
+        click.echo("Fetched sims successfully.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch sims {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+        return
+
+    tbl = TableLogger(
+        columns="name,state,zpy_version,blender_version,created_at",
+        colwidth={
+            "name": LARGE_WIDTH,
+            "state": MEDIUM_WIDTH,
+            "zpy_version": MEDIUM_WIDTH,
+            "blender_version": SMALL_WIDTH,
+            "created_at": DATETIME_WIDTH,
+        },
+    )
+    for s in sims:
+        tbl(
+            s["name"],
+            s["state"],
+            s["zpy_version"],
+            s["blender_version"],
+            s["created_at"],
+        )
+
+
+@sim_group.command("get")
+@click.argument("name")
+@click.argument(
+    "path",
+    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
+)
+def get_sim(name, path):
+    """get sim
+
+    Download sim with name NAME from backend.
+
+    Args:
+        name (str): name of sim
+        path (str): directory to put zipped sim
+    """
+    from cli.sims import download_sim
+
+    try:
+        output_path = download_sim(name, path)
+        click.echo(f"Downloaded sim '{name}' to {output_path}")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to download sim: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to download sim: {e}", fg="yellow", err=True)
+
+
+@sim_group.command("upload")
+@click.argument("name")
+@click.argument("path", type=click.Path(exists=True, dir_okay=False, resolve_path=True))
+@use_project(required=True)
+def upload_sim(name, path, project=None):
+    """upload sim
+
+    Upload sim located at PATH to PROJECT and call it NAME. Requires PROJECT to be set via `zpy project`.
+
+    Args:
+        name (str): name of sim
+        path (str): path to sim
+        project (str): project uuid
+    """
+    from cli.sims import create_sim
+
+    if to_pathlib_path(path).suffix != ".zip":
+        click.secho(f"File {path} must be of type zip", fg="red", err=True)
+    try:
+        with Loader("Uploading sim..."):
+            create_sim(name, path, project)
+        click.secho(f"Uploaded sim {path} with name '{name}'", fg="green")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to upload sim: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+
+
+@sim_group.command("logs")
+@click.argument("name")
+@click.argument(
+    "path",
+    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
+)
+def logs_sim(name, path):
+    from cli.logs import fetch_logs
+
+    try:
+        fetch_logs("sims", name, path)
+        click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
+
+
+# ------- ACCOUNT
+
+
+@cli.group("account")
+def account_group():
+    """Account object
+
+    Accounts are used to interact with the backend.
+    """
+    pass
+
+
+@account_group.command("list")
 @click.argument("filters", nargs=-1)
 def list_accounts(filters):
     """list accounts
@@ -344,7 +592,19 @@ def list_accounts(filters):
         )
 
 
-@cli_list.command("jobs")
+# ------- JOB
+
+
+@cli.group("job")
+def job_group():
+    """Job object
+
+    Jobs are used in order to perform operations on a set of datasets.
+    """
+    pass
+
+
+@job_group.command("list")
 @click.argument("filters", nargs=-1)
 @use_project()
 def list_jobs(filters, project=None):
@@ -374,273 +634,19 @@ def list_jobs(filters, project=None):
         return
 
     tbl = TableLogger(
-        columns="id,state,name,operation,created_at",
+        columns="state,name,operation,created_at",
         colwidth={
-            "id": UUID_WIDTH,
-            "state": SMALL_WIDTH,
+            "state": MEDIUM_WIDTH,
             "name": LARGE_WIDTH,
             "operation": SMALL_WIDTH,
             "created_at": DATETIME_WIDTH,
         },
     )
     for j in jobs:
-        tbl(j["id"], j["state"], j["name"], j["operation"], j["created_at"])
+        tbl(j["state"], j["name"], j["operation"], j["created_at"])
 
 
-# ------- GET
-
-
-@cli.group("get")
-def get():
-    """get object
-
-    Get group is used for download commands on backend objects.
-    """
-    pass
-
-
-@get.command("dataset")
-@click.argument("name")
-@click.argument("dtype", type=click.Choice(["job", "generated", "uploaded"]))
-@click.argument(
-    "path",
-    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
-)
-def get_dataset(name, dtype, path):
-    """get dataset
-
-    Download dataset of type DTYPE and name NAME to local PATH from backend.
-
-    Args:
-        name (str): name of dataset
-        dtype (str): type of dataset
-        path (str): directory to put zipped dataset
-    """
-    from cli.datasets import download_dataset
-
-    try:
-        output_path = download_dataset(name, path, dtype)
-        click.echo(f"Downloaded {dtype} dataset '{name}' to {output_path}")
-    except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to download dataset: {e}", fg="red", err=True)
-        if e.response.status_code == 400:
-            click.secho(str(e.response.json()), fg="red", err=True)
-    except NameError as e:
-        click.secho(f"Failed to download dataset: {e}", fg="yellow", err=True)
-
-
-@get.command("sim")
-@click.argument("name")
-@click.argument(
-    "path",
-    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
-)
-def get_sim(name, path):
-    """get sim
-
-    Download sim with name NAME from backend.
-
-    Args:
-        name (str): name of sim
-        path (str): directory to put zipped sim
-    """
-    from cli.sims import download_sim
-
-    try:
-        output_path = download_sim(name, path)
-        click.echo(f"Downloaded sim '{name}' to {output_path}")
-    except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to download sim: {e}", fg="red", err=True)
-        if e.response.status_code == 400:
-            click.secho(str(e.response.json()), fg="red", err=True)
-    except NameError as e:
-        click.secho(f"Failed to download sim: {e}", fg="yellow", err=True)
-
-
-# -------  UPLOAD
-
-
-@cli.group("upload")
-def upload():
-    """upload object
-
-    Upload group is used for upload commands on backend objects.
-    """
-    pass
-
-
-@upload.command("sim")
-@click.argument("name")
-@click.argument("path", type=click.Path(exists=True, dir_okay=False, resolve_path=True))
-@use_project(required=True)
-def upload_sim(name, path, project=None):
-    """upload sim
-
-    Upload sim located at PATH to PROJECT and call it NAME. Requires PROJECT to be set via `zpy project`.
-
-    Args:
-        name (str): name of sim
-        path (str): path to sim
-        project (str): project uuid
-    """
-    from cli.sims import create_sim
-
-    if to_pathlib_path(path).suffix != ".zip":
-        click.secho(f"File {path} must be of type zip", fg="red", err=True)
-    try:
-        with Loader("Uploading sim..."):
-            create_sim(name, path, project)
-        click.secho(f"Uploaded sim {path} with name '{name}'", fg="green")
-    except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to upload sim: {e}", fg="red", err=True)
-        if e.response.status_code == 400:
-            click.secho(str(e.response.json()), fg="red", err=True)
-
-
-@upload.command("dataset")
-@click.argument("name")
-@click.argument("path", type=click.Path(exists=True, dir_okay=False, resolve_path=True))
-@use_project(required=True)
-def upload_dataset(name, path, project=None):
-    """upload dataset
-
-    Upload dataset located at PATH to PROJECT and call it NAME. Requires PROJECT to be set via `zpy project`.
-
-    Args:
-        name (str): name of dataset
-        path (str): path to dataset
-        project (str): project uuid
-    """
-    from cli.datasets import create_uploaded_dataset
-
-    if to_pathlib_path(path).suffix != ".zip":
-        click.secho(f"File {path} must be of type zip", fg="red", err=True)
-    try:
-        with Loader("Uploading dataset..."):
-            create_uploaded_dataset(name, path, project)
-        click.secho(f"Uploaded dataset {path} with name '{name}'", fg="green")
-    except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to upload dataset: {e}", fg="red", err=True)
-        if e.response.status_code == 400:
-            click.secho(str(e.response.json()), fg="red", err=True)
-
-
-# ------- CREATE
-
-
-@cli.group("create")
-def create():
-    """create object
-
-    Create group is used for create commands on backend objects.
-    """
-    pass
-
-
-@create.command("project")
-@click.argument("account", type=click.UUID)
-@click.argument("name")
-def create_project(account, name):
-    """Create a project under ACCOUNT called NAME
-
-    See available accounts: zpy list accounts
-    """
-    from cli.projects import create_project
-
-    try:
-        create_project(account, name)
-        click.secho(f"Created project '{name}'", fg="green")
-    except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to create project: {e}", fg="red", err=True)
-        if e.response.status_code == 400:
-            click.secho(str(e.response.json()), fg="red", err=True)
-
-
-@create.command("dataset")
-@click.argument("name")
-@click.argument("sim")
-@click.argument("args", nargs=-1)
-@use_project(required=True)
-def create_dataset(name, sim, args, project=None):
-    """Create a dataset.
-
-    Create a generated dataset object called NAME. This will trigger the generation of data from SIM given the
-    input ARGS. Requires PROJECT to be set via `zpy project`.
-
-    Args:
-        name (str): name of new dataset
-        sim (str): name of sim dataset is built with
-        args (List(str)): configuration of sim for this dataset
-        project (str): project uuid
-    """
-    from cli.datasets import create_generated_dataset
-
-    try:
-        dataset_config = parse_args(args)
-    except Exception:
-        click.secho(f"Failed to parse args: {args}", fg="yellow", err=True)
-        return
-    try:
-        create_generated_dataset(name, sim, parse_args(args), project)
-        click.secho(
-            f"Created dataset '{name}' from sim '{sim}' with config {dataset_config}",
-            fg="green",
-        )
-    except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
-        if e.response.status_code == 400:
-            click.secho(str(e.response.json()), fg="red", err=True)
-    except NameError as e:
-        click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
-
-
-@create.command("sweep")
-@click.argument("name")
-@click.argument("sim")
-@click.argument("number")
-@click.argument("args", nargs=-1)
-@use_project(required=True)
-def create_sweep(name, sim, number, args, project=None):
-    """create sweep
-
-    Create a sweep of generated dataset objects called "NAME seed<i>" where i ranges from 0 to NUMBER - 1.
-    These will trigger the generation of data from SIM given the input ARGS. Sweep is just a series of create dataset
-    calls with different seeds set. Requires PROJECT to be set via `zpy project`.
-
-    Args:
-        name (str): name of new dataset
-        sim (str): name of sim dataset is built with
-        number (str): number of datasets to create
-        args (List(str)): configuration of sim for this dataset
-        project (str): project uuid
-    """
-    from cli.datasets import create_generated_dataset
-
-    try:
-        dataset_config = parse_args(args)
-    except Exception:
-        click.secho(f"Failed to parse args: {args}", fg="yellow", err=True)
-        return
-    for i in range(int(number)):
-        dataset_name = f"{name} seed{i}"
-        dataset_config["seed"] = i
-        try:
-            create_generated_dataset(dataset_name, sim, dataset_config, project)
-            click.secho(
-                f"Created dataset '{dataset_name}' from sim '{sim}' with config {dataset_config}",
-                fg="green",
-            )
-        except requests.exceptions.HTTPError as e:
-            click.secho(f"Failed to create dataset: {e}", fg="red", err=True)
-            if e.response.status_code == 400:
-                click.secho(str(e.response.json()), fg="red", err=True)
-        except NameError as e:
-            click.secho(f"Failed to create dataset: {e}", fg="yellow", err=True)
-            return
-    click.echo(f"Finished creating {number} datasets from sim '{sim}'.")
-
-
-@create.command("job")
+@job_group.command("create")
 @click.argument("name")
 @click.argument("operation", type=click.Choice(["package", "tvt", "train"]))
 @click.option(
@@ -675,24 +681,18 @@ def create_job(name, operation, filters, configfile, sweepfile, project=None):
     for dfilter in filters:
         try:
             with Loader(f"Filtering datasets by '{dfilter}'..."):
-                datasets_by_type = filter_datasets(dfilter, project)
+                datasets = filter_datasets(dfilter, project)
 
-            for [dataset_type, datasets] in datasets_by_type.items():
-                count = len(datasets)
-                click.secho(f"Found {count} of type<{dataset_type}>")
+            count = len(datasets)
+            click.secho(f"Found {count} matching '{dfilter}'")
 
-                if count == 0:
-                    continue
+            if count == 0:
+                continue
 
-                dataset_names = list(datasets.values())
-                print_list_as_columns(dataset_names)
+            dataset_names = list(datasets.values())
+            print_list_as_columns(dataset_names)
 
-            filtered_datasets_ids = [
-                data_set_id
-                for data_sets in datasets_by_type.values()
-                for data_set_id in data_sets.keys()
-            ]
-            filtered_datasets.extend(filtered_datasets_ids)
+            filtered_datasets.extend(datasets.keys())
         except requests.exceptions.HTTPError as e:
             click.secho(f"Failed to filter datasets {e}", fg="red", err=True)
 
@@ -732,61 +732,13 @@ def create_job(name, operation, filters, configfile, sweepfile, project=None):
     click.echo(f"Finished creating {len(job_configs)} jobs with name '{name}'")
 
 
-# ------- LOGS
-
-
-@cli.group("logs")
-def logs():
-    """logs
-
-    Logs group is used for fetching logs of object backend runs.
-    """
-    pass
-
-
-@logs.command("dataset")
-@click.argument("name")
-@click.argument(
-    "path",
-    type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
-)
-def logs_dataset(name, path):
-    """generated dataset logs
-
-    Download generated dataset run logs.
-
-    Args:
-        name (str): name of dataset
-        path (str): directory to put logs in
-    """
-    from cli.logs import fetch_logs
-
-    try:
-        fetch_logs("generated-data-sets", name, path)
-        click.echo(f"Downloaded {path}/[info/debug/error].log from '{name}'.")
-    except requests.exceptions.HTTPError as e:
-        click.secho(f"Failed to fetch logs: {e}", fg="red", err=True)
-        if e.response.status_code == 400:
-            click.secho(str(e.response.json()), fg="red", err=True)
-    except NameError as e:
-        click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
-
-
-@logs.command("job")
+@job_group.command("logs")
 @click.argument("name")
 @click.argument(
     "path",
     type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
 )
 def logs_job(name, path):
-    """job logs
-
-    Download job run logs.
-
-    Args:
-        name (str): name of job
-        path (str): directory to put logs in
-    """
     from cli.logs import fetch_logs
 
     try:
@@ -798,3 +750,96 @@ def logs_job(name, path):
             click.secho(str(e.response.json()), fg="red", err=True)
     except NameError as e:
         click.secho(f"Failed to fetch logs: {e}", fg="yellow", err=True)
+
+
+# ------- TRANSFORM
+
+
+@cli.group("transform")
+def transform_group():
+    """Transform Operations
+
+    Transforms are used on datasets to output a new dataset.
+    """
+    pass
+
+
+@transform_group.command("list")
+@click.argument("filters", nargs=-1)
+@use_project()
+def list_transforms(filters, project=None):
+    """
+    list transforms
+
+    List transforms from backend with optional FILTERS. Also displays available TRANSFORMS. Uses PROJECT set via `zpy project` command when available.
+    """
+    from cli.transforms import fetch_transforms, available_transforms
+
+    try:
+        filters = parse_args(filters)
+        if project:
+            filters["project"] = project
+    except Exception:
+        click.secho(f"Failed to parse filters: {filters}", fg="yellow", err=True)
+        return
+
+    try:
+        click.echo(f"Available transforms: {available_transforms()}")
+        with Loader("Fetching transforms..."):
+            transforms = fetch_transforms(filters)
+        click.echo("Fetched transforms successfully.")
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to fetch transforms {e}.", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+        return
+
+    tbl = TableLogger(
+        columns="state,operation,input_dataset,created_at",
+        colwidth={
+            "state": MEDIUM_WIDTH,
+            "operation": SMALL_WIDTH,
+            "input_dataset": LARGE_WIDTH,
+            "created_at": DATETIME_WIDTH,
+        },
+    )
+    for t in transforms:
+        tbl(t["state"], t["operation"], t["input_dataset"], t["created_at"])
+
+
+@transform_group.command("dataset")
+@click.argument("name")
+@click.argument("operation")
+@click.argument("args", nargs=-1)
+@use_project(required=True)
+def transform_dataset(name, operation, args, project=None):
+    """Transform a dataset.
+
+    Transform a dataset NAME with OPERATION. This will trigger the transformation of this dataset given the input ARGS. Requires PROJECT to be set via `zpy project`.
+
+    Args:
+        name (str): name of new dataset
+        operation (str): operation to run on dataset
+        args (List(str)): configuration of sim for this dataset
+        project (str): project uuid
+    """
+    from cli.transforms import create_transform
+
+    try:
+        transform_config = parse_args(args)
+    except Exception:
+        click.secho(f"Failed to parse args: {args}", fg="yellow", err=True)
+        return
+
+    try:
+        create_transform(name, operation, transform_config, project)
+        click.secho(
+            f"Running {operation} on dataset '{name}' with config {transform_config}",
+            fg="green",
+        )
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"Failed to create transform: {e}", fg="red", err=True)
+        if e.response.status_code == 400:
+            click.secho(str(e.response.json()), fg="red", err=True)
+    except NameError as e:
+        click.secho(f"Failed to create transform: {e}", fg="yellow", err=True)
