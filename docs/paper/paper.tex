@@ -95,7 +95,7 @@ pdfkeywords={Computer Vision, Synthetic Data, Machine Learning, Open Source, Pyt
 \maketitle
 
 \begin{abstract}
-Synthetic data presents a unique solution to the huge data requirements of computer vision with deep learning. In this work, we present zpy \footnote{All code is available on GitHub at \url{http://github.com/ZumoLabs/zpy}}, an open source framework for creating synthetic data. Built on top of the popular open source 3D platform Blender. And designed with modularity and readability in mind.
+Synthetic data presents a unique solution to the huge data requirements of computer vision with deep learning. In this work, we present zpy \footnote{All code is available on GitHub at \url{http://github.com/ZumoLabs/zpy}}, an open source framework for creating synthetic data. Built on top of the popular open source 3D platform Blender, zpy is designed with accessibility and readability in mind. Open source synthetic data toolkits like zpy are the bridge between the more mature tools of the 3D workflow and the machine learning frameworks. We make the case for why open source synthetic data is important to solve issues such as fairness and bias by democratizing access to data.
 \end{abstract}
 
 \keywords{Computer Vision \and Synthetic Data \and Machine Learning \and Open Source \and Python \and Blender}
@@ -111,37 +111,13 @@ Synthetic data presents a unique solution to the huge data requirements of compu
 \section{Introduction}
 \label{sec:introduction}
 
-Open source machine learning frameworks (references)
+Synthetic data is data that is \emph{created} as opposed to \emph{collected}.
 
-Deep learning has exploded in popularity due to large open source frameworks such as tensorflow and pytorch
+Simulation heavy fields were amongst the first to start using synthetic images to start training deep learning systems. Research with the biggest datasets and highest quality can be found in this field, with works on autonomous vehicles \cite{prakash2020structured} \cite{srivastava2019multi} \cite{Hahner_2019} \cite{7780721}, robotic grasping \cite{james2019simtoreal} \cite{tobin2017domain}, and even drone racing \cite{Loquercio_2020}. The availability of high quality 3D humans from the video game and movie industries has also made possible applications such as human pose estimation  \cite{shrivastava2017learning} \cite{Varol_2017}, and person re-id \cite{aaronASRC}. We dive into what synthetic data could mean for human issues such as fairness and bias in \ref{sec:motivation}. Synthetic data has also been used to advance climate and space science, finding applications in detection in overhead satellite imagery \cite{shermeyer2020rareplanes}, pose estimation of satellites in space \cite{kisantal2020satellite}, and segmentation of clouds \cite{lyu2020learning}. Other work has dived deeper into the fundamental theory of synthetic data \cite{le2017using}. For a thorough review of synthetic data literature, we recommend readers go through Nikolenkos 2019 summary paper \cite{nikolenko2019synthetic}.
 
-What is synthetic data.
+Analogous to the early days of deep learning, synthetic data still has a black box nature. How to properly create and use synthetic data is not fully understood, and overcoming challenges such as the sim2real gap are still alchemy. We perform an ablation study to examine the effects of domain randomization on synthetic data in \ref{sec:domainrandomization}, and explore the importance of training curriculum in \ref{sec:curicculum}.
 
-Usecases for synthetic data
-
-autonomous vehicles \ref{shermeyer2020rareplanes}, \ref{shermeyer2020rareplanes}, \ref{shermeyer2020rareplanes}, \ref{shermeyer2020rareplanes}
-
-pose estimation for humans \ref{shermeyer2020rareplanes}, \ref{shermeyer2020rareplanes}
-
-person re-id \ref{shermeyer2020rareplanes}
-
-detection in overhead satellite imagery \ref{shermeyer2020rareplanes}
-
-pose estimation of satellites in space \ref{kisantal2020satellite}
-
-segmentation of clouds \ref{shermeyer2020rareplanes}
-
-Challenges with synthetic data
-
-We dive deeper into the effects of training curriculum on synthetic data in \ref{sec:curicculum}.
-
-Sim2Real Gap and domain randomization. We perform an ablation study on different types of domain randomization in \ref{sec:domainrandomization}
-
-Black box nature of ML
-
-Other attempts at open source synthetic data \cite{denninger2019blenderproc} \cite{bpycv}
-
-For a thorough review of synthetic data literature, we recommend readers go through Nikolenkos 2019 summary paper \cite{nikolenko2019synthetic}.
+Part of the maturation process of deep learning has been the emergence of large open source frameworks such as TensorFlow \cite{tensorflow} and PyTorch \cite{pytorch}. These tools have hundreds of thousands of developers worldwide, and will be the backbone of the AI technologies of the future. As synthetic data itself matures, there too we will see similar open source frameworks emerge. A critical piece of the synthetic data stack, the 3D worfklow, has already produced a champion: Blender \cite{blender}. We study the unique properties of Blender and why it emerged as the frontrunner in the 3D workflow race in \ref{sec:3d}. In fact, zpy is already one of several early attempts at an open source synthetic data toolkit \cite{denninger2019blenderproc} \cite{bpycv}.
 
 \section{Background}
 \label{sec:background}
@@ -209,13 +185,6 @@ In the software world today, developers write explicit sets of rules (known as a
 
 In the software of tomorrow, developers will curate a dataset which will be used to train a deep learning model. This model will then be deployed into a production system, which will consume input data and output actions. This changes the workflow of developers from explicitly writing rules to instead creating the datasets which are then parsed to create algorithms.
 
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{webapp.png}
-	\caption{A visual interface for synthetic data creation via a WebApp.}
-	\label{fig:webapp}
-\end{figure}
-
 \section{Project Features}
 \label{sec:projectfeatures}
 
@@ -246,6 +215,13 @@ When designing software systems, there is usually a tradeoff between \emph{flexi
 
 
 The zpy python package is organized as a collection of seperate modules. These modules are separated based on their dependencies and functionality. This makes it easier for end users to add custom functionality, or ignore modules with dependencies they do not want. This type of modular design can be seen in other popular python libraries, such as Matplotlib \cite{Hunter:2007}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{webapp.png}
+	\caption{A visual interface for synthetic data creation via a WebApp.}
+	\label{fig:webapp}
+\end{figure}
 
 \subsection{User Interfaces}
 \label{sec:userinterfaces}
