@@ -75,7 +75,7 @@ if __name__ == "__main__":
         "sim_uuid": "a7188bb0-07b4-4817-9874-53c684eb4d6c",
     }
     staging_kwargs = {
-        "base_url": "https://ragnarok.stage.zumok8s.org",
+        "base_url": "https://ragnarok.zumok8s.org",
         # The rest need to match something on staging
         "auth_token": "4345497e868c4d4a7a563c05f604c41ed4825a049dbc9c38523254d53ef498c9",  # Auth token from localStorage
         "project_uuid": "4b0035d6-7bdd-4be3-adde-939c790437c3",  # Hugo's project has the most sims

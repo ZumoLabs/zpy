@@ -305,19 +305,33 @@ class Dataset:
     _dataset = None
 
     @require_zpy_init
-    def __init__(self, name: str):
+    def __init__(self, name: str = None, dataset: dict = None):
+        """
+        Construct a Dataset which is a local representation of a Dataset generated on the API.
+
+        Args:
+            name: If provided, Dataset will be automatically retrieved from the API.
+            dataset: If Dataset has already been retrieved from the API, provide this.
+        Returns
+            Dataset
+        """
         self._name = name
 
-        unique_dataset_filters = {
-            "project": _project["id"],
-            "name": name,
-        }
-        datasets = get(
-            f"{_base_url}/api/v1/datasets/",
-            params=unique_dataset_filters,
-            headers=auth_header(_auth_token),
-        )["results"]
-        self._dataset = datasets[0]
+        if dataset is not None:
+            self._dataset = dataset
+        else:
+            unique_dataset_filters = {
+                "project": _project["id"],
+                "name": name,
+            }
+            datasets = get(f"{_base_url}/api/v1/datasets/",
+                           params=unique_dataset_filters,
+                           headers=auth_header(_auth_token))["results"]
+            self._dataset = datasets[0]
+
+    @property
+    def id(self):
+        return self._dataset["id"]
 
     @property
     def name(self):
@@ -332,3 +346,7 @@ class Dataset:
     @property
     def config(self):
         return
+
+    def view(self):
+        return
+
