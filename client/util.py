@@ -59,7 +59,11 @@ def get(url, **kwargs):
     Raises:
         HTTPError
     """
-    return handle_response(requests.get(url, **kwargs))
+    verbose = kwargs.pop("verbose", False)
+    response = requests.get(url, **kwargs)
+    if verbose:
+        print(response.url)
+    return handle_response(response)
 
 
 def post(url, **kwargs):
