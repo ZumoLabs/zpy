@@ -10,7 +10,7 @@ from pydash import set_, unset
 import requests
 
 from cli.utils import download_url
-from util import (
+from zpy.client_util import (
     add_newline,
     get,
     post,
