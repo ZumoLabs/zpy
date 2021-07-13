@@ -229,7 +229,7 @@ def generate(
             f"{_base_url}/api/v1/datasets/{dataset['id']}/",
             headers=auth_header(_auth_token),
         )
-        while "state" not in dataset or not is_done(dataset["state"]):
+        while not is_done(dataset["state"]):
             next_check_datetime = datetime.now() + timedelta(seconds=60)
             while datetime.now() < next_check_datetime:
                 print(

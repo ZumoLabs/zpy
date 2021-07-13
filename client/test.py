@@ -59,7 +59,7 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("can_v7")
     dataset_config.set("run\\.padding_style", "messy")
-    zpy.generate("can_v7 test.10", dataset_config, num_datapoints=10, materialize=True)
+    zpy.generate("can_v7 test.13", dataset_config, num_datapoints=10, materialize=True)
 
 
 if __name__ == "__main__":
@@ -68,6 +68,11 @@ if __name__ == "__main__":
         "project_uuid": "aad8e2b2-5431-4104-a205-dc3b638b0dab",
         "auth_token": "214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e",
     }
+    # init_kwargs = {
+    #     "base_url": "http://ragnarok.stage.zumok8s.org",
+    #     "project_uuid": "feb6e594-55e0-4f87-9e75-5a128221499f",
+    #     "auth_token": "a51cacaa01082ba5237b49f74cd6ffa5cf88339345383d97bcadd1f99e5f9a01",
+    # }
     print("Running test_1:")
     test_1(**init_kwargs)
     print("Running test_2:")
