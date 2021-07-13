@@ -37,13 +37,13 @@ def test_1():
     zpy.init(
         base_url="http://localhost:8000",
         project_uuid="aad8e2b2-5431-4104-a205-dc3b638b0dab",
-        auth_token="214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e"
+        auth_token="214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e",
     )
     dataset_config = zpy.DatasetConfig("can_v7")
     dataset_config.set("run\\.padding_style", "square")
     print(dataset_config.config)
     previews = zpy.preview(dataset_config)
-    urls = [preview['url'] for preview in previews]
+    urls = [preview["url"] for preview in previews]
     print(json.dumps(urls, indent=4, sort_keys=True))
 
 
@@ -52,13 +52,13 @@ def test_2():
     zpy.init(
         base_url="http://localhost:8000",
         project_uuid="aad8e2b2-5431-4104-a205-dc3b638b0dab",
-        auth_token="214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e"
+        auth_token="214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e",
     )
     dataset_config = zpy.DatasetConfig("can_v7")
     dataset_config.set("run\\.padding_style", "messy")
     print(dataset_config.config)
     previews = zpy.preview(dataset_config)
-    urls = [preview['url'] for preview in previews]
+    urls = [preview["url"] for preview in previews]
     print(json.dumps(urls, indent=4, sort_keys=True))
 
 
@@ -72,11 +72,11 @@ def test_3():
     zpy.init(
         base_url="http://localhost:8000",
         project_uuid="aad8e2b2-5431-4104-a205-dc3b638b0dab",
-        auth_token="214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e"
+        auth_token="214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e",
     )
     dataset_config = zpy.DatasetConfig("can_v7")
     dataset_config.set("run\\.padding_style", "messy")
-    zpy.generate('can_v7 test.10', dataset_config, num_datapoints=10, materialize=True)
+    zpy.generate("can_v7 test.10", dataset_config, num_datapoints=10, materialize=True)
 
 
 if __name__ == "__main__":

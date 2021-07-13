@@ -27,10 +27,10 @@ _project: Union[Dict, None] = None
 
 
 def init(
-        auth_token: str,
-        project_uuid: str,
-        base_url: str = "https://ragnarok.zumok8s.org",
-        **kwargs,
+    auth_token: str,
+    project_uuid: str,
+    base_url: str = "https://ragnarok.zumok8s.org",
+    **kwargs,
 ):
     global _auth_token, _base_url, _project
     _auth_token = auth_token
@@ -164,11 +164,14 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         print("\t(no premade simruns matching filter)")
         return []
 
-    print('getting files with: {}'.format(
-        f"{_base_url}/api/v1/files/?run__sim={dataset_config.sim['id']}&path__icontains=.rgb.png"))
+    print(
+        "getting files with: {}".format(
+            f"{_base_url}/api/v1/files/?run__sim={dataset_config.sim['id']}&path__icontains=.rgb.png"
+        )
+    )
     files_res = get(
         f"{_base_url}/api/v1/files/?run__sim={dataset_config.sim['id']}&path__icontains=.rgb.png",
-        headers=auth_header(_auth_token)
+        headers=auth_header(_auth_token),
     )
     files = files_res["results"]
     if len(files) == 0:
@@ -209,7 +212,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-        name: str, dataset_config: DatasetConfig, num_datapoints: int, materialize=False
+    name: str, dataset_config: DatasetConfig, num_datapoints: int, materialize=False
 ):
     """
     Generate a dataset.
@@ -244,10 +247,15 @@ def generate(
 
     print("Generating dataset:")
     print(json.dumps(dataset, indent=4, sort_keys=True))
-    print(f"You can follow its progress at https://app.zumolabs.ai/datasets/{dataset['id']}/")
+    print(
+        f"You can follow its progress at https://app.zumolabs.ai/datasets/{dataset['id']}/"
+    )
 
     if materialize:
-        dataset = get(f"{_base_url}/api/v1/datasets/{dataset['id']}/", headers=auth_header(_auth_token))
+        dataset = get(
+            f"{_base_url}/api/v1/datasets/{dataset['id']}/",
+            headers=auth_header(_auth_token),
+        )
         while "state" not in dataset or not is_done(dataset["state"]):
             next_check_datetime = datetime.now() + timedelta(seconds=60)
             while datetime.now() < next_check_datetime:
@@ -273,11 +281,15 @@ def generate(
             name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
             # Throw it in /tmp for now I guess
             output_path = Path("/tmp") / name_slug
-            print(f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}")
+            print(
+                f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
+            )
             download_url(dataset_download_res["redirect_link"], output_path)
             print("Done.")
         else:
-            print(f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}")
+            print(
+                f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
+            )
 
 
 class Dataset:
