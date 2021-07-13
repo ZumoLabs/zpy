@@ -33,24 +33,7 @@ def test_preview(*args, **kwargs):
 
 
 def test_1():
-    # zpy.init(
-    #     base_url="https://ragnarok.stage.zumok8s.org",
-    #     project_uuid="",
-    #     auth_token="",
-    # )
-    zpy.init(
-        base_url="http://localhost:8000",
-        project_uuid="",
-        auth_token=""
-    )
-    dataset_config = zpy.DatasetConfig("can_v7")
-    print(json.dumps(dataset_config.available_params, indent=4, sort_keys=True))
-
-    zpy.preview(dataset_config)
-    zpy.generate('can_v7 test.5', dataset_config, num_datapoints=10, materialize=True)
-
-
-def test_2():
+    """In local env, simruns exist for config { "run.padding_style": "square" }"""
     zpy.init(
         base_url="http://localhost:8000",
         project_uuid="aad8e2b2-5431-4104-a205-dc3b638b0dab",
@@ -59,35 +42,47 @@ def test_2():
     dataset_config = zpy.DatasetConfig("can_v7")
     dataset_config.set("run\\.padding_style", "square")
     print(dataset_config.config)
-    zpy.preview(dataset_config)
+    previews = zpy.preview(dataset_config)
+    urls = [preview['url'] for preview in previews]
+    print(json.dumps(urls, indent=4, sort_keys=True))
+
+
+def test_2():
+    """In local env, simruns do NOT exist for config { "run.padding_style": "messy" }"""
+    zpy.init(
+        base_url="http://localhost:8000",
+        project_uuid="aad8e2b2-5431-4104-a205-dc3b638b0dab",
+        auth_token="214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e"
+    )
+    dataset_config = zpy.DatasetConfig("can_v7")
+    dataset_config.set("run\\.padding_style", "messy")
+    print(dataset_config.config)
+    previews = zpy.preview(dataset_config)
+    urls = [preview['url'] for preview in previews]
+    print(json.dumps(urls, indent=4, sort_keys=True))
+
+
+def test_3():
+    """"""
+    # zpy.init(
+    #     base_url="https://ragnarok.stage.zumok8s.org",
+    #     project_uuid="",
+    #     auth_token="",
+    # )
+    zpy.init(
+        base_url="http://localhost:8000",
+        project_uuid="aad8e2b2-5431-4104-a205-dc3b638b0dab",
+        auth_token="214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e"
+    )
+    dataset_config = zpy.DatasetConfig("can_v7")
+    dataset_config.set("run\\.padding_style", "messy")
+    zpy.generate('can_v7 test.10', dataset_config, num_datapoints=10, materialize=True)
 
 
 if __name__ == "__main__":
-    # local_kwargs = {
-    #     "base_url": "http://localhost:8000",
-    #     # The rest need to match something in the dev's local
-    #     "auth_token": "c98d1edd78f8e3416c72525942cdb5242b1d518f0582bed8e48ae0fa6be09508",
-    #     "project_uuid": "fd914c42-1f50-4b45-82d7-78e9ae440b78",
-    #     "sim_uuid": "a7188bb0-07b4-4817-9874-53c684eb4d6c",
-    # }
-    # staging_kwargs = {
-    #     "base_url": "https://ragnarok.zumok8s.org",
-    #     # The rest need to match something on staging
-    #     "auth_token": "4345497e868c4d4a7a563c05f604c41ed4825a049dbc9c38523254d53ef498c9",  # Auth token from localStorage
-    #     "project_uuid": "4b0035d6-7bdd-4be3-adde-939c790437c3",  # Hugo's project has the most sims
-    #     "sim_uuid": "3dc167cd-1f80-4548-9662-7a36a822ea8f",  # can_v5 - looked to have the most interesting params
-    #     "sim_specific_properties": {
-    #         "probability_glass_effect": 0.1,
-    #         # 'use_distractors': False,
-    #         # 'blur_jitter': False,
-    #     },
-    # }
-
-    # test_params(**local_kwargs)
-    # test_preview(**local_kwargs)
-
-    # test_params(**staging_kwargs)
-    # test_preview(**staging_kwargs)
-
-    # test_1()
+    print("Running test_1:")
+    test_1()
+    print("Running test_2:")
     test_2()
+    print("Running test_3:")
+    test_3()

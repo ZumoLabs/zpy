@@ -136,7 +136,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         dataset_config: Describes a Sim and its configuration. See DatasetConfig.
         num_samples (int): number of preview samples to generate
     Returns:
-        None
+        File[]: Sample images for the given configuration.
     """
     print(f"Generating preview:")
 
@@ -162,27 +162,8 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     if len(simruns) == 0:
         print(f"No preview available.")
         print("\t(no premade simruns matching filter)")
-        return
+        return []
 
-    # ready_dataset = None
-    # while ready_dataset is None:
-    #     for dataset in simruns:
-    #         if dataset["state"] == 'READY':
-    #             ready_dataset = dataset
-    #
-    #     # Get next page
-    #     if simruns_res["next"] is not None:
-    #         simruns = get(simruns_res["next"], headers=auth_header(_auth_token))["results"]
-    #
-    # if ready_dataset is None:
-    #     print(f"No preview available.")
-    #     print("\t(no READY datasets matching filter)")
-
-    # dataset_id = datasets[randrange(len(datasets))]["id"]
-    # Re-request the data set detail (image links aren't included in the list call
-    # dataset = get(
-    #     f"{_base_url}/api/v1/datasets/{dataset_id}/", headers=auth_header(_auth_token)
-    # )
     print('getting files with: {}'.format(
         f"{_base_url}/api/v1/files/?run__sim={dataset_config.sim['id']}&path__icontains=.rgb.png"))
     files_res = get(
@@ -195,34 +176,35 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         print("\t(no images found)")
         return
 
-    bounded_num_images = min([len(files), num_samples * IMAGES_PER_SAMPLE])
-
-    # TODO: Push the below into the API
-    formatted_samples = {}
-    found_images = 0
-    for file in files:
-        path = Path(file["path"])
-        name = path.name
-        if (
-                name.startswith("_plot")
-                or name.startswith("_viz")
-                or path.suffix in [".log", ".json"]
-        ):
-            continue
-
-        image_category, name, output_type, file_ext = name.split(".")
-
-        if name not in formatted_samples:
-            formatted_samples[name] = {}
-
-        formatted_samples[name][output_type] = file
-        found_images += 1
-
-        if found_images == bounded_num_images:
-            # Not pulling next page for now. Either find enough samples or we don't.
-            break
-
-    print(json.dumps(formatted_samples, indent=4, sort_keys=True))
+    return files
+    # bounded_num_images = min([len(files), num_samples * IMAGES_PER_SAMPLE])
+    #
+    # # TODO: Push the below into the API
+    # formatted_samples = {}
+    # found_images = 0
+    # for file in files:
+    #     path = Path(file["path"])
+    #     name = path.name
+    #     if (
+    #             name.startswith("_plot")
+    #             or name.startswith("_viz")
+    #             or path.suffix in [".log", ".json"]
+    #     ):
+    #         continue
+    #
+    #     image_category, name, output_type, file_ext = name.split(".")
+    #
+    #     if name not in formatted_samples:
+    #         formatted_samples[name] = {}
+    #
+    #     formatted_samples[name][output_type] = file
+    #     found_images += 1
+    #
+    #     if found_images == bounded_num_images:
+    #         # Not pulling next page for now. Either find enough samples or we don't.
+    #         break
+    #
+    # return formatted_samples
 
 
 @add_newline
@@ -253,7 +235,7 @@ def generate(
         f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
         data={
             "project": _project["id"],
-            "sim": dataset_config.sim["id"],
+            "sim": dataset_config.sim["name"],
             "config": json.dumps(dataset_config.config),
             "amount": num_datapoints,
         },
