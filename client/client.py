@@ -149,6 +149,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         "project": _project["id"],
         "sim": dataset_config.sim["id"],
         "state": "READY",
+        "page-size": num_samples,
         **config_filters,
     }
     simruns_res = get(
@@ -180,34 +181,6 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         return
 
     return files
-    # bounded_num_images = min([len(files), num_samples * IMAGES_PER_SAMPLE])
-    #
-    # # TODO: Push the below into the API
-    # formatted_samples = {}
-    # found_images = 0
-    # for file in files:
-    #     path = Path(file["path"])
-    #     name = path.name
-    #     if (
-    #             name.startswith("_plot")
-    #             or name.startswith("_viz")
-    #             or path.suffix in [".log", ".json"]
-    #     ):
-    #         continue
-    #
-    #     image_category, name, output_type, file_ext = name.split(".")
-    #
-    #     if name not in formatted_samples:
-    #         formatted_samples[name] = {}
-    #
-    #     formatted_samples[name][output_type] = file
-    #     found_images += 1
-    #
-    #     if found_images == bounded_num_images:
-    #         # Not pulling next page for now. Either find enough samples or we don't.
-    #         break
-    #
-    # return formatted_samples
 
 
 @add_newline
