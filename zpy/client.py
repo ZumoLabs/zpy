@@ -163,11 +163,15 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         return []
 
     file_query_params = {
-        "run__sim": dataset_config.sim['id'],
+        "run__sim": dataset_config.sim["id"],
         "path__icontains": ".rgb",
         "~path__icontains": ".annotated",
     }
-    files_res = get(f"{_base_url}/api/v1/files/", params=file_query_params, headers=auth_header(_auth_token))
+    files_res = get(
+        f"{_base_url}/api/v1/files/",
+        params=file_query_params,
+        headers=auth_header(_auth_token),
+    )
     files = files_res.json()["results"]
     if len(files) == 0:
         print(f"No preview available.")
@@ -222,9 +226,7 @@ def generate(
             headers=auth_header(_auth_token),
         ).json()
         while not is_done(dataset["state"]):
-            all_simruns_query_params = {
-                "datasets": dataset['id']
-            }
+            all_simruns_query_params = {"datasets": dataset["id"]}
             num_simruns = get(
                 f"{_base_url}/api/v1/simruns/",
                 params=all_simruns_query_params,
@@ -232,7 +234,7 @@ def generate(
             ).json()["count"]
             num_ready_simruns = get(
                 f"{_base_url}/api/v1/simruns/",
-                params={**all_simruns_query_params, 'state': 'READY'},
+                params={**all_simruns_query_params, "state": "READY"},
                 headers=auth_header(_auth_token),
             ).json()["count"]
             next_check_datetime = datetime.now() + timedelta(seconds=60)
