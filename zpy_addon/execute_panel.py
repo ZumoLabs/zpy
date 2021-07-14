@@ -7,7 +7,6 @@ from pathlib import Path
 
 import bpy
 
-import client.util
 import zpy
 import gin
 from bpy.types import Operator
