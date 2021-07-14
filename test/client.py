@@ -29,9 +29,9 @@ def test_2(**init_kwargs):
 def test_3(**init_kwargs):
     """"""
     zpy.init(**init_kwargs)
-    dataset_config = zpy.DatasetConfig("can_v7")
+    dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("can_v7.4", dataset_config, num_datapoints=10, materialize=True)
+    zpy.generate("dumpster_v2.16", dataset_config, num_datapoints=8, materialize=True)
 
 
 if __name__ == "__main__":
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     # }
     # print("Running test_1:")
     # test_1(**init_kwargs)
-    print("Running test_2:")
-    test_2(**init_kwargs)
-    # print("Running test_3:")
-    # test_3(**init_kwargs)
+    # print("Running test_2:")
+    # test_2(**init_kwargs)
+    print("Running test_3:")
+    test_3(**init_kwargs)

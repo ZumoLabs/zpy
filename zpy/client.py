@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Dict, Union
 
 import requests
-from pydash import set_, unset
+from pydash import set_, unset, is_empty
 
 from cli.utils import download_url
 from zpy.client_util import (
@@ -71,7 +71,7 @@ class DatasetConfig:
             sim_name: Name of Sim
         """
         self._sim = None
-        self._config = None
+        self._config = {}
 
         unique_sim_filters = {
             "project": _project["id"],
@@ -114,8 +114,6 @@ class DatasetConfig:
             path: The json gin config path. Ex. given object { a: b: [{ c: 1 }]}, the value at path "a.b[0]c" is 1.
             value: The value for the gin config path provided.
         """
-        if self._config is None:
-            self._config = {}
         set_(self._config, path, value)
 
     def unset(self, path):
@@ -142,7 +140,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
     config_filters = (
         {}
-        if dataset_config.config is None
+        if is_empty(dataset_config.config)
         else {"config": to_query_param_value(dataset_config.config)}
     )
     filter_params = {
@@ -223,6 +221,7 @@ def generate(
     )
 
     if materialize:
+        print("Materialize requested, waiting until dataset finishes to download it.")
         dataset = get(
             f"{_base_url}/api/v1/datasets/{dataset['id']}/",
             headers=auth_header(_auth_token),
@@ -231,13 +230,14 @@ def generate(
             next_check_datetime = datetime.now() + timedelta(seconds=60)
             while datetime.now() < next_check_datetime:
                 print(
-                    f"Dataset is not ready. Checking again in {(next_check_datetime - datetime.now()).seconds}s.",
-                    end="\r",
+                    "\r{}".format(
+                        f"Dataset is not ready. Checking again in {(next_check_datetime - datetime.now()).seconds}s."),
+                    end="",
                 )
                 time.sleep(1)
 
             clear_last_print()
-            print("Checking dataset...", end="\r")
+            print("\r{}".format("Checking dataset...", end=""))
             dataset = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/",
                 headers=auth_header(_auth_token),
