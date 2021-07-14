@@ -5,9 +5,9 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Union
-from pydash import set_, unset
 
 import requests
+from pydash import set_, unset
 
 from cli.utils import download_url
 from zpy.client_util import (
@@ -165,20 +165,18 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         print("\t(no premade simruns matching filter)")
         return []
 
-    print(
-        "getting files with: {}".format(
-            f"{_base_url}/api/v1/files/?run__sim={dataset_config.sim['id']}&path__icontains=.rgb.png"
-        )
+    file_url = (
+        f"{_base_url}/api/v1/files/?run__sim={dataset_config.sim['id']}"
+        f"&path__icontains=.rgb"
+        f"&~path__icontains=.annotated"
     )
-    files_res = get(
-        f"{_base_url}/api/v1/files/?run__sim={dataset_config.sim['id']}&path__icontains=.rgb.png",
-        headers=auth_header(_auth_token),
-    )
+    print("getting files with: {}".format(file_url))
+    files_res = get(file_url, headers=auth_header(_auth_token))
     files = files_res["results"]
     if len(files) == 0:
         print(f"No preview available.")
         print("\t(no images found)")
-        return
+        return []
 
     return files
 
