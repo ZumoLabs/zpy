@@ -231,7 +231,8 @@ def generate(
             while datetime.now() < next_check_datetime:
                 print(
                     "\r{}".format(
-                        f"Dataset is not ready. Checking again in {(next_check_datetime - datetime.now()).seconds}s."),
+                        f"Dataset is not ready. Checking again in {(next_check_datetime - datetime.now()).seconds}s."
+                    ),
                     end="",
                 )
                 time.sleep(1)
