@@ -35,7 +35,7 @@ def handle_response(response: requests.Response):
     Args:
         response: Request to handle
     Returns:
-        deserialized json response
+        requests.Response
     """
     if response.status_code != 200:
         if response.status_code == 400:
@@ -44,7 +44,7 @@ def handle_response(response: requests.Response):
         else:
             response.raise_for_status()
 
-    return response.json()
+    return response
 
 
 def get(url, **kwargs):
@@ -55,7 +55,7 @@ def get(url, **kwargs):
         url (str): Ragnarok API url
         kwargs: Forwarded to the requests.get function call
     Returns:
-        deserialized API response
+        requests.Response
     Raises:
         HTTPError
     """
@@ -74,7 +74,7 @@ def post(url, **kwargs):
         url (str): Ragnarok API url
         kwargs: Forwarded to the requests.post function call
     Returns:
-        deserialized API response
+         requests.Response
     Raises:
         HTTPError
     """

@@ -18,7 +18,7 @@ def test_2(**init_kwargs):
     """In local env, simruns do NOT exist for config { "run.padding_style": "messy" }"""
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("can_v7")
-    # dataset_config.set("run\\.padding_style", "messy")
+    dataset_config.set("run\\.padding_style", "messy")
     print(dataset_config.config)
     previews = zpy.preview(dataset_config)
     urls = [preview["url"] for preview in previews]
@@ -31,7 +31,7 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.16", dataset_config, num_datapoints=8, materialize=True)
+    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
 
 
 if __name__ == "__main__":
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     }
     # init_kwargs = {
     #     "base_url": "https://ragnarok.stage.zumok8s.org",
-    #     "project_uuid": "91419af0-4815-41e7-9b77-5ef8154148c8",  # Zumo Internal
+    #     "project_uuid": "91419af0-4815-41e7-9b77-5ef8154148c8",  # Compology
     #     "auth_token": "a51cacaa01082ba5237b49f74cd6ffa5cf88339345383d97bcadd1f99e5f9a01",
     # }
     # init_kwargs = {

@@ -40,7 +40,7 @@ def init(
         _project = get(
             f"{_base_url}/api/v1/projects/{project_uuid}",
             headers=auth_header(_auth_token),
-        )
+        ).json()
     except requests.HTTPError:
         print(
             "Failed to find project, please double check the id and try again.",
@@ -81,7 +81,7 @@ class DatasetConfig:
             f"{_base_url}/api/v1/sims/",
             params=unique_sim_filters,
             headers=auth_header(_auth_token),
-        )["results"]
+        ).json()["results"]
         if len(sims) > 1:
             raise RuntimeError(
                 f"Create DatasetConfig failed: Found more than 1 Sim for unique filters which should not be possible."
@@ -154,23 +154,21 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         f"{_base_url}/api/v1/simruns/",
         params=filter_params,
         headers=auth_header(_auth_token),
-        verbose=True,
     )
-    simruns = simruns_res["results"]
+    simruns = simruns_res.json()["results"]
 
     if len(simruns) == 0:
         print(f"No preview available.")
-        print("\t(no premade simruns matching filter)")
+        print("\t(no premade SimRuns matching filter)")
         return []
 
-    file_url = (
-        f"{_base_url}/api/v1/files/?run__sim={dataset_config.sim['id']}"
-        f"&path__icontains=.rgb"
-        f"&~path__icontains=.annotated"
-    )
-    print("getting files with: {}".format(file_url))
-    files_res = get(file_url, headers=auth_header(_auth_token))
-    files = files_res["results"]
+    file_query_params = {
+        "run__sim": dataset_config.sim['id'],
+        "path__icontains": ".rgb",
+        "~path__icontains": ".annotated",
+    }
+    files_res = get(f"{_base_url}/api/v1/files/", params=file_query_params, headers=auth_header(_auth_token))
+    files = files_res.json()["results"]
     if len(files) == 0:
         print(f"No preview available.")
         print("\t(no images found)")
@@ -202,7 +200,7 @@ def generate(
             "name": name,
         },
         headers=auth_header(_auth_token),
-    )
+    ).json()
     post(
         f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
         data={
@@ -216,22 +214,34 @@ def generate(
 
     print("Generating dataset:")
     print(json.dumps(dataset, indent=4, sort_keys=True))
-    print(
-        f"You can follow its progress at https://app.zumolabs.ai/datasets/{dataset['id']}/"
-    )
 
     if materialize:
         print("Materialize requested, waiting until dataset finishes to download it.")
         dataset = get(
             f"{_base_url}/api/v1/datasets/{dataset['id']}/",
             headers=auth_header(_auth_token),
-        )
+        ).json()
         while not is_done(dataset["state"]):
+            all_simruns_query_params = {
+                "datasets": dataset['id']
+            }
+            num_simruns = get(
+                f"{_base_url}/api/v1/simruns/",
+                params=all_simruns_query_params,
+                headers=auth_header(_auth_token),
+            ).json()["count"]
+            num_ready_simruns = get(
+                f"{_base_url}/api/v1/simruns/",
+                params={**all_simruns_query_params, 'state': 'READY'},
+                headers=auth_header(_auth_token),
+            ).json()["count"]
             next_check_datetime = datetime.now() + timedelta(seconds=60)
             while datetime.now() < next_check_datetime:
                 print(
                     "\r{}".format(
-                        f"Dataset is not ready. Checking again in {(next_check_datetime - datetime.now()).seconds}s."
+                        f"Dataset<{dataset['name']}> not ready for download in state {dataset['state']}. "
+                        f"SimRuns READY: {num_ready_simruns}/{num_simruns}. "
+                        f"Checking again in {(next_check_datetime - datetime.now()).seconds}s."
                     ),
                     end="",
                 )
@@ -242,14 +252,14 @@ def generate(
             dataset = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/",
                 headers=auth_header(_auth_token),
-            )
+            ).json()
 
         if dataset["state"] == "READY":
             print("Dataset is ready for download.")
             dataset_download_res = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/download/",
                 headers=auth_header(_auth_token),
-            )
+            ).json()
             name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
             # Throw it in /tmp for now I guess
             output_path = Path("/tmp") / name_slug
@@ -291,7 +301,7 @@ class Dataset:
                 f"{_base_url}/api/v1/datasets/",
                 params=unique_dataset_filters,
                 headers=auth_header(_auth_token),
-            )["results"]
+            ).json()["results"]
             self._dataset = datasets[0]
 
     @property
