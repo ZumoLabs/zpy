@@ -361,7 +361,7 @@ def list_projects(filters):
 def create_project(account, name):
     """Create a project under ACCOUNT called NAME.
 
-    See available accounts: zpy list accounts
+    See available accounts: zpy account list
     """
     from cli.projects import create_project
 
