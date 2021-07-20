@@ -17,7 +17,9 @@ def fetch_sim(name, project, url, auth_headers):
         auth_headers: authentication for backend
     """
     endpoint = f"{url}/api/v1/sims/"
-    r = requests.get(endpoint, params={"name": name, "project": project}, headers=auth_headers)
+    r = requests.get(
+        endpoint, params={"name": name, "project": project}, headers=auth_headers
+    )
     if r.status_code != 200:
         r.raise_for_status()
     response = json.loads(r.text)
