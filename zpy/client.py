@@ -202,9 +202,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-    dataset_config: DatasetConfig,
-    num_datapoints: int = 10,
-    materialize: bool = False
+    dataset_config: DatasetConfig, num_datapoints: int = 10, materialize: bool = False
 ):
     """
     Generate a dataset.
@@ -231,7 +229,7 @@ def generate(
         f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
         data={
             "project": _project["id"],
-            "sim": dataset_config.sim["name"],
+            "sim": dataset_config.sim["id"],
             "config": json.dumps(dataset_config.config),
             "amount": num_datapoints,
         },
@@ -290,7 +288,7 @@ def generate(
                 )
                 download_url(dataset_download_res["redirect_link"], output_path)
                 print("Done.")
-            else: 
+            else:
                 print(
                     f"Download failed. Dataset {name_slug} already exists in {output_path}."
                 )
@@ -298,7 +296,7 @@ def generate(
             print(
                 f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
             )
-    return Dataset(dataset['name'], dataset)
+    return Dataset(dataset["name"], dataset)
 
 
 class Dataset:
