@@ -187,9 +187,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-    dataset_config: DatasetConfig,
-    num_datapoints: int = 10,
-    materialize: bool = False
+    dataset_config: DatasetConfig, num_datapoints: int = 10, materialize: bool = False
 ):
     """
     Generate a dataset.
@@ -211,7 +209,7 @@ def generate(
     dhash.update(encoded)
     config_hash = dhash.hexdigest()
     sim_name = dataset_config._sim["name"]
-    internal_dataset_name = f'{sim_name}-{config_hash}-{num_datapoints}'
+    internal_dataset_name = f"{sim_name}-{config_hash}-{num_datapoints}"
     dataset = post(
         f"{_base_url}/api/v1/datasets/",
         data={
@@ -283,7 +281,7 @@ def generate(
                 )
                 download_url(dataset_download_res["redirect_link"], output_path)
                 print("Done.")
-            else: 
+            else:
                 print(
                     f"Download failed. Dataset {name_slug} already exists in {output_path}."
                 )
@@ -291,7 +289,7 @@ def generate(
             print(
                 f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
             )
-    return Dataset(dataset['name'], dataset)
+    return Dataset(dataset["name"], dataset)
 
 
 class Dataset:
