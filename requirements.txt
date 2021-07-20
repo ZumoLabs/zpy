@@ -12,3 +12,4 @@ click
 table-logger==0.3.6
 tqdm
 pydash
+hashlib

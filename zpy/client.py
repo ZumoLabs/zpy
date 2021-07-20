@@ -6,6 +6,10 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Union
 
+import hashlib
+from os import listdir
+from os.path import join
+
 import requests
 from pydash import set_, unset, is_empty
 
@@ -183,13 +187,13 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-    name: str, dataset_config: DatasetConfig, num_datapoints: int, materialize=False
+    dataset_config: DatasetConfig,
+    num_datapoints: int = 10,
+    materialize: bool = False
 ):
     """
     Generate a dataset.
-
     Args:
-        name: Name of the dataset. Must be unique per Project.
         dataset_config: Specification for a Sim and its configurable parameters.
         num_datapoints: Number of datapoints in the dataset. A datapoint is an instant in time composed of all
                               the output images (rgb, iseg, cseg, etc) along with the annotations.
@@ -197,11 +201,22 @@ def generate(
     Returns:
         None
     """
+    # https://www.doc.ic.ac.uk/~nuric/coding/how-to-hash-a-dictionary-in-python.html
+    config_json = json.dumps(
+        dataset_config.config,
+        sort_keys=True,
+    )
+    dhash = hashlib.md5()
+    encoded = config_json.encode()
+    dhash.update(encoded)
+    config_hash = dhash.hexdigest()
+    sim_name = dataset_config._sim["name"]
+    internal_dataset_name = f'{sim_name}-{config_hash}-{num_datapoints}'
     dataset = post(
         f"{_base_url}/api/v1/datasets/",
         data={
             "project": _project["id"],
-            "name": name,
+            "name": internal_dataset_name,
         },
         headers=auth_header(_auth_token),
     ).json()
@@ -215,10 +230,8 @@ def generate(
         },
         headers=auth_header(_auth_token),
     )
-
     print("Generating dataset:")
     print(json.dumps(dataset, indent=4, sort_keys=True))
-
     if materialize:
         print("Materialize requested, waiting until dataset finishes to download it.")
         dataset = get(
@@ -248,14 +261,12 @@ def generate(
                     end="",
                 )
                 time.sleep(1)
-
             clear_last_print()
             print("\r{}".format("Checking dataset...", end=""))
             dataset = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/",
                 headers=auth_header(_auth_token),
             ).json()
-
         if dataset["state"] == "READY":
             print("Dataset is ready for download.")
             dataset_download_res = get(
@@ -264,16 +275,23 @@ def generate(
             ).json()
             name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
             # Throw it in /tmp for now I guess
-            output_path = Path("/tmp") / name_slug
-            print(
-                f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
-            )
-            download_url(dataset_download_res["redirect_link"], output_path)
-            print("Done.")
+            output_path = join(Path("/tmp"), name_slug)
+            existing_files = listdir(Path("/tmp"))
+            if not name_slug in existing_files:
+                print(
+                    f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
+                )
+                download_url(dataset_download_res["redirect_link"], output_path)
+                print("Done.")
+            else: 
+                print(
+                    f"Download failed. Dataset {name_slug} already exists in {output_path}."
+                )
         else:
             print(
                 f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
             )
+    return Dataset(dataset['name'], dataset)
 
 
 class Dataset:
