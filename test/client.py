@@ -87,7 +87,7 @@ def format_dataset(path_to_zipped_dataset, saver_func):
 def test_generate():
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("can_v7")
-    dataset = zpy.generate(dataset_config, num_datapoints=9, materialize=True)
+    dataset = zpy.generate(dataset_config, num_datapoints=22, materialize=True, saver_func=test_saver_func)
     print("Printing returned dataset:")
     print(json.dumps(dataset, default=lambda o: o.__dict__, sort_keys=True, indent=4))
 

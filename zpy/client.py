@@ -5,6 +5,7 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Union
+import re
 
 import hashlib
 from os import listdir
@@ -64,6 +65,50 @@ def require_zpy_init(func):
 
     return wrapper
 
+def format_dataset(path_to_zipped_dataset, saver_func):
+    '''
+    https://www.geeksforgeeks.org/how-to-validate-image-file-extension-using-regular-expression/
+    https://realpython.com/regex-python/
+    '''
+    regex = "(?i)([^\\s]+(\\.(jpe?g|png|gif|bmp))$)"
+    pattern = re.compile(regex)
+    annotation_file_name = "_annotations.zumo.json"
+    for batch in listdir(path_to_zipped_dataset):
+        batch_uri = join(path_to_zipped_dataset, batch)
+        image_names = [str for str in listdir(batch_uri) if re.search(pattern, str)]
+        image_uris = [join(path_to_zipped_dataset, batch, p) for p in image_names]
+        annotation_file_uri = join(batch_uri, annotation_file_name)
+        metadata = json.load(open(annotation_file_uri))
+        saver_func(image_uris, metadata)
+
+def default_saver_func(images, annotations):
+    """
+    Same output as:
+    https://gist.github.com/steven-zumo/d44b16ae5173931c7943f8f4531cda41
+    """
+    print("Running saver_func")
+    # output_path = "/mnt/c/Users/georg/Zumo/Datasets/dumpster_v2.1_formatted"
+    # for img in images:
+    #     # maybe an awkward way to match an image to it's annotation
+    #     img_annotation = next(
+    #         (a for a in annotations["annotations"] if a["filename_image"] in img), None
+    #     )
+    #     if img_annotation is not None:
+    #         category_id = str(img_annotation["category_id"])
+    #         category_label = annotations["categories"][category_id]["name"]
+    #         # awkward way to access batch name from image uri
+    #         batch = img.split("/")[-2]
+    #         # save same result as stevens example
+    #         output_file_uri = join(
+    #             output_path,
+    #             category_label
+    #             + "-"
+    #             + batch[:4]
+    #             + "-"
+    #             + img_annotation["filename_image"]
+    #             + ".jpg",
+    #         )
+    #         shutil.copy(img, output_file_uri)
 
 class DatasetConfig:
     @require_zpy_init
@@ -202,7 +247,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-    dataset_config: DatasetConfig, num_datapoints: int = 10, materialize: bool = False
+    dataset_config: DatasetConfig, num_datapoints: int = 10, materialize: bool = False, saver_func=default_saver_func
 ):
     """
     Generate a dataset.
@@ -229,7 +274,7 @@ def generate(
         f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
         data={
             "project": _project["id"],
-            "sim": dataset_config.sim["id"],
+            "sim": dataset_config.sim["name"],
             "config": json.dumps(dataset_config.config),
             "amount": num_datapoints,
         },
@@ -267,7 +312,7 @@ def generate(
                 )
                 time.sleep(1)
             clear_last_print()
-            print("\r{}".format("Checking dataset...", end=""))
+            print("\r{}".format("Checking dataset..."))
             dataset = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/",
                 headers=auth_header(_auth_token),
@@ -282,16 +327,18 @@ def generate(
             # Throw it in /tmp for now I guess
             output_path = join(Path("/tmp"), name_slug)
             existing_files = listdir(Path("/tmp"))
-            if not name_slug in existing_files:
+            if name_slug not in existing_files:
                 print(
                     f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
                 )
-                download_url(dataset_download_res["redirect_link"], output_path)
+                download_url(dataset_download_res["redirect_link"], output_path)                    
+                format_dataset(output_path, saver_func)
                 print("Done.")
             else:
                 print(
                     f"Download failed. Dataset {name_slug} already exists in {output_path}."
                 )
+            
         else:
             print(
                 f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
