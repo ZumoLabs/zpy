@@ -5,23 +5,22 @@ import requests
 
 
 @fetch_auth
-def fetch_sim(name, url, auth_headers):
+def fetch_sim(name, project, url, auth_headers):
     """fetch sim
 
     Fetch info on a sim by name from backend.
 
     Args:
         name (str): name of sim
+        project (str): uuid of project
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
     endpoint = f"{url}/api/v1/sims/"
-    r = requests.get(endpoint, params={"name": name}, headers=auth_headers)
+    r = requests.get(endpoint, params={"name": name, "project": project}, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
     response = json.loads(r.text)
-    if response["count"] != 1:
-        raise NameError(f"found {response['count']} sims for name {name}")
     return response["results"][0]
 
 
@@ -51,7 +50,7 @@ def create_sim(name, path, project, url, auth_headers):
 
 
 @fetch_auth
-def download_sim(name, path, url, auth_headers):
+def download_sim(name, path, project, url, auth_headers):
     """download sim
 
     Download sim object from S3 through ZumoLabs backend.
@@ -59,13 +58,14 @@ def download_sim(name, path, url, auth_headers):
     Args:
         name (str): name of sim to download
         path (str): output directory
+        project (str): uuid of project
         url (str): backend endpoint
         auth_headers: authentication for backend
 
     Returns:
         str: output file path
     """
-    sim = fetch_sim(name)
+    sim = fetch_sim(name, project)
     endpoint = f"{url}/api/v1/sims/{sim['id']}/download"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:

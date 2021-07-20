@@ -209,7 +209,7 @@ def generate(
         f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
         data={
             "project": _project["id"],
-            "sim": dataset_config.sim["name"],
+            "sim": dataset_config.sim["id"],
             "config": json.dumps(dataset_config.config),
             "amount": num_datapoints,
         },
