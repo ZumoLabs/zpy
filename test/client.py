@@ -42,7 +42,6 @@ def test_saver_func(images, annotations):
     """
     Same output as:
     https://gist.github.com/steven-zumo/d44b16ae5173931c7943f8f4531cda41
-
     """
     output_path = "/mnt/c/Users/georg/Zumo/Datasets/dumpster_v2.1_formatted"
     for img in images:
@@ -69,9 +68,11 @@ def test_saver_func(images, annotations):
 
 
 def format_dataset(path_to_zipped_dataset, saver_func):
-    # https://www.geeksforgeeks.org/how-to-validate-image-file-extension-using-regular-expression/
-    # https://realpython.com/regex-python/ - How to fix from example - DeprecationWarning: Flags not at the start of the expression
-    regex = "(?i)([^\\s]+(\\.(jpe?g|png|gif|bmp))$)"  # Regex to check valid image file extension.
+    '''
+    https://www.geeksforgeeks.org/how-to-validate-image-file-extension-using-regular-expression/
+    https://realpython.com/regex-python/
+    '''
+    regex = "(?i)([^\\s]+(\\.(jpe?g|png|gif|bmp))$)"
     pattern = re.compile(regex)
     annotation_file_name = "_annotations.zumo.json"
     for batch in listdir(path_to_zipped_dataset):
@@ -82,10 +83,11 @@ def format_dataset(path_to_zipped_dataset, saver_func):
         metadata = json.load(open(annotation_file_uri))
         saver_func(image_uris, metadata)
 
+
 def test_generate():
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("can_v7")
-    dataset = zpy.generate(dataset_config, num_datapoints=9, materialize=True)
+    dataset = zpy.generate(dataset_config, num_datapoints=20, materialize=False)
     print('Printing returned dataset:')
     print(json.dumps(
         dataset,
@@ -96,10 +98,15 @@ def test_generate():
 
 
 if __name__ == "__main__":
+    # init_kwargs = {
+    #     "base_url": "http://localhost:8000",
+    #     "project_uuid": "aad8e2b2-5431-4104-a205-dc3b638b0dab",
+    #     "auth_token": "214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e",
+    # }
     init_kwargs = {
-        "base_url": "http://localhost:8000",
-        "project_uuid": "aad8e2b2-5431-4104-a205-dc3b638b0dab",
-        "auth_token": "214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e",
+        "base_url": "https://ragnarok.stage.zumok8s.org",
+        "project_uuid": "feb6e594-55e0-4f87-9e75-5a128221499f",
+        "auth_token": "a19f8a1cef0c1661f7de1fd513d740c499752fc567fc4c6fe6d11fdbce533b65",
     }
     # init_kwargs = {
     #     "base_url": "https://ragnarok.stage.zumok8s.org",

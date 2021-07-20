@@ -88,7 +88,7 @@ class DatasetConfig:
         ).json()["results"]
         if len(sims) > 1:
             raise RuntimeError(
-                f"Create DatasetConfig failed: Found more than 1 Sim for unique filters which should not be possible."
+                "Create DatasetConfig failed: Found more than 1 Sim for unique filters which should not be possible."
             )
         elif len(sims) == 1:
             print(f"Found Sim<{sim_name}> in Project<{_project['name']}>")
@@ -111,6 +111,21 @@ class DatasetConfig:
         """A dict representing a json object of gin config parameters."""
         return self._config
 
+    @property
+    def hash(self):
+        """Return a hash of the config.
+        https://www.doc.ic.ac.uk/~nuric/coding/how-to-hash-a-dictionary-in-python.html
+        """    
+        config_json = json.dumps(
+            self._config,
+            sort_keys=True,
+        )
+        dhash = hashlib.md5()
+        encoded = config_json.encode()
+        dhash.update(encoded)
+        config_hash = dhash.hexdigest()
+        return config_hash
+
     def set(self, path: str, value: any):
         """Set a value for a configurable parameter.
 
@@ -127,7 +142,7 @@ class DatasetConfig:
             See self.set
         """
         unset(self._config, path)
-
+        
 
 @add_newline
 def preview(dataset_config: DatasetConfig, num_samples=10):
@@ -140,7 +155,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     Returns:
         File[]: Sample images for the given configuration.
     """
-    print(f"Generating preview:")
+    print("Generating preview:")
 
     config_filters = (
         {}
@@ -162,7 +177,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     simruns = simruns_res.json()["results"]
 
     if len(simruns) == 0:
-        print(f"No preview available.")
+        print("No preview available.")
         print("\t(no premade SimRuns matching filter)")
         return []
 
@@ -178,7 +193,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     )
     files = files_res.json()["results"]
     if len(files) == 0:
-        print(f"No preview available.")
+        print("No preview available.")
         print("\t(no images found)")
         return []
 
@@ -201,17 +216,9 @@ def generate(
     Returns:
         None
     """
-    # https://www.doc.ic.ac.uk/~nuric/coding/how-to-hash-a-dictionary-in-python.html
-    config_json = json.dumps(
-        dataset_config.config,
-        sort_keys=True,
-    )
-    dhash = hashlib.md5()
-    encoded = config_json.encode()
-    dhash.update(encoded)
-    config_hash = dhash.hexdigest()
+    hash = dataset_config.hash
     sim_name = dataset_config._sim["name"]
-    internal_dataset_name = f'{sim_name}-{config_hash}-{num_datapoints}'
+    internal_dataset_name = f'{sim_name}-{hash}-{num_datapoints}'
     dataset = post(
         f"{_base_url}/api/v1/datasets/",
         data={
