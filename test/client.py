@@ -106,5 +106,5 @@ if __name__ == "__main__":
     print("Running test_3:")
     test_3(**init_kwargs)
     # test format dataset
-    input_path = "/mnt/c/Users/georg/Zumo/Datasets/dumpster_v2.1"
-    format_dataset(input_path, test_saver_func)
+    # input_path = "/mnt/c/Users/georg/Zumo/Datasets/dumpster_v2.1"
+    # format_dataset(input_path, test_saver_func)

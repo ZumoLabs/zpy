@@ -54,11 +54,11 @@ def generate_dataset(dataset_name, sim_name, count, config, project, url, auth_h
     """
     from cli.sims import fetch_sim
 
-    fetch_sim(sim_name)
+    sim = fetch_sim(sim_name, project)
     dataset = create_dataset(dataset_name, None, project)
     endpoint = f"{url}/api/v1/datasets/{dataset['id']}/generate/"
     data = {
-        "sim": sim_name,
+        "sim": sim["id"],
         "amount": count,
         "config": json.dumps(config),
         "project": project,
