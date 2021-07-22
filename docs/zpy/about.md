@@ -5,4 +5,4 @@
 - A [Blender Addon](../../addon/about) for creating and debugging [sims](https://zumolabs.github.io/zpy/zpy/tutorials/what_is_a_sim/) inside the Blender UI.
 - A [CLI](../../cli/about/) for things like uploading [sims](https://zumolabs.github.io/zpy/zpy/tutorials/what_is_a_sim/) and generating datasets.
 - A [WebApp](../../app/about/) for a GUI version of the API and CLI.
-- A [Client API](../../client_api/about/) for generating synthetic datasets.
+- A [Python client](../../client_api/about/) for generating synthetic datasets.

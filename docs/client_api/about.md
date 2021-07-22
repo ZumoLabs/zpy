@@ -1,4 +1,4 @@
-# Client API
+# Python client
 
 ## Overview
 

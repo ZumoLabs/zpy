@@ -45,10 +45,10 @@ nav:
     - License: overview/license.md
     - Citation: overview/citation.md
     - Code of Conduct: overview/code_of_conduct.md
-  - zpy client:
+  - Python client:
     - About: client_api/about.md
     - API Reference: client_api/reference.md
-  - Web App:
+  - Web app:
     - About: app/about.md
     - Create an Account: app/create_an_account.md
   - Developer tools:
