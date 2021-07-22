@@ -48,7 +48,10 @@ nav:
   - zpy client:
     - About: client_api/about.md
     - API Reference: client_api/reference.md
-  - Power user tools:
+  - Web App:
+    - About: app/about.md
+    - Create an Account: app/create_an_account.md
+  - Developer tools:
     - zpy:
       - About: zpy/about.md
       - Install:
@@ -83,9 +86,7 @@ nav:
       - zpy sim: cli/sim.md
       - zpy job: cli/job.md
       - zpy transform: cli/transform.md
-    - Web App:
-      - About: app/about.md
-      - Create an Account: app/create_an_account.md
+    
     - Blender Addon:
       - About: addon/about.md
       - Install: addon/install.md
