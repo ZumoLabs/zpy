@@ -18,13 +18,21 @@ DATETIME_WIDTH = 27
 
 
 @click.group(context_settings=dict(token_normalize_func=str.lower))
-def cli():
+@click.option(
+    "--api-version",
+    default="v2",
+    help="Backend API version.",
+)
+@click.pass_context
+def cli(ctx, api_version):
     """zpy cli
 
     Zumo Labs cli which is used to create, get, list, upload objects from
     the Zumo Labs backend (ragnarok).
     """
     initialize_config()
+    ctx.ensure_object(dict)
+    ctx.obj['API_VERSION'] = api_version
 
 
 @cli.command("help")
@@ -158,7 +166,8 @@ def dataset_group():
 @dataset_group.command("list")
 @click.argument("filters", nargs=-1)
 @use_project()
-def list_datasets(filters, project=None):
+@click.pass_context
+def list_datasets(ctx, filters, project=None, **kwargs):
     """list datasets
 
     List datasets from backend with optional FILTERS. Uses PROJECT set via zpy project command when available.

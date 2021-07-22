@@ -7,9 +7,8 @@ from pathlib import Path
 from typing import Dict, Union
 
 import requests
-from pydash import set_, unset, is_empty
-
 from cli.utils import download_url
+from pydash import set_, unset, is_empty
 from zpy.client_util import (
     add_newline,
     get,
@@ -23,22 +22,27 @@ from zpy.client_util import (
 
 _auth_token: str = ""
 _base_url: str = ""
+_version: str = ""
+_versioned_url: str = ""
 _project: Union[Dict, None] = None
 
 
 def init(
-    auth_token: str,
-    project_uuid: str,
-    base_url: str = "https://ragnarok.zumok8s.org",
-    **kwargs,
+        auth_token: str,
+        project_uuid: str,
+        base_url: str = "https://ragnarok.zumok8s.org",
+        version: str = "v2",
+        **kwargs,
 ):
-    global _auth_token, _base_url, _project
+    global _auth_token, _base_url, _version, _versioned_url, _project
     _auth_token = auth_token
     _base_url = base_url
+    _version = version
+    _versioned_url = f"{base_url}/api/{version}"
 
     try:
         _project = get(
-            f"{_base_url}/api/v1/projects/{project_uuid}",
+            f"{_versioned_url}/projects/{project_uuid}",
             headers=auth_header(_auth_token),
         ).json()
     except requests.HTTPError:
@@ -54,7 +58,7 @@ IMAGES_PER_SAMPLE = 2  # for the iseg and rbg
 def require_zpy_init(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        if None in [_project, _auth_token, _base_url]:
+        if None in [_project, _auth_token]:
             raise RuntimeError("Project and auth_token must be set via zpy.init()")
         return func(*args, **kwargs)
 
@@ -78,7 +82,7 @@ class DatasetConfig:
             "name": sim_name,
         }
         sims = get(
-            f"{_base_url}/api/v1/sims/",
+            f"{_versioned_url}/sims/",
             params=unique_sim_filters,
             headers=auth_header(_auth_token),
         ).json()["results"]
@@ -151,7 +155,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         **config_filters,
     }
     simruns_res = get(
-        f"{_base_url}/api/v1/simruns/",
+        f"{_versioned_url}/simruns/",
         params=filter_params,
         headers=auth_header(_auth_token),
     )
@@ -168,7 +172,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
         "~path__icontains": ".annotated",
     }
     files_res = get(
-        f"{_base_url}/api/v1/files/",
+        f"{_versioned_url}/files/",
         params=file_query_params,
         headers=auth_header(_auth_token),
     )
@@ -198,7 +202,7 @@ def generate(
         None
     """
     dataset = post(
-        f"{_base_url}/api/v1/datasets/",
+        f"{_versioned_url}/datasets/",
         data={
             "project": _project["id"],
             "name": name,
@@ -206,7 +210,7 @@ def generate(
         headers=auth_header(_auth_token),
     ).json()
     post(
-        f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
+        f"{_versioned_url}/datasets/{dataset['id']}/generate/",
         data={
             "project": _project["id"],
             "sim": dataset_config.sim["id"],
@@ -222,18 +226,18 @@ def generate(
     if materialize:
         print("Materialize requested, waiting until dataset finishes to download it.")
         dataset = get(
-            f"{_base_url}/api/v1/datasets/{dataset['id']}/",
+            f"{_versioned_url}/datasets/{dataset['id']}/",
             headers=auth_header(_auth_token),
         ).json()
         while not is_done(dataset["state"]):
             all_simruns_query_params = {"datasets": dataset["id"]}
             num_simruns = get(
-                f"{_base_url}/api/v1/simruns/",
+                f"{_versioned_url}/simruns/",
                 params=all_simruns_query_params,
                 headers=auth_header(_auth_token),
             ).json()["count"]
             num_ready_simruns = get(
-                f"{_base_url}/api/v1/simruns/",
+                f"{_versioned_url}/simruns/",
                 params={**all_simruns_query_params, "state": "READY"},
                 headers=auth_header(_auth_token),
             ).json()["count"]
@@ -252,14 +256,14 @@ def generate(
             clear_last_print()
             print("\r{}".format("Checking dataset...", end=""))
             dataset = get(
-                f"{_base_url}/api/v1/datasets/{dataset['id']}/",
+                f"{_versioned_url}/datasets/{dataset['id']}/",
                 headers=auth_header(_auth_token),
             ).json()
 
         if dataset["state"] == "READY":
             print("Dataset is ready for download.")
             dataset_download_res = get(
-                f"{_base_url}/api/v1/datasets/{dataset['id']}/download/",
+                f"{_versioned_url}/datasets/{dataset['id']}/download/",
                 headers=auth_header(_auth_token),
             ).json()
             name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
@@ -300,7 +304,7 @@ class Dataset:
                 "name": name,
             }
             datasets = get(
-                f"{_base_url}/api/v1/datasets/",
+                f"{_versioned_url}/datasets/",
                 params=unique_dataset_filters,
                 headers=auth_header(_auth_token),
             ).json()["results"]

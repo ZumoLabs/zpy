@@ -19,7 +19,7 @@ def create_new_job(name, operation, config, datasets, project, url, auth_headers
         auth_headers: authentication for backend
         project (str): project uuid
     """
-    endpoint = f"{url}/api/v1/jobs/"
+    endpoint = f"{url}/jobs/"
     data = {
         "project": project,
         "operation": operation.upper(),
@@ -46,7 +46,7 @@ def fetch_jobs(filters, url, auth_headers):
     Returns:
         list: list of jobs
     """
-    endpoint = f"{url}/api/v1/jobs/"
+    endpoint = f"{url}/jobs/"
     r = requests.get(endpoint, headers=auth_headers, params=filters)
     if r.status_code != 200:
         r.raise_for_status()

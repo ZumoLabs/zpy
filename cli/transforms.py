@@ -21,7 +21,7 @@ def create_transform(name, operation, config, project, url, auth_headers):
     from cli.datasets import fetch_dataset
 
     dataset = fetch_dataset(name)
-    endpoint = f"{url}/api/v1/transforms/"
+    endpoint = f"{url}/transforms/"
     data = {
         "project": project,
         "operation": operation,
@@ -48,7 +48,7 @@ def fetch_transforms(filters, url, auth_headers):
     Returns:
         list: list of transforms
     """
-    endpoint = f"{url}/api/v1/transforms/"
+    endpoint = f"{url}/transforms/"
     r = requests.get(endpoint, headers=auth_headers, params=filters)
     if r.status_code != 200:
         r.raise_for_status()
@@ -68,7 +68,7 @@ def available_transforms(url, auth_headers):
     Returns:
         list: list of transforms
     """
-    endpoint = f"{url}/api/v1/transforms/available/"
+    endpoint = f"{url}/transforms/available/"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()

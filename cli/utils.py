@@ -7,6 +7,7 @@ from typing import Union
 from urllib.request import urlopen
 
 import click
+from click.globals import get_current_context
 from tqdm import tqdm
 
 from cli.config import read_config
@@ -133,9 +134,11 @@ def fetch_auth(func):
     def wrapper(*args, **kwargs):
         config = read_config()
         endpoint = config["ENDPOINT"]
+        click_ctx = get_current_context()
+        url = endpoint + f"/api/{click_ctx.obj['API_VERSION']}"
 
         auth_header = {"Authorization": "token {}".format(config["TOKEN"])}
-        return func(*args, **kwargs, url=endpoint, auth_headers=auth_header)
+        return func(*args, **kwargs, url=url, auth_headers=auth_header)
 
     return wrapper
 

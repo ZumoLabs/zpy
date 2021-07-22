@@ -16,7 +16,7 @@ def fetch_sim(name, project, url, auth_headers):
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
-    endpoint = f"{url}/api/v1/sims/"
+    endpoint = f"{url}/sims/"
     r = requests.get(
         endpoint, params={"name": name, "project": project}, headers=auth_headers
     )
@@ -40,7 +40,7 @@ def create_sim(name, path, project, url, auth_headers):
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
-    endpoint = f"{url}/api/v1/sims/"
+    endpoint = f"{url}/sims/"
     r = requests.post(
         endpoint,
         data={"name": name, "project": project},
@@ -68,7 +68,7 @@ def download_sim(name, path, project, url, auth_headers):
         str: output file path
     """
     sim = fetch_sim(name, project)
-    endpoint = f"{url}/api/v1/sims/{sim['id']}/download"
+    endpoint = f"{url}/sims/{sim['id']}/download"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
@@ -90,7 +90,7 @@ def fetch_sims(filters, url, auth_headers):
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
-    endpoint = f"{url}/api/v1/sims/"
+    endpoint = f"{url}/sims/"
     r = requests.get(endpoint, headers=auth_headers, params=filters)
     if r.status_code != 200:
         r.raise_for_status()

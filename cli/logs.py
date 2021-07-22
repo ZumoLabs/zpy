@@ -19,7 +19,7 @@ def fetch_logs(resource, name, path, url, auth_headers):
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
-    endpoint = f"{url}/api/v1/{resource}/"
+    endpoint = f"{url}/{resource}/"
     r = requests.get(endpoint, params={"name": name}, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
@@ -27,7 +27,7 @@ def fetch_logs(resource, name, path, url, auth_headers):
     if response["count"] != 1:
         raise NameError(f"found {response['count']} {resource} for name {name}")
     obj = response["results"][0]
-    endpoint = f"{url}/api/v1/{resource}/{obj['id']}/logs"
+    endpoint = f"{url}/{resource}/{obj['id']}/logs"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()

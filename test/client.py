@@ -35,7 +35,7 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
+    zpy.generate("dumpster_v2.39", dataset_config, num_datapoints=3, materialize=True)
 
 
 def test_saver_func(images, annotations):
@@ -86,6 +86,7 @@ def format_dataset(path_to_zipped_dataset, saver_func):
 if __name__ == "__main__":
     init_kwargs = {
         "base_url": "http://localhost:8000",
+        "version": "v2",
         "project_uuid": "aad8e2b2-5431-4104-a205-dc3b638b0dab",
         "auth_token": "214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e",
     }

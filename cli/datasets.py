@@ -16,7 +16,7 @@ def create_dataset(name, file_path, project, url, auth_headers):
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
-    endpoint = f"{url}/api/v1/datasets/"
+    endpoint = f"{url}/datasets/"
     data = {"name": name, "project": project}
     if file_path:
         r = requests.post(
@@ -56,7 +56,7 @@ def generate_dataset(dataset_name, sim_name, count, config, project, url, auth_h
 
     sim = fetch_sim(sim_name, project)
     dataset = create_dataset(dataset_name, None, project)
-    endpoint = f"{url}/api/v1/datasets/{dataset['id']}/generate/"
+    endpoint = f"{url}/datasets/{dataset['id']}/generate/"
     data = {
         "sim": sim["id"],
         "amount": count,
@@ -88,7 +88,7 @@ def download_dataset(name, path, url, auth_headers):
         str: output file path
     """
     dataset = fetch_dataset(name)
-    endpoint = f"{url}/api/v1/datasets/{dataset['id']}/download/"
+    endpoint = f"{url}/datasets/{dataset['id']}/download/"
     r = requests.get(endpoint, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
@@ -110,7 +110,7 @@ def fetch_datasets(filters, url, auth_headers):
     Returns:
         list: paginated sorted datasets for all types
     """
-    endpoint = f"{url}/api/v1/datasets/"
+    endpoint = f"{url}/datasets/"
     r = requests.get(endpoint, headers=auth_headers, params=filters)
     if r.status_code != 200:
         r.raise_for_status()
@@ -128,7 +128,7 @@ def fetch_dataset(name, url, auth_headers):
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
-    endpoint = f"{url}/api/v1/datasets/"
+    endpoint = f"{url}/datasets/"
     r = requests.get(endpoint, params={"name": name}, headers=auth_headers)
     if r.status_code != 200:
         r.raise_for_status()
@@ -156,7 +156,7 @@ def filter_datasets(dfilter, project, url, auth_headers):
     """
     filtered_datasets = {}
     field, pattern, regex = parse_filter(dfilter)
-    endpoint = f"{url}/api/v1/datasets/"
+    endpoint = f"{url}/datasets/"
     params = {
         "project": project,
         f"{field}__{pattern}": regex,

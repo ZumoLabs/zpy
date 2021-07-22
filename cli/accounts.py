@@ -16,7 +16,7 @@ def fetch_accounts(filters, url, auth_headers):
         url (str): backend endpoint
         auth_headers: authentication for backend
     """
-    endpoint = f"{url}/api/v1/accounts/"
+    endpoint = f"{url}/accounts/"
     r = requests.get(endpoint, headers=auth_headers, params=filters)
     if r.status_code != 200:
         r.raise_for_status()
