@@ -40,8 +40,7 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.21", dataset_config,
-                 num_datapoints=3, materialize=True)
+    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
 
 
 # def is_image(path: Union[str, Path]) -> bool:
@@ -62,25 +61,24 @@ def default_saver_func(image_uris, metadata):
         image = next((i for i in images if i["name"] in uri), None)
 
         if image is not None:
-            image_id = image['id']
-            image_name = image['name']
+            image_id = image["id"]
+            image_name = image["name"]
 
             annotation = next(
-                (a for a in metadata["annotations"]
-                 if a["image_id"] == image_id), None
+                (a for a in metadata["annotations"] if a["image_id"] == image_id), None
             )
 
             batch_name = Path(
-                str(image['output_path'])
-                .removesuffix(str(image['relative_path']))
+                str(image["output_path"]).removesuffix(str(image["relative_path"]))
             ).name
 
             unzipped_path = Path(
-                str(uri)
-                .removesuffix(str(image['relative_path']))
+                str(uri).removesuffix(str(image["relative_path"]))
             ).parent
 
-            output_path = join(unzipped_path.parent, join(unzipped_path.name, "_formatted"))
+            output_path = join(
+                unzipped_path.parent, join(unzipped_path.name, "_formatted")
+            )
 
             print(output_path)
             return
@@ -91,30 +89,28 @@ def default_saver_func(image_uris, metadata):
 
                 output_file_uri = join(
                     default_output_path,
-                    category_label
-                    + "-"
-                    + batch_name[:4]
-                    + "-"
-                    + image_name
-                    + ".jpg",
+                    category_label + "-" + batch_name[:4] + "-" + image_name + ".jpg",
                 )
                 print(output_file_uri)
                 shutil.copy(image, output_file_uri)
 
 
 def format_dataset(path_to_zipped_dataset, saver_func):
-
     def remove_n_extensions(path: Union[str, Path], n: int = 1) -> Path:
         p = Path(path)
         extensions = "".join(p.suffixes[-n:])  # remove n extensions
         return str(p).removesuffix(extensions)
 
     def filter_metadata(img_group, metadata):
-        id_group = [i['id'] for i in img_group]
+        id_group = [i["id"] for i in img_group]
         return {
             **metadata,
-            'images': {k: v for k, v in dict(metadata['images']).items() if v['id'] in id_group},
-            'annotations': [a for a in metadata['annotations'] if a['image_id'] in id_group]
+            "images": {
+                k: v for k, v in dict(metadata["images"]).items() if v["id"] in id_group
+            },
+            "annotations": [
+                a for a in metadata["annotations"] if a["image_id"] in id_group
+            ],
         }
 
     annotation_file_name = "_annotations.zumo.json"
@@ -127,27 +123,31 @@ def format_dataset(path_to_zipped_dataset, saver_func):
         batch_uri = join(unzipped_output_path, batch)
         annotation_file_uri = join(batch_uri, annotation_file_name)
         metadata = json.load(open(annotation_file_uri))
-        batch_images = list(dict(metadata['images']).values())
+        batch_images = list(dict(metadata["images"]).values())
         # https://www.geeksforgeeks.org/python-identical-consecutive-grouping-in-list/
-        grouped_images = [list(y) for x, y in groupby(
-            batch_images,
-            lambda x: remove_n_extensions(Path(x['relative_path']), n=2)
-        )]
+        grouped_images = [
+            list(y)
+            for x, y in groupby(
+                batch_images,
+                lambda x: remove_n_extensions(Path(x["relative_path"]), n=2),
+            )
+        ]
 
         for img_group in grouped_images:
             filtered_metadata = filter_metadata(img_group, metadata)
-            uri_group = [
-                join(batch_uri, Path(i['relative_path']))
-                for i in img_group
-            ]
+            uri_group = [join(batch_uri, Path(i["relative_path"])) for i in img_group]
             saver_func(uri_group, filtered_metadata)
 
 
 def test_generate():
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("can_v7")
-    dataset = zpy.generate(dataset_config, num_datapoints=22,
-                           materialize=True, saver_func=default_saver_func)
+    dataset = zpy.generate(
+        dataset_config,
+        num_datapoints=22,
+        materialize=True,
+        saver_func=default_saver_func,
+    )
     print("Printing returned dataset:")
     print(json.dumps(dataset, default=lambda o: o.__dict__, sort_keys=True, indent=4))
 

@@ -61,8 +61,7 @@ def require_zpy_init(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if None in [_project, _auth_token, _base_url]:
-            raise RuntimeError(
-                "Project and auth_token must be set via zpy.init()")
+            raise RuntimeError("Project and auth_token must be set via zpy.init()")
         return func(*args, **kwargs)
 
     return wrapper
@@ -70,24 +69,24 @@ def require_zpy_init(func):
 
 def format_dataset(
     # dataset
-    path_to_zipped_dataset
-    , saver_func):
-    '''
+    path_to_zipped_dataset,
+    saver_func,
+):
+    """
     https://www.geeksforgeeks.org/how-to-validate-image-file-extension-using-regular-expression/
     https://realpython.com/regex-python/
-    '''
+    """
     regex = "(?i)([^\\s]+(\\.(jpe?g|png|gif|bmp))$)"
     pattern = re.compile(regex)
     annotation_file_name = "_annotations.zumo.json"
     for batch in listdir(path_to_zipped_dataset):
         batch_uri = join(path_to_zipped_dataset, batch)
-        image_names = [str for str in listdir(
-            batch_uri) if re.search(pattern, str)]
-        image_uris = [join(path_to_zipped_dataset, batch, p)
-                      for p in image_names]
+        image_names = [str for str in listdir(batch_uri) if re.search(pattern, str)]
+        image_uris = [join(path_to_zipped_dataset, batch, p) for p in image_names]
         annotation_file_uri = join(batch_uri, annotation_file_name)
         metadata = json.load(open(annotation_file_uri))
         saver_func(image_uris, metadata)
+
 
 # def format_dataset(
 #     # dataset
@@ -122,8 +121,7 @@ def default_saver_func(images, annotations):
 
         # maybe an awkward way to match an image to it's annotation
         img_annotation = next(
-            (a for a in annotations["annotations"]
-             if a["filename_image"] in img), None
+            (a for a in annotations["annotations"] if a["filename_image"] in img), None
         )
 
         if img_annotation is not None:
@@ -286,7 +284,10 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-    dataset_config: DatasetConfig, num_datapoints: int = 10, materialize: bool = False, saver_func=None
+    dataset_config: DatasetConfig,
+    num_datapoints: int = 10,
+    materialize: bool = False,
+    saver_func=None,
 ):
     """
     Generate a dataset.
@@ -300,7 +301,7 @@ def generate(
     """
     hash = dataset_config.hash
     sim_name = dataset_config._sim["name"]
-    internal_dataset_name = f'{sim_name}-{hash}-{num_datapoints}'
+    internal_dataset_name = f"{sim_name}-{hash}-{num_datapoints}"
     dataset = post(
         f"{_base_url}/api/v1/datasets/",
         data={
@@ -358,8 +359,8 @@ def generate(
             ).json()
 
         dataset = Dataset(dataset["name"], dataset)
-        # dataset._path = 
-        # dataset._nameslug = 
+        # dataset._path =
+        # dataset._nameslug =
         if dataset["state"] == "READY":
             print("Dataset is ready for download.")
             dataset_download_res = get(
@@ -374,8 +375,7 @@ def generate(
                 print(
                     f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
                 )
-                download_url(
-                    dataset_download_res["redirect_link"], output_path)
+                download_url(dataset_download_res["redirect_link"], output_path)
 
                 if saver_func is not None:
                     format_dataset(output_path, saver_func)
@@ -446,4 +446,3 @@ class Dataset:
 
     def view(self):
         return
-
