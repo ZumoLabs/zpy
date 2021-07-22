@@ -72,7 +72,7 @@ nav:
         - Segmentation Images: zpy/tutorials/segmentation.md
         - Depth Images: zpy/tutorials/depth.md
         - Jittering Object Pose: zpy/tutorials/jitterpose.md
-        - Jitering Materials: zpy/tutorials/jittermat.md
+        - Jittering Materials: zpy/tutorials/jittermat.md
         - Random HDRI Backgrounds: zpy/tutorials/hdri.md
     - CLI:
       - About: cli/about.md
