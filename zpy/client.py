@@ -68,8 +68,7 @@ def require_zpy_init(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if None in [_project, _auth_token, _base_url]:
-            raise RuntimeError(
-                "Project and auth_token must be set via zpy.init()")
+            raise RuntimeError("Project and auth_token must be set via zpy.init()")
         return func(*args, **kwargs)
 
     return wrapper
@@ -299,7 +298,7 @@ def generate(
     """
     hash = dataset_config.hash
     sim_name = dataset_config._sim["name"]
-    internal_dataset_name = f'{sim_name}-{hash}-{num_datapoints}'
+    internal_dataset_name = f"{sim_name}-{hash}-{num_datapoints}"
     dataset = post(
         f"{_base_url}/api/v1/datasets/",
         data={
@@ -370,8 +369,7 @@ def generate(
                 print(
                     f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
                 )
-                download_url(
-                    dataset_download_res["redirect_link"], output_path)
+                download_url(dataset_download_res["redirect_link"], output_path)
 
                 format_dataset(output_path, saver_func)
 
