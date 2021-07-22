@@ -49,7 +49,7 @@ nav:
     - About: client_api/about.md
     - API Reference: client_api/reference.md
   - Power user tools:
-    - Zpy:
+    - zpy:
       - About: zpy/about.md
       - Install:
           - pip: zpy/install/pip.md
