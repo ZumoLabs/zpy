@@ -2,6 +2,7 @@ import json
 from os import listdir
 from os.path import join
 from os.path import splitext
+import os
 import shutil
 import re
 import zipfile
@@ -56,63 +57,35 @@ def test_3(**init_kwargs):
 
 
 def default_saver_func(image_uris, metadata):
-
     images = list(dict(metadata["images"]).values())
+    UUID = str(uuid.uuid4())
 
     for uri in image_uris:
         image = next((i for i in images if i["name"] in uri), None)
 
         if image is not None:
-            image_id = image['id']
-            image_name = image['name']
-
-            annotation = next(
-                (a for a in metadata["annotations"]
-                 if a["image_id"] == image_id), None
-            )
-
-            batch_name = Path(
-                str(image['output_path'])
-                .removesuffix(str(image['relative_path']))
-            ).name
-
-            unzipped_path = Path(
+            unzipped_dataset_path = Path(
                 str(uri)
                 .removesuffix(str(image['relative_path']))
             ).parent
 
-            default_output_path = join(
-                unzipped_path.parent,
-                unzipped_path.name + "_formatted"
+            output_path = join(
+                unzipped_dataset_path.parent,
+                unzipped_dataset_path.name + "_formatted"
             )
-
-            uuid.uuid4()
 
             output_file_uri = join(
-                default_output_path,
-                category_label
+                output_path,
+                UUID
                 + "-"
-                + batch_name[:4]
-                + "-"
-                + image_name
-                + ".jpg",
+                + image['name'],
             )
-            shutil.copy(image, output_file_uri)
 
-            # if annotation is not None:
-            #     category_id = str(annotation["category_id"])
-            #     category_label = metadata["categories"][category_id]["name"]
-
-            #     output_file_uri = join(
-            #         default_output_path,
-            #         category_label
-            #         + "-"
-            #         + batch_name[:4]
-            #         + "-"
-            #         + image_name
-            #         + ".jpg",
-            #     )
-            #     shutil.copy(image, output_file_uri)
+            try:
+                shutil.copy(uri, output_file_uri)
+            except IOError as io_err:
+                os.makedirs(os.path.dirname(output_file_uri))
+                shutil.copy(uri, output_file_uri)
 
 
 def format_dataset(path_to_zipped_dataset, saver_func):

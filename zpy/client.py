@@ -10,6 +10,13 @@ import re
 import hashlib
 from os import listdir
 from os.path import join
+import os
+import shutil
+import zipfile
+from pathlib import Path
+from typing import Union
+from itertools import groupby
+import uuid
 
 import requests
 from pydash import set_, unset, is_empty
@@ -68,85 +75,77 @@ def require_zpy_init(func):
     return wrapper
 
 
-def format_dataset(
-    # dataset
-    path_to_zipped_dataset
-    , saver_func):
-    '''
-    https://www.geeksforgeeks.org/how-to-validate-image-file-extension-using-regular-expression/
-    https://realpython.com/regex-python/
-    '''
-    regex = "(?i)([^\\s]+(\\.(jpe?g|png|gif|bmp))$)"
-    pattern = re.compile(regex)
-    annotation_file_name = "_annotations.zumo.json"
-    for batch in listdir(path_to_zipped_dataset):
-        batch_uri = join(path_to_zipped_dataset, batch)
-        image_names = [str for str in listdir(
-            batch_uri) if re.search(pattern, str)]
-        image_uris = [join(path_to_zipped_dataset, batch, p)
-                      for p in image_names]
-        annotation_file_uri = join(batch_uri, annotation_file_name)
-        metadata = json.load(open(annotation_file_uri))
-        saver_func(image_uris, metadata)
+def default_saver_func(image_uris, metadata):
+    images = list(dict(metadata["images"]).values())
+    UUID = str(uuid.uuid4())
 
-# def format_dataset(
-#     # dataset
-#     path_to_zipped_dataset
-#     , saver_func):
-#     '''
-#     https://www.geeksforgeeks.org/how-to-validate-image-file-extension-using-regular-expression/
-#     https://realpython.com/regex-python/
-#     '''
-#     regex = "(?i)([^\\s]+(\\.(jpe?g|png|gif|bmp))$)"
-#     pattern = re.compile(regex)
-#     annotation_file_name = "_annotations.zumo.json"
-#     for batch in listdir(path_to_zipped_dataset):
-#         batch_uri = join(path_to_zipped_dataset, batch)
-#         image_names = [str for str in listdir(
-#             batch_uri) if re.search(pattern, str)]
-#         image_uris = [join(path_to_zipped_dataset, batch, p)
-#                       for p in image_names]
-#         annotation_file_uri = join(batch_uri, annotation_file_name)
-#         metadata = json.load(open(annotation_file_uri))
-#         saver_func(image_uris, metadata)
+    for uri in image_uris:
+        image = next((i for i in images if i["name"] in uri), None)
 
+        if image is not None:
+            unzipped_dataset_path = Path(
+                str(uri)
+                .removesuffix(str(image['relative_path']))
+            ).parent
 
-def default_saver_func(images, annotations):
-    """
-    Same output as:
-    https://gist.github.com/steven-zumo/d44b16ae5173931c7943f8f4531cda41
-    """
-    print("Running saver_func")
-    output_path = "/mnt/c/Users/georg/Zumo/Datasets/dumpster_v2.1_formatted"
-    for img in images:
+            output_path = join(
+                unzipped_dataset_path.parent,
+                unzipped_dataset_path.name + "_formatted"
+            )
 
-        # maybe an awkward way to match an image to it's annotation
-        img_annotation = next(
-            (a for a in annotations["annotations"]
-             if a["filename_image"] in img), None
-        )
-
-        if img_annotation is not None:
-            category_id = str(img_annotation["category_id"])
-            category_label = annotations["categories"][category_id]["name"]
-
-            # awkward way to access batch name from image uri
-            batch = img.split("/")[-2]
-
-            # awkward way to access batch name from image uri
-            dataset_name = img.split("/")[-3]
-
-            # save same result as stevens example
             output_file_uri = join(
                 output_path,
-                category_label
+                UUID
                 + "-"
-                + batch[:4]
-                + "-"
-                + img_annotation["filename_image"]
-                + ".jpg",
+                + image['name'],
             )
-            shutil.copy(img, output_file_uri)
+
+            try:
+                shutil.copy(uri, output_file_uri)
+            except IOError as io_err:
+                os.makedirs(os.path.dirname(output_file_uri))
+                shutil.copy(uri, output_file_uri)
+
+
+def format_dataset(path_to_zipped_dataset, saver_func):
+
+    def remove_n_extensions(path: Union[str, Path], n: int = 1) -> Path:
+        p = Path(path)
+        extensions = "".join(p.suffixes[-n:])
+        return str(p).removesuffix(extensions)
+
+    def filter_metadata(img_group, metadata):
+        id_group = [i['id'] for i in img_group]
+        return {
+            **metadata,
+            'images': {k: v for k, v in dict(metadata['images']).items() if v['id'] in id_group},
+            'annotations': [a for a in metadata['annotations'] if a['image_id'] in id_group]
+        }
+
+    annotation_file_name = "_annotations.zumo.json"
+
+    unzipped_output_path = remove_n_extensions(path_to_zipped_dataset, n=1)
+    with zipfile.ZipFile(path_to_zipped_dataset, "r") as zip_ref:
+        zip_ref.extractall(unzipped_output_path)
+
+    for batch in listdir(unzipped_output_path):
+        batch_uri = join(unzipped_output_path, batch)
+        annotation_file_uri = join(batch_uri, annotation_file_name)
+        metadata = json.load(open(annotation_file_uri))
+        batch_images = list(dict(metadata['images']).values())
+        # https://www.geeksforgeeks.org/python-identical-consecutive-grouping-in-list/
+        grouped_images = [list(y) for x, y in groupby(
+            batch_images,
+            lambda x: remove_n_extensions(Path(x['relative_path']), n=2)
+        )]
+
+        for img_group in grouped_images:
+            filtered_metadata = filter_metadata(img_group, metadata)
+            uri_group = [
+                join(batch_uri, Path(i['relative_path']))
+                for i in img_group
+            ]
+            saver_func(uri_group, filtered_metadata)
 
 
 class DatasetConfig:
@@ -286,7 +285,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-    dataset_config: DatasetConfig, num_datapoints: int = 10, materialize: bool = False, saver_func=None
+    dataset_config: DatasetConfig, num_datapoints: int = 10, materialize: bool = False, saver_func=default_saver_func
 ):
     """
     Generate a dataset.
@@ -357,16 +356,13 @@ def generate(
                 headers=auth_header(_auth_token),
             ).json()
 
-        dataset = Dataset(dataset["name"], dataset)
-        # dataset._path = 
-        # dataset._nameslug = 
         if dataset["state"] == "READY":
             print("Dataset is ready for download.")
             dataset_download_res = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/download/",
                 headers=auth_header(_auth_token),
             ).json()
-            name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
+            name_slug = f"{str(dataset['name']).replace(' ', '_')}-{dataset['id'][:8]}.zip"
             # Throw it in /tmp for now I guess
             output_path = join(Path("/tmp"), name_slug)
             existing_files = listdir(Path("/tmp"))
@@ -377,11 +373,7 @@ def generate(
                 download_url(
                     dataset_download_res["redirect_link"], output_path)
 
-                if saver_func is not None:
-                    format_dataset(output_path, saver_func)
-                else:
-                    pass
-                    # format_dataset(output_path, () => default_saver_func, nameslug, )
+                format_dataset(output_path, saver_func)
 
                 print("Done.")
             else:
@@ -393,6 +385,7 @@ def generate(
             print(
                 f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
             )
+
     return Dataset(dataset["name"], dataset)
 
 
@@ -446,4 +439,3 @@ class Dataset:
 
     def view(self):
         return
-
