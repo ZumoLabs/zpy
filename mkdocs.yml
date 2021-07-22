@@ -18,6 +18,9 @@ theme:
     text: Fira Mono
   logo: assets/logo.png
 
+plugins:
+- mkdocstrings
+
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -42,6 +45,9 @@ nav:
     - License: overview/license.md
     - Citation: overview/citation.md
     - Code of Conduct: overview/code_of_conduct.md
+  - zpy client:
+    - About: client_api/about.md
+    - API Reference: client_api/reference.md
   - Zpy:
     - About: zpy/about.md
     - Install:
