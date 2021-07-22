@@ -64,20 +64,16 @@ def default_saver_func(image_uris, metadata):
 
         if image is not None:
             unzipped_dataset_path = Path(
-                str(uri)
-                .removesuffix(str(image['relative_path']))
+                str(uri).removesuffix(str(image["relative_path"]))
             ).parent
 
             output_path = join(
-                unzipped_dataset_path.parent,
-                unzipped_dataset_path.name + "_formatted"
+                unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
             )
 
             output_file_uri = join(
                 output_path,
-                UUID
-                + "-"
-                + image['name'],
+                UUID + "-" + image["name"],
             )
 
             try:

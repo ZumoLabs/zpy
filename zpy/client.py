@@ -83,20 +83,16 @@ def default_saver_func(image_uris, metadata):
 
         if image is not None:
             unzipped_dataset_path = Path(
-                str(uri)
-                .removesuffix(str(image['relative_path']))
+                str(uri).removesuffix(str(image["relative_path"]))
             ).parent
 
             output_path = join(
-                unzipped_dataset_path.parent,
-                unzipped_dataset_path.name + "_formatted"
+                unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
             )
 
             output_file_uri = join(
                 output_path,
-                UUID
-                + "-"
-                + image['name'],
+                UUID + "-" + image["name"],
             )
 
             try:
@@ -107,18 +103,21 @@ def default_saver_func(image_uris, metadata):
 
 
 def format_dataset(path_to_zipped_dataset, saver_func):
-
     def remove_n_extensions(path: Union[str, Path], n: int = 1) -> Path:
         p = Path(path)
         extensions = "".join(p.suffixes[-n:])
         return str(p).removesuffix(extensions)
 
     def filter_metadata(img_group, metadata):
-        id_group = [i['id'] for i in img_group]
+        id_group = [i["id"] for i in img_group]
         return {
             **metadata,
-            'images': {k: v for k, v in dict(metadata['images']).items() if v['id'] in id_group},
-            'annotations': [a for a in metadata['annotations'] if a['image_id'] in id_group]
+            "images": {
+                k: v for k, v in dict(metadata["images"]).items() if v["id"] in id_group
+            },
+            "annotations": [
+                a for a in metadata["annotations"] if a["image_id"] in id_group
+            ],
         }
 
     annotation_file_name = "_annotations.zumo.json"
@@ -131,19 +130,19 @@ def format_dataset(path_to_zipped_dataset, saver_func):
         batch_uri = join(unzipped_output_path, batch)
         annotation_file_uri = join(batch_uri, annotation_file_name)
         metadata = json.load(open(annotation_file_uri))
-        batch_images = list(dict(metadata['images']).values())
+        batch_images = list(dict(metadata["images"]).values())
         # https://www.geeksforgeeks.org/python-identical-consecutive-grouping-in-list/
-        grouped_images = [list(y) for x, y in groupby(
-            batch_images,
-            lambda x: remove_n_extensions(Path(x['relative_path']), n=2)
-        )]
+        grouped_images = [
+            list(y)
+            for x, y in groupby(
+                batch_images,
+                lambda x: remove_n_extensions(Path(x["relative_path"]), n=2),
+            )
+        ]
 
         for img_group in grouped_images:
             filtered_metadata = filter_metadata(img_group, metadata)
-            uri_group = [
-                join(batch_uri, Path(i['relative_path']))
-                for i in img_group
-            ]
+            uri_group = [join(batch_uri, Path(i["relative_path"])) for i in img_group]
             saver_func(uri_group, filtered_metadata)
 
 
@@ -284,7 +283,10 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-    dataset_config: DatasetConfig, num_datapoints: int = 10, materialize: bool = False, saver_func=default_saver_func
+    dataset_config: DatasetConfig,
+    num_datapoints: int = 10,
+    materialize: bool = False,
+    saver_func=default_saver_func,
 ):
     """
     Generate a dataset.
@@ -361,7 +363,9 @@ def generate(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/download/",
                 headers=auth_header(_auth_token),
             ).json()
-            name_slug = f"{str(dataset['name']).replace(' ', '_')}-{dataset['id'][:8]}.zip"
+            name_slug = (
+                f"{str(dataset['name']).replace(' ', '_')}-{dataset['id'][:8]}.zip"
+            )
             # Throw it in /tmp for now I guess
             output_path = join(Path("/tmp"), name_slug)
             existing_files = listdir(Path("/tmp"))
