@@ -6,7 +6,7 @@ The zpy client enables you to generate and download synthetic datasets.
 
 This API is in early access. If you're interested in using it, email us at info@zumolabs.ai.
 
-## Quickstart guide
+## Quick start guide
 
 ### Install
 
@@ -26,7 +26,7 @@ import zpy.client as zpy
 # We'll provide your project id during on-boarding
 project_uuid="..."
 
-# This is your temporary authtoken. It can be found by visiting:
+# This is your temporary auth token. It can be found by visiting:
 #     https://app.zumolabs.ai/settings/auth-token
 #
 # The auth token will expire when you log out of the web app
