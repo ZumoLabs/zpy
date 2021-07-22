@@ -1,8 +1,13 @@
 import json
 from os import listdir
 from os.path import join
+from os.path import splitext
 import shutil
 import re
+import zipfile
+from pathlib import Path
+from typing import Union
+from itertools import groupby
 
 import zpy.client as zpy
 
@@ -35,59 +40,114 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
+    zpy.generate("dumpster_v2.21", dataset_config,
+                 num_datapoints=3, materialize=True)
 
 
-def test_saver_func(images, annotations):
-    """
-    Same output as:
-    https://gist.github.com/steven-zumo/d44b16ae5173931c7943f8f4531cda41
-    """
-    output_path = "/mnt/c/Users/georg/Zumo/Datasets/dumpster_v2.1_formatted"
-    for img in images:
-        # maybe an awkward way to match an image to it's annotation
-        img_annotation = next(
-            (a for a in annotations["annotations"] if a["filename_image"] in img), None
-        )
-        if img_annotation is not None:
-            category_id = str(img_annotation["category_id"])
-            category_label = annotations["categories"][category_id]["name"]
-            # awkward way to access batch name from image uri
-            batch = img.split("/")[-2]
-            # save same result as stevens example
-            output_file_uri = join(
-                output_path,
-                category_label
-                + "-"
-                + batch[:4]
-                + "-"
-                + img_annotation["filename_image"]
-                + ".jpg",
+# def is_image(path: Union[str, Path]) -> bool:
+#     '''
+#     https://www.geeksforgeeks.org/how-to-validate-image-file-extension-using-regular-expression/
+#     https://realpython.com/regex-python/
+#     '''
+#     img_regex = "(?i)([^\\s]+(\\.(jpe?g|png|gif|bmp))$)"
+#     pattern = re.compile(img_regex)
+#     return re.search(pattern, path)
+
+
+def default_saver_func(image_uris, metadata):
+
+    images = list(dict(metadata["images"]).values())
+
+    for uri in image_uris:
+        image = next((i for i in images if i["name"] in uri), None)
+
+        if image is not None:
+            image_id = image['id']
+            image_name = image['name']
+
+            annotation = next(
+                (a for a in metadata["annotations"]
+                 if a["image_id"] == image_id), None
             )
-            shutil.copy(img, output_file_uri)
+
+            batch_name = Path(
+                str(image['output_path'])
+                .removesuffix(str(image['relative_path']))
+            ).name
+
+            unzipped_path = Path(
+                str(uri)
+                .removesuffix(str(image['relative_path']))
+            ).parent
+
+            output_path = join(unzipped_path.parent, join(unzipped_path.name, "_formatted"))
+
+            print(output_path)
+            return
+
+            if annotation is not None:
+                category_id = str(annotation["category_id"])
+                category_label = metadata["categories"][category_id]["name"]
+
+                output_file_uri = join(
+                    default_output_path,
+                    category_label
+                    + "-"
+                    + batch_name[:4]
+                    + "-"
+                    + image_name
+                    + ".jpg",
+                )
+                print(output_file_uri)
+                shutil.copy(image, output_file_uri)
 
 
 def format_dataset(path_to_zipped_dataset, saver_func):
-    '''
-    https://www.geeksforgeeks.org/how-to-validate-image-file-extension-using-regular-expression/
-    https://realpython.com/regex-python/
-    '''
-    regex = "(?i)([^\\s]+(\\.(jpe?g|png|gif|bmp))$)"
-    pattern = re.compile(regex)
+
+    def remove_n_extensions(path: Union[str, Path], n: int = 1) -> Path:
+        p = Path(path)
+        extensions = "".join(p.suffixes[-n:])  # remove n extensions
+        return str(p).removesuffix(extensions)
+
+    def filter_metadata(img_group, metadata):
+        id_group = [i['id'] for i in img_group]
+        return {
+            **metadata,
+            'images': {k: v for k, v in dict(metadata['images']).items() if v['id'] in id_group},
+            'annotations': [a for a in metadata['annotations'] if a['image_id'] in id_group]
+        }
+
     annotation_file_name = "_annotations.zumo.json"
-    for batch in listdir(path_to_zipped_dataset):
-        batch_uri = join(path_to_zipped_dataset, batch)
-        image_names = [str for str in listdir(batch_uri) if re.search(pattern, str)]
-        image_uris = [join(path_to_zipped_dataset, batch, p) for p in image_names]
+
+    unzipped_output_path = remove_n_extensions(path_to_zipped_dataset, n=1)
+    with zipfile.ZipFile(path_to_zipped_dataset, "r") as zip_ref:
+        zip_ref.extractall(unzipped_output_path)
+
+    for batch in listdir(unzipped_output_path):
+        batch_uri = join(unzipped_output_path, batch)
         annotation_file_uri = join(batch_uri, annotation_file_name)
         metadata = json.load(open(annotation_file_uri))
-        saver_func(image_uris, metadata)
+        batch_images = list(dict(metadata['images']).values())
+        # https://www.geeksforgeeks.org/python-identical-consecutive-grouping-in-list/
+        grouped_images = [list(y) for x, y in groupby(
+            batch_images,
+            lambda x: remove_n_extensions(Path(x['relative_path']), n=2)
+        )]
+
+        for img_group in grouped_images:
+            filtered_metadata = filter_metadata(img_group, metadata)
+            uri_group = [
+                join(batch_uri, Path(i['relative_path']))
+                for i in img_group
+            ]
+            saver_func(uri_group, filtered_metadata)
 
 
 def test_generate():
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("can_v7")
-    dataset = zpy.generate(dataset_config, num_datapoints=22, materialize=True, saver_func=test_saver_func)
+    dataset = zpy.generate(dataset_config, num_datapoints=22,
+                           materialize=True, saver_func=default_saver_func)
     print("Printing returned dataset:")
     print(json.dumps(dataset, default=lambda o: o.__dict__, sort_keys=True, indent=4))
 
@@ -120,6 +180,6 @@ if __name__ == "__main__":
     # print("Running test_3:")
     # test_3(**init_kwargs)
     # test format dataset
-    # input_path = "/mnt/c/Users/georg/Zumo/Datasets/dumpster_v2.1"
-    # format_dataset(input_path, test_saver_func)
-    test_generate()
+    input_path = "/mnt/c/Users/georg/Zumo/Datasets/can_v714-8c288ec8.zip"
+    format_dataset(input_path, default_saver_func)
+    # test_generate()
