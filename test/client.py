@@ -8,6 +8,7 @@ import zipfile
 from pathlib import Path
 from typing import Union
 from itertools import groupby
+import uuid
 
 import zpy.client as zpy
 
@@ -80,26 +81,38 @@ def default_saver_func(image_uris, metadata):
                 .removesuffix(str(image['relative_path']))
             ).parent
 
-            output_path = join(unzipped_path.parent, join(unzipped_path.name, "_formatted"))
+            default_output_path = join(
+                unzipped_path.parent,
+                unzipped_path.name + "_formatted"
+            )
 
-            print(output_path)
-            return
+            uuid.uuid4()
 
-            if annotation is not None:
-                category_id = str(annotation["category_id"])
-                category_label = metadata["categories"][category_id]["name"]
+            output_file_uri = join(
+                default_output_path,
+                category_label
+                + "-"
+                + batch_name[:4]
+                + "-"
+                + image_name
+                + ".jpg",
+            )
+            shutil.copy(image, output_file_uri)
 
-                output_file_uri = join(
-                    default_output_path,
-                    category_label
-                    + "-"
-                    + batch_name[:4]
-                    + "-"
-                    + image_name
-                    + ".jpg",
-                )
-                print(output_file_uri)
-                shutil.copy(image, output_file_uri)
+            # if annotation is not None:
+            #     category_id = str(annotation["category_id"])
+            #     category_label = metadata["categories"][category_id]["name"]
+
+            #     output_file_uri = join(
+            #         default_output_path,
+            #         category_label
+            #         + "-"
+            #         + batch_name[:4]
+            #         + "-"
+            #         + image_name
+            #         + ".jpg",
+            #     )
+            #     shutil.copy(image, output_file_uri)
 
 
 def format_dataset(path_to_zipped_dataset, saver_func):
