@@ -74,12 +74,10 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
         with zipfile.ZipFile(path_to_zip, "r") as zip_ref:
             zip_ref.extractall(output_path)
 
-    unzipped_dataset_path = Path(
-        remove_n_extensions(path_to_zipped_dataset, n=1))
+    unzipped_dataset_path = Path(remove_n_extensions(path_to_zipped_dataset, n=1))
     unzip_to_path(path_to_zipped_dataset, unzipped_dataset_path)
     output_dir = join(
-        unzipped_dataset_path.parent,
-        unzipped_dataset_path.name + "_formatted"
+        unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
     )
 
     def preprocess_datapoints(unzipped_dataset_path, datapoint_callback):
@@ -162,16 +160,12 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
                 )
 
     # call the callback if provided
-    if (datapoint_callback is not None):
+    if datapoint_callback is not None:
         preprocess_datapoints(unzipped_dataset_path, datapoint_callback)
 
     # if no callback provided -  use default json accumulator, write out json, rename and copy images to new folder
     else:
-        accumulated_metadata = {
-            "images": [],
-            "annotations": [],
-            "categories": []
-        }
+        accumulated_metadata = {"images": [], "annotations": [], "categories": []}
 
         def default_datapoint_callback(images, annotations, categories):
             # accumulate json
@@ -204,8 +198,7 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
                     os.makedirs(os.path.dirname(output_image_uri))
                     shutil.copy(original_image_uri, output_image_uri)
 
-        preprocess_datapoints(unzipped_dataset_path,
-                              default_datapoint_callback)
+        preprocess_datapoints(unzipped_dataset_path, default_datapoint_callback)
 
         # https://www.geeksforgeeks.org/python-removing-duplicate-dicts-in-list/
         unique_elements_metadata = {
@@ -221,8 +214,6 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
             os.makedirs(os.path.dirname(metadata_output_path))
             with open(metadata_output_path, "w") as outfile:
                 json.dump(unique_elements_metadata, outfile)
-
-
 
 
 def require_zpy_init(func):

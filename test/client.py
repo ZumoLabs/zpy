@@ -42,8 +42,7 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.21", dataset_config,
-                 num_datapoints=3, materialize=True)
+    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
 
 
 def pretty_print(object):
@@ -88,22 +87,20 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
                 list(y)
                 for x, y in groupby(
                     batch_images,
-                    lambda x: remove_n_extensions(
-                        Path(x["relative_path"]), n=2),
+                    lambda x: remove_n_extensions(Path(x["relative_path"]), n=2),
                 )
             ]
 
             # datapoint level
             for images in images_grouped_by_datapoint:
                 DATAPOINT_UUID = str(uuid.uuid4())
-                
+
                 # get [images], [annotations], [categories] per data point
                 image_ids = [i["id"] for i in images]
                 annotations = [
                     a for a in metadata["annotations"] if a["image_id"] in image_ids
                 ]
-                category_ids = list(set([a["category_id"]
-                                    for a in annotations]))
+                category_ids = list(set([a["category_id"] for a in annotations]))
                 categories = [
                     c
                     for c in list(dict(metadata["categories"]).values())
@@ -122,8 +119,7 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
                         str(img["id"]): str(
                             DATAPOINT_UUID
                             + "-"
-                            + str(Path(img["name"]).suffixes[-2]
-                                  ).replace(".", "")
+                            + str(Path(img["name"]).suffixes[-2]).replace(".", "")
                         )
                         for img in images
                     }[str(image_id)]
@@ -197,7 +193,7 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
 
         # https://www.geeksforgeeks.org/python-removing-duplicate-dicts-in-list/
         unique_elements_metadata = {
-            k: [i for n, i in enumerate(v) if i not in v[n + 1:]]
+            k: [i for n, i in enumerate(v) if i not in v[n + 1 :]]
             for k, v in accumulated_metadata.items()
         }
         # write json
