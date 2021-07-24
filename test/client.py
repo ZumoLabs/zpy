@@ -42,8 +42,7 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.21", dataset_config,
-                 num_datapoints=3, materialize=True)
+    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
 
 
 def pretty_print(object):
@@ -133,8 +132,7 @@ def format_dataset(path_to_zipped_dataset, saver_func):
 
         for img_group in grouped_images:
             filtered_metadata = filter_metadata(img_group, metadata)
-            uri_group = [join(batch_uri, Path(i["relative_path"]))
-                         for i in img_group]
+            uri_group = [join(batch_uri, Path(i["relative_path"])) for i in img_group]
             saver_func(uri_group, filtered_metadata)
 
 
@@ -147,20 +145,16 @@ def new_saver_func(image_uris, metadata):
 
         if image is not None:
             unzipped_dataset_path = Path(
-                str(uri)
-                .removesuffix(str(image['relative_path']))
+                str(uri).removesuffix(str(image["relative_path"]))
             ).parent
 
             output_path = join(
-                unzipped_dataset_path.parent,
-                unzipped_dataset_path.name + "_formatted"
+                unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
             )
 
             output_file_uri = join(
                 output_path,
-                UUID
-                + "-"
-                + image['name'],
+                UUID + "-" + image["name"],
             )
 
             try:
@@ -207,47 +201,58 @@ def process_datapoint(unzipped_dataset_path, datapoint_callback):
             DATAPOINT_UUID = str(uuid.uuid4())
             # get [images], [annotations], [categories] per data point
             image_ids = [i["id"] for i in images]
-            annotations = [a for a in metadata["annotations"]
-                           if a["image_id"] in image_ids]
+            annotations = [
+                a for a in metadata["annotations"] if a["image_id"] in image_ids
+            ]
             category_ids = list(set([a["category_id"] for a in annotations]))
-            categories = [c for c in list(
-                dict(metadata["categories"]).values()) if c["id"] in category_ids]
+            categories = [
+                c
+                for c in list(dict(metadata["categories"]).values())
+                if c["id"] in category_ids
+            ]
 
             # functions that take ids and return new ones
             def mutate_category_id(category_id: Union[str, int]) -> str:
-                return {str(c["id"]): (str(c["id"]) + "-" + BATCH_UUID)
-                        for c in categories}[str(category_id)]
+                return {
+                    str(c["id"]): (str(c["id"]) + "-" + BATCH_UUID) for c in categories
+                }[str(category_id)]
 
             def mutate_image_id(image_id: Union[str, int]) -> str:
-                return {str(img['id']): str(DATAPOINT_UUID + "-" + str(Path(img['name']).suffixes[-2]).replace(".", ""))
-                        for img in images}[str(image_id)]
+                return {
+                    str(img["id"]): str(
+                        DATAPOINT_UUID
+                        + "-"
+                        + str(Path(img["name"]).suffixes[-2]).replace(".", "")
+                    )
+                    for img in images
+                }[str(image_id)]
 
             # mutate the arrays
             images_mutated = [
-                {**i,
-                 "output_path": join(batch_uri, Path(i["relative_path"])),
-                 "id": mutate_image_id(i['id']),
-                 } for i in images
+                {
+                    **i,
+                    "output_path": join(batch_uri, Path(i["relative_path"])),
+                    "id": mutate_image_id(i["id"]),
+                }
+                for i in images
             ]
             annotations_mutated = [
-                {**a,
-                 "category_id": mutate_category_id(a["category_id"]),
-                 "image_id": mutate_image_id(a['image_id'])
-                 } for a in annotations
+                {
+                    **a,
+                    "category_id": mutate_category_id(a["category_id"]),
+                    "image_id": mutate_image_id(a["image_id"]),
+                }
+                for a in annotations
             ]
             categories_mutated = [
-                {**c,
-                 "id":  mutate_category_id(c["id"])
-                 } for c in categories
+                {**c, "id": mutate_category_id(c["id"])} for c in categories
             ]
 
             # call the callback with the mutated arrays
-            datapoint_callback(
-                images_mutated, annotations_mutated, categories_mutated)
+            datapoint_callback(images_mutated, annotations_mutated, categories_mutated)
 
 
 def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
-
     def remove_n_extensions(path: Union[str, Path], n: int = 1) -> Path:
         p = Path(path)
         extensions = "".join(p.suffixes[-n:])  # remove n extensions
@@ -274,8 +279,7 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
                 list(y)
                 for x, y in groupby(
                     batch_images,
-                    lambda x: remove_n_extensions(
-                        Path(x["relative_path"]), n=2),
+                    lambda x: remove_n_extensions(Path(x["relative_path"]), n=2),
                 )
             ]
 
@@ -284,60 +288,68 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
                 DATAPOINT_UUID = str(uuid.uuid4())
                 # get [images], [annotations], [categories] per data point
                 image_ids = [i["id"] for i in images]
-                annotations = [a for a in metadata["annotations"]
-                               if a["image_id"] in image_ids]
-                category_ids = list(set([a["category_id"]
-                                    for a in annotations]))
-                categories = [c for c in list(
-                    dict(metadata["categories"]).values()) if c["id"] in category_ids]
+                annotations = [
+                    a for a in metadata["annotations"] if a["image_id"] in image_ids
+                ]
+                category_ids = list(set([a["category_id"] for a in annotations]))
+                categories = [
+                    c
+                    for c in list(dict(metadata["categories"]).values())
+                    if c["id"] in category_ids
+                ]
 
                 # functions that take ids and return new ones
                 def mutate_category_id(category_id: Union[str, int]) -> str:
-                    return {str(c["id"]): (str(c["id"]) + "-" + BATCH_UUID)
-                            for c in categories}[str(category_id)]
+                    return {
+                        str(c["id"]): (str(c["id"]) + "-" + BATCH_UUID)
+                        for c in categories
+                    }[str(category_id)]
 
                 def mutate_image_id(image_id: Union[str, int]) -> str:
-                    return {str(img['id']): str(DATAPOINT_UUID + "-" + str(Path(img['name']).suffixes[-2]).replace(".", ""))
-                            for img in images}[str(image_id)]
+                    return {
+                        str(img["id"]): str(
+                            DATAPOINT_UUID
+                            + "-"
+                            + str(Path(img["name"]).suffixes[-2]).replace(".", "")
+                        )
+                        for img in images
+                    }[str(image_id)]
 
                 # mutate the arrays
                 images_mutated = [
-                    {**i,
-                     "output_path": join(batch_uri, Path(i["relative_path"])),
-                     "id": mutate_image_id(i['id']),
-                     } for i in images
+                    {
+                        **i,
+                        "output_path": join(batch_uri, Path(i["relative_path"])),
+                        "id": mutate_image_id(i["id"]),
+                    }
+                    for i in images
                 ]
                 annotations_mutated = [
-                    {**a,
-                     "category_id": mutate_category_id(a["category_id"]),
-                     "image_id": mutate_image_id(a['image_id'])
-                     } for a in annotations
+                    {
+                        **a,
+                        "category_id": mutate_category_id(a["category_id"]),
+                        "image_id": mutate_image_id(a["image_id"]),
+                    }
+                    for a in annotations
                 ]
                 categories_mutated = [
-                    {**c,
-                     "id":  mutate_category_id(c["id"])
-                     } for c in categories
+                    {**c, "id": mutate_category_id(c["id"])} for c in categories
                 ]
 
                 # call the callback with the mutated arrays
                 datapoint_callback(
-                    images_mutated, annotations_mutated, categories_mutated)
+                    images_mutated, annotations_mutated, categories_mutated
+                )
 
-    unzipped_dataset_path = Path(
-        remove_n_extensions(path_to_zipped_dataset, n=1))
+    unzipped_dataset_path = Path(remove_n_extensions(path_to_zipped_dataset, n=1))
     unzip_to_path(path_to_zipped_dataset, unzipped_dataset_path)
     output_dir = join(
-        unzipped_dataset_path.parent,
-        unzipped_dataset_path.name + "_formatted"
+        unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
     )
 
     # if no callback provided, use default accumulator and write to json file
-    if (datapoint_callback is None):
-        accumulated_metadata = {
-            "images": [],
-            "annotations": [],
-            "categories": []
-        }
+    if datapoint_callback is None:
+        accumulated_metadata = {"images": [], "annotations": [], "categories": []}
 
         def default_datapoint_callback(images, annotations, categories):
             # accumulate json
@@ -346,23 +358,20 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
 
             for image in images:
                 # reference original path to save from
-                original_image_uri = image["output_path"] 
-                
+                original_image_uri = image["output_path"]
+
                 # build new path
-                image_extensions = "".join(Path(image['name']).suffixes[-2:])
-                datapoint_uuid = "-".join(str(image['id']).split("-")[:-1])
+                image_extensions = "".join(Path(image["name"]).suffixes[-2:])
+                datapoint_uuid = "-".join(str(image["id"]).split("-")[:-1])
                 new_image_name = datapoint_uuid + image_extensions
-                output_image_uri = join(
-                    output_dir,
-                    Path(new_image_name)
-                )
+                output_image_uri = join(output_dir, Path(new_image_name))
 
                 # add to accumulator
                 image = {
                     **image,
                     "name": new_image_name,
                     "output_path": output_image_uri,
-                    "relative_path": new_image_name
+                    "relative_path": new_image_name,
                 }
                 accumulated_metadata["images"].append(image)
 
@@ -376,16 +385,18 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
         call_per_datapoint(unzipped_dataset_path, default_datapoint_callback)
 
         # https://www.geeksforgeeks.org/python-removing-duplicate-dicts-in-list/
-        unique_elements_metadata = {k: [i for n, i in enumerate(v) if i not in v[n + 1:]]
-                                    for k, v in accumulated_metadata.items()}
+        unique_elements_metadata = {
+            k: [i for n, i in enumerate(v) if i not in v[n + 1 :]]
+            for k, v in accumulated_metadata.items()
+        }
         # write json
         metadata_output_path = join(output_dir, Path("_annotations.zumo.json"))
         try:
-            with open(metadata_output_path, 'w') as outfile:
+            with open(metadata_output_path, "w") as outfile:
                 json.dump(unique_elements_metadata, outfile)
         except IOError as io_err:
             os.makedirs(os.path.dirname(metadata_output_path))
-            with open(metadata_output_path, 'w') as outfile:
+            with open(metadata_output_path, "w") as outfile:
                 json.dump(unique_elements_metadata, outfile)
 
     # else call the provided callback
