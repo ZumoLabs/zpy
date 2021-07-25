@@ -385,7 +385,6 @@ def scene_information() -> Dict:
         "run_kwargs": run_kwargs,
         "export_date": time.strftime("%m%d%Y_%H%M_%S"),
         "zpy_version": zpy.__version__,
-        "steps": gin.query_parameter("zpy.blender.step.num_steps"),
         "zpy_path": zpy.__file__,
         "blender_version": ".".join([str(_) for _ in bpy.app.version]),
     }
