@@ -178,7 +178,7 @@ def process_and_call_datapoints(
     Args:
         dataset_path (Path): Path to raw, unzipped dataset.
         datapoint_callback (images: list[dict], annotations: list[dict], categories: list[dict]) -> None: User defined function.
-        default_datapoint_callback (images: list[dict], annotations: list[dict], categories: list[dict], metadata: dict) -> None: Default function that accumaltes json and saves images.
+        default_datapoint_callback (images: list[dict], annotations: list[dict], categories: list[dict], metadata: list[dict]) -> None: Default function that accumaltes json and saves images.
     Returns:
         None: No return value.
     """
