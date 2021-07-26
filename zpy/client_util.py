@@ -172,14 +172,14 @@ def process_and_call_datapoints(
     dataset_path, datapoint_callback=None, default_datapoint_callback=None
 ):
     """
-    Updates metadata with new
+    Updates metadata with new ids and image paths.
     Calls datapoint_callback or default_datapoint_callback once per datapoint.
     Args:
         dataset_path (Path): Path to raw, unzipped dataset.
         datapoint_callback (images: list(dict), annotations: list(dict), categories: list(dict)) -> any: User defined function.
-        default_datapoint_callback (images: list(dict), annotations: list(dict), categories: list(dict), metadata: dict) -> any: Default function that accumaltes json and saves images..
+        default_datapoint_callback (images: list(dict), annotations: list(dict), categories: list(dict), metadata: dict) -> any: Default function that accumaltes json and saves images.
     Returns:
-        Path: Extracted folder path
+        None: No return value.
     """
     # batch level - sum category counts
     category_count_sums = {}
