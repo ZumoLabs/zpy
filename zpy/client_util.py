@@ -154,6 +154,7 @@ def remove_n_extensions(path: Union[str, Path], n: int) -> Path:
     extensions = "".join(p.suffixes[-n:])  # remove n extensions
     return str(p).removesuffix(extensions)
 
+
 def extract_zip(path_to_zip: Path) -> Path:
     """
     Extracts a .zip to a new adjacent folder by the same name.
