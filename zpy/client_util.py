@@ -106,8 +106,7 @@ def to_query_param_value(config):
     for django_field_traversal, django_field_value in config.items():
         # Ignore fields set as None. They weren't specifically set or asked for.
         if django_field_value is not None:
-            query_param_values.append(
-                f"{django_field_traversal}:{django_field_value}")
+            query_param_values.append(f"{django_field_traversal}:{django_field_value}")
     return ",".join(query_param_values)
 
 
@@ -141,7 +140,7 @@ def is_done(state: str):
 
 def unique_list(list: list) -> list:
     """Removes non unique items from a list. Works for objects, unlike set()"""
-    return [i for n, i in enumerate(list) if i not in list[n + 1:]]
+    return [i for n, i in enumerate(list) if i not in list[n + 1 :]]
 
 
 def list_from_dict(d: dict):
@@ -170,16 +169,17 @@ def extract_zip(path_to_zip: Path) -> Path:
     Returns:
         Path: Extracted folder path
     """
-    unzipped_path = Path(
-        remove_n_extensions(path_to_zip, n=1))
+    unzipped_path = Path(remove_n_extensions(path_to_zip, n=1))
     with zipfile.ZipFile(path_to_zip, "r") as zip_ref:
         zip_ref.extractall(unzipped_path)
     return unzipped_path
 
 
-def process_and_call_datapoints(dataset_path, datapoint_callback=None, default_datapoint_callback=None):
+def process_and_call_datapoints(
+    dataset_path, datapoint_callback=None, default_datapoint_callback=None
+):
     """
-    Updates metadata with new 
+    Updates metadata with new
     Calls datapoint_callback or default_datapoint_callback once per datapoint.
     Args:
         dataset_path (Path): Path to raw, unzipped dataset.
@@ -196,8 +196,9 @@ def process_and_call_datapoints(dataset_path, datapoint_callback=None, default_d
         metadata = json.load(open(annotation_file_uri))
         batch_categories = list_from_dict(metadata["categories"])
         for c in batch_categories:
-            category_count_sums[c["id"]] = category_count_sums.get(
-                c["id"], 0) + c["count"]
+            category_count_sums[c["id"]] = (
+                category_count_sums.get(c["id"], 0) + c["count"]
+            )
 
     # batch level - group images by satapoint
     for batch in listdir(dataset_path):
@@ -210,8 +211,7 @@ def process_and_call_datapoints(dataset_path, datapoint_callback=None, default_d
             list(y)
             for x, y in groupby(
                 batch_images,
-                lambda x: remove_n_extensions(
-                    Path(x["relative_path"]), n=2),
+                lambda x: remove_n_extensions(Path(x["relative_path"]), n=2),
             )
         ]
 
@@ -223,8 +223,7 @@ def process_and_call_datapoints(dataset_path, datapoint_callback=None, default_d
             annotations = [
                 a for a in metadata["annotations"] if a["image_id"] in image_ids
             ]
-            category_ids = unique_list([a["category_id"]
-                                        for a in annotations])
+            category_ids = unique_list([a["category_id"] for a in annotations])
             categories = [
                 c
                 for c in list_from_dict(metadata["categories"])
@@ -236,8 +235,7 @@ def process_and_call_datapoints(dataset_path, datapoint_callback=None, default_d
                     str(img["id"]): str(
                         DATAPOINT_UUID
                         + "-"
-                        + str(Path(img["name"]).suffixes[-2]
-                              ).replace(".", "")
+                        + str(Path(img["name"]).suffixes[-2]).replace(".", "")
                     )
                     for img in images
                 }
@@ -260,23 +258,23 @@ def process_and_call_datapoints(dataset_path, datapoint_callback=None, default_d
                 for a in annotations
             ]
             categories_mutated = [
-                {**c,
-                    "count": category_count_sums[c["id"]]
-                 } for c in categories
+                {**c, "count": category_count_sums[c["id"]]} for c in categories
             ]
-            metadata_mutated = {
-                **metadata["metadata"],
-                "save_path": batch_uri
-            }
+            metadata_mutated = {**metadata["metadata"], "save_path": batch_uri}
 
             # call the callback with the mutated arrays - default callback includes metadata
-            if (default_datapoint_callback is not None):
+            if default_datapoint_callback is not None:
                 default_datapoint_callback(
-                    images_mutated, annotations_mutated, categories_mutated, metadata_mutated
+                    images_mutated,
+                    annotations_mutated,
+                    categories_mutated,
+                    metadata_mutated,
                 )
-            elif (datapoint_callback is not None):
+            elif datapoint_callback is not None:
                 datapoint_callback(
-                    images_mutated, annotations_mutated, categories_mutated,
+                    images_mutated,
+                    annotations_mutated,
+                    categories_mutated,
                 )
 
 
@@ -291,19 +289,16 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None):
     Returns:
         None: No return value.
     """
-    if (datapoint_callback is not None):
-        process_and_call_datapoints(
-            dataset_path, datapoint_callback=datapoint_callback)
+    if datapoint_callback is not None:
+        process_and_call_datapoints(dataset_path, datapoint_callback=datapoint_callback)
     else:
-        output_dir = join(
-            dataset_path.parent, dataset_path.name + "_formatted"
-        )
+        output_dir = join(dataset_path.parent, dataset_path.name + "_formatted")
 
         accumulated_metadata = {
             "metadata": [],
             "images": [],
             "annotations": [],
-            "categories": []
+            "categories": [],
         }
 
         def default_datapoint_callback(images, annotations, categories, metadata):
@@ -338,18 +333,20 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None):
                     os.makedirs(os.path.dirname(output_image_uri))
                     shutil.copy(original_image_uri, output_image_uri)
 
-        process_and_call_datapoints(dataset_path,
-                                    default_datapoint_callback=default_datapoint_callback)
+        process_and_call_datapoints(
+            dataset_path, default_datapoint_callback=default_datapoint_callback
+        )
 
         # https://www.geeksforgeeks.org/python-removing-duplicate-dicts-in-list/
         unique_metadata = {
-            k: (unique_list(v) if (isinstance(v, list)) else v) for k, v in accumulated_metadata.items()
+            k: (unique_list(v) if (isinstance(v, list)) else v)
+            for k, v in accumulated_metadata.items()
         }
 
         # set "metadata" as the first one and update its output path
         unique_metadata["metadata"] = {
             **unique_metadata["metadata"][0],
-            "save_path": output_dir
+            "save_path": output_dir,
         }
 
         # write json

@@ -1,10 +1,7 @@
 import json
 
 import zpy.client as zpy
-from zpy.client_util import (
-    extract_zip,
-    format_dataset
-)
+from zpy.client_util import extract_zip, format_dataset
 
 
 def test_1(**init_kwargs):
@@ -35,8 +32,7 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.21", dataset_config,
-                 num_datapoints=3, materialize=True)
+    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
 
 
 def pretty_print(object):
