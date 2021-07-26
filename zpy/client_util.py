@@ -144,7 +144,7 @@ def unique_list(list: list) -> list:
     return [i for n, i in enumerate(list) if i not in list[n + 1:]]
 
 
-def list_from_dict(d: dict):
+def dict_to_list(d: dict) -> list:
     """Converts dict to list"""
     return list(dict(d).values())
 
@@ -170,14 +170,12 @@ def extract_zip(path_to_zip: Path) -> Path:
     return unzipped_path
 
 
-def group_metadata_by_datapoint(
-    dataset_path,
-):
+def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
     """
-    Creates metadata updated with new ids and accurate paths.
-    Returns a list of metadata dicts, each relevant to a single datapoint.
+    Updates metadata with new ids and accurate image paths.
+    Returns a list of dicts, each item containing metadata relevant to a single datapoint.
     Args:
-        dataset_path (Path): Path to raw, unzipped dataset.
+        dataset_path (Path): Path to unzipped dataset.
     Returns:
         list[
             dict[
@@ -187,7 +185,7 @@ def group_metadata_by_datapoint(
                 annotations: list[dict],
 
             ]
-        ]: Returns a list of metadata dicts, each relevant to a single datapoint.
+        ]: Returns a list of dicts, each item containing metadata relevant to a single datapoint.
     """
 
     metadata_dicts = []
@@ -197,7 +195,7 @@ def group_metadata_by_datapoint(
         batch_uri = join(dataset_path, batch)
         annotation_file_uri = join(batch_uri, "_annotations.zumo.json")
         metadata = json.load(open(annotation_file_uri))
-        batch_categories = list_from_dict(metadata["categories"])
+        batch_categories = dict_to_list(metadata["categories"])
         for c in batch_categories:
             category_count_sums[c["id"]] = (
                 category_count_sums.get(c["id"], 0) + c["count"]
@@ -229,7 +227,7 @@ def group_metadata_by_datapoint(
             category_ids = unique_list([a["category_id"] for a in annotations])
             categories = [
                 c
-                for c in list_from_dict(metadata["categories"])
+                for c in dict_to_list(metadata["categories"])
                 if c["id"] in category_ids
             ]
 
@@ -275,13 +273,13 @@ def group_metadata_by_datapoint(
     return metadata_dicts
 
 
-def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None):
+def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> None:
     """
-    Updates dataset metadata with new ids and accurate image paths.
+    Updates metadata with new ids and accurate image paths.
     If a datapoint_callback is provided, it is called once per datapoint with the updated metadata.
-    Otherwise it defaults to writing an updated _annotations.zumo.json, along with all images, to a new adjacent folder.
+    Otherwise it defaults to writing out an updated _annotations.zumo.json, along with all images, to a new adjacent folder.
     Args:
-        dataset_path (str): Path to raw unzipped dataset.
+        dataset_path (str): Path to unzipped dataset.
         datapoint_callback (images: list[dict], annotations: list[dict], categories: list[dict]) -> None: User defined function.
     Returns:
         None: No return value.
