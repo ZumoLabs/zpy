@@ -177,8 +177,8 @@ def process_and_call_datapoints(
     Calls datapoint_callback or default_datapoint_callback once per datapoint.
     Args:
         dataset_path (Path): Path to raw, unzipped dataset.
-        datapoint_callback (images: list(dict), annotations: list(dict), categories: list(dict)) -> any: User defined function.
-        default_datapoint_callback (images: list(dict), annotations: list(dict), categories: list(dict), metadata: dict) -> any: Default function that accumaltes json and saves images.
+        datapoint_callback (images: list[dict], annotations: list[dict], categories: list[dict]) -> None: User defined function.
+        default_datapoint_callback (images: list[dict], annotations: list[dict], categories: list[dict], metadata: dict) -> None: Default function that accumaltes json and saves images.
     Returns:
         None: No return value.
     """
@@ -279,7 +279,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None):
     Otherwise it defaults to writing an updated _annotations.zumo.json, along with all images, to a new adjacent folder.
     Args:
         dataset_path (str): Path to raw unzipped dataset.
-        datapoint_callback (images: list(dict), annotations: list(dict), categories: list(dict)) -> any: User defined function.
+        datapoint_callback (images: list[dict], annotations: list[dict], categories: list[dict]) -> None: User defined function.
     Returns:
         None: No return value.
     """
