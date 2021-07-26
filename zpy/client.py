@@ -62,8 +62,7 @@ def require_zpy_init(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if None in [_project, _auth_token, _base_url]:
-            raise RuntimeError(
-                "Project and auth_token must be set via zpy.init()")
+            raise RuntimeError("Project and auth_token must be set via zpy.init()")
         return func(*args, **kwargs)
 
     return wrapper
