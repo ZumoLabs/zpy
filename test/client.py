@@ -1,17 +1,10 @@
 import json
-from os import listdir
-from os.path import join
-from os.path import splitext
-import os
-import shutil
-import re
-import zipfile
-from pathlib import Path
-from typing import Union
-from itertools import groupby
-import uuid
 
 import zpy.client as zpy
+from zpy.client_util import (
+    extract_zip,
+    format_dataset
+)
 
 
 def test_1(**init_kwargs):
@@ -42,7 +35,8 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
+    zpy.generate("dumpster_v2.21", dataset_config,
+                 num_datapoints=3, materialize=True)
 
 
 def pretty_print(object):
@@ -67,7 +61,7 @@ def test_generate(**init_kwargs):
 
     dataset = zpy.generate(
         dataset_config,
-        num_datapoints=36,
+        num_datapoints=37,
         materialize=True,
         # datapoint_callback=datapoint_callback
     )
@@ -102,7 +96,13 @@ if __name__ == "__main__":
     # test_3(**init_kwargs)
     # test format dataset
 
+    def datapoint_callback(images, annotations, categories):
+        pretty_print(images)
+        pretty_print(annotations)
+        pretty_print(categories)
+
     input_path = "/mnt/c/Users/georg/Zumo/Datasets/can_v714-8c288ec8.zip"
-    zpy.process_zipped_dataset(input_path)
+    dataset_path = extract_zip(input_path)
+    format_dataset(dataset_path)
 
     # test_generate(**init_kwargs)

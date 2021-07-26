@@ -5,25 +5,18 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Union
-import re
-
 import hashlib
 from os import listdir
 from os.path import join
-import os
-import shutil
-import zipfile
 from pathlib import Path
 from typing import Union
-from itertools import groupby
-import uuid
-
 import requests
 from pydash import set_, unset, is_empty
 
 from cli.utils import download_url
 from zpy.client_util import (
     add_newline,
+    extract_zip,
     get,
     post,
     to_query_param_value,
@@ -31,6 +24,7 @@ from zpy.client_util import (
     auth_header,
     clear_last_print,
     is_done,
+    format_dataset
 )
 
 _auth_token: str = ""
@@ -63,204 +57,6 @@ def init(
 IMAGES_PER_SAMPLE = 2  # for the iseg and rbg
 # DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
 DATASET_OUTPUT_PATH = Path("/mnt/c/Users/georg/Zumo/Datasets/Materialized")
-
-
-def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
-    """
-    - Unzips dataset
-    - Edits a copy of _annotations.zumo.json with UUIDs and new file paths
-    if datapoint_callback is passed:
-        - Calls datapoint_callback(images: [{}], annotations: [{}], categories: [{}]) once per datapoint.
-    else:
-        - Edits _annotations.zumo.json again to reflect output path
-        - Accumulates a new _annotations.zumo.json and saves it to output path
-        - Copies every image to output path
-    """
-    def remove_n_extensions(path: Union[str, Path], n: int = 1) -> Path:
-        p = Path(path)
-        extensions = "".join(p.suffixes[-n:])  # remove n extensions
-        return str(p).removesuffix(extensions)
-
-    def unzip_to_path(path_to_zip: Union[str, Path], output_path: Union[str, Path]):
-        with zipfile.ZipFile(path_to_zip, "r") as zip_ref:
-            zip_ref.extractall(output_path)
-
-    unzipped_dataset_path = Path(remove_n_extensions(path_to_zipped_dataset, n=1))
-    unzip_to_path(path_to_zipped_dataset, unzipped_dataset_path)
-    output_dir = join(
-        unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
-    )
-
-    def preprocess_and_call_datapoints(unzipped_dataset_path, datapoint_callback, is_default: bool):
-        """
-        Calls datapoint_callback(images: [{}], annotations: [{}], categories: [{}]) once per datapoint.
-        """
-        # batch level - sum category counts
-        category_count_sums = {}
-        for batch in listdir(unzipped_dataset_path):
-            batch_uri = join(unzipped_dataset_path, batch)
-            annotation_file_uri = join(batch_uri, "_annotations.zumo.json")
-            metadata = json.load(open(annotation_file_uri))
-            batch_categories = list(dict(metadata["categories"]).values())
-            for c in batch_categories:
-                category_count_sums[c["id"]] = category_count_sums.get(
-                    c["id"], 0) + c["count"]
-
-        # batch level - group images by satapoint
-        for batch in listdir(unzipped_dataset_path):
-            batch_uri = join(unzipped_dataset_path, batch)
-            annotation_file_uri = join(batch_uri, "_annotations.zumo.json")
-            metadata = json.load(open(annotation_file_uri))
-            batch_images = list(dict(metadata["images"]).values())
-            # https://www.geeksforgeeks.org/python-identical-consecutive-grouping-in-list/
-            images_grouped_by_datapoint = [
-                list(y)
-                for x, y in groupby(
-                    batch_images,
-                    lambda x: remove_n_extensions(
-                        Path(x["relative_path"]), n=2),
-                )
-            ]
-
-            # datapoint level
-            for images in images_grouped_by_datapoint:
-                DATAPOINT_UUID = str(uuid.uuid4())
-                # get [images], [annotations], [categories] per data point
-                image_ids = [i["id"] for i in images]
-                annotations = [
-                    a for a in metadata["annotations"] if a["image_id"] in image_ids
-                ]
-                category_ids = list(set([a["category_id"]
-                                    for a in annotations]))
-                categories = [
-                    c
-                    for c in list(dict(metadata["categories"]).values())
-                    if c["id"] in category_ids
-                ]
-
-                def mutate_image_id(image_id: Union[str, int]) -> str:
-                    return {
-                        str(img["id"]): str(
-                            DATAPOINT_UUID
-                            + "-"
-                            + str(Path(img["name"]).suffixes[-2]
-                                  ).replace(".", "")
-                        )
-                        for img in images
-                    }[str(image_id)]
-
-                # mutate the arrays
-                images_mutated = [
-                    {
-                        **i,
-                        "output_path": join(batch_uri, Path(i["relative_path"])),
-                        "id": mutate_image_id(i["id"]),
-                    }
-                    for i in images
-                ]
-                annotations_mutated = [
-                    {
-                        **a,
-                        "image_id": mutate_image_id(a["image_id"]),
-                    }
-                    for a in annotations
-                ]
-                categories_mutated = [
-                    {**c,
-                     "count": category_count_sums[c["id"]]
-                     } for c in categories
-                ]
-                metadata_mutated = {
-                    **metadata["metadata"],
-                    "save_path": batch_uri
-                }
-
-                # call the callback with the mutated arrays - default callback includes metadata
-                if (is_default):
-                    datapoint_callback(
-                        images_mutated, annotations_mutated, categories_mutated, metadata_mutated
-                    )
-                else:
-                    datapoint_callback(
-                        images_mutated, annotations_mutated, categories_mutated,
-                    )
-
-    # call the callback if provided
-    if (datapoint_callback is not None):
-        preprocess_and_call_datapoints(unzipped_dataset_path,
-                                       datapoint_callback, is_default=False)
-
-    # if no callback provided -  use default json accumulator, write out json, rename and copy images to new folder
-    else:
-        def default_datapoint_callback(images, annotations, categories, metadata):
-            # accumulate json
-            accumulated_metadata["metadata"].append(metadata)
-            accumulated_metadata["annotations"].extend(annotations)
-            accumulated_metadata["categories"].extend(categories)
-
-            for image in images:
-                # reference original path to save from
-                original_image_uri = image["output_path"]
-
-                # build new path
-                image_extensions = "".join(Path(image["name"]).suffixes[-2:])
-                datapoint_uuid = "-".join(str(image["id"]).split("-")[:-1])
-                new_image_name = datapoint_uuid + image_extensions
-                output_image_uri = join(output_dir, Path(new_image_name))
-
-                # add to accumulator
-                image = {
-                    **image,
-                    "name": new_image_name,
-                    "output_path": output_image_uri,
-                    "relative_path": new_image_name,
-                }
-                accumulated_metadata["images"].append(image)
-
-                # copy image to new folder
-                try:
-                    shutil.copy(original_image_uri, output_image_uri)
-                except IOError as io_err:
-                    os.makedirs(os.path.dirname(output_image_uri))
-                    shutil.copy(original_image_uri, output_image_uri)
-
-        '''
-        From here below is what the client implementation would look like, but
-        replacing preprocess_and_call_datapoints with zpy.generate(..., datapoint_callback)
-        '''
-
-        accumulated_metadata = {
-            "metadata": [],
-            "images": [],
-            "annotations": [],
-            "categories": []
-        }
-
-        preprocess_and_call_datapoints(unzipped_dataset_path,
-                                       default_datapoint_callback, is_default=True)
-
-        # https://www.geeksforgeeks.org/python-removing-duplicate-dicts-in-list/
-        unique_elements_metadata = {
-            k: [i for n, i in enumerate(v) if i not in v[n + 1:]]
-            for k, v in accumulated_metadata.items()
-        }
-
-        # set "metadata" as the first one and update its output path
-        unique_elements_metadata["metadata"] = {
-            **unique_elements_metadata["metadata"][0],
-            "save_path": output_dir
-        }
-
-        # write json
-        metadata_output_path = join(output_dir, Path("_annotations.zumo.json"))
-        try:
-            with open(metadata_output_path, "w") as outfile:
-                json.dump(unique_elements_metadata, outfile)
-        except IOError as io_err:
-            os.makedirs(os.path.dirname(metadata_output_path))
-            with open(metadata_output_path, "w") as outfile:
-                json.dump(unique_elements_metadata, outfile)
-
 
 def require_zpy_init(func):
     @functools.wraps(func)
@@ -502,7 +298,8 @@ def generate(
                 )
                 download_url(
                     dataset_download_res["redirect_link"], output_path)
-                process_zipped_dataset(output_path, datapoint_callback)
+                unzipped_dataset_path = extract_zip(output_path)
+                format_dataset(unzipped_dataset_path, datapoint_callback)
                 print("Done.")
             else:
                 print(
