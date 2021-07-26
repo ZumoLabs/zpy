@@ -85,12 +85,10 @@ def process_zipped_dataset(path_to_zipped_dataset, datapoint_callback=None):
         with zipfile.ZipFile(path_to_zip, "r") as zip_ref:
             zip_ref.extractall(output_path)
 
-    unzipped_dataset_path = Path(
-        remove_n_extensions(path_to_zipped_dataset, n=1))
+    unzipped_dataset_path = Path(remove_n_extensions(path_to_zipped_dataset, n=1))
     unzip_to_path(path_to_zipped_dataset, unzipped_dataset_path)
     output_dir = join(
-        unzipped_dataset_path.parent,
-        unzipped_dataset_path.name + "_formatted"
+        unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
     )
 
     def preprocess_and_call_datapoints(unzipped_dataset_path, datapoint_callback, is_default: bool):
