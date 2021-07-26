@@ -24,7 +24,7 @@ from zpy.client_util import (
     auth_header,
     clear_last_print,
     is_done,
-    format_dataset
+    format_dataset,
 )
 
 _auth_token: str = ""
@@ -57,6 +57,7 @@ def init(
 IMAGES_PER_SAMPLE = 2  # for the iseg and rbg
 # DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
 DATASET_OUTPUT_PATH = Path("/mnt/c/Users/georg/Zumo/Datasets/Materialized")
+
 
 def require_zpy_init(func):
     @functools.wraps(func)
@@ -295,8 +296,7 @@ def generate(
                 print(
                     f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
                 )
-                download_url(
-                    dataset_download_res["redirect_link"], output_path)
+                download_url(dataset_download_res["redirect_link"], output_path)
                 unzipped_dataset_path = extract_zip(output_path)
                 format_dataset(unzipped_dataset_path, datapoint_callback)
                 print("Done.")
