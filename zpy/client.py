@@ -5,7 +5,6 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Union
-import hashlib
 from os import listdir
 from os.path import join
 from pathlib import Path
@@ -25,6 +24,7 @@ from zpy.client_util import (
     clear_last_print,
     is_done,
     format_dataset,
+    hash
 )
 
 _auth_token: str = ""
@@ -55,8 +55,7 @@ def init(
 
 
 IMAGES_PER_SAMPLE = 2  # for the iseg and rbg
-# DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
-DATASET_OUTPUT_PATH = Path("/mnt/c/Users/georg/Zumo/Datasets/Materialized")
+DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
 
 
 def require_zpy_init(func):
@@ -117,18 +116,9 @@ class DatasetConfig:
 
     @property
     def hash(self):
-        """Return a hash of the config.
-        https://www.doc.ic.ac.uk/~nuric/coding/how-to-hash-a-dictionary-in-python.html
-        """
-        config_json = json.dumps(
-            self._config,
-            sort_keys=True,
-        )
-        dhash = hashlib.md5()
-        encoded = config_json.encode()
-        dhash.update(encoded)
-        config_hash = dhash.hexdigest()
-        return config_hash
+        """Return a hash of the config."""
+        return hash(self._config)
+
 
     def set(self, path: str, value: any):
         """Set a value for a configurable parameter.
@@ -274,7 +264,7 @@ def generate(
                 )
                 time.sleep(1)
             clear_last_print()
-            print("\r{}".format("Checking dataset..."))
+            print("\r{}".format("Checking dataset...", end=""))
             dataset = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/",
                 headers=auth_header(_auth_token),

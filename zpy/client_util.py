@@ -17,6 +17,8 @@ import zipfile
 from pathlib import Path
 from itertools import groupby
 import uuid
+import hashlib
+from pydash import uniq
 
 
 def add_newline(func):
@@ -106,7 +108,8 @@ def to_query_param_value(config):
     for django_field_traversal, django_field_value in config.items():
         # Ignore fields set as None. They weren't specifically set or asked for.
         if django_field_value is not None:
-            query_param_values.append(f"{django_field_traversal}:{django_field_value}")
+            query_param_values.append(
+                f"{django_field_traversal}:{django_field_value}")
     return ",".join(query_param_values)
 
 
@@ -138,11 +141,6 @@ def is_done(state: str):
     return state in ["READY", "CANCELLED", "PACKAGING_FAILED", "GENERATING_FAILED"]
 
 
-def unique_list(list: list) -> list:
-    """Removes non unique items from a list. Works for objects, unlike set()"""
-    return [i for n, i in enumerate(list) if i not in list[n + 1 :]]
-
-
 def dict_to_list(d: dict) -> list:
     """Converts dict to list"""
     return list(dict(d).values())
@@ -153,6 +151,21 @@ def remove_n_extensions(path: Union[str, Path], n: int) -> Path:
     p = Path(path)
     extensions = "".join(p.suffixes[-n:])  # remove n extensions
     return str(p).removesuffix(extensions)
+
+
+def hash(data):
+    """Return a deterministic hash of any json serializable data.
+    https://www.doc.ic.ac.uk/~nuric/coding/how-to-hash-a-dictionary-in-python.html
+    """
+    dict_json = json.dumps(
+        data,
+        sort_keys=True,
+    )
+    dhash = hashlib.md5()
+    encoded = dict_json.encode()
+    dhash.update(encoded)
+    config_hash = dhash.hexdigest()
+    return config_hash
 
 
 def extract_zip(path_to_zip: Path) -> Path:
@@ -187,24 +200,21 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
         ]: Returns a list of dicts, each item containing metadata relevant to a single datapoint.
     """
 
-    metadata_dicts = []
-    # batch level - sum category counts
+    datapoint_list = []
     category_count_sums = {}
-    for batch in listdir(dataset_path):
-        batch_uri = join(dataset_path, batch)
-        annotation_file_uri = join(batch_uri, "_annotations.zumo.json")
-        metadata = json.load(open(annotation_file_uri))
-        batch_categories = dict_to_list(metadata["categories"])
-        for c in batch_categories:
-            category_count_sums[c["id"]] = (
-                category_count_sums.get(c["id"], 0) + c["count"]
-            )
 
     # batch level - group images by satapoint
     for batch in listdir(dataset_path):
         batch_uri = join(dataset_path, batch)
         annotation_file_uri = join(batch_uri, "_annotations.zumo.json")
         metadata = json.load(open(annotation_file_uri))
+
+        batch_categories = dict_to_list(metadata["categories"])
+        for c in batch_categories:
+            category_count_sums[c["id"]] = (
+                category_count_sums.get(c["id"], 0) + c["count"]
+            )
+
         batch_images = list(dict(metadata["images"]).values())
         # https://www.geeksforgeeks.org/python-identical-consecutive-grouping-in-list/
         images_grouped_by_datapoint = [
@@ -223,37 +233,35 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
             annotations = [
                 a for a in metadata["annotations"] if a["image_id"] in image_ids
             ]
-            category_ids = unique_list([a["category_id"] for a in annotations])
+            category_ids = uniq([a["category_id"] for a in annotations])
             categories = [
                 c
                 for c in dict_to_list(metadata["categories"])
                 if c["id"] in category_ids
             ]
 
-            def mutate_image_id(image_id: Union[str, int]) -> str:
-                id_map = {
-                    str(img["id"]): str(
-                        DATAPOINT_UUID
-                        + "-"
-                        + str(Path(img["name"]).suffixes[-2]).replace(".", "")
-                    )
-                    for img in images
-                }
-                return id_map[str(image_id)]
+            image_new_id_map = {
+                img["id"]: str(
+                    DATAPOINT_UUID
+                    + "-"
+                    + str(Path(img["name"]).suffixes[-2]).replace(".", "")
+                )
+                for img in images
+            }
 
             # mutate the arrays
             images_mutated = [
                 {
                     **i,
                     "output_path": join(batch_uri, Path(i["relative_path"])),
-                    "id": mutate_image_id(i["id"]),
+                    "id": image_new_id_map[i["id"]],
                 }
                 for i in images
             ]
             annotations_mutated = [
                 {
                     **a,
-                    "image_id": mutate_image_id(a["image_id"]),
+                    "image_id": image_new_id_map[a["image_id"]],
                 }
                 for a in annotations
             ]
@@ -262,7 +270,7 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
             ]
             metadata_mutated = {**metadata["metadata"], "save_path": batch_uri}
 
-            metadata_dicts.append(
+            datapoint_list.append(
                 {
                     "metadata": metadata_mutated,
                     "categories": categories_mutated,
@@ -271,7 +279,16 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
                 }
             )
 
-    return metadata_dicts
+    def update_category_counts(datapoints):
+        return [{
+                **d,
+                "categories": [{
+                    **c,
+                    "count": category_count_sums[c["id"]]
+                } for c in d["categories"]]
+                } for d in datapoints]
+
+    return update_category_counts(datapoint_list)
 
 
 def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> None:
@@ -288,25 +305,27 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
     grouped_metadata = group_metadata_by_datapoint(dataset_path)
 
     if datapoint_callback is not None:
-        for m in grouped_metadata:
-            datapoint_callback(m["images"], m["annotations"], m["categories"])
+        for datapoint in grouped_metadata:
+            datapoint_callback(
+                datapoint["images"], datapoint["annotations"], datapoint["categories"])
     else:
-        output_dir = join(dataset_path.parent, dataset_path.name + "_formatted")
+        output_dir = join(dataset_path.parent,
+                          dataset_path.name + "_formatted")
 
         accumulated_metadata = {
-            "metadata": [],
+            "metadata": {},
             "categories": [],
             "images": [],
             "annotations": [],
         }
 
-        def default_datapoint_callback(images, annotations, categories, metadata):
-            # accumulate json
-            accumulated_metadata["metadata"].append(metadata)
-            accumulated_metadata["annotations"].extend(annotations)
-            accumulated_metadata["categories"].extend(categories)
+        for datapoint in grouped_metadata:
+            accumulated_metadata["metadata"] = datapoint["metadata"]
+            accumulated_metadata["categories"].extend(datapoint["categories"])
+            accumulated_metadata["annotations"].extend(
+                datapoint["annotations"])
 
-            for image in images:
+            for image in datapoint["images"]:
                 # reference original path to save from
                 original_image_uri = image["output_path"]
 
@@ -332,21 +351,14 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
                     os.makedirs(os.path.dirname(output_image_uri))
                     shutil.copy(original_image_uri, output_image_uri)
 
-        for m in grouped_metadata:
-            default_datapoint_callback(
-                m["images"], m["annotations"], m["categories"], m["metadata"]
-            )
-
-        # https://www.geeksforgeeks.org/python-removing-duplicate-dicts-in-list/
         unique_metadata = {
-            k: (unique_list(v) if (isinstance(v, list)) else v)
-            for k, v in accumulated_metadata.items()
-        }
-
-        # set "metadata" as the first one and update its output path
-        unique_metadata["metadata"] = {
-            **unique_metadata["metadata"][0],
-            "save_path": output_dir,
+            "metadata": {
+                **accumulated_metadata["metadata"],
+                "save_path": output_dir,
+            },
+            "categories": uniq(accumulated_metadata["categories"]),
+            "images": uniq(accumulated_metadata["images"]),
+            "annotations": uniq(accumulated_metadata["annotations"])
         }
 
         # write json

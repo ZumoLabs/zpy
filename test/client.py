@@ -1,7 +1,13 @@
 import json
 
 import zpy.client as zpy
-from zpy.client_util import extract_zip, format_dataset
+from zpy.client_util import extract_zip, format_dataset, hash
+
+import unittest
+from zpy.client_util import remove_n_extensions
+from numpy import array_equal
+
+from zpy.client import DatasetConfig
 
 
 def test_1(**init_kwargs):
@@ -32,7 +38,8 @@ def test_3(**init_kwargs):
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
+    zpy.generate("dumpster_v2.21", dataset_config,
+                 num_datapoints=3, materialize=True)
 
 
 def pretty_print(object):
@@ -62,8 +69,27 @@ def test_generate(**init_kwargs):
         # datapoint_callback=datapoint_callback
     )
 
+# https://docs.python.org/3/library/unittest.html#module-unittest
+class TestClientUtilMethods(unittest.TestCase):
+
+    def test_remove_n_extensions(self):
+        self.assertTrue("/foo" == remove_n_extensions("/foo.rgb.png", 2))
+        self.assertTrue("/images" == remove_n_extensions("/images.foo.rgb.png", 3))
+        self.assertTrue("/images.rgb" == remove_n_extensions("/images.rgb.png", 1))
+        self.assertTrue("/foo/images" == remove_n_extensions("/foo/images.rgb.png", 9001))
+
+    def test_hash(self):
+        dictA = hash({"foo": 1, "bar": 2})
+        dictB = hash({"bar": 2, "foo": 1})
+        self.assertEqual(hash(dictA), hash(dictB))
+        self.assertEqual(hash(True), hash(True))
+        self.assertNotEqual(hash(True), hash(False))
+        self.assertNotEqual(hash(1), hash(2))
+        self.assertNotEqual(hash([1]), hash([1,1]))
+
 
 if __name__ == "__main__":
+    # unittest.main()
     # init_kwargs = {
     #     "base_url": "http://localhost:8000",
     #     "project_uuid": "aad8e2b2-5431-4104-a205-dc3b638b0dab",

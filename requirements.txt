@@ -19,3 +19,4 @@ re
 shutil
 itertools
 uuid
+unittest
