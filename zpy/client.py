@@ -24,7 +24,7 @@ from zpy.client_util import (
     clear_last_print,
     is_done,
     format_dataset,
-    hash
+    hash,
 )
 
 _auth_token: str = ""
@@ -118,7 +118,6 @@ class DatasetConfig:
     def hash(self):
         """Return a hash of the config."""
         return hash(self._config)
-
 
     def set(self, path: str, value: any):
         """Set a value for a configurable parameter.

@@ -108,8 +108,7 @@ def to_query_param_value(config):
     for django_field_traversal, django_field_value in config.items():
         # Ignore fields set as None. They weren't specifically set or asked for.
         if django_field_value is not None:
-            query_param_values.append(
-                f"{django_field_traversal}:{django_field_value}")
+            query_param_values.append(f"{django_field_traversal}:{django_field_value}")
     return ",".join(query_param_values)
 
 
@@ -280,13 +279,16 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
             )
 
     def update_category_counts(datapoints):
-        return [{
+        return [
+            {
                 **d,
-                "categories": [{
-                    **c,
-                    "count": category_count_sums[c["id"]]
-                } for c in d["categories"]]
-                } for d in datapoints]
+                "categories": [
+                    {**c, "count": category_count_sums[c["id"]]}
+                    for c in d["categories"]
+                ],
+            }
+            for d in datapoints
+        ]
 
     return update_category_counts(datapoint_list)
 
@@ -307,10 +309,10 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
     if datapoint_callback is not None:
         for datapoint in grouped_metadata:
             datapoint_callback(
-                datapoint["images"], datapoint["annotations"], datapoint["categories"])
+                datapoint["images"], datapoint["annotations"], datapoint["categories"]
+            )
     else:
-        output_dir = join(dataset_path.parent,
-                          dataset_path.name + "_formatted")
+        output_dir = join(dataset_path.parent, dataset_path.name + "_formatted")
 
         accumulated_metadata = {
             "metadata": {},
@@ -322,8 +324,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
         for datapoint in grouped_metadata:
             accumulated_metadata["metadata"] = datapoint["metadata"]
             accumulated_metadata["categories"].extend(datapoint["categories"])
-            accumulated_metadata["annotations"].extend(
-                datapoint["annotations"])
+            accumulated_metadata["annotations"].extend(datapoint["annotations"])
 
             for image in datapoint["images"]:
                 # reference original path to save from
@@ -358,7 +359,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
             },
             "categories": uniq(accumulated_metadata["categories"]),
             "images": uniq(accumulated_metadata["images"]),
-            "annotations": uniq(accumulated_metadata["annotations"])
+            "annotations": uniq(accumulated_metadata["annotations"]),
         }
 
         # write json
