@@ -278,7 +278,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
     """
     Updates metadata with new ids and accurate image paths.
     If a datapoint_callback is provided, it is called once per datapoint with the updated metadata.
-    Otherwise it defaults to writing out an updated _annotations.zumo.json, along with all images, to a new adjacent folder.
+    Otherwise the default is to write out an updated _annotations.zumo.json, along with all images, to a new adjacent folder.
     Args:
         dataset_path (str): Path to unzipped dataset.
         datapoint_callback (images: list[dict], annotations: list[dict], categories: list[dict]) -> None: User defined function.
