@@ -106,8 +106,7 @@ def to_query_param_value(config):
     for django_field_traversal, django_field_value in config.items():
         # Ignore fields set as None. They weren't specifically set or asked for.
         if django_field_value is not None:
-            query_param_values.append(
-                f"{django_field_traversal}:{django_field_value}")
+            query_param_values.append(f"{django_field_traversal}:{django_field_value}")
     return ",".join(query_param_values)
 
 
@@ -141,7 +140,7 @@ def is_done(state: str):
 
 def unique_list(list: list) -> list:
     """Removes non unique items from a list. Works for objects, unlike set()"""
-    return [i for n, i in enumerate(list) if i not in list[n + 1:]]
+    return [i for n, i in enumerate(list) if i not in list[n + 1 :]]
 
 
 def dict_to_list(d: dict) -> list:
@@ -263,12 +262,14 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
             ]
             metadata_mutated = {**metadata["metadata"], "save_path": batch_uri}
 
-            metadata_dicts.append({
-                "metadata": metadata_mutated,
-                "categories": categories_mutated,
-                "images": images_mutated,
-                "annotations": annotations_mutated
-            })
+            metadata_dicts.append(
+                {
+                    "metadata": metadata_mutated,
+                    "categories": categories_mutated,
+                    "images": images_mutated,
+                    "annotations": annotations_mutated,
+                }
+            )
 
     return metadata_dicts
 
@@ -290,8 +291,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
         for m in grouped_metadata:
             datapoint_callback(m["images"], m["annotations"], m["categories"])
     else:
-        output_dir = join(dataset_path.parent,
-                          dataset_path.name + "_formatted")
+        output_dir = join(dataset_path.parent, dataset_path.name + "_formatted")
 
         accumulated_metadata = {
             "metadata": [],
@@ -333,7 +333,9 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
                     shutil.copy(original_image_uri, output_image_uri)
 
         for m in grouped_metadata:
-            default_datapoint_callback(m["images"], m["annotations"], m["categories"], m["metadata"])
+            default_datapoint_callback(
+                m["images"], m["annotations"], m["categories"], m["metadata"]
+            )
 
         # https://www.geeksforgeeks.org/python-removing-duplicate-dicts-in-list/
         unique_metadata = {
