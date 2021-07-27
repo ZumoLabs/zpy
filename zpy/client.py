@@ -123,11 +123,7 @@ class DatasetConfig:
             params=unique_sim_filters,
             headers=auth_header(_auth_token),
         ).json()["results"]
-        if len(sims) > 1:
-            raise RuntimeError(
-                f"Create DatasetConfig failed: Found more than 1 Sim for unique filters which should not be possible."
-            )
-        elif len(sims) == 1:
+        if len(sims) == 1:
             print(f"Found Sim<{sim_name}> in Project<{_project['name']}>")
             self._sim = sims[0]
         else:
