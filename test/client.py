@@ -1,8 +1,8 @@
 import json
+import re
+import shutil
 from os import listdir
 from os.path import join
-import shutil
-import re
 
 import zpy.client as zpy
 
@@ -36,6 +36,34 @@ def test_3(**init_kwargs):
     dataset_config = zpy.DatasetConfig("dumpster_v2")
     # dataset_config.set("run\\.padding_style", "square")
     zpy.generate("dumpster_v2.39", dataset_config, num_datapoints=3, materialize=True)
+
+
+def test_4():
+    zpy.init(project_uuid='feb6e594-55e0-4f87-9e75-5a128221499f',
+             auth_token='56602eb0b0019c033c821b194c6eccbe26079824ad7e2fe1925a79200443ac54')
+    # zpy.init(project_uuid='aad8e2b2-5431-4104-a205-dc3b638b0dab',
+    #          auth_token='9344ca735850d929748c9fda008f7479f2411e0876a593d6160f99fcc25762a4',
+    #          base_url="http://localhost:8000")
+    # init_kwargs = {
+    #     "base_url": "https://ragnarok.stage.zumok8s.org",
+    #     "project_uuid": "feb6e594-55e0-4f87-9e75-5a128221499f",
+    #     "auth_token": "33032c0cc774c9211d861eaf5d92740076c4034cd408b535a5c1858d44425cb7",
+    # }
+    zpy.init(**init_kwargs)
+    sim_name = "dumpster_v5"
+    dataset_config = zpy.DatasetConfig(sim_name)
+    # categories: Dict[int, str] = {
+    #     0: 'full',
+    #     1: 'ok',
+    #     #        2: 'not in dumpster',
+    #     #        3: 'can not see'
+    # }
+    # dataset_config.set('only_category', 'full')
+    dataset_config.set('categories', {0: 'not in dumpster'})
+    # print(dataset_config.config)
+    # samples = zpy.preview(dataset_config, num_samples=10)
+    # pprint(samples)
+    zpy.generate("dumpster_v8_ktest_6", dataset_config, num_datapoints=8)
 
 
 def test_saver_func(images, annotations):
@@ -104,8 +132,9 @@ if __name__ == "__main__":
     # test_1(**init_kwargs)
     # print("Running test_2:")
     # test_2(**init_kwargs)
-    print("Running test_3:")
-    test_3(**init_kwargs)
+    # print("Running test_3:")
+    # test_3(**init_kwargs)
+    test_4()
     # test format dataset
     # input_path = "/mnt/c/Users/georg/Zumo/Datasets/dumpster_v2.1"
     # format_dataset(input_path, test_saver_func)

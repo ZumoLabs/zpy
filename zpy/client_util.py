@@ -123,3 +123,38 @@ def clear_last_print():
 def is_done(state: str):
     """Returns True if state is a done state, false otherwise."""
     return state in ["READY", "CANCELLED", "PACKAGING_FAILED", "GENERATING_FAILED"]
+
+
+DJANGO_TRAVERSAL_SEPARATOR = "__"
+
+
+def convert_to_rag_query_params(iterable, current_path="", paths=None):
+    """Recursive function which converts a config iterable into appropriate query parameter strings for the backend API.
+
+    Args:
+        iterable (dict or list): Iterable to convert.
+        current_path (str): Accumulator for the current depth-first path being built.
+        paths (dict or None): Accumulator for the paths as the function recurses.
+    Returns:
+        dict: Single level dictionary of rag query parameter keys to values.
+    """
+    if paths is None:
+        paths = {}
+
+    if current_path:
+        current_path += DJANGO_TRAVERSAL_SEPARATOR
+
+    if isinstance(iterable, dict):
+        for k, v in iterable.items():
+            if isinstance(v, dict) or isinstance(v, list):
+                convert_to_rag_query_params(v, current_path + str(k), paths)
+            else:
+                paths[current_path + str(k)] = v
+    elif isinstance(iterable, list):
+        for index, item in enumerate(iterable):
+            if isinstance(item, dict) or isinstance(item, list):
+                convert_to_rag_query_params(item, current_path + str(index), paths)
+            else:
+                paths[current_path + str(index)] = item
+
+    return paths
