@@ -14,7 +14,6 @@ from zpy.client_util import (
     add_newline,
     get,
     post,
-    to_query_param_value,
     convert_size,
     auth_header,
     clear_last_print,
@@ -41,6 +40,11 @@ class InvalidProjectError(Exception):
 
 class ClientNotInitializedError(Exception):
     """Raised when trying to use functionality which is dependent on calling client.init()"""
+    pass
+
+
+class InvalidSimError(Exception):
+    """Raised when a Sim asked for by name cannot be found."""
     pass
 
 
@@ -75,7 +79,7 @@ def init(
 
     if is_empty(auth_token):
         raise InvalidAuthTokenError(
-            f"Init failed: invalid auth token - find yours at {_base_url}/settings/auth-token.")
+            f"Init failed: invalid auth token - find yours at https://app.zumolabs.ai/settings/auth-token.")
 
     try:
         _project = get(
@@ -86,7 +90,7 @@ def init(
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 401:
             raise InvalidAuthTokenError(
-                f"Init failed: invalid auth token - find yours at {_base_url}/settings/auth-token.") from None
+                f"Init failed: invalid auth token - find yours at https://app.zumolabs.ai/settings/auth-token.") from None
         elif e.response.status_code == 404:
             raise InvalidProjectError("Init failed: you are not part of this project or it does not exist.") from None
 
@@ -127,9 +131,7 @@ class DatasetConfig:
             print(f"Found Sim<{sim_name}> in Project<{_project['name']}>")
             self._sim = sims[0]
         else:
-            raise RuntimeError(
-                f"Create DatasetConfig failed: Could not find Sim<{sim_name}> in Project<{_project['name']}>."
-            )
+            raise InvalidSimError(f"Could not find Sim<{sim_name}> in Project<{_project['name']}>.")
 
     @property
     def sim(self):

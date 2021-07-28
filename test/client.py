@@ -40,7 +40,7 @@ def test_3(**init_kwargs):
 
 def test_4():
     zpy.init(project_uuid='feb6e594-55e0-4f87-9e75-5a128221499f',
-             auth_token='56602eb0b0019c033c821b194c6eccbe26079824ad7e2fe1925a79200443ac54')
+             auth_token='a4a13763b0dc0017b1fc9af890e9efea58fd072074ab9a169e5dcf0633310f28')
     # zpy.init(project_uuid='aad8e2b2-5431-4104-a205-dc3b638b0dab',
     #          auth_token='9344ca735850d929748c9fda008f7479f2411e0876a593d6160f99fcc25762a4',
     #          base_url="http://localhost:8000")
@@ -52,6 +52,13 @@ def test_4():
     zpy.init(**init_kwargs)
     sim_name = "dumpster_v5"
     dataset_config = zpy.DatasetConfig(sim_name)
+    print(dataset_config.categories)
+    dataset_config.categories = 3
+    print(dataset_config.categories)
+    help(dataset_config)
+    dataset_config = zpy.DatasetConfig("can_v7")
+    help(dataset_config)
+    # help(zpy.DatasetConfig)
     # categories: Dict[int, str] = {
     #     0: 'full',
     #     1: 'ok',
@@ -59,11 +66,11 @@ def test_4():
     #     #        3: 'can not see'
     # }
     # dataset_config.set('only_category', 'full')
-    dataset_config.set('categories', {0: 'not in dumpster'})
+    # dataset_config.set('categories', {0: 'not in dumpster'})
     # print(dataset_config.config)
     # samples = zpy.preview(dataset_config, num_samples=10)
     # pprint(samples)
-    zpy.generate("dumpster_v8_ktest_6", dataset_config, num_datapoints=8)
+    # zpy.generate("dumpster_v8_ktest_6", dataset_config, num_datapoints=8)
 
 
 def test_saver_func(images, annotations):
