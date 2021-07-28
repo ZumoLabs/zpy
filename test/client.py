@@ -3,6 +3,7 @@ import re
 import shutil
 from os import listdir
 from os.path import join
+from pprint import pprint
 
 import zpy.client as zpy
 
@@ -50,27 +51,21 @@ def test_4():
     #     "auth_token": "33032c0cc774c9211d861eaf5d92740076c4034cd408b535a5c1858d44425cb7",
     # }
     zpy.init(**init_kwargs)
-    sim_name = "dumpster_v5"
-    dataset_config = zpy.DatasetConfig(sim_name)
-    print(dataset_config.categories)
-    dataset_config.categories = 3
-    print(dataset_config.categories)
-    help(dataset_config)
-    dataset_config = zpy.DatasetConfig("can_v7")
-    help(dataset_config)
-    # help(zpy.DatasetConfig)
-    # categories: Dict[int, str] = {
-    #     0: 'full',
-    #     1: 'ok',
-    #     #        2: 'not in dumpster',
-    #     #        3: 'can not see'
-    # }
-    # dataset_config.set('only_category', 'full')
-    # dataset_config.set('categories', {0: 'not in dumpster'})
-    # print(dataset_config.config)
-    # samples = zpy.preview(dataset_config, num_samples=10)
-    # pprint(samples)
-    # zpy.generate("dumpster_v8_ktest_6", dataset_config, num_datapoints=8)
+    dumpster_v5_config = zpy.DatasetConfig.from_sim_name("dumpster_v5")
+    dumpster_v5_config.num_random_materials = 1
+    dumpster_v5_config.categories = {
+        0: 'not in dumpster',
+        1: 'can not see'
+    }
+    # can_v7_config = zpy.DatasetConfig.from_sim_name("can_v7")
+    # help(dumpster_v5_config)
+    print(dumpster_v5_config.config)
+    # help(can_v7_config)
+    samples_1 = zpy.preview(dumpster_v5_config, num_samples=10)
+    # samples_2 = zpy.preview(can_v7_config, num_samples=10)
+    pprint(samples_1)
+    # pprint(samples_2)
+    zpy.generate("dumpster_v5_ktest_3", dumpster_v5_config, num_datapoints=6)
 
 
 def test_saver_func(images, annotations):

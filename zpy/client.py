@@ -7,7 +7,7 @@ from typing import Dict, Union
 from uuid import UUID
 
 import requests.exceptions
-from pydash import set_, unset, is_empty
+from pydash import set_, unset, is_empty, pascal_case
 
 from cli.utils import download_url
 from zpy.client_util import (
@@ -45,7 +45,6 @@ class ClientNotInitializedError(Exception):
 
 class InvalidSimError(Exception):
     """Raised when a Sim asked for by name cannot be found."""
-    pass
 
 
 def init(
@@ -106,6 +105,10 @@ def require_zpy_init(func):
     return wrapper
 
 
+DYNAMIC_ATTRIBUTES_KEY = '_dynamic_attributes'
+DYNAMIC_ATTRIBUTE_GIN_PREFIX = 'run.'
+
+
 class DatasetConfig:
     @require_zpy_init
     def __init__(self, sim_name: str):
@@ -133,6 +136,50 @@ class DatasetConfig:
         else:
             raise InvalidSimError(f"Could not find Sim<{sim_name}> in Project<{_project['name']}>.")
 
+    @classmethod
+    def from_sim_name(cls, sim_name: str):
+        """Create a Sim specific DatasetConfig with instance attributes corresponding to adjustable Sim parameters.
+
+        Args:
+            sim_name (str): The name of the Sim.
+        """
+        dataset_config = DatasetConfig(sim_name)
+
+        # Add the run_kwargs as attributes to the class
+        dynamic_attributes = {DYNAMIC_ATTRIBUTES_KEY: []}
+        for run_kwarg in dataset_config.sim["run_kwargs"]:
+            property_name = run_kwarg["name"]
+            internal_name = f"_{property_name}"
+            # The extra _internal_name kwarg is to capture the value of internal_name at that point in the loop,
+            # otherwise every property from this loop will refer to the same thing.
+            p = property(fget=lambda _self, _internal_name=internal_name: getattr(_self, _internal_name),
+                         fset=lambda _self, value, _internal_name=internal_name: setattr(_self, _internal_name, value),
+                         doc=f"Type: {run_kwarg['type']}. Default if not set: {run_kwarg['default']}.")
+            # Add underscore-prefixed name for storing the actual value
+            dynamic_attributes[internal_name] = None
+            # Add non-underscored name to be treated as a @property
+            dynamic_attributes[property_name] = p
+            # Keep track of all of the dynamic attributes that were added this way (used for adding to the config later)
+            dynamic_attributes[DYNAMIC_ATTRIBUTES_KEY].append(property_name)
+
+        def constructor(self, sim):
+            """Override DatasetConfig constructor in order to not refetch the same Sim.
+
+            Args:
+                sim (dict): Sim object fetched from backend API.
+            """
+            self._sim = sim
+            self._config = {}
+
+        # creating class dynamically
+        class_name = pascal_case(dataset_config.sim["name"]) + "DatasetConfig"
+        clazz = type(class_name, (DatasetConfig,), {
+            "__init__": constructor,
+            "__doc__": dataset_config.sim["description"],
+            **dynamic_attributes,
+        })
+        return clazz(dataset_config.sim)
+
     @property
     def sim(self):
         """
@@ -157,7 +204,16 @@ class DatasetConfig:
         Returns:
             dict: A dict representing a json object of gin config parameters.
         """
-        return self._config
+        dynamic_attr_values = {}
+        for dynamic_attr in getattr(self, DYNAMIC_ATTRIBUTES_KEY, []):
+            dynamic_attr_value = getattr(self, dynamic_attr)
+            if dynamic_attr_value is not None:
+                dynamic_attr_values[DYNAMIC_ATTRIBUTE_GIN_PREFIX + dynamic_attr] = dynamic_attr_value
+
+        return {
+            **self._config,
+            **dynamic_attr_values,
+        }
 
     def set(self, path: str, value: any):
         """Set a configurable parameter. Uses pydash.set_.
