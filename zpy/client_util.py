@@ -195,7 +195,7 @@ def extract_zip(path_to_zip: Path) -> Path:
 
 
 def group_by(iterable: Iterable, keyfunc) -> list[list]:
-    '''
+    """
     Groups items in a list by equality using the value returned when passed to the callback
     https://docs.python.org/3/library/itertools.html#itertools.groupby
     Args:
@@ -203,16 +203,19 @@ def group_by(iterable: Iterable, keyfunc) -> list[list]:
         keyfunc: Callback that transforms each item in the list to a value used to test for equality against other items.
     Returns:
         list[list]: List of lists containing items that test equal to eachother when transformed by the keyfunc callback
-    '''
-    return[
-        list(group) for key, group in groupby(
+    """
+    return [
+        list(group)
+        for key, group in groupby(
             iterable,
             keyfunc,
         )
     ]
 
 
-def group_metadata_by_datapoint(dataset_path: Path) -> list[dict[Union[list[dict], dict]]]:
+def group_metadata_by_datapoint(
+    dataset_path: Path,
+) -> list[dict[Union[list[dict], dict]]]:
     """
     Updates metadata with new ids and accurate image paths.
     Returns a list of dicts, each item containing metadata relevant to a single datapoint.
@@ -244,9 +247,7 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict[Union[list[dict
 
         images_grouped_by_datapoint = group_by(
             values(metadata["images"]),
-            lambda image: remove_n_extensions(
-                image["relative_path"], n=2
-            ),
+            lambda image: remove_n_extensions(image["relative_path"], n=2),
         )
 
         # datapoint level
@@ -255,10 +256,12 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict[Union[list[dict
             # get [images], [annotations], [categories], {metadata} per data point
             image_ids = [i["id"] for i in images]
             annotations = filter_(
-                metadata["annotations"], lambda a: a["image_id"] in image_ids)
+                metadata["annotations"], lambda a: a["image_id"] in image_ids
+            )
             category_ids = uniq([a["category_id"] for a in annotations])
             categories = filter_(
-                values(metadata["categories"]), lambda c: c["id"] in category_ids)
+                values(metadata["categories"]), lambda c: c["id"] in category_ids
+            )
 
             image_new_id_map = {
                 img["id"]: str(
@@ -380,7 +383,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
             },
             "categories": uniq(accumulated_metadata["categories"]),
             "images": accumulated_metadata["images"],
-            "annotations": accumulated_metadata["annotations"]
+            "annotations": accumulated_metadata["annotations"],
         }
 
         # write json
