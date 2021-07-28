@@ -124,9 +124,9 @@ if __name__ == "__main__":
         pretty_print(annotations)
         pretty_print(categories)
 
-    input_path = "/mnt/c/Users/georg/Zumo/Datasets/can_v714-8c288ec8.zip"
-    dataset_path = extract_zip(input_path)
-    format_dataset(dataset_path)
+    # input_path = "/mnt/c/Users/georg/Zumo/Datasets/can_v714-8c288ec8.zip"
+    # dataset_path = extract_zip(input_path)
+    # format_dataset(dataset_path)
 
     # test_generate(**init_kwargs)
 
