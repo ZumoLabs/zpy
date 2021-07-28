@@ -361,7 +361,7 @@ def list_projects(filters):
 def create_project(account, name):
     """Create a project under ACCOUNT called NAME.
 
-    See available accounts: zpy list accounts
+    See available accounts: zpy account list
     """
     from cli.projects import create_project
 
@@ -467,7 +467,8 @@ def list_sims(filters, project=None):
     "path",
     type=click.Path(exists=True, file_okay=False, writable=True, resolve_path=True),
 )
-def get_sim(name, path):
+@use_project(required=True)
+def get_sim(name, path, project=None):
     """get sim
 
     Download sim with name NAME from backend.
@@ -475,11 +476,12 @@ def get_sim(name, path):
     Args:
         name (str): name of sim
         path (str): directory to put zipped sim
+        project (str): project uuid
     """
     from cli.sims import download_sim
 
     try:
-        output_path = download_sim(name, path)
+        output_path = download_sim(name, path, project)
         click.echo(f"Downloaded sim '{name}' to {output_path}")
     except requests.exceptions.HTTPError as e:
         click.secho(f"Failed to download sim: {e}", fg="red", err=True)

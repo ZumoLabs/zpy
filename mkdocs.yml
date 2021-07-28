@@ -18,6 +18,9 @@ theme:
     text: Fira Mono
   logo: assets/logo.png
 
+plugins:
+- mkdocstrings
+
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -42,46 +45,51 @@ nav:
     - License: overview/license.md
     - Citation: overview/citation.md
     - Code of Conduct: overview/code_of_conduct.md
-  - Zpy:
-    - About: zpy/about.md
-    - Install:
-        - pip: zpy/install/pip.md
-        - script: zpy/install/script.md
-        - Linux developer: zpy/install/linux.md
-        - Windows developer: zpy/install/windows.md
-        - Blender Python Path: zpy/install/blender_python_path.md
-    - Examples:
-      - Package Sim: zpy/example/package.md
-      - RPI Sim: zpy/example/rpi.md
-      - Suzanne Code-Along:
-        - Part 1: zpy/example/part1.md
-        - Part 2: zpy/example/part2.md
-        - Part 3: zpy/example/part3.md
-    - Guides:
-      - What is a Sim?: zpy/tutorials/what_is_a_sim.md
-      - Running a Sim: zpy/tutorials/run_a_sim.md
-      - Using Script Templates: zpy/tutorials/template.md
-      - Script Writing Guide: zpy/tutorials/script_writing_guide.md
-      - Segmentation Images: zpy/tutorials/segmentation.md
-      - Depth Images: zpy/tutorials/depth.md
-      - Jittering Object Pose: zpy/tutorials/jitterpose.md
-      - Jitering Materials: zpy/tutorials/jittermat.md
-      - Random HDRI Backgrounds: zpy/tutorials/hdri.md
-  - CLI:
-    - About: cli/about.md
-    - zpy config: cli/basic.md
-    - zpy env: cli/env.md
-    - zpy project: cli/project.md
-    - zpy dataset: cli/dataset.md
-    - zpy sim: cli/sim.md
-    - zpy job: cli/job.md
-    - zpy transform: cli/transform.md
-  - Web App:
+  - Python client:
+    - About: client_api/about.md
+    - API Reference: client_api/reference.md
+  - Web app:
     - About: app/about.md
     - Create an Account: app/create_an_account.md
-  - Blender Addon:
-    - About: addon/about.md
-    - Install: addon/install.md
+  - Developer tools:
+    - zpy:
+      - About: zpy/about.md
+      - Install:
+          - pip: zpy/install/pip.md
+          - script: zpy/install/script.md
+          - Linux developer: zpy/install/linux.md
+          - Windows developer: zpy/install/windows.md
+          - Blender Python Path: zpy/install/blender_python_path.md
+      - Examples:
+        - Package Sim: zpy/example/package.md
+        - RPI Sim: zpy/example/rpi.md
+        - Suzanne Code-Along:
+          - Part 1: zpy/example/part1.md
+          - Part 2: zpy/example/part2.md
+          - Part 3: zpy/example/part3.md
+      - Guides:
+        - What is a Sim?: zpy/tutorials/what_is_a_sim.md
+        - Running a Sim: zpy/tutorials/run_a_sim.md
+        - Using Script Templates: zpy/tutorials/template.md
+        - Script Writing Guide: zpy/tutorials/script_writing_guide.md
+        - Segmentation Images: zpy/tutorials/segmentation.md
+        - Depth Images: zpy/tutorials/depth.md
+        - Jittering Object Pose: zpy/tutorials/jitterpose.md
+        - Jittering Materials: zpy/tutorials/jittermat.md
+        - Random HDRI Backgrounds: zpy/tutorials/hdri.md
+    - CLI:
+      - About: cli/about.md
+      - zpy config: cli/basic.md
+      - zpy env: cli/env.md
+      - zpy project: cli/project.md
+      - zpy dataset: cli/dataset.md
+      - zpy sim: cli/sim.md
+      - zpy job: cli/job.md
+      - zpy transform: cli/transform.md
+    
+    - Blender Addon:
+      - About: addon/about.md
+      - Install: addon/install.md
   - Releases:
     - v1.3: releases/1.3-NOTES.md
     - v1.2: releases/1.2-NOTES.md
