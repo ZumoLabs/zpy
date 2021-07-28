@@ -20,3 +20,4 @@ shutil
 itertools
 uuid
 unittest
+collections

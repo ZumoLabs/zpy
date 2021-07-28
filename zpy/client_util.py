@@ -1,7 +1,7 @@
 import functools
 import math
 import sys
-from typing import Union
+from typing import Callable, Iterable, Union
 import requests
 from requests import HTTPError
 from typing import Union
@@ -18,7 +18,8 @@ from pathlib import Path
 from itertools import groupby
 import uuid
 import hashlib
-from pydash import uniq
+from pydash import uniq, values, filter_
+from collections import defaultdict
 
 
 def add_newline(func):
@@ -141,28 +142,40 @@ def is_done(state: str):
     return state in ["READY", "CANCELLED", "PACKAGING_FAILED", "GENERATING_FAILED"]
 
 
-def dict_to_list(d: dict) -> list:
-    """Converts dict to list"""
-    return list(dict(d).values())
+# def dict_to_list(d: dict) -> list:
+#     """Converts dict to list"""
+#     return list(dict(d).values())
 
 
 def remove_n_extensions(path: Union[str, Path], n: int) -> Path:
-    """Takes a path and removes n extensions from the end. Example: "image.rgb.png" becomes "image" for n = 2"""
+    """
+    Removes n extensions from the end of a path. Example: "image.rgb.png" becomes "image" for n = 2
+    Args:
+        path: Path.
+    Returns:
+        Path: Path minus n extensions.
+    """
+    """"""
     p = Path(path)
-    extensions = "".join(p.suffixes[-n:])  # remove n extensions
+    extensions = "".join(p.suffixes[-n:])
     return str(p).removesuffix(extensions)
 
 
-def hash(data):
-    """Return a deterministic hash of any json serializable data.
-    https://www.doc.ic.ac.uk/~nuric/coding/how-to-hash-a-dictionary-in-python.html
+def hash(data) -> str:
     """
-    dict_json = json.dumps(
+    Returns a deterministic hash from json serializable data.
+    https://www.doc.ic.ac.uk/~nuric/coding/how-to-hash-a-dictionary-in-python.html
+    Args:
+        data: JSON serializable data.
+    Returns:
+        str: Deterministic hash of the input data.
+    """
+    data_json = json.dumps(
         data,
         sort_keys=True,
     )
     dhash = hashlib.md5()
-    encoded = dict_json.encode()
+    encoded = data_json.encode()
     dhash.update(encoded)
     config_hash = dhash.hexdigest()
     return config_hash
@@ -182,7 +195,25 @@ def extract_zip(path_to_zip: Path) -> Path:
     return unzipped_path
 
 
-def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
+def group_by(iterable: Iterable, keyfunc) -> list[list]:
+    '''
+    Groups items in a list by equality using the value returned when passed to the callback
+    https://docs.python.org/3/library/itertools.html#itertools.groupby
+    Args:
+        list: List of items to group
+        keyfunc: Callback that transforms each item in the list to a value used to test for equality against other items.
+    Returns:
+        list[list]: List of lists containing items that test equal to eachother when transformed by the keyfunc callback
+    '''
+    return[
+        list(group) for key, group in groupby(
+            iterable,
+            keyfunc,
+        )
+    ]
+
+
+def group_metadata_by_datapoint(dataset_path: Path) -> list[dict[Union[list[dict], dict]]]:
     """
     Updates metadata with new ids and accurate image paths.
     Returns a list of dicts, each item containing metadata relevant to a single datapoint.
@@ -191,7 +222,7 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
     Returns:
         list[
             dict[
-                metadata: list[dict],
+                metadata: dict,
                 categories: list[dict],
                 images: list[dict],
                 annotations: list[dict],
@@ -200,8 +231,8 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
         ]: Returns a list of dicts, each item containing metadata relevant to a single datapoint.
     """
 
-    datapoint_list = []
-    category_count_sums = {}
+    datapoints = []
+    category_count_sums = defaultdict(int)
 
     # batch level - group images by satapoint
     for batch in listdir(dataset_path):
@@ -209,36 +240,26 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
         annotation_file_uri = join(batch_uri, "_annotations.zumo.json")
         metadata = json.load(open(annotation_file_uri))
 
-        batch_categories = dict_to_list(metadata["categories"])
-        for c in batch_categories:
-            category_count_sums[c["id"]] = (
-                category_count_sums.get(c["id"], 0) + c["count"]
-            )
+        for c in values(metadata["categories"]):
+            category_count_sums[c["id"]] += c["count"]
 
-        batch_images = list(dict(metadata["images"]).values())
-        # https://www.geeksforgeeks.org/python-identical-consecutive-grouping-in-list/
-        images_grouped_by_datapoint = [
-            list(y)
-            for x, y in groupby(
-                batch_images,
-                lambda x: remove_n_extensions(Path(x["relative_path"]), n=2),
-            )
-        ]
+        images_grouped_by_datapoint = group_by(
+            values(metadata["images"]),
+            lambda image: remove_n_extensions(
+                image["relative_path"], n=2
+            ),
+        )
 
         # datapoint level
         for images in images_grouped_by_datapoint:
             DATAPOINT_UUID = str(uuid.uuid4())
-            # get [images], [annotations], [categories] per data point
+            # get [images], [annotations], [categories], {metadata} per data point
             image_ids = [i["id"] for i in images]
-            annotations = [
-                a for a in metadata["annotations"] if a["image_id"] in image_ids
-            ]
+            annotations = filter_(
+                metadata["annotations"], lambda a: a["image_id"] in image_ids)
             category_ids = uniq([a["category_id"] for a in annotations])
-            categories = [
-                c
-                for c in dict_to_list(metadata["categories"])
-                if c["id"] in category_ids
-            ]
+            categories = filter_(
+                values(metadata["categories"]), lambda c: c["id"] in category_ids)
 
             image_new_id_map = {
                 img["id"]: str(
@@ -270,7 +291,7 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
             ]
             metadata_mutated = {**metadata["metadata"], "save_path": batch_uri}
 
-            datapoint_list.append(
+            datapoints.append(
                 {
                     "metadata": metadata_mutated,
                     "categories": categories_mutated,
@@ -288,7 +309,7 @@ def group_metadata_by_datapoint(dataset_path: Path) -> list[dict]:
                 } for c in d["categories"]]
                 } for d in datapoints]
 
-    return update_category_counts(datapoint_list)
+    return update_category_counts(datapoints)
 
 
 def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> None:
@@ -357,8 +378,8 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
                 "save_path": output_dir,
             },
             "categories": uniq(accumulated_metadata["categories"]),
-            "images": uniq(accumulated_metadata["images"]),
-            "annotations": uniq(accumulated_metadata["annotations"])
+            "images": accumulated_metadata["images"],
+            "annotations": accumulated_metadata["annotations"]
         }
 
         # write json
