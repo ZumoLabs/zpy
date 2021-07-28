@@ -157,7 +157,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     )
     filter_params = {
         "project": _project["id"],
-        "sim": dataset_config.sim["id"],
+        "sim": dataset_config.sim["name"],
         "state": "READY",
         "page-size": num_samples,
         **config_filters,

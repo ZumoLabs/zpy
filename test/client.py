@@ -33,12 +33,12 @@ def test_2(**init_kwargs):
     print(json.dumps(urls, indent=4, sort_keys=True))
 
 
-def test_3(**init_kwargs):
+def test_3():
     """"""
-    zpy.init(**init_kwargs)
-    dataset_config = zpy.DatasetConfig("dumpster_v2")
+    zpy.init(project_uuid='feb6e594-55e0-4f87-9e75-5a128221499f', auth_token='a4a13763b0dc0017b1fc9af890e9efea58fd072074ab9a169e5dcf0633310f28')
+    dataset_config = zpy.DatasetConfig("dumpster_v5.1")
     # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate("dumpster_v2.21", dataset_config, num_datapoints=3, materialize=True)
+    zpy.generate(dataset_config, num_datapoints=3, materialize=True)
 
 
 def pretty_print(object):
@@ -70,23 +70,23 @@ def test_generate(**init_kwargs):
 
 
 # https://docs.python.org/3/library/unittest.html#module-unittest
-class TestClientUtilMethods(unittest.TestCase):
-    def test_remove_n_extensions(self):
-        self.assertTrue("/foo" == remove_n_extensions("/foo.rgb.png", 2))
-        self.assertTrue("/images" == remove_n_extensions("/images.foo.rgb.png", 3))
-        self.assertTrue("/images.rgb" == remove_n_extensions("/images.rgb.png", 1))
-        self.assertTrue(
-            "/foo/images" == remove_n_extensions("/foo/images.rgb.png", 9001)
-        )
-
-    def test_hash(self):
-        dictA = hash({"foo": 1, "bar": 2})
-        dictB = hash({"bar": 2, "foo": 1})
-        self.assertEqual(hash(dictA), hash(dictB))
-        self.assertEqual(hash(True), hash(True))
-        self.assertNotEqual(hash(True), hash(False))
-        self.assertNotEqual(hash(1), hash(2))
-        self.assertNotEqual(hash([1]), hash([1, 1]))
+# class TestClientUtilMethods(unittest.TestCase):
+#     def test_remove_n_extensions(self):
+#         self.assertTrue("/foo" == remove_n_extensions("/foo.rgb.png", 2))
+#         self.assertTrue("/images" == remove_n_extensions("/images.foo.rgb.png", 3))
+#         self.assertTrue("/images.rgb" == remove_n_extensions("/images.rgb.png", 1))
+#         self.assertTrue(
+#             "/foo/images" == remove_n_extensions("/foo/images.rgb.png", 9001)
+#         )
+#
+#     def test_hash(self):
+#         dictA = hash({"foo": 1, "bar": 2})
+#         dictB = hash({"bar": 2, "foo": 1})
+#         self.assertEqual(hash(dictA), hash(dictB))
+#         self.assertEqual(hash(True), hash(True))
+#         self.assertNotEqual(hash(True), hash(False))
+#         self.assertNotEqual(hash(1), hash(2))
+#         self.assertNotEqual(hash([1]), hash([1, 1]))
 
 
 if __name__ == "__main__":
@@ -96,11 +96,11 @@ if __name__ == "__main__":
     #     "project_uuid": "aad8e2b2-5431-4104-a205-dc3b638b0dab",
     #     "auth_token": "214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e",
     # }
-    init_kwargs = {
-        "base_url": "https://ragnarok.stage.zumok8s.org",
-        "project_uuid": "feb6e594-55e0-4f87-9e75-5a128221499f",
-        "auth_token": "a19f8a1cef0c1661f7de1fd513d740c499752fc567fc4c6fe6d11fdbce533b65",
-    }
+    # init_kwargs = {
+    #     "base_url": "https://ragnarok.stage.zumok8s.org",
+    #     "project_uuid": "feb6e594-55e0-4f87-9e75-5a128221499f",
+    #     "auth_token": "a19f8a1cef0c1661f7de1fd513d740c499752fc567fc4c6fe6d11fdbce533b65",
+    # }
     # init_kwargs = {
     #     "base_url": "https://ragnarok.stage.zumok8s.org",
     #     "project_uuid": "91419af0-4815-41e7-9b77-5ef8154148c8",  # Compology
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     # print("Running test_2:")
     # test_2(**init_kwargs)
     # print("Running test_3:")
-    # test_3(**init_kwargs)
+    test_3()
     # test format dataset
 
     def datapoint_callback(images, annotations, categories):

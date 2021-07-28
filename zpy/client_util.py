@@ -1,7 +1,7 @@
 import functools
 import math
 import sys
-from typing import Callable, Iterable, Union
+from typing import Callable, Iterable, Union, List, Dict
 import requests
 from requests import HTTPError
 from typing import Union
@@ -190,7 +190,7 @@ def extract_zip(path_to_zip: Path) -> Path:
     return unzipped_path
 
 
-def group_by(iterable: Iterable, keyfunc) -> list[list]:
+def group_by(iterable: Iterable, keyfunc) -> List[List]:
     """
     Groups items in a list by equality using the value returned when passed to the callback
     https://docs.python.org/3/library/itertools.html#itertools.groupby
@@ -211,7 +211,7 @@ def group_by(iterable: Iterable, keyfunc) -> list[list]:
 
 def group_metadata_by_datapoint(
     dataset_path: Path,
-) -> list[dict[Union[list[dict], dict]]]:
+) -> (Dict, Dict, List[Dict]):
     """
     Updates metadata with new ids and accurate image paths.
     Returns a list of dicts, each item containing metadata relevant to a single datapoint.
