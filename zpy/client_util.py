@@ -109,8 +109,7 @@ def to_query_param_value(config):
     for django_field_traversal, django_field_value in config.items():
         # Ignore fields set as None. They weren't specifically set or asked for.
         if django_field_value is not None:
-            query_param_values.append(
-                f"{django_field_traversal}:{django_field_value}")
+            query_param_values.append(f"{django_field_traversal}:{django_field_value}")
     return ",".join(query_param_values)
 
 
@@ -153,7 +152,7 @@ def remove_n_extensions(path: Union[str, Path], n: int) -> str:
     """"""
     p = Path(path)
     for _ in range(n):
-        p = p.with_suffix('')
+        p = p.with_suffix("")
     return str(p)
 
 
@@ -248,7 +247,8 @@ def group_metadata_by_datapoint(
             # get datapoint specific annotations
             image_ids = [i["id"] for i in images]
             annotations = filter_(
-                metadata["annotations"], lambda a: a["image_id"] in image_ids)
+                metadata["annotations"], lambda a: a["image_id"] in image_ids
+            )
 
             # mutate
             image_new_id_map = {
@@ -261,7 +261,8 @@ def group_metadata_by_datapoint(
             }
 
             categories_mutated = [
-                {**c, "count": category_count_sums[c["id"]]} for c in values(metadata["categories"])
+                {**c, "count": category_count_sums[c["id"]]}
+                for c in values(metadata["categories"])
             ]
 
             images_mutated = [
@@ -272,7 +273,7 @@ def group_metadata_by_datapoint(
                 }
                 for i in images
             ]
-            
+
             annotations_mutated = [
                 {
                     **a,
@@ -293,8 +294,7 @@ def group_metadata_by_datapoint(
 
             # update the category counts
             accum_categories = [
-                {**c, "count": category_count_sums[c["id"]]}
-                for c in accum_categories
+                {**c, "count": category_count_sums[c["id"]]} for c in accum_categories
             ]
 
     return (accum_metadata, accum_categories, accum_datapoints)
@@ -311,8 +311,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
     Returns:
         None: No return value.
     """
-    metadata, categories, datapoints = group_metadata_by_datapoint(
-        dataset_path)
+    metadata, categories, datapoints = group_metadata_by_datapoint(dataset_path)
 
     if datapoint_callback is not None:
         for datapoint in datapoints:
@@ -321,8 +320,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
             )
 
     else:
-        output_dir = join(dataset_path.parent,
-                          dataset_path.name + "_formatted")
+        output_dir = join(dataset_path.parent, dataset_path.name + "_formatted")
 
         accum_metadata = {
             "metadata": {
@@ -331,12 +329,11 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
             },
             "categories": categories,
             "images": [],
-            "annotations": []
+            "annotations": [],
         }
 
         for datapoint in datapoints:
-            accum_metadata["annotations"].extend(
-                datapoint["annotations"])
+            accum_metadata["annotations"].extend(datapoint["annotations"])
 
             for image in datapoint["images"]:
                 # reference original path to save from
@@ -349,12 +346,14 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
                 output_image_uri = join(output_dir, Path(new_image_name))
 
                 # add to accumulator
-                accum_metadata["images"].append({
-                    **image,
-                    "name": new_image_name,
-                    "output_path": output_image_uri,
-                    "relative_path": new_image_name,
-                })
+                accum_metadata["images"].append(
+                    {
+                        **image,
+                        "name": new_image_name,
+                        "output_path": output_image_uri,
+                        "relative_path": new_image_name,
+                    }
+                )
 
                 # copy image to new folder
                 try:
