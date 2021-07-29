@@ -1,25 +1,23 @@
 import functools
-import math
-import sys
-from typing import Callable, Iterable, Union, List, Dict
-import requests
-from requests import HTTPError
-from typing import Union
-import functools
+import hashlib
 import json
-import sys
-from pathlib import Path
-from os import listdir
-from os.path import join
+import math
 import os
 import shutil
-import zipfile
-from pathlib import Path
-from itertools import groupby
+import sys
 import uuid
-import hashlib
-from pydash import uniq, values, filter_
+import zipfile
 from collections import defaultdict
+from itertools import groupby
+from os import listdir
+from os.path import join
+from pathlib import Path
+from typing import Iterable, List, Dict, Tuple, Callable
+from typing import Union
+
+import requests
+from pydash import uniq, values, filter_
+from requests import HTTPError
 
 
 def add_newline(func):
@@ -145,7 +143,8 @@ def remove_n_extensions(path: Union[str, Path], n: int) -> str:
     """
     Removes n extensions from the end of a path. Example: "image.rgb.png" becomes "image" for n = 2
     Args:
-        path: Path.
+        path (Path): Path to manipulate.
+        n (int): Number of extensions to remove.
     Returns:
         str: Path minus n extensions.
     """
@@ -156,7 +155,7 @@ def remove_n_extensions(path: Union[str, Path], n: int) -> str:
     return str(p)
 
 
-def hash(data) -> str:
+def dict_hash(data) -> str:
     """
     Returns a deterministic hash from json serializable data.
     https://www.doc.ic.ac.uk/~nuric/coding/how-to-hash-a-dictionary-in-python.html
@@ -190,13 +189,13 @@ def extract_zip(path_to_zip: Path) -> Path:
     return unzipped_path
 
 
-def group_by(iterable: Iterable, keyfunc) -> List[List]:
+def group_by(iterable: Iterable, keyfunc: Callable) -> List[List]:
     """
     Groups items in a list by equality using the value returned when passed to the callback
     https://docs.python.org/3/library/itertools.html#itertools.groupby
     Args:
-        list: List of items to group
-        keyfunc: Callback that transforms each item in the list to a value used to test for equality against other items.
+        iterable (Iterable): List of items to group
+        keyfunc (Callable): Callback that transforms each item in the list to a value used to test for equality against other items.
     Returns:
         list[list]: List of lists containing items that test equal to eachother when transformed by the keyfunc callback
     """
@@ -210,8 +209,8 @@ def group_by(iterable: Iterable, keyfunc) -> List[List]:
 
 
 def group_metadata_by_datapoint(
-    dataset_path: Path,
-) -> tuple[dict, list[dict], list[dict]]:
+        dataset_path: Path,
+) -> Tuple[Dict, List[Dict], List[Dict]]:
     """
     Updates metadata with new ids and accurate image paths.
     Returns a list of dicts, each item containing metadata relevant to a single datapoint.
@@ -242,7 +241,7 @@ def group_metadata_by_datapoint(
 
         # datapoint level
         for images in images_grouped_by_datapoint:
-            DATAPOINT_UUID = str(uuid.uuid4())
+            datapoint_uuid = str(uuid.uuid4())
 
             # get datapoint specific annotations
             image_ids = [i["id"] for i in images]
@@ -253,7 +252,7 @@ def group_metadata_by_datapoint(
             # mutate
             image_new_id_map = {
                 img["id"]: str(
-                    DATAPOINT_UUID
+                    datapoint_uuid
                     + "-"
                     + str(Path(img["name"]).suffixes[-2]).replace(".", "")
                 )
@@ -297,7 +296,7 @@ def group_metadata_by_datapoint(
                 {**c, "count": category_count_sums[c["id"]]} for c in accum_categories
             ]
 
-    return (accum_metadata, accum_categories, accum_datapoints)
+    return accum_metadata, accum_categories, accum_datapoints
 
 
 def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> None:
@@ -307,7 +306,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
     Otherwise the default is to write out an updated _annotations.zumo.json, along with all images, to a new adjacent folder.
     Args:
         dataset_path (str): Path to unzipped dataset.
-        datapoint_callback (images: list[dict], annotations: list[dict], categories: list[dict]) -> None: User defined function.
+        datapoint_callback (Callable) -> None: User defined function.
     Returns:
         None: No return value.
     """
@@ -356,18 +355,11 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
                 )
 
                 # copy image to new folder
-                try:
-                    shutil.copy(original_image_uri, output_image_uri)
-                except IOError as io_err:
-                    os.makedirs(os.path.dirname(output_image_uri))
-                    shutil.copy(original_image_uri, output_image_uri)
+                os.makedirs(os.path.dirname(output_image_uri), exist_ok=True)
+                shutil.copy(original_image_uri, output_image_uri)
 
         # write json
         metadata_output_path = join(output_dir, Path("_annotations.zumo.json"))
-        try:
-            with open(metadata_output_path, "w") as outfile:
-                json.dump(accum_metadata, outfile)
-        except IOError as io_err:
-            os.makedirs(os.path.dirname(metadata_output_path))
-            with open(metadata_output_path, "w") as outfile:
-                json.dump(accum_metadata, outfile)
+        os.makedirs(os.path.dirname(metadata_output_path), exist_ok=True)
+        with open(metadata_output_path, "w") as outfile:
+            json.dump(accum_metadata, outfile, indent=4)

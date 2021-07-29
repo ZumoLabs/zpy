@@ -24,7 +24,7 @@ from zpy.client_util import (
     clear_last_print,
     is_done,
     format_dataset,
-    hash,
+    dict_hash,
 )
 
 _auth_token: str = ""
@@ -117,7 +117,7 @@ class DatasetConfig:
     @property
     def hash(self):
         """Return a hash of the config."""
-        return hash(self._config)
+        return dict_hash(self._config)
 
     def set(self, path: str, value: any):
         """Set a value for a configurable parameter.
@@ -244,6 +244,8 @@ def generate(
         )
         print("Generating dataset:")
         print(json.dumps(dataset, indent=4, sort_keys=True))
+    else:
+        dataset = datasets_res["results"][0]
 
     if materialize:
         print("Materialize requested, waiting until dataset finishes to download it.")

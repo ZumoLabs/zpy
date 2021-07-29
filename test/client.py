@@ -1,13 +1,6 @@
 import json
 
 import zpy.client as zpy
-from zpy.client_util import extract_zip, format_dataset, hash
-
-import unittest
-from zpy.client_util import remove_n_extensions
-from numpy import array_equal
-
-from zpy.client import DatasetConfig
 
 
 def test_1(**init_kwargs):
@@ -36,12 +29,12 @@ def test_2(**init_kwargs):
 def test_3():
     """"""
     zpy.init(
-        project_uuid="feb6e594-55e0-4f87-9e75-5a128221499f",
-        auth_token="a4a13763b0dc0017b1fc9af890e9efea58fd072074ab9a169e5dcf0633310f28",
+        project_uuid='feb6e594-55e0-4f87-9e75-5a128221499f',
+        auth_token='a4a13763b0dc0017b1fc9af890e9efea58fd072074ab9a169e5dcf0633310f28',
     )
     dataset_config = zpy.DatasetConfig("dumpster_v5.1")
-    # dataset_config.set("run\\.padding_style", "square")
-    zpy.generate(dataset_config, num_datapoints=3, materialize=True)
+    dataset_config.set("run\.padding_style", "messy")
+    zpy.generate(dataset_config, num_datapoints=3)
 
 
 def pretty_print(object):
@@ -117,7 +110,7 @@ if __name__ == "__main__":
     # print("Running test_2:")
     # test_2(**init_kwargs)
     # print("Running test_3:")
-    # test_3()
+    test_3()
     # test format dataset
 
     # def datapoint_callback(images, annotations, categories):
@@ -129,4 +122,4 @@ if __name__ == "__main__":
     # dataset_path = extract_zip(input_path)
     # format_dataset(dataset_path, datapoint_callback)
 
-    test_generate(**init_kwargs)
+    # test_generate(**init_kwargs)
