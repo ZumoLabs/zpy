@@ -24,7 +24,7 @@ from zpy.client_util import (
     clear_last_print,
     is_done,
     format_dataset,
-    dict_hash,
+    dict_hash, remove_n_extensions,
 )
 
 _auth_token: str = ""
@@ -293,20 +293,19 @@ def generate(
                 f"{str(dataset['name']).replace(' ', '_')}-{dataset['id'][:8]}.zip"
             )
             # Throw it in /tmp for now I guess
-            output_path = join(DATASET_OUTPUT_PATH, name_slug)
+            output_path = Path(DATASET_OUTPUT_PATH) / name_slug
             existing_files = listdir(DATASET_OUTPUT_PATH)
             if name_slug not in existing_files:
                 print(
                     f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
                 )
                 download_url(dataset_download_res["redirect_link"], output_path)
-                unzipped_dataset_path = extract_zip(output_path)
-                format_dataset(unzipped_dataset_path, datapoint_callback)
+                format_dataset(output_path, datapoint_callback)
                 print("Done.")
+            elif datapoint_callback is not None:
+                format_dataset(output_path, datapoint_callback)
             else:
-                print(
-                    f"Download failed. Dataset {name_slug} already exists in {output_path}."
-                )
+                print(f"Dataset {name_slug} already exists in {output_path}.")
 
         else:
             print(

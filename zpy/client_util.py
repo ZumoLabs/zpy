@@ -229,7 +229,9 @@ def group_metadata_by_datapoint(
     for batch in listdir(dataset_path):
         batch_uri = join(dataset_path, batch)
         annotation_file_uri = join(batch_uri, "_annotations.zumo.json")
-        metadata = json.load(open(annotation_file_uri))
+
+        with open(annotation_file_uri) as annotation_file:
+            metadata = json.load(annotation_file)
 
         for c in values(metadata["categories"]):
             category_count_sums[c["id"]] += c["count"]
@@ -299,18 +301,22 @@ def group_metadata_by_datapoint(
     return accum_metadata, accum_categories, accum_datapoints
 
 
-def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> None:
+def format_dataset(zipped_dataset_path: Union[str, Path], datapoint_callback=None) -> None:
     """
     Updates metadata with new ids and accurate image paths.
     If a datapoint_callback is provided, it is called once per datapoint with the updated metadata.
     Otherwise the default is to write out an updated _annotations.zumo.json, along with all images, to a new adjacent folder.
     Args:
-        dataset_path (str): Path to unzipped dataset.
+        zipped_dataset_path (str): Path to unzipped dataset.
         datapoint_callback (Callable) -> None: User defined function.
     Returns:
         None: No return value.
     """
-    metadata, categories, datapoints = group_metadata_by_datapoint(dataset_path)
+    unzipped_dataset_path = Path(remove_n_extensions(zipped_dataset_path, n=1))
+    if not unzipped_dataset_path.exists():
+        unzipped_dataset_path = extract_zip(zipped_dataset_path)
+
+    metadata, categories, datapoints = group_metadata_by_datapoint(unzipped_dataset_path)
 
     if datapoint_callback is not None:
         for datapoint in datapoints:
@@ -319,7 +325,7 @@ def format_dataset(dataset_path: Union[str, Path], datapoint_callback=None) -> N
             )
 
     else:
-        output_dir = join(dataset_path.parent, dataset_path.name + "_formatted")
+        output_dir = join(unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted")
 
         accum_metadata = {
             "metadata": {
