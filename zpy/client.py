@@ -55,8 +55,7 @@ def init(
 
 
 IMAGES_PER_SAMPLE = 2  # for the iseg and rbg
-# DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
-DATASET_OUTPUT_PATH = Path("/mnt/c/Users/georg/Zumo/Datasets/Materialized")
+DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
 
 
 def require_zpy_init(func):
