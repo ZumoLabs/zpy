@@ -195,10 +195,10 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-        dataset_config: DatasetConfig,
-        num_datapoints: int = 10,
-        materialize: bool = True,
-        datapoint_callback=None,
+    dataset_config: DatasetConfig,
+    num_datapoints: int = 10,
+    materialize: bool = True,
+    datapoint_callback=None,
 ):
     """
     Generate a dataset.

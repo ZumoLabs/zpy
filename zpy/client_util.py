@@ -209,7 +209,7 @@ def group_by(iterable: Iterable, keyfunc: Callable) -> List[List]:
 
 
 def group_metadata_by_datapoint(
-        dataset_path: Path,
+    dataset_path: Path,
 ) -> Tuple[Dict, List[Dict], List[Dict]]:
     """
     Updates metadata with new ids and accurate image paths.
