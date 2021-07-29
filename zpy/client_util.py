@@ -28,7 +28,9 @@ def track_runtime(wrapped_function):
         value = wrapped_function(*args, **kwargs)
         end_datetime = datetime.now()
         run_time = end_datetime - start_datetime
-        print(f"{str(wrapped_function)} took {run_time.seconds}.{run_time.microseconds} seconds.")
+        print(
+            f"{str(wrapped_function)} took {run_time.seconds}.{run_time.microseconds} seconds."
+        )
 
         return value
 
@@ -247,7 +249,7 @@ def group_metadata_by_datapoint(
     Returns:
         tuple (metadata: dict, categories: list[dict], datapoints: list[dict]): Returns a tuple of (metadata, categories, datapoints), datapoints being a list of dicts, each containing images and annotations.
     """
-    print('Parsing dataset to group by datapoint...')
+    print("Parsing dataset to group by datapoint...")
     accum_metadata = {}
     accum_categories = []
     accum_datapoints = []
@@ -344,7 +346,7 @@ def format_dataset(
     """
     unzipped_dataset_path = Path(remove_n_extensions(zipped_dataset_path, n=1))
     if not unzipped_dataset_path.exists():
-        print(f'Unzipping {zipped_dataset_path}...')
+        print(f"Unzipping {zipped_dataset_path}...")
         unzipped_dataset_path = extract_zip(zipped_dataset_path)
 
     metadata, categories, datapoints = group_metadata_by_datapoint(
@@ -352,15 +354,17 @@ def format_dataset(
     )
 
     if datapoint_callback is not None:
-        print('Skipping default formatting, using datapoint_callback instead.')
+        print("Skipping default formatting, using datapoint_callback instead.")
         for datapoint in datapoints:
             datapoint_callback(
                 datapoint["images"], datapoint["annotations"], categories
             )
 
     else:
-        print('Doing default formatting for dataset...')
-        output_dir = join(unzipped_dataset_path.parent, unzipped_dataset_path.name, "_formatted")
+        print("Doing default formatting for dataset...")
+        output_dir = join(
+            unzipped_dataset_path.parent, unzipped_dataset_path.name, "_formatted"
+        )
 
         accum_metadata = {
             "metadata": {

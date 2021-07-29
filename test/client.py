@@ -95,30 +95,29 @@ class TestClientUtilMethods(unittest.TestCase):
         )
 
     def test_format_dataset(self):
-        output_dir = Path('/home/korystiger/Downloads/ktest')
+        output_dir = Path("/home/korystiger/Downloads/ktest")
         if output_dir.exists():
             shutil.rmtree(output_dir)
 
-        os.makedirs(output_dir / 'train', exist_ok=True)
-        os.makedirs(output_dir / 'val', exist_ok=True)
-        os.makedirs(output_dir / 'test', exist_ok=True)
+        os.makedirs(output_dir / "train", exist_ok=True)
+        os.makedirs(output_dir / "val", exist_ok=True)
+        os.makedirs(output_dir / "test", exist_ok=True)
 
         metadata = {
-            tvt_type: {'categories': {}, 'images': {}, 'annotations': []}
-            for tvt_type in
-            ['train', 'val', 'test']
+            tvt_type: {"categories": {}, "images": {}, "annotations": []}
+            for tvt_type in ["train", "val", "test"]
         }
 
         def datapoint_callback(images, annotations, categories):
             # print(f'Handling datapoint {images[0]["id"]}')
             r = random.random()
 
-            if r < .4:
-                tvt_type = 'train'
-            elif r < .8:
-                tvt_type = 'test'
+            if r < 0.4:
+                tvt_type = "train"
+            elif r < 0.8:
+                tvt_type = "test"
             else:
-                tvt_type = 'val'
+                tvt_type = "val"
 
             for image in images:
                 image_extensions = "".join(Path(image["name"]).suffixes[-2:])
@@ -128,23 +127,26 @@ class TestClientUtilMethods(unittest.TestCase):
 
                 shutil.copy(image["output_path"], new_path)
 
-                metadata[tvt_type]['images'][image['id']] = {
+                metadata[tvt_type]["images"][image["id"]] = {
                     **image,
-                    'output_path': str(new_path),
-                    'name': new_image_name
+                    "output_path": str(new_path),
+                    "name": new_image_name,
                 }
 
-            metadata[tvt_type]['annotations'].extend(annotations)
+            metadata[tvt_type]["annotations"].extend(annotations)
 
             for category in categories:
-                metadata[tvt_type]['categories'][category['id']] = category
+                metadata[tvt_type]["categories"][category["id"]] = category
 
-        format_dataset('/home/korystiger/Downloads/malibu-3k-0aac7584.zip', datapoint_callback=datapoint_callback)
+        format_dataset(
+            "/home/korystiger/Downloads/malibu-3k-0aac7584.zip",
+            datapoint_callback=datapoint_callback,
+        )
         # format_dataset('/home/korystiger/Downloads/trailer_empty_v5-f9b7ccb2.zip', datapoint_callback=datapoint_callback)
 
-        for tvt_type in ['train', 'val', 'test']:
+        for tvt_type in ["train", "val", "test"]:
             print(f"Writing {tvt_type} json...")
-            path = str(output_dir / tvt_type / 'annotations.json')
+            path = str(output_dir / tvt_type / "annotations.json")
             blob = metadata[tvt_type]
             write_json(path, blob)
 
