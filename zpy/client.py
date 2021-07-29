@@ -55,14 +55,16 @@ def init(
 
 
 IMAGES_PER_SAMPLE = 2  # for the iseg and rbg
-DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
+# DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
+DATASET_OUTPUT_PATH = Path("/mnt/c/Users/georg/Zumo/Datasets/Materialized")
 
 
 def require_zpy_init(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if None in [_project, _auth_token, _base_url]:
-            raise RuntimeError("Project and auth_token must be set via zpy.init()")
+            raise RuntimeError(
+                "Project and auth_token must be set via zpy.init()")
         return func(*args, **kwargs)
 
     return wrapper
@@ -213,26 +215,40 @@ def generate(
     hash = dataset_config.hash
     sim_name = dataset_config._sim["name"]
     internal_dataset_name = f"{sim_name}-{hash}-{num_datapoints}"
-    dataset = post(
-        f"{_base_url}/api/v1/datasets/",
-        data={
-            "project": _project["id"],
-            "name": internal_dataset_name,
-        },
+
+    filter_params = {
+        "project": _project["id"],
+        "name": internal_dataset_name
+    }
+
+    datasets_res = get(
+        f"{_base_url}/api/v1/datasets",
+        params=filter_params,
         headers=auth_header(_auth_token),
     ).json()
-    post(
-        f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
-        data={
-            "project": _project["id"],
-            "sim": dataset_config.sim["id"],
-            "config": json.dumps(dataset_config.config),
-            "amount": num_datapoints,
-        },
-        headers=auth_header(_auth_token),
-    )
-    print("Generating dataset:")
-    print(json.dumps(dataset, indent=4, sort_keys=True))
+
+    if len(datasets_res["results"]) == 0:
+        dataset = post(
+            f"{_base_url}/api/v1/datasets/",
+            data={
+                "project": _project["id"],
+                "name": internal_dataset_name,
+            },
+            headers=auth_header(_auth_token),
+        ).json()
+        post(
+            f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
+            data={
+                "project": _project["id"],
+                "sim": dataset_config.sim["name"],
+                "config": json.dumps(dataset_config.config),
+                "amount": num_datapoints,
+            },
+            headers=auth_header(_auth_token),
+        )
+        print("Generating dataset:")
+        print(json.dumps(dataset, indent=4, sort_keys=True))
+
     if materialize:
         print("Materialize requested, waiting until dataset finishes to download it.")
         dataset = get(
@@ -285,7 +301,8 @@ def generate(
                 print(
                     f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
                 )
-                download_url(dataset_download_res["redirect_link"], output_path)
+                download_url(
+                    dataset_download_res["redirect_link"], output_path)
                 unzipped_dataset_path = extract_zip(output_path)
                 format_dataset(unzipped_dataset_path, datapoint_callback)
                 print("Done.")

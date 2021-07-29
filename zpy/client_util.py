@@ -211,14 +211,14 @@ def group_by(iterable: Iterable, keyfunc) -> List[List]:
 
 def group_metadata_by_datapoint(
     dataset_path: Path,
-) -> (Dict, Dict, List[Dict]):
+) -> tuple[dict, list[dict], list[dict]]: 
     """
     Updates metadata with new ids and accurate image paths.
     Returns a list of dicts, each item containing metadata relevant to a single datapoint.
     Args:
         dataset_path (Path): Path to unzipped dataset.
     Returns:
-        tuple (metadata, categories, datapoints: list[dict]): Returns a tuple of (metadata, categories, datapoints), datapoints being a list of dicts, each containing images and annotations.
+        tuple (metadata: dict, categories: list[dict], datapoints: list[dict]): Returns a tuple of (metadata, categories, datapoints), datapoints being a list of dicts, each containing images and annotations.
     """
 
     accum_metadata = {}
@@ -296,7 +296,7 @@ def group_metadata_by_datapoint(
             accum_categories = [
                 {**c, "count": category_count_sums[c["id"]]} for c in accum_categories
             ]
-
+ 
     return (accum_metadata, accum_categories, accum_datapoints)
 
 

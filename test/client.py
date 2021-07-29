@@ -54,8 +54,6 @@ def pretty_print(object):
 
 
 def test_generate(**init_kwargs):
-    print("hey")
-
     zpy.init(**init_kwargs)
     dataset_config = zpy.DatasetConfig("can_v7")
 
@@ -66,7 +64,7 @@ def test_generate(**init_kwargs):
 
     dataset = zpy.generate(
         dataset_config,
-        num_datapoints=37,
+        num_datapoints=39,
         materialize=True,
         # datapoint_callback=datapoint_callback
     )
@@ -99,11 +97,11 @@ if __name__ == "__main__":
     #     "project_uuid": "aad8e2b2-5431-4104-a205-dc3b638b0dab",
     #     "auth_token": "214540cbd525f1ecf2bc52e2ddb7ef76801048e3f55aa4b33a9e501b115a736e",
     # }
-    # init_kwargs = {
-    #     "base_url": "https://ragnarok.stage.zumok8s.org",
-    #     "project_uuid": "feb6e594-55e0-4f87-9e75-5a128221499f",
-    #     "auth_token": "a19f8a1cef0c1661f7de1fd513d740c499752fc567fc4c6fe6d11fdbce533b65",
-    # }
+    init_kwargs = {
+        "base_url": "https://ragnarok.stage.zumok8s.org",
+        "project_uuid": "feb6e594-55e0-4f87-9e75-5a128221499f",
+        "auth_token": "a19f8a1cef0c1661f7de1fd513d740c499752fc567fc4c6fe6d11fdbce533b65",
+    }
     # init_kwargs = {
     #     "base_url": "https://ragnarok.stage.zumok8s.org",
     #     "project_uuid": "91419af0-4815-41e7-9b77-5ef8154148c8",  # Compology
@@ -119,16 +117,16 @@ if __name__ == "__main__":
     # print("Running test_2:")
     # test_2(**init_kwargs)
     # print("Running test_3:")
-    test_3()
+    # test_3()
     # test format dataset
 
-    def datapoint_callback(images, annotations, categories):
-        pretty_print(images)
-        pretty_print(annotations)
-        pretty_print(categories)
+    # def datapoint_callback(images, annotations, categories):
+    #     pretty_print(images)
+    #     pretty_print(annotations)
+    #     pretty_print(categories)
 
     # input_path = "/mnt/c/Users/georg/Zumo/Datasets/can_v714-8c288ec8.zip"
     # dataset_path = extract_zip(input_path)
-    # format_dataset(dataset_path)
+    # format_dataset(dataset_path, datapoint_callback)
 
-    # test_generate(**init_kwargs)
+    test_generate(**init_kwargs)
