@@ -62,8 +62,7 @@ def require_zpy_init(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if None in [_project, _auth_token, _base_url]:
-            raise RuntimeError(
-                "Project and auth_token must be set via zpy.init()")
+            raise RuntimeError("Project and auth_token must be set via zpy.init()")
         return func(*args, **kwargs)
 
     return wrapper
@@ -215,10 +214,7 @@ def generate(
     sim_name = dataset_config._sim["name"]
     internal_dataset_name = f"{sim_name}-{hash}-{num_datapoints}"
 
-    filter_params = {
-        "project": _project["id"],
-        "name": internal_dataset_name
-    }
+    filter_params = {"project": _project["id"], "name": internal_dataset_name}
 
     datasets_res = get(
         f"{_base_url}/api/v1/datasets",
@@ -300,8 +296,7 @@ def generate(
                 print(
                     f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
                 )
-                download_url(
-                    dataset_download_res["redirect_link"], output_path)
+                download_url(dataset_download_res["redirect_link"], output_path)
                 unzipped_dataset_path = extract_zip(output_path)
                 format_dataset(unzipped_dataset_path, datapoint_callback)
                 print("Done.")
