@@ -3,12 +3,12 @@ import json
 import sys
 import time
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, Union
 from os import listdir
 from os.path import join
 from pathlib import Path
+from typing import Dict
 from typing import Union
+
 import requests
 from pydash import set_, unset, is_empty
 
@@ -195,24 +195,25 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-    dataset_config: DatasetConfig,
-    num_datapoints: int = 10,
-    materialize: bool = False,
-    datapoint_callback=None,
+        dataset_config: DatasetConfig,
+        num_datapoints: int = 10,
+        materialize: bool = True,
+        datapoint_callback=None,
 ):
     """
     Generate a dataset.
     Args:
-        dataset_config: Specification for a Sim and its configurable parameters.
-        num_datapoints: Number of datapoints in the dataset. A datapoint is an instant in time composed of all
+        dataset_config (DatasetConfig): Specification for a Sim and its configurable parameters.
+        num_datapoints (int): Number of datapoints in the dataset. A datapoint is an instant in time composed of all
                               the output images (rgb, iseg, cseg, etc) along with the annotations.
-        materialize: Optionally download the dataset.
+        datapoint_callback (fn): Callback function to be called with every datapoint in the generated Dataset.
+        materialize (bool): Optionally download the dataset. Defaults to True.
     Returns:
         None
     """
-    hash = dataset_config.hash
-    sim_name = dataset_config._sim["name"]
-    internal_dataset_name = f"{sim_name}-{hash}-{num_datapoints}"
+    dataset_config_hash = dataset_config.hash
+    sim_name = dataset_config.sim["name"]
+    internal_dataset_name = f"{sim_name}-{dataset_config_hash}-{num_datapoints}"
 
     filter_params = {"project": _project["id"], "name": internal_dataset_name}
 
