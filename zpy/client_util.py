@@ -8,6 +8,7 @@ import sys
 import uuid
 import zipfile
 from collections import defaultdict
+from datetime import datetime
 from itertools import groupby
 from os import listdir
 from os.path import join
@@ -18,6 +19,20 @@ from typing import Union
 import requests
 from pydash import uniq, values, filter_
 from requests import HTTPError
+
+
+def track_runtime(wrapped_function):
+    @functools.wraps(wrapped_function)
+    def do_track(*args, **kwargs):
+        start_datetime = datetime.now()
+        value = wrapped_function(*args, **kwargs)
+        end_datetime = datetime.now()
+        run_time = end_datetime - start_datetime
+        print(f"{str(wrapped_function)} took {run_time.seconds}.{run_time.microseconds} seconds.")
+
+        return value
+
+    return do_track
 
 
 def add_newline(func):
@@ -175,6 +190,7 @@ def dict_hash(data) -> str:
     return config_hash
 
 
+@track_runtime
 def extract_zip(path_to_zip: Path) -> Path:
     """
     Extracts a .zip to a new adjacent folder by the same name.
@@ -187,6 +203,17 @@ def extract_zip(path_to_zip: Path) -> Path:
     with zipfile.ZipFile(path_to_zip, "r") as zip_ref:
         zip_ref.extractall(unzipped_path)
     return unzipped_path
+
+
+@track_runtime
+def write_json(path, json_blob):
+    """
+    Args:
+        path (str): Path to output to.
+        json_blob (obj): JSON serializable object.
+    """
+    with open(path, "w") as outfile:
+        json.dump(json_blob, outfile, indent=4)
 
 
 def group_by(iterable: Iterable, keyfunc: Callable) -> List[List]:
@@ -208,6 +235,7 @@ def group_by(iterable: Iterable, keyfunc: Callable) -> List[List]:
     ]
 
 
+@track_runtime
 def group_metadata_by_datapoint(
     dataset_path: Path,
 ) -> Tuple[Dict, List[Dict], List[Dict]]:
@@ -219,7 +247,7 @@ def group_metadata_by_datapoint(
     Returns:
         tuple (metadata: dict, categories: list[dict], datapoints: list[dict]): Returns a tuple of (metadata, categories, datapoints), datapoints being a list of dicts, each containing images and annotations.
     """
-
+    print('Parsing dataset to group by datapoint...')
     accum_metadata = {}
     accum_categories = []
     accum_datapoints = []
@@ -316,6 +344,7 @@ def format_dataset(
     """
     unzipped_dataset_path = Path(remove_n_extensions(zipped_dataset_path, n=1))
     if not unzipped_dataset_path.exists():
+        print(f'Unzipping {zipped_dataset_path}...')
         unzipped_dataset_path = extract_zip(zipped_dataset_path)
 
     metadata, categories, datapoints = group_metadata_by_datapoint(
@@ -323,15 +352,15 @@ def format_dataset(
     )
 
     if datapoint_callback is not None:
+        print('Skipping default formatting, using datapoint_callback instead.')
         for datapoint in datapoints:
             datapoint_callback(
                 datapoint["images"], datapoint["annotations"], categories
             )
 
     else:
-        output_dir = join(
-            unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
-        )
+        print('Doing default formatting for dataset...')
+        output_dir = join(unzipped_dataset_path.parent, unzipped_dataset_path.name, "_formatted")
 
         accum_metadata = {
             "metadata": {
