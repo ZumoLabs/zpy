@@ -363,7 +363,7 @@ def format_dataset(
     else:
         print("Doing default formatting for dataset...")
         output_dir = join(
-            unzipped_dataset_path.parent, unzipped_dataset_path.name, "_formatted"
+            unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
         )
 
         accum_metadata = {
