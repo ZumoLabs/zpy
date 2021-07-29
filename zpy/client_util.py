@@ -301,7 +301,9 @@ def group_metadata_by_datapoint(
     return accum_metadata, accum_categories, accum_datapoints
 
 
-def format_dataset(zipped_dataset_path: Union[str, Path], datapoint_callback=None) -> None:
+def format_dataset(
+    zipped_dataset_path: Union[str, Path], datapoint_callback=None
+) -> None:
     """
     Updates metadata with new ids and accurate image paths.
     If a datapoint_callback is provided, it is called once per datapoint with the updated metadata.
@@ -316,7 +318,9 @@ def format_dataset(zipped_dataset_path: Union[str, Path], datapoint_callback=Non
     if not unzipped_dataset_path.exists():
         unzipped_dataset_path = extract_zip(zipped_dataset_path)
 
-    metadata, categories, datapoints = group_metadata_by_datapoint(unzipped_dataset_path)
+    metadata, categories, datapoints = group_metadata_by_datapoint(
+        unzipped_dataset_path
+    )
 
     if datapoint_callback is not None:
         for datapoint in datapoints:
@@ -325,7 +329,9 @@ def format_dataset(zipped_dataset_path: Union[str, Path], datapoint_callback=Non
             )
 
     else:
-        output_dir = join(unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted")
+        output_dir = join(
+            unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
+        )
 
         accum_metadata = {
             "metadata": {

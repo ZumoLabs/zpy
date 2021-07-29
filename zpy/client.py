@@ -24,7 +24,8 @@ from zpy.client_util import (
     clear_last_print,
     is_done,
     format_dataset,
-    dict_hash, remove_n_extensions,
+    dict_hash,
+    remove_n_extensions,
 )
 
 _auth_token: str = ""

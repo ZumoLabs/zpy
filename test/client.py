@@ -76,8 +76,8 @@ class TestClientUtilMethods(unittest.TestCase):
 
     def test_generate(self):
         zpy.init(
-            project_uuid='feb6e594-55e0-4f87-9e75-5a128221499f',
-            auth_token='a4a13763b0dc0017b1fc9af890e9efea58fd072074ab9a169e5dcf0633310f28',
+            project_uuid="feb6e594-55e0-4f87-9e75-5a128221499f",
+            auth_token="a4a13763b0dc0017b1fc9af890e9efea58fd072074ab9a169e5dcf0633310f28",
         )
         dataset_config = zpy.DatasetConfig("dumpster_v5.1")
         dataset_config.set("run\.padding_style", "messy")
@@ -87,7 +87,9 @@ class TestClientUtilMethods(unittest.TestCase):
             pretty_print(annotations)
             pretty_print(categories)
 
-        zpy.generate(dataset_config, num_datapoints=3, datapoint_callback=datapoint_callback)
+        zpy.generate(
+            dataset_config, num_datapoints=3, datapoint_callback=datapoint_callback
+        )
 
 
 if __name__ == "__main__":
