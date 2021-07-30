@@ -239,7 +239,7 @@ def group_by(iterable: Iterable, keyfunc: Callable) -> List[List]:
 
 @track_runtime
 def group_metadata_by_datapoint(
-        dataset_path: Path,
+    dataset_path: Path,
 ) -> Tuple[Dict, List[Dict], List[Dict]]:
     """
     Updates metadata with new ids and accurate image paths.
@@ -320,7 +320,7 @@ def group_metadata_by_datapoint(
             )
 
     for category_id, category_count in category_count_sums.items():
-        accum_categories[category_id]['count'] = category_count
+        accum_categories[category_id]["count"] = category_count
 
     return accum_metadata, values(accum_categories), accum_datapoints
 
