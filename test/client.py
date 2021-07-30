@@ -120,17 +120,14 @@ class TestClientUtilMethods(unittest.TestCase):
                 tvt_type = "val"
 
             for image in images:
-                image_extensions = "".join(Path(image["name"]).suffixes[-2:])
-                datapoint_uuid = "-".join(str(image["id"]).split("-")[:-1])
-                new_image_name = datapoint_uuid + image_extensions
-                new_path = output_dir / tvt_type / new_image_name
+                new_path = output_dir / tvt_type / image["id"]
 
                 shutil.copy(image["output_path"], new_path)
 
                 metadata[tvt_type]["images"][image["id"]] = {
                     **image,
                     "output_path": str(new_path),
-                    "name": new_image_name,
+                    "name": image["id"],
                 }
 
             metadata[tvt_type]["annotations"].extend(annotations)
