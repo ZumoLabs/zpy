@@ -17,7 +17,7 @@ from typing import Iterable, List, Dict, Tuple, Callable
 from typing import Union
 
 import requests
-from pydash import uniq, values, filter_
+from pydash import values, filter_
 from requests import HTTPError
 
 
@@ -239,7 +239,7 @@ def group_by(iterable: Iterable, keyfunc: Callable) -> List[List]:
 
 @track_runtime
 def group_metadata_by_datapoint(
-    dataset_path: Path,
+        dataset_path: Path,
 ) -> Tuple[Dict, List[Dict], List[Dict]]:
     """
     Updates metadata with new ids and accurate image paths.
@@ -247,11 +247,13 @@ def group_metadata_by_datapoint(
     Args:
         dataset_path (Path): Path to unzipped dataset.
     Returns:
-        tuple (metadata: dict, categories: list[dict], datapoints: list[dict]): Returns a tuple of (metadata, categories, datapoints), datapoints being a list of dicts, each containing images and annotations.
+        tuple (metadata: dict, categories: list[dict], datapoints: list[dict]): Returns a tuple of (metadata,
+            categories, datapoints), datapoints being a list of dicts, each containing a list of images and a list of
+            annotations.
     """
     print("Parsing dataset to group by datapoint...")
     accum_metadata = {}
-    accum_categories = []
+    accum_categories = {}
     accum_datapoints = []
     category_count_sums = defaultdict(int)
 
@@ -263,8 +265,13 @@ def group_metadata_by_datapoint(
         with open(annotation_file_uri) as annotation_file:
             metadata = json.load(annotation_file)
 
-        for c in values(metadata["categories"]):
-            category_count_sums[c["id"]] += c["count"]
+        accum_metadata = {**metadata["metadata"], "save_path": batch_uri}
+
+        for category_id, category in metadata["categories"].items():
+            category_count_sums[category_id] += category["count"]
+
+        for category_id, category in metadata["categories"].items():
+            accum_categories[category_id] = category
 
         images_grouped_by_datapoint = group_by(
             values(metadata["images"]),
@@ -283,18 +290,9 @@ def group_metadata_by_datapoint(
 
             # mutate
             image_new_id_map = {
-                img["id"]: str(
-                    datapoint_uuid
-                    + "-"
-                    + str(Path(img["name"]).suffixes[-2]).replace(".", "")
-                )
+                img["id"]: datapoint_uuid + "".join(Path(img["name"]).suffixes[-2:])
                 for img in images
             }
-
-            categories_mutated = [
-                {**c, "count": category_count_sums[c["id"]]}
-                for c in values(metadata["categories"])
-            ]
 
             images_mutated = [
                 {
@@ -314,8 +312,6 @@ def group_metadata_by_datapoint(
             ]
 
             # accumulate
-            accum_metadata = {**metadata["metadata"], "save_path": batch_uri}
-            accum_categories = uniq([*accum_categories, *categories_mutated])
             accum_datapoints.append(
                 {
                     "images": images_mutated,
@@ -323,12 +319,10 @@ def group_metadata_by_datapoint(
                 }
             )
 
-            # update the category counts
-            accum_categories = [
-                {**c, "count": category_count_sums[c["id"]]} for c in accum_categories
-            ]
+    for category_id, category_count in category_count_sums.items():
+        accum_categories[category_id]['count'] = category_count
 
-    return accum_metadata, accum_categories, accum_datapoints
+    return accum_metadata, values(accum_categories), accum_datapoints
 
 
 def format_dataset(
@@ -365,14 +359,15 @@ def format_dataset(
         output_dir = join(
             unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
         )
+        os.makedirs(output_dir)
 
         accum_metadata = {
             "metadata": {
                 **metadata,
                 "save_path": output_dir,
             },
-            "categories": categories,
-            "images": [],
+            "categories": {category["id"]: category for category in categories},
+            "images": {},
             "annotations": [],
         }
 
@@ -384,27 +379,21 @@ def format_dataset(
                 original_image_uri = image["output_path"]
 
                 # build new path
-                image_extensions = "".join(Path(image["name"]).suffixes[-2:])
-                datapoint_uuid = "-".join(str(image["id"]).split("-")[:-1])
-                new_image_name = datapoint_uuid + image_extensions
-                output_image_uri = join(output_dir, Path(new_image_name))
+                output_image_uri = join(output_dir, image["id"])
 
                 # add to accumulator
-                accum_metadata["images"].append(
-                    {
-                        **image,
-                        "name": new_image_name,
-                        "output_path": output_image_uri,
-                        "relative_path": new_image_name,
-                    }
-                )
+                accum_metadata["images"][image["id"]] = {
+                    **image,
+                    "name": image["id"],
+                    "relative_path": image["id"],
+                    "output_path": join(output_dir, image["id"]),
+                }
 
                 # copy image to new folder
-                os.makedirs(os.path.dirname(output_image_uri), exist_ok=True)
                 shutil.copy(original_image_uri, output_image_uri)
 
         # write json
         metadata_output_path = join(output_dir, Path("_annotations.zumo.json"))
+
         os.makedirs(os.path.dirname(metadata_output_path), exist_ok=True)
-        with open(metadata_output_path, "w") as outfile:
-            json.dump(accum_metadata, outfile, indent=4)
+        write_json(metadata_output_path, accum_metadata)

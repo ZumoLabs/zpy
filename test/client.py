@@ -3,6 +3,7 @@ import os
 import random
 import shutil
 import unittest
+from collections import defaultdict
 from pathlib import Path
 
 import zpy.client as zpy
@@ -107,9 +108,9 @@ class TestClientUtilMethods(unittest.TestCase):
             tvt_type: {"categories": {}, "images": {}, "annotations": []}
             for tvt_type in ["train", "val", "test"]
         }
+        category_counts = {tvt_type: defaultdict(int) for tvt_type in ["train", "val", "test"]}
 
         def datapoint_callback(images, annotations, categories):
-            # print(f'Handling datapoint {images[0]["id"]}')
             r = random.random()
 
             if r < 0.4:
@@ -127,21 +128,31 @@ class TestClientUtilMethods(unittest.TestCase):
                 metadata[tvt_type]["images"][image["id"]] = {
                     **image,
                     "output_path": str(new_path),
+                    "relative_path": image["id"],
                     "name": image["id"],
                 }
+
+                filtered_annotations_by_image_id = [a for a in annotations if a['image_id'] == image['id']]
+                for annotation in filtered_annotations_by_image_id:
+                    category_counts[tvt_type][annotation['category_id']] += 1
 
             metadata[tvt_type]["annotations"].extend(annotations)
 
             for category in categories:
                 metadata[tvt_type]["categories"][category["id"]] = category
 
-        format_dataset(
-            "/home/korystiger/Downloads/malibu-3k-0aac7584.zip",
-            datapoint_callback=datapoint_callback,
-        )
-        # format_dataset('/home/korystiger/Downloads/trailer_empty_v5-f9b7ccb2.zip', datapoint_callback=datapoint_callback)
+        # format_dataset("/home/korystiger/Downloads/malibu-3k-0aac7584.zip",
+        #     # datapoint_callback=datapoint_callback,
+        # )
+        # format_dataset('/home/korystiger/Downloads/can_v714-8c288ec8.zip',
+        #                datapoint_callback=datapoint_callback)
+        format_dataset('/home/korystiger/Downloads/trailer_empty_v5-f9b7ccb2.zip',
+                       datapoint_callback=datapoint_callback)
 
         for tvt_type in ["train", "val", "test"]:
+            for category_id, count in category_counts[tvt_type].items():
+                metadata[tvt_type]['categories'][category_id]['count'] = count
+
             print(f"Writing {tvt_type} json...")
             path = str(output_dir / tvt_type / "annotations.json")
             blob = metadata[tvt_type]
