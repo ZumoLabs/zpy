@@ -4,7 +4,6 @@ import sys
 import time
 from datetime import datetime, timedelta
 from os import listdir
-from os.path import join
 from pathlib import Path
 from typing import Dict
 from typing import Union
@@ -15,7 +14,6 @@ from pydash import set_, unset, is_empty
 from cli.utils import download_url
 from zpy.client_util import (
     add_newline,
-    extract_zip,
     get,
     post,
     to_query_param_value,
@@ -25,7 +23,6 @@ from zpy.client_util import (
     is_done,
     format_dataset,
     dict_hash,
-    remove_n_extensions,
 )
 
 _auth_token: str = ""
@@ -269,16 +266,14 @@ def generate(
             next_check_datetime = datetime.now() + timedelta(seconds=60)
             while datetime.now() < next_check_datetime:
                 print(
-                    "\r{}".format(
-                        f"Dataset<{dataset['name']}> not ready for download in state {dataset['state']}. "
-                        f"SimRuns READY: {num_ready_simruns}/{num_simruns}. "
-                        f"Checking again in {(next_check_datetime - datetime.now()).seconds}s."
-                    ),
-                    end="",
+                    f"Dataset<{dataset['name']}> not ready for download in state {dataset['state']}. "
+                    f"SimRuns READY: {num_ready_simruns}/{num_simruns}. "
+                    f"Checking again in {(next_check_datetime - datetime.now()).seconds}s.",
+                    end="\r"
                 )
                 time.sleep(1)
             clear_last_print()
-            print("\r{}".format("Checking dataset...", end=""))
+            print("Checking dataset...", end="\r")
             dataset = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/",
                 headers=auth_header(_auth_token),
