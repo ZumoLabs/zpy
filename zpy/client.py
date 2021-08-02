@@ -269,7 +269,7 @@ def generate(
                     f"Dataset<{dataset['name']}> not ready for download in state {dataset['state']}. "
                     f"SimRuns READY: {num_ready_simruns}/{num_simruns}. "
                     f"Checking again in {(next_check_datetime - datetime.now()).seconds}s.",
-                    end="\r"
+                    end="\r",
                 )
                 time.sleep(1)
             clear_last_print()
