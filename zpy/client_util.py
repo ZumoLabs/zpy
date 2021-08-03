@@ -124,7 +124,8 @@ def to_query_param_value(config):
     for django_field_traversal, django_field_value in config.items():
         # Ignore fields set as None. They weren't specifically set or asked for.
         if django_field_value is not None:
-            query_param_values.append(f"{django_field_traversal}:{django_field_value}")
+            query_param_values.append(
+                f"{django_field_traversal}:{django_field_value}")
     return ",".join(query_param_values)
 
 
@@ -193,18 +194,17 @@ def dict_hash(data) -> str:
 
 
 @track_runtime
-def extract_zip(path_to_zip: Path) -> Path:
+def extract_zip(path_to_zip: Path, output_path: Path):
     """
     Extracts a .zip to a new adjacent folder by the same name.
     Args:
         path_to_zip: Path to .zip
     Returns:
-        Path: Extracted folder path
+        None: No return value
     """
-    unzipped_path = Path(remove_n_extensions(path_to_zip, n=1))
     with zipfile.ZipFile(path_to_zip, "r") as zip_ref:
-        zip_ref.extractall(unzipped_path)
-    return unzipped_path
+        zip_ref.extractall(output_path)
+
 
 
 @track_runtime
@@ -290,7 +290,8 @@ def group_metadata_by_datapoint(
 
             # mutate
             image_new_id_map = {
-                img["id"]: datapoint_uuid + "".join(Path(img["name"]).suffixes[-2:])
+                img["id"]: datapoint_uuid +
+                "".join(Path(img["name"]).suffixes[-2:])
                 for img in images
             }
 
@@ -338,13 +339,16 @@ def format_dataset(
     Returns:
         None: No return value.
     """
-    unzipped_dataset_path = Path(remove_n_extensions(zipped_dataset_path, n=1))
-    if not unzipped_dataset_path.exists():
+    raw_dataset_path = Path(join(
+        Path(zipped_dataset_path).parent, Path(zipped_dataset_path).name + "_raw"
+    ))
+
+    if not raw_dataset_path.exists():
         print(f"Unzipping {zipped_dataset_path}...")
-        unzipped_dataset_path = extract_zip(zipped_dataset_path)
+        extract_zip(zipped_dataset_path, raw_dataset_path)
 
     metadata, categories, datapoints = group_metadata_by_datapoint(
-        unzipped_dataset_path
+        raw_dataset_path
     )
 
     if datapoint_callback is not None:
@@ -356,10 +360,8 @@ def format_dataset(
 
     else:
         print("Doing default formatting for dataset...")
-        output_dir = join(
-            unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
-        )
-        os.makedirs(output_dir)
+        output_dir = Path(remove_n_extensions(zipped_dataset_path, n=1))
+        os.makedirs(output_dir, exist_ok=True)
 
         accum_metadata = {
             "metadata": {

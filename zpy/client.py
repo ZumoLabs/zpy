@@ -115,7 +115,7 @@ class DatasetConfig:
     @property
     def hash(self):
         """Return a hash of the config."""
-        return dict_hash(self._config)
+        return dict_hash(self._config)[:8]
 
     def set(self, path: str, value: any):
         """Set a value for a configurable parameter.
