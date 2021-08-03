@@ -50,14 +50,8 @@ dataset_config = zpy.DatasetConfig(sim_name)
 
 # The generate call will cause our backend to actually generate a dataset. 
 #
-# There are a few known issues:
+# Currently known issues:
 # * Takes ~5 minutes to provision and spin up machines for larger generation jobs >200
-#   images
-# * Each dataset needs a unique name, e.g. 'dataset.01'. In the future, we may remove
-#   the concept of dataset names. Instead datasets will only be specified by their
-#   config.
-# * Calls to `generate` for a config that has already been generated take longer than
-#   they should. In the future, if the data has already been generated it will start
-#   downloading immediately.
-zpy.generate('dataset.01', dataset_config, num_datapoints=50, materialize=True)
+#   images.
+zpy.generate(dataset_config, num_datapoints=50, materialize=True)
 ```
