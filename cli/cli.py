@@ -32,7 +32,7 @@ def cli(ctx, api_version):
     """
     initialize_config()
     ctx.ensure_object(dict)
-    ctx.obj['API_VERSION'] = api_version
+    ctx.obj["API_VERSION"] = api_version
 
 
 @cli.command("help")

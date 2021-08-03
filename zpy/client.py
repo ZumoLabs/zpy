@@ -35,16 +35,19 @@ _project: Union[Dict, None] = None
 
 class InvalidAuthTokenError(Exception):
     """Raised when an auth_token is missing or invalid."""
+
     pass
 
 
 class InvalidProjectError(Exception):
     """Raised when accessing a project which does not exist or without appropriate access permissions."""
+
     pass
 
 
 class ClientNotInitializedError(Exception):
     """Raised when trying to use functionality which is dependent on calling client.init()"""
+
     pass
 
 
@@ -53,10 +56,10 @@ class InvalidSimError(Exception):
 
 
 def init(
-        auth_token: str = '',
-        project_uuid: str = '',
-        base_url: str = "https://ragnarok.zumok8s.org",
-        version: str = "v2",
+    auth_token: str = "",
+    project_uuid: str = "",
+    base_url: str = "https://ragnarok.zumok8s.org",
+    version: str = "v2",
 ):
     """
     Initializes the zpy client library.
@@ -79,11 +82,14 @@ def init(
     try:
         UUID(project_uuid, version=4)
     except ValueError:
-        raise InvalidProjectError("Init failed: project_uuid must be a valid uuid4 string.") from None
+        raise InvalidProjectError(
+            "Init failed: project_uuid must be a valid uuid4 string."
+        ) from None
 
     if is_empty(auth_token):
         raise InvalidAuthTokenError(
-            f"Init failed: invalid auth token - find yours at https://app.zumolabs.ai/settings/auth-token.")
+            f"Init failed: invalid auth token - find yours at https://app.zumolabs.ai/settings/auth-token."
+        )
 
     try:
         _project = get(
@@ -94,9 +100,12 @@ def init(
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 401:
             raise InvalidAuthTokenError(
-                f"Init failed: invalid auth token - find yours at https://app.zumolabs.ai/settings/auth-token.") from None
+                f"Init failed: invalid auth token - find yours at https://app.zumolabs.ai/settings/auth-token."
+            ) from None
         elif e.response.status_code == 404:
-            raise InvalidProjectError("Init failed: you are not part of this project or it does not exist.") from None
+            raise InvalidProjectError(
+                "Init failed: you are not part of this project or it does not exist."
+            ) from None
 
 
 DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
@@ -107,14 +116,15 @@ def require_zpy_init(func):
     def wrapper(*args, **kwargs):
         if not _init_done:
             raise ClientNotInitializedError(
-                "Client not initialized: project and auth_token must be set via client.init().") from None
+                "Client not initialized: project and auth_token must be set via client.init()."
+            ) from None
         return func(*args, **kwargs)
 
     return wrapper
 
 
-DYNAMIC_ATTRIBUTES_KEY = '_dynamic_attributes'
-DYNAMIC_ATTRIBUTE_GIN_PREFIX = 'run.'
+DYNAMIC_ATTRIBUTES_KEY = "_dynamic_attributes"
+DYNAMIC_ATTRIBUTE_GIN_PREFIX = "run."
 
 
 class DatasetConfig:
@@ -122,7 +132,9 @@ class DatasetConfig:
         # Placeholders to make IDEs happy. Actual value setting happens in the from_sim_name factory method.
         self._sim = None
         self._config = {}
-        raise RuntimeWarning('DatasetConfig is not directly instantiable any more. Use DatasetConfig.from_sim_name!')
+        raise RuntimeWarning(
+            "DatasetConfig is not directly instantiable any more. Use DatasetConfig.from_sim_name!"
+        )
 
     @classmethod
     @require_zpy_init
@@ -145,7 +157,9 @@ class DatasetConfig:
             print(f"Found Sim<{sim_name}> in Project<{_project['name']}>")
             sim = sims[0]
         else:
-            raise InvalidSimError(f"Could not find Sim<{sim_name}> in Project<{_project['name']}>.")
+            raise InvalidSimError(
+                f"Could not find Sim<{sim_name}> in Project<{_project['name']}>."
+            )
 
         # Add the run_kwargs as attributes to the class
         dynamic_attributes = {DYNAMIC_ATTRIBUTES_KEY: []}
@@ -154,9 +168,15 @@ class DatasetConfig:
             internal_name = f"_{property_name}"
             # The extra _internal_name kwarg is to capture the value of internal_name at that point in the loop,
             # otherwise every property from this loop will refer to the same thing.
-            p = property(fget=lambda _self, _internal_name=internal_name: getattr(_self, _internal_name),
-                         fset=lambda _self, value, _internal_name=internal_name: setattr(_self, _internal_name, value),
-                         doc=f"Type: {run_kwarg['type']}. Default if not set: {run_kwarg['default']}.")
+            p = property(
+                fget=lambda _self, _internal_name=internal_name: getattr(
+                    _self, _internal_name
+                ),
+                fset=lambda _self, value, _internal_name=internal_name: setattr(
+                    _self, _internal_name, value
+                ),
+                doc=f"Type: {run_kwarg['type']}. Default if not set: {run_kwarg['default']}.",
+            )
             # Add underscore-prefixed name for storing the actual value
             dynamic_attributes[internal_name] = None
             # Add non-underscored name to be treated as a @property
@@ -175,11 +195,15 @@ class DatasetConfig:
 
         # creating class dynamically
         class_name = pascal_case(sim["name"]) + "DatasetConfig"
-        clazz = type(class_name, (DatasetConfig,), {
-            "__init__": constructor,
-            "__doc__": sim["description"],
-            **dynamic_attributes,
-        })
+        clazz = type(
+            class_name,
+            (DatasetConfig,),
+            {
+                "__init__": constructor,
+                "__doc__": sim["description"],
+                **dynamic_attributes,
+            },
+        )
         return clazz(sim)
 
     @property
@@ -202,7 +226,9 @@ class DatasetConfig:
         for dynamic_attr in getattr(self, DYNAMIC_ATTRIBUTES_KEY, []):
             dynamic_attr_value = getattr(self, dynamic_attr)
             if dynamic_attr_value is not None:
-                dynamic_attr_values[DYNAMIC_ATTRIBUTE_GIN_PREFIX + dynamic_attr] = dynamic_attr_value
+                dynamic_attr_values[
+                    DYNAMIC_ATTRIBUTE_GIN_PREFIX + dynamic_attr
+                ] = dynamic_attr_value
 
         return {
             **self._config,

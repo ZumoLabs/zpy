@@ -136,7 +136,9 @@ class TestClient(unittest.TestCase):
             tvt_type: {"categories": {}, "images": {}, "annotations": []}
             for tvt_type in ["train", "val", "test"]
         }
-        category_counts = {tvt_type: defaultdict(int) for tvt_type in ["train", "val", "test"]}
+        category_counts = {
+            tvt_type: defaultdict(int) for tvt_type in ["train", "val", "test"]
+        }
 
         def datapoint_callback(images, annotations, categories):
             r = random.random()
@@ -160,9 +162,11 @@ class TestClient(unittest.TestCase):
                     "name": image["id"],
                 }
 
-                filtered_annotations_by_image_id = [a for a in annotations if a['image_id'] == image['id']]
+                filtered_annotations_by_image_id = [
+                    a for a in annotations if a["image_id"] == image["id"]
+                ]
                 for annotation in filtered_annotations_by_image_id:
-                    category_counts[tvt_type][annotation['category_id']] += 1
+                    category_counts[tvt_type][annotation["category_id"]] += 1
 
             metadata[tvt_type]["annotations"].extend(annotations)
 
