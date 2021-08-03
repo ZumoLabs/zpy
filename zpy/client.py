@@ -34,8 +34,17 @@ def init(
     auth_token: str,
     project_uuid: str,
     base_url: str = "https://ragnarok.zumok8s.org",
-    **kwargs,
 ):
+    """
+    Initializes the zpy client library.
+
+    Args:
+        auth_token (str): API auth_token. Required for all internal API calls.
+        project_uuid (str): A valid uuid4 project id. Required to scope permissions for all requested API objects.
+        base_url (str, optional): API url. Overridable for testing different environments.
+    Returns:
+        None: No return value.
+    """
     global _auth_token, _base_url, _project
     _auth_token = auth_token
     _base_url = base_url
@@ -68,7 +77,7 @@ def require_zpy_init(func):
 
 class DatasetConfig:
     @require_zpy_init
-    def __init__(self, sim_name: str, **kwargs):
+    def __init__(self, sim_name: str):
         """
         Create a DatasetConfig. Used by zpy.preview and zpy.generate.
 
@@ -101,36 +110,70 @@ class DatasetConfig:
 
     @property
     def sim(self):
+        """
+        Returns:
+            dict: The Sim object.
+        """
         return self._sim
 
     @property
     def available_params(self):
+        """
+        Returns:
+            dict[]: The Sim's adjustable parameters.
+        """
         return self._sim["run_kwargs"]
 
     @property
     def config(self):
-        """A dict representing a json object of gin config parameters."""
+        """
+        Property which holds the parameters managed via DatasetConfig.set() and DatasetConfig.unset()
+
+        Returns:
+            dict: A dict representing a json object of gin config parameters.
+        """
         return self._config
 
     @property
     def hash(self):
-        """Return a hash of the config."""
+        """
+        Returns:
+             str: A deterministic hash of the internal _config dictionary.
+        """
         return dict_hash(self._config)
 
     def set(self, path: str, value: any):
-        """Set a value for a configurable parameter.
+        """
+        Set a configurable parameter. Uses pydash.set_.
+
+                https://pydash.readthedocs.io/en/latest/api.html#pydash.objects.set_
 
         Args:
-            path: The json gin config path. Ex. given object { a: b: [{ c: 1 }]}, the value at path "a.b[0].c" is 1.
-            value: The value for the gin config path provided.
+            path: The json gin config path using pydash.set_ notation.
+            value: The value to be set at the provided gin config path.
+        Returns:
+            None: No return value
+        Examples:
+            Given the following object, the value at path `a.b[0].c` is 1.
+
+                    { a: { b: [ { c: 1 } ] } }
         """
         set_(self._config, path, value)
 
     def unset(self, path):
-        """Remove a configurable parameter.
+        """
+        Remove a configurable parameter. Uses pydash.unset.
+
+                https://pydash.readthedocs.io/en/latest/api.html#pydash.objects.unset
 
         Args:
-            See self.set
+            path: The json gin config path using pydash.set_ notation. Ex. given object { a: b: [{ c: 1 }]}, the value at path "a.b[0]c" is 1.
+        Returns:
+            None: No return value
+        Examples:
+            Given the following object, the value at path `a.b[0].c` is 1.
+
+                    { a: { b: [ { c: 1 } ] } }
         """
         unset(self._config, path)
 
@@ -141,10 +184,10 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     Generate a preview of output data for a given DatasetConfig.
 
     Args:
-        dataset_config: Describes a Sim and its configuration. See DatasetConfig.
-        num_samples (int): number of preview samples to generate
+        dataset_config (DatasetConfig): Describes a Sim and its configuration. See DatasetConfig.
+        num_samples (int): Number of preview samples to generate.
     Returns:
-        File[]: Sample images for the given configuration.
+        dict[]: Sample images for the given configuration.
     """
     print("Generating preview:")
 
@@ -207,7 +250,7 @@ def generate(
         datapoint_callback (fn): Callback function to be called with every datapoint in the generated Dataset.
         materialize (bool): Optionally download the dataset. Defaults to True.
     Returns:
-        None
+        None: No return value.
     """
     dataset_config_hash = dataset_config.hash
     sim_name = dataset_config.sim["name"]
@@ -322,8 +365,6 @@ class Dataset:
         Args:
             name: If provided, Dataset will be automatically retrieved from the API.
             dataset: If Dataset has already been retrieved from the API, provide this.
-        Returns
-            Dataset
         """
         self._name = name
 
@@ -342,22 +383,17 @@ class Dataset:
             self._dataset = datasets[0]
 
     @property
-    def id(self):
-        return self._dataset["id"]
-
-    @property
     def name(self):
+        """
+        Returns:
+            str: The datasets name.
+        """
         return self._name
 
     @property
-    def state(self):
-        if not self._dataset:
-            print("Dataset needs to be generated before you can access its state.")
-        return self._dataset["state"]
-
-    @property
     def config(self):
-        return
-
-    def view(self):
-        return
+        """
+        Returns:
+            DatasetConfig: The configuration used to generate this dataset.
+        """
+        return None
