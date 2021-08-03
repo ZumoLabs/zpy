@@ -121,7 +121,7 @@ class DatasetConfig:
         """Set a value for a configurable parameter.
 
         Args:
-            path: The json gin config path. Ex. given object { a: b: [{ c: 1 }]}, the value at path "a.b[0]c" is 1.
+            path: The json gin config path. Ex. given object { a: b: [{ c: 1 }]}, the value at path "a.b[0].c" is 1.
             value: The value for the gin config path provided.
         """
         set_(self._config, path, value)
