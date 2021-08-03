@@ -4,10 +4,9 @@ import time
 from datetime import datetime, timedelta
 from os import listdir
 from pathlib import Path
-from typing import Dict, Union
-from uuid import UUID
 from typing import Dict
 from typing import Union
+from uuid import UUID
 
 import requests.exceptions
 from pydash import set_, unset, is_empty, pascal_case
@@ -99,6 +98,7 @@ def init(
         elif e.response.status_code == 404:
             raise InvalidProjectError("Init failed: you are not part of this project or it does not exist.") from None
 
+
 DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
 
 
@@ -118,17 +118,20 @@ DYNAMIC_ATTRIBUTE_GIN_PREFIX = 'run.'
 
 
 class DatasetConfig:
-    @require_zpy_init
-    def __init__(self, sim_name: str):
-        """
-        Create a DatasetConfig. Used by zpy.preview and zpy.generate.
-
-        Args:
-            sim_name (str): Name of Sim.
-        """
+    def __init__(self, *args, **kwargs):
+        # Placeholders to make IDEs happy. Actual value setting happens in the from_sim_name factory method.
         self._sim = None
         self._config = {}
+        raise RuntimeWarning('DatasetConfig is not directly instantiable any more. Use DatasetConfig.from_sim_name!')
 
+    @classmethod
+    @require_zpy_init
+    def from_sim_name(cls, sim_name: str):
+        """Create a Sim specific DatasetConfig with instance attributes corresponding to adjustable Sim parameters.
+
+        Args:
+            sim_name (str): The name of the Sim.
+        """
         unique_sim_filters = {
             "project": _project["id"],
             "name": sim_name,
@@ -140,22 +143,13 @@ class DatasetConfig:
         ).json()["results"]
         if len(sims) == 1:
             print(f"Found Sim<{sim_name}> in Project<{_project['name']}>")
-            self._sim = sims[0]
+            sim = sims[0]
         else:
             raise InvalidSimError(f"Could not find Sim<{sim_name}> in Project<{_project['name']}>.")
 
-    @classmethod
-    def from_sim_name(cls, sim_name: str):
-        """Create a Sim specific DatasetConfig with instance attributes corresponding to adjustable Sim parameters.
-
-        Args:
-            sim_name (str): The name of the Sim.
-        """
-        dataset_config = DatasetConfig(sim_name)
-
         # Add the run_kwargs as attributes to the class
         dynamic_attributes = {DYNAMIC_ATTRIBUTES_KEY: []}
-        for run_kwarg in dataset_config.sim["run_kwargs"]:
+        for run_kwarg in sim["run_kwargs"]:
             property_name = run_kwarg["name"]
             internal_name = f"_{property_name}"
             # The extra _internal_name kwarg is to capture the value of internal_name at that point in the loop,
@@ -180,13 +174,13 @@ class DatasetConfig:
             self._config = {}
 
         # creating class dynamically
-        class_name = pascal_case(dataset_config.sim["name"]) + "DatasetConfig"
+        class_name = pascal_case(sim["name"]) + "DatasetConfig"
         clazz = type(class_name, (DatasetConfig,), {
             "__init__": constructor,
-            "__doc__": dataset_config.sim["description"],
+            "__doc__": sim["description"],
             **dynamic_attributes,
         })
-        return clazz(dataset_config.sim)
+        return clazz(sim)
 
     @property
     def sim(self):
@@ -195,14 +189,6 @@ class DatasetConfig:
             dict: The Sim object.
         """
         return self._sim
-
-    @property
-    def available_params(self):
-        """
-        Returns:
-            dict: The configurable parameters on the Sim object.
-        """
-        return self._sim["run_kwargs"]
 
     @property
     def config(self):
