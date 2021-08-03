@@ -2,9 +2,12 @@ import functools
 import json
 import time
 from datetime import datetime, timedelta
+from os import listdir
 from pathlib import Path
 from typing import Dict, Union
 from uuid import UUID
+from typing import Dict
+from typing import Union
 
 import requests.exceptions
 from pydash import set_, unset, is_empty, pascal_case
@@ -17,7 +20,10 @@ from zpy.client_util import (
     convert_size,
     auth_header,
     clear_last_print,
-    is_done, convert_to_rag_query_params,
+    convert_to_rag_query_params,
+    is_done,
+    format_dataset,
+    dict_hash,
 )
 
 _init_done: bool = False
@@ -92,6 +98,8 @@ def init(
                 f"Init failed: invalid auth token - find yours at https://app.zumolabs.ai/settings/auth-token.") from None
         elif e.response.status_code == 404:
             raise InvalidProjectError("Init failed: you are not part of this project or it does not exist.") from None
+
+DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
 
 
 def require_zpy_init(func):
@@ -215,6 +223,11 @@ class DatasetConfig:
             **dynamic_attr_values,
         }
 
+    @property
+    def hash(self):
+        """Return a hash of the config."""
+        return dict_hash(self._config)
+
     def set(self, path: str, value: any):
         """Set a configurable parameter. Uses pydash.set_.
 
@@ -260,7 +273,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     Returns:
         dict[]: Sample images for the given configuration.
     """
-    print(f"Generating preview:")
+    print("Generating preview:")
 
     filter_params = {
         "project": _project["id"],
@@ -277,7 +290,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     simruns = simruns_res.json()["results"]
 
     if len(simruns) == 0:
-        print(f"No preview available.")
+        print("No preview available.")
         print("\t(no premade SimRuns matching filter)")
         return []
 
@@ -293,7 +306,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     )
     files = files_res.json()["results"]
     if len(files) == 0:
-        print(f"No preview available.")
+        print("No preview available.")
         print("\t(no images found)")
         return []
 
@@ -302,41 +315,57 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 @add_newline
 def generate(
-    name: str, dataset_config: DatasetConfig, num_datapoints: int, materialize=True
+    dataset_config: DatasetConfig,
+    num_datapoints: int = 10,
+    materialize: bool = True,
+    datapoint_callback=None,
 ):
     """
     Generate a dataset.
-
     Args:
-        name (str): Name of the dataset. Must be unique per Project.
         dataset_config (DatasetConfig): Specification for a Sim and its configurable parameters.
         num_datapoints (int): Number of datapoints in the dataset. A datapoint is an instant in time composed of all
                               the output images (rgb, iseg, cseg, etc) along with the annotations.
-        materialize (bool): Optionally download the dataset.
+        datapoint_callback (fn): Callback function to be called with every datapoint in the generated Dataset.
+        materialize (bool): Optionally download the dataset. Defaults to True.
     Returns:
         None: No return value.
     """
-    dataset = post(
-        f"{_versioned_url}/datasets/",
-        data={
-            "project": _project["id"],
-            "name": name,
-        },
+    dataset_config_hash = dataset_config.hash
+    sim_name = dataset_config.sim["name"]
+    internal_dataset_name = f"{sim_name}-{dataset_config_hash}-{num_datapoints}"
+
+    filter_params = {"project": _project["id"], "name": internal_dataset_name}
+
+    datasets_res = get(
+        f"{_base_url}/api/v1/datasets",
+        params=filter_params,
         headers=auth_header(_auth_token),
     ).json()
-    post(
-        f"{_versioned_url}/datasets/{dataset['id']}/generate/",
-        data={
-            "project": _project["id"],
-            "sim": dataset_config.sim["id"],
-            "config": json.dumps(dataset_config.config),
-            "amount": num_datapoints,
-        },
-        headers=auth_header(_auth_token),
-    )
 
-    print("Generating dataset:")
-    print(json.dumps(dataset, indent=4, sort_keys=True))
+    if len(datasets_res["results"]) == 0:
+        dataset = post(
+            f"{_base_url}/api/v1/datasets/",
+            data={
+                "project": _project["id"],
+                "name": internal_dataset_name,
+            },
+            headers=auth_header(_auth_token),
+        ).json()
+        post(
+            f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
+            data={
+                "project": _project["id"],
+                "sim": dataset_config.sim["id"],
+                "config": json.dumps(dataset_config.config),
+                "amount": num_datapoints,
+            },
+            headers=auth_header(_auth_token),
+        )
+        print("Generating dataset:")
+        print(json.dumps(dataset, indent=4, sort_keys=True))
+    else:
+        dataset = datasets_res["results"][0]
 
     if materialize:
         print("Materialize requested, waiting until dataset finishes to download it.")
@@ -359,17 +388,14 @@ def generate(
             next_check_datetime = datetime.now() + timedelta(seconds=60)
             while datetime.now() < next_check_datetime:
                 print(
-                    "\r{}".format(
-                        f"Dataset<{dataset['name']}> not ready for download in state {dataset['state']}. "
-                        f"SimRuns READY: {num_ready_simruns}/{num_simruns}. "
-                        f"Checking again in {(next_check_datetime - datetime.now()).seconds}s."
-                    ),
-                    end="",
+                    f"Dataset<{dataset['name']}> not ready for download in state {dataset['state']}. "
+                    f"SimRuns READY: {num_ready_simruns}/{num_simruns}. "
+                    f"Checking again in {(next_check_datetime - datetime.now()).seconds}s.",
+                    end="\r",
                 )
                 time.sleep(1)
-
             clear_last_print()
-            print("\r{}".format("Checking dataset...", end=""))
+            print("Checking dataset...", end="\r")
             dataset = get(
                 f"{_versioned_url}/datasets/{dataset['id']}/",
                 headers=auth_header(_auth_token),
@@ -381,18 +407,30 @@ def generate(
                 f"{_versioned_url}/datasets/{dataset['id']}/download/",
                 headers=auth_header(_auth_token),
             ).json()
-            name_slug = f"{dataset['name'].replace(' ', '_')}-{dataset['id'][:8]}.zip"
-            # Throw it in /tmp for now I guess
-            output_path = Path("/tmp") / name_slug
-            print(
-                f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
+            name_slug = (
+                f"{str(dataset['name']).replace(' ', '_')}-{dataset['id'][:8]}.zip"
             )
-            download_url(dataset_download_res["redirect_link"], output_path)
-            print("Done.")
+            # Throw it in /tmp for now I guess
+            output_path = Path(DATASET_OUTPUT_PATH) / name_slug
+            existing_files = listdir(DATASET_OUTPUT_PATH)
+            if name_slug not in existing_files:
+                print(
+                    f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
+                )
+                download_url(dataset_download_res["redirect_link"], output_path)
+                format_dataset(output_path, datapoint_callback)
+                print("Done.")
+            elif datapoint_callback is not None:
+                format_dataset(output_path, datapoint_callback)
+            else:
+                print(f"Dataset {name_slug} already exists in {output_path}.")
+
         else:
             print(
                 f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
             )
+
+    return Dataset(dataset["name"], dataset)
 
 
 class Dataset:

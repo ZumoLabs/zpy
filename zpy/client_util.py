@@ -1,9 +1,40 @@
 import functools
+import hashlib
+import json
 import math
+import os
+import shutil
 import sys
+import uuid
+import zipfile
+from collections import defaultdict
+from datetime import datetime
+from itertools import groupby
+from os import listdir
+from os.path import join
+from pathlib import Path
+from typing import Iterable, List, Dict, Tuple, Callable
+from typing import Union
 
 import requests
+from pydash import values, filter_
 from requests import HTTPError
+
+
+def track_runtime(wrapped_function):
+    @functools.wraps(wrapped_function)
+    def do_track(*args, **kwargs):
+        start_datetime = datetime.now()
+        value = wrapped_function(*args, **kwargs)
+        end_datetime = datetime.now()
+        run_time = end_datetime - start_datetime
+        print(
+            f"{str(wrapped_function)} took {run_time.seconds}.{run_time.microseconds} seconds."
+        )
+
+        return value
+
+    return do_track
 
 
 def add_newline(func):
@@ -158,3 +189,246 @@ def convert_to_rag_query_params(iterable, current_path="", paths=None):
                 paths[current_path + str(index)] = item
 
     return paths
+
+
+def remove_n_extensions(path: Union[str, Path], n: int) -> str:
+    """
+    Removes n extensions from the end of a path. Example: "image.rgb.png" becomes "image" for n = 2
+    Args:
+        path (Path): Path to manipulate.
+        n (int): Number of extensions to remove.
+    Returns:
+        str: Path minus n extensions.
+    """
+    """"""
+    p = Path(path)
+    for _ in range(n):
+        p = p.with_suffix("")
+    return str(p)
+
+
+def dict_hash(data) -> str:
+    """
+    Returns a deterministic hash from json serializable data.
+    https://www.doc.ic.ac.uk/~nuric/coding/how-to-hash-a-dictionary-in-python.html
+    Args:
+        data: JSON serializable data.
+    Returns:
+        str: Deterministic hash of the input data.
+    """
+    data_json = json.dumps(
+        data,
+        sort_keys=True,
+    )
+    dhash = hashlib.md5()
+    encoded = data_json.encode()
+    dhash.update(encoded)
+    config_hash = dhash.hexdigest()
+    return config_hash
+
+
+@track_runtime
+def extract_zip(path_to_zip: Path) -> Path:
+    """
+    Extracts a .zip to a new adjacent folder by the same name.
+    Args:
+        path_to_zip: Path to .zip
+    Returns:
+        Path: Extracted folder path
+    """
+    unzipped_path = Path(remove_n_extensions(path_to_zip, n=1))
+    with zipfile.ZipFile(path_to_zip, "r") as zip_ref:
+        zip_ref.extractall(unzipped_path)
+    return unzipped_path
+
+
+@track_runtime
+def write_json(path, json_blob):
+    """
+    Args:
+        path (str): Path to output to.
+        json_blob (obj): JSON serializable object.
+    """
+    with open(path, "w") as outfile:
+        json.dump(json_blob, outfile, indent=4)
+
+
+def group_by(iterable: Iterable, keyfunc: Callable) -> List[List]:
+    """
+    Groups items in a list by equality using the value returned when passed to the callback
+    https://docs.python.org/3/library/itertools.html#itertools.groupby
+    Args:
+        iterable (Iterable): List of items to group
+        keyfunc (Callable): Callback that transforms each item in the list to a value used to test for equality against other items.
+    Returns:
+        list[list]: List of lists containing items that test equal to eachother when transformed by the keyfunc callback
+    """
+    return [
+        list(group)
+        for key, group in groupby(
+            iterable,
+            keyfunc,
+        )
+    ]
+
+
+@track_runtime
+def group_metadata_by_datapoint(
+    dataset_path: Path,
+) -> Tuple[Dict, List[Dict], List[Dict]]:
+    """
+    Updates metadata with new ids and accurate image paths.
+    Returns a list of dicts, each item containing metadata relevant to a single datapoint.
+    Args:
+        dataset_path (Path): Path to unzipped dataset.
+    Returns:
+        tuple (metadata: dict, categories: list[dict], datapoints: list[dict]): Returns a tuple of (metadata,
+            categories, datapoints), datapoints being a list of dicts, each containing a list of images and a list of
+            annotations.
+    """
+    print("Parsing dataset to group by datapoint...")
+    accum_metadata = {}
+    accum_categories = {}
+    accum_datapoints = []
+    category_count_sums = defaultdict(int)
+
+    # batch level - group images by datapoint
+    for batch in listdir(dataset_path):
+        batch_uri = join(dataset_path, batch)
+        annotation_file_uri = join(batch_uri, "_annotations.zumo.json")
+
+        with open(annotation_file_uri) as annotation_file:
+            metadata = json.load(annotation_file)
+
+        accum_metadata = {**metadata["metadata"], "save_path": batch_uri}
+
+        for category_id, category in metadata["categories"].items():
+            category_count_sums[category_id] += category["count"]
+
+        for category_id, category in metadata["categories"].items():
+            accum_categories[category_id] = category
+
+        images_grouped_by_datapoint = group_by(
+            values(metadata["images"]),
+            lambda image: remove_n_extensions(image["relative_path"], n=2),
+        )
+
+        # datapoint level
+        for images in images_grouped_by_datapoint:
+            datapoint_uuid = str(uuid.uuid4())
+
+            # get datapoint specific annotations
+            image_ids = [i["id"] for i in images]
+            annotations = filter_(
+                metadata["annotations"], lambda a: a["image_id"] in image_ids
+            )
+
+            # mutate
+            image_new_id_map = {
+                img["id"]: datapoint_uuid + "".join(Path(img["name"]).suffixes[-2:])
+                for img in images
+            }
+
+            images_mutated = [
+                {
+                    **i,
+                    "output_path": join(batch_uri, Path(i["relative_path"])),
+                    "id": image_new_id_map[i["id"]],
+                }
+                for i in images
+            ]
+
+            annotations_mutated = [
+                {
+                    **a,
+                    "image_id": image_new_id_map[a["image_id"]],
+                }
+                for a in annotations
+            ]
+
+            # accumulate
+            accum_datapoints.append(
+                {
+                    "images": images_mutated,
+                    "annotations": annotations_mutated,
+                }
+            )
+
+    for category_id, category_count in category_count_sums.items():
+        accum_categories[category_id]["count"] = category_count
+
+    return accum_metadata, values(accum_categories), accum_datapoints
+
+
+def format_dataset(
+    zipped_dataset_path: Union[str, Path], datapoint_callback=None
+) -> None:
+    """
+    Updates metadata with new ids and accurate image paths.
+    If a datapoint_callback is provided, it is called once per datapoint with the updated metadata.
+    Otherwise the default is to write out an updated _annotations.zumo.json, along with all images, to a new adjacent folder.
+    Args:
+        zipped_dataset_path (str): Path to unzipped dataset.
+        datapoint_callback (Callable) -> None: User defined function.
+    Returns:
+        None: No return value.
+    """
+    unzipped_dataset_path = Path(remove_n_extensions(zipped_dataset_path, n=1))
+    if not unzipped_dataset_path.exists():
+        print(f"Unzipping {zipped_dataset_path}...")
+        unzipped_dataset_path = extract_zip(zipped_dataset_path)
+
+    metadata, categories, datapoints = group_metadata_by_datapoint(
+        unzipped_dataset_path
+    )
+
+    if datapoint_callback is not None:
+        print("Skipping default formatting, using datapoint_callback instead.")
+        for datapoint in datapoints:
+            datapoint_callback(
+                datapoint["images"], datapoint["annotations"], categories
+            )
+
+    else:
+        print("Doing default formatting for dataset...")
+        output_dir = join(
+            unzipped_dataset_path.parent, unzipped_dataset_path.name + "_formatted"
+        )
+        os.makedirs(output_dir)
+
+        accum_metadata = {
+            "metadata": {
+                **metadata,
+                "save_path": output_dir,
+            },
+            "categories": {category["id"]: category for category in categories},
+            "images": {},
+            "annotations": [],
+        }
+
+        for datapoint in datapoints:
+            accum_metadata["annotations"].extend(datapoint["annotations"])
+
+            for image in datapoint["images"]:
+                # reference original path to save from
+                original_image_uri = image["output_path"]
+
+                # build new path
+                output_image_uri = join(output_dir, image["id"])
+
+                # add to accumulator
+                accum_metadata["images"][image["id"]] = {
+                    **image,
+                    "name": image["id"],
+                    "relative_path": image["id"],
+                    "output_path": join(output_dir, image["id"]),
+                }
+
+                # copy image to new folder
+                shutil.copy(original_image_uri, output_image_uri)
+
+        # write json
+        metadata_output_path = join(output_dir, Path("_annotations.zumo.json"))
+
+        os.makedirs(os.path.dirname(metadata_output_path), exist_ok=True)
+        write_json(metadata_output_path, accum_metadata)
