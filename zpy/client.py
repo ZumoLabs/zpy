@@ -351,36 +351,20 @@ def generate(
                 f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
             )
 
-    return Dataset(dataset["name"], dataset)
+    return Dataset(internal_dataset_name, dataset_config)
 
 
 class Dataset:
-    _dataset = None
-
-    @require_zpy_init
-    def __init__(self, name: str = None, dataset: dict = None):
+    def __init__(self, name: str = None, dataset_config: DatasetConfig = None):
         """
         Construct a Dataset which is a local representation of a Dataset generated on the API.
 
         Args:
-            name: If provided, Dataset will be automatically retrieved from the API.
-            dataset: If Dataset has already been retrieved from the API, provide this.
+            name (str): The name of the Dataset.
+            dataset_config (DatasetConfig): The DatasetConfig used to generate this Dataset.
         """
         self._name = name
-
-        if dataset is not None:
-            self._dataset = dataset
-        else:
-            unique_dataset_filters = {
-                "project": _project["id"],
-                "name": name,
-            }
-            datasets = get(
-                f"{_base_url}/api/v1/datasets/",
-                params=unique_dataset_filters,
-                headers=auth_header(_auth_token),
-            ).json()["results"]
-            self._dataset = datasets[0]
+        self._config = dataset_config
 
     @property
     def name(self):
@@ -396,4 +380,4 @@ class Dataset:
         Returns:
             DatasetConfig: The configuration used to generate this dataset.
         """
-        return None
+        return self._config
