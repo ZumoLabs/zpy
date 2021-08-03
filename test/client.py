@@ -213,7 +213,7 @@ class TestClientUtilMethods(unittest.TestCase):
 
         zpy.init(
             project_uuid="feb6e594-55e0-4f87-9e75-5a128221499f",
-            auth_token="6812a36a1613dda3e0458e4ce4893e3e1ccc4c39dcf4368c862e670dabe76d8a",
+            auth_token="12ea8d406b508be8fd0a1fef78f825440347fb10989536fcd1dedb9241327491",
         )
         dataset_config = zpy.DatasetConfig("dumpster_v5.1")
         dataset_config.set("run\.padding_style", "random")

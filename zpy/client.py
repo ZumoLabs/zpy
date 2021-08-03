@@ -136,16 +136,11 @@ class DatasetConfig:
 
     @property
     def hash(self):
-<<<<<<< HEAD
-        """Return a hash of the config."""
-        return dict_hash(self._config)[:8]
-=======
         """
         Returns:
              str: A deterministic hash of the internal _config dictionary.
         """
-        return dict_hash(self._config)
->>>>>>> 4668008b80e63a1154813c202cdcb31961de7bd3
+        return dict_hash(self._config)[:8]
 
     def set(self, path: str, value: any):
         """
@@ -217,7 +212,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
     if len(simruns) == 0:
         print("No preview available.")
-        print("\t(no premade SimRuns matching filter)")
+        print("\t(no SimRuns matching filter)")
         return []
 
     file_query_params = {
@@ -288,13 +283,14 @@ def generate(
             },
             headers=auth_header(_auth_token),
         )
-        print("Generating dataset:")
+        print(f"Sending generate request for Dataset<{internal_dataset_name}>...")
         print(json.dumps(dataset, indent=4, sort_keys=True))
     else:
+        print(f"Generate for Dataset<{internal_dataset_name}> has already been requested.")
         dataset = datasets_res["results"][0]
 
     if materialize:
-        print("Materialize requested, waiting until dataset finishes to download it.")
+        print(f"Materializing Dataset<{internal_dataset_name}>...")
         dataset = get(
             f"{_base_url}/api/v1/datasets/{dataset['id']}/",
             headers=auth_header(_auth_token),
@@ -321,41 +317,37 @@ def generate(
                 )
                 time.sleep(1)
             clear_last_print()
-            print("Checking dataset...", end="\r")
+            print(f"Checking state of Dataset<{dataset['name']}>...", end="\r")
             dataset = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/",
                 headers=auth_header(_auth_token),
             ).json()
 
         if dataset["state"] == "READY":
-            print("Dataset is ready for download.")
             dataset_download_res = get(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/download/",
                 headers=auth_header(_auth_token),
             ).json()
-            name_slug = (
-                f"{str(dataset['name']).replace(' ', '_')}-{dataset['id'][:8]}.zip"
-            )
+            name_slug = f"{dataset['name']}.zip"
             # Throw it in /tmp for now I guess
             output_path = Path(DATASET_OUTPUT_PATH) / name_slug
             existing_files = listdir(DATASET_OUTPUT_PATH)
             if name_slug not in existing_files:
                 print(
-                    f"Downloading {convert_size(dataset_download_res['size_bytes'])} dataset to {output_path}"
+                    f"Dataset<{dataset['name']}> not found locally, downloading "
+                    f"{convert_size(dataset_download_res['size_bytes'])}..."
                 )
                 download_url(dataset_download_res["redirect_link"], output_path)
-                format_dataset(output_path, datapoint_callback)
-                print("Done.")
-            elif datapoint_callback is not None:
-                format_dataset(output_path, datapoint_callback)
             else:
-                print(f"Dataset {name_slug} already exists in {output_path}.")
-
+                print(f"Dataset<{dataset['name']}> already exists locally.")
+            print(f"Formatting Dataset<{dataset['name']}>...")
+            format_dataset(output_path, datapoint_callback)
         else:
             print(
-                f"Dataset is no longer running but cannot be downloaded with state = {dataset['state']}"
+                f"Dataset<{dataset['name']}> is no longer running but cannot be downloaded with state = {dataset['state']}"
             )
 
+    print(f"Dataset<{dataset['name']}> finished processing.")
     return Dataset(internal_dataset_name, dataset_config)
 
 

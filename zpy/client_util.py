@@ -1,6 +1,7 @@
 import functools
 import hashlib
 import json
+import logging
 import math
 import os
 import shutil
@@ -192,12 +193,12 @@ def dict_hash(data) -> str:
     return config_hash
 
 
-@track_runtime
 def extract_zip(path_to_zip: Path, output_path: Path):
     """
     Extracts a .zip to a new adjacent folder by the same name.
     Args:
-        path_to_zip: Path to .zip
+        path_to_zip (Path): Path to .zip to extract.
+        output_path (Path): Path of where to extract to.
     Returns:
         None: No return value
     """
@@ -205,7 +206,6 @@ def extract_zip(path_to_zip: Path, output_path: Path):
         zip_ref.extractall(output_path)
 
 
-@track_runtime
 def write_json(path, json_blob):
     """
     Args:
@@ -235,7 +235,6 @@ def group_by(iterable: Iterable, keyfunc: Callable) -> List[List]:
     ]
 
 
-@track_runtime
 def group_metadata_by_datapoint(
     dataset_path: Path,
 ) -> Tuple[Dict, List[Dict], List[Dict]]:
@@ -249,7 +248,6 @@ def group_metadata_by_datapoint(
             categories, datapoints), datapoints being a list of dicts, each containing a list of images and a list of
             annotations.
     """
-    print("Parsing dataset to group by datapoint...")
     accum_metadata = {}
     accum_categories = {}
     accum_datapoints = []
@@ -336,9 +334,7 @@ def format_dataset(
     Returns:
         None: No return value.
     """
-    raw_dataset_path = Path(
-        join(Path(zipped_dataset_path).parent, Path(zipped_dataset_path).name + "_raw")
-    )
+    raw_dataset_path = Path(zipped_dataset_path).parent / (Path(zipped_dataset_path).with_suffix('').name + "_raw")
 
     if not raw_dataset_path.exists():
         print(f"Unzipping {zipped_dataset_path}...")
@@ -356,7 +352,9 @@ def format_dataset(
     else:
         print("Doing default formatting for dataset...")
         output_dir = Path(remove_n_extensions(zipped_dataset_path, n=1))
-        os.makedirs(output_dir, exist_ok=True)
+        if Path(output_dir).exists():
+            shutil.rmtree(output_dir)
+        os.makedirs(output_dir)
 
         accum_metadata = {
             "metadata": {
