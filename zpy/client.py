@@ -286,7 +286,9 @@ def generate(
         print(f"Sending generate request for Dataset<{internal_dataset_name}>...")
         print(json.dumps(dataset, indent=4, sort_keys=True))
     else:
-        print(f"Generate for Dataset<{internal_dataset_name}> has already been requested.")
+        print(
+            f"Generate for Dataset<{internal_dataset_name}> has already been requested."
+        )
         dataset = datasets_res["results"][0]
 
     if materialize:

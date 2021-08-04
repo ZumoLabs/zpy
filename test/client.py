@@ -218,7 +218,8 @@ class TestClientUtilMethods(unittest.TestCase):
         dataset_config = zpy.DatasetConfig("dumpster_v5.1")
         dataset_config.set("run\.padding_style", "random")
         zpy.generate(
-            dataset_config, num_datapoints=12,  # datapoint_callback=datapoint_callback
+            dataset_config,
+            num_datapoints=12,  # datapoint_callback=datapoint_callback
         )
 
         for tvt_type in ["train", "val", "test"]:

@@ -334,7 +334,9 @@ def format_dataset(
     Returns:
         None: No return value.
     """
-    raw_dataset_path = Path(zipped_dataset_path).parent / (Path(zipped_dataset_path).with_suffix('').name + "_raw")
+    raw_dataset_path = Path(zipped_dataset_path).parent / (
+        Path(zipped_dataset_path).with_suffix("").name + "_raw"
+    )
 
     if not raw_dataset_path.exists():
         print(f"Unzipping {zipped_dataset_path}...")
