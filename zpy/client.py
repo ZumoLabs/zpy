@@ -265,9 +265,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     return files
 
 
-def default_dataset_callback(
-    datapoints: list, categories: list, output_dir: Path
-):
+def default_dataset_callback(datapoints: list, categories: list, output_dir: Path):
     """
     The default Dataset formatting function. It will flatten the Dataset into a single directory of images with a
     single annotation json file.
