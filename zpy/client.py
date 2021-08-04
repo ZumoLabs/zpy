@@ -22,7 +22,10 @@ from zpy.client_util import (
     auth_header,
     clear_last_print,
     is_done,
-    dict_hash, group_metadata_by_datapoint, extract_zip, write_json,
+    dict_hash,
+    group_metadata_by_datapoint,
+    extract_zip,
+    write_json,
 )
 
 _auth_token: str = ""
@@ -263,7 +266,9 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     return files
 
 
-def default_dataset_callback(datapoints: list, categories: list, output_dir: Optional[Path]):
+def default_dataset_callback(
+    datapoints: list, categories: list, output_dir: Optional[Path]
+):
     """
     The default Dataset formatting function. It will flatten the Dataset into a single directory of images with a
     single annotation file.
@@ -381,10 +386,10 @@ def default_dataset_callback(datapoints: list, categories: list, output_dir: Opt
 
 @add_newline
 def generate(
-        dataset_config: DatasetConfig,
-        num_datapoints: int = 10,
-        download: bool = True,
-        dataset_callback=default_dataset_callback,
+    dataset_config: DatasetConfig,
+    num_datapoints: int = 10,
+    download: bool = True,
+    dataset_callback=default_dataset_callback,
 ):
     """
     Generate a dataset.
@@ -498,9 +503,13 @@ def generate(
                 print(f"Dataset<{dataset['name']}> already exists locally.")
 
             print(f"Formatting Dataset<{dataset['name']}>...")
-            metadata, categories, datapoints = group_metadata_by_datapoint(dataset_unzipped_path)
+            metadata, categories, datapoints = group_metadata_by_datapoint(
+                dataset_unzipped_path
+            )
 
-            dataset_callback(datapoints, categories, output_dir=dataset_zip_path.with_suffix(""))
+            dataset_callback(
+                datapoints, categories, output_dir=dataset_zip_path.with_suffix("")
+            )
         else:
             print(
                 f"Dataset<{dataset['name']}> is no longer running but cannot be downloaded with "

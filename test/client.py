@@ -143,8 +143,8 @@ class TestClient(unittest.TestCase):
             }
 
             for datapoint in datapoints:
-                images = datapoint['images']
-                annotations = datapoint['annotations']
+                images = datapoint["images"]
+                annotations = datapoint["annotations"]
 
                 r = random.random()
 
@@ -176,7 +176,10 @@ class TestClient(unittest.TestCase):
                 metadata[tvt_type]["annotations"].extend(annotations)
 
                 for category in categories:
-                    metadata[tvt_type]["categories"][category["id"]] = { **category, "count": 0}
+                    metadata[tvt_type]["categories"][category["id"]] = {
+                        **category,
+                        "count": 0,
+                    }
 
             for tvt_type in ["train", "val", "test"]:
                 for category_id, count in category_counts[tvt_type].items():
@@ -194,7 +197,5 @@ class TestClient(unittest.TestCase):
         dataset_config = zpy.DatasetConfig("dumpster_v5.1")
         dataset_config.set("run\.padding_style", "random")
         zpy.generate(
-            dataset_config,
-            num_datapoints=15,
-            dataset_callback=dataset_callback
+            dataset_config, num_datapoints=15, dataset_callback=dataset_callback
         )
