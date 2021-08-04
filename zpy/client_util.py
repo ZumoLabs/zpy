@@ -209,7 +209,7 @@ def extract_zip(path_to_zip: Path, output_path: Path):
 def write_json(path, json_blob):
     """
     Args:
-        path (str): Path to output to.
+        path (Path or str): Path to output to.
         json_blob (obj): JSON serializable object.
     """
     with open(path, "w") as outfile:
@@ -359,7 +359,7 @@ def format_dataset(
         accum_metadata = {
             "metadata": {
                 **metadata,
-                "save_path": output_dir,
+                "save_path": str(output_dir),
             },
             "categories": {category["id"]: category for category in categories},
             "images": {},
@@ -374,21 +374,21 @@ def format_dataset(
                 original_image_uri = image["output_path"]
 
                 # build new path
-                output_image_uri = join(output_dir, image["id"])
+                output_image_uri = output_dir / image["id"]
 
                 # add to accumulator
                 accum_metadata["images"][image["id"]] = {
                     **image,
                     "name": image["id"],
                     "relative_path": image["id"],
-                    "output_path": join(output_dir, image["id"]),
+                    "output_path": str(output_dir / image["id"]),
                 }
 
                 # copy image to new folder
                 shutil.copy(original_image_uri, output_image_uri)
 
         # write json
-        metadata_output_path = join(output_dir, Path("_annotations.zumo.json"))
+        metadata_output_path = output_dir / "_annotations.zumo.json"
 
         os.makedirs(os.path.dirname(metadata_output_path), exist_ok=True)
         write_json(metadata_output_path, accum_metadata)
