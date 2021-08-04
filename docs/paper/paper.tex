@@ -316,38 +316,25 @@ The kwargs of the run function in a sim are effectively additional hyperparamete
 \section{Example}
 \label{sec:example}
 
-To put into practice what this paper has explained, we present an example of how synthetic data can be used to train a computer vision model. In this example, we train a detection model which is tasked with predicting the bounding boxes for packages and parcels in images. In section \ref{sec:domainrandomization} we explore the effect of some key dataset hyperparameters on the final model performance. In section \ref{sec:curicculum} we discuss how training curriculum can affect model performance when using synthetic data.
+To put into practice what this paper has explained, we present a simple example of how synthetic data can be used to train a computer vision model. In this example, we train a detection model which predicts the bounding boxes for cardboard packages and parcels in images. In section \ref{sec:domainrandomization} we explore how domain randomization in different aspects of the simulation can affect final model performance.
 
-Following the synthetic data workflow,
-
-Armed with our synthetic training dataset and our real test dataset, we are ready to do some model training.
-
-We used a ResNet model implemented in PyTorch inside of the Detectron2 computer vision library \cite{wu2019detectron2}.
-
-Each individual training run 
-
-Details on the training setup: GPU, total training time, total number of sweeps, epoch and batch size.
-
+We used a variant of Faster R-CNN implemented in PyTorch as part of the Detectron2 model zoo \cite{wu2019detectron2}. Training was done on a single Nvidia GeForce RTX 3090, with each training run lasting at most an hour: this experiment consisted only of fine-tuning a model pre-trained on ImageNet as opposed to training a model from scratch. We sweeped over various learning rates and used the largest batch size we could given our GPU memory, model size, and image size. We picked the best performing permutation of hyperparameters when comparing results, keeping the model and test dataset consistent.
 
 \subsection{Domain Randomization}
 \label{sec:domainrandomization}
 
 Domain randomization is a technique commonly used in synthetic data to increase the variance of a dataset distribution. In the field of synthetic data for computer vision, it might refer to randomizing the intensity of lighting in every frame of a simulation. Domain randomization is also important in the space of material assets: using a large variety of textures and material properties will help prevent texture overfitting, a common issue with CNNs \cite{DBLP:journals/corr/abs-1811-12231}. 
 
-In our package experiment, we expose boolean toggles as run function kwargs that unlock certain forms of domain randomization. One toggle enables domain randomization in the lighting space: changing the position and intensity of several lights in the sim. The second toggle enables random HDRIs, which change the appearance of the background in the package images. The third toggle enables domain randomization for materials, which changes the appearance of the packages themselves, both the texture as well as the material properties. We perform an ablation study to pick appart the contributions of each type of domain randomization to the performance of a detection model trained on synthetic data with each respective form of domain randomization \ref{fig:results}.
+In our package experiment, we expose boolean toggles as run function kwargs that unlock certain forms of domain randomization. One toggle enables domain randomization in the lighting space: changing the position and intensity of several lights in the sim. The second toggle enables random HDRIs, which change the appearance of the background in the package images. The third toggle enables domain randomization for materials, which changes the appearance of the packages themselves, both the texture as well as the material properties. We perform an ablation study to pick appart the contributions of each type of domain randomization to the performance of a detection model trained on synthetic data with each respective form of domain randomization \ref{fig:results}. These toggles are used to create the following four synthetic training datasets:
 
-Deeper discussion of results
+\begin{itemize}
+	\item \lstinline{package_sim_dr_light} - Synthetic dataset of 512 images. Domain randomization is applied to lighting only.
+	\item \lstinline{package_sim_dr_mat} - Synthetic dataset of 512 images. Domain randomization is applied to materials only.
+	\item \lstinline{package_sim_dr_bg} - Synthetic dataset of 512 images. Domain randomization is applied to background only.
+	\item \lstinline{package_sim_dr_all} - Synthetic dataset of 512 images. Domain randomization is applied to lighting, background, and materials.
+\end{itemize}
 
-\subsection{Training Curicculum}
-\label{sec:curicculum}
-
-Pre-training w/ real and fine-tuning on synthetic
-
-Training only on Synthetic
-
-ref to rare planes
-
-ref to mixed synthetic data
+The best performing single run is fine tuned for XX iterations at a learning rate of XX on the \lstinline{package_sim_dr_all} dataset. By comparing the top performing runs for each type of domain randomization, we can thus rank the relative importance of each as such: lighting, materials, and background. One possible explanation may be that this XXX. Finally, as a caveat: it is important to underline that this is a small experiment, and we do not claim that these insights can be applied to other usecases or even further explorations of this particular problem. 
 
 \section{Conclusion}
 \label{sec:conclusion}
