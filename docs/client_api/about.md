@@ -13,3 +13,7 @@ You can install `zpy` with pip:
 ```bash
 pip install zpy-zumo
 ```
+
+### Getting started
+
+See our [getting started guide](../getting_started) for an example of creating your first dataset.
