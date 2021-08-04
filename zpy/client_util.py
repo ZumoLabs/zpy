@@ -268,10 +268,7 @@ def group_metadata_by_datapoint(
         for category_id, category in metadata["categories"].items():
             accum_categories[category_id] = category
 
-        images_grouped_by_datapoint = group_by(
-            values(metadata["images"]),
-            lambda image: remove_n_extensions(image["relative_path"], n=2),
-        )
+        images_grouped_by_datapoint = group_by(values(metadata["images"]), lambda image: image["frame"])
 
         # datapoint level
         for images in images_grouped_by_datapoint:
@@ -294,6 +291,7 @@ def group_metadata_by_datapoint(
                     **i,
                     "output_path": join(batch_uri, Path(i["relative_path"])),
                     "id": image_new_id_map[i["id"]],
+                    "frame": datapoint_uuid,
                 }
                 for i in images
             ]
@@ -302,6 +300,7 @@ def group_metadata_by_datapoint(
                 {
                     **a,
                     "image_id": image_new_id_map[a["image_id"]],
+                    "frame": datapoint_uuid,
                 }
                 for a in annotations
             ]
@@ -321,7 +320,7 @@ def group_metadata_by_datapoint(
 
 
 def format_dataset(
-    zipped_dataset_path: Union[str, Path], datapoint_callback=None
+        zipped_dataset_path: Union[str, Path], dataset_callback=None
 ) -> None:
     """
     Updates metadata with new ids and accurate image paths.
@@ -334,7 +333,7 @@ def format_dataset(
         None: No return value.
     """
     raw_dataset_path = Path(zipped_dataset_path).parent / (
-        Path(zipped_dataset_path).with_suffix("").name + "_raw"
+            Path(zipped_dataset_path).with_suffix("").name + "_raw"
     )
 
     if not raw_dataset_path.exists():
@@ -343,13 +342,9 @@ def format_dataset(
 
     metadata, categories, datapoints = group_metadata_by_datapoint(raw_dataset_path)
 
-    if datapoint_callback is not None:
-        print("Skipping default formatting, using datapoint_callback instead.")
-        for datapoint in datapoints:
-            datapoint_callback(
-                datapoint["images"], datapoint["annotations"], categories
-            )
-
+    if dataset_callback is not None:
+        print("Skipping default formatting, using dataset_callback instead.")
+        dataset_callback(datapoints, categories)
     else:
         output_dir = Path(remove_n_extensions(zipped_dataset_path, n=1))
         print(f"Doing default formatting and outputting to {output_dir}")
