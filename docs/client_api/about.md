@@ -24,13 +24,13 @@ pip install zpy-zumo
 import zpy.client as zpy
 
 # We'll provide your project id during on-boarding
-project_uuid="..."
+project_uuid = "..."
 
 # This is your temporary auth token. It can be found by visiting:
 #     https://app.zumolabs.ai/settings/auth-token
 #
 # The auth token will expire when you log out of the web app
-auth_token="..."
+auth_token = "..."
 
 zpy.init(project_uuid=project_uuid, auth_token=auth_token)
 
@@ -53,5 +53,5 @@ dataset_config = zpy.DatasetConfig(sim_name)
 # Currently known issues:
 # * Takes ~5 minutes to provision and spin up machines for larger generation jobs >200
 #   images.
-zpy.generate(dataset_config, num_datapoints=50, materialize=True)
+zpy.generate(dataset_config, num_datapoints=50)
 ```

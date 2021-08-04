@@ -238,7 +238,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 def generate(
     dataset_config: DatasetConfig,
     num_datapoints: int = 10,
-    materialize: bool = True,
+    download: bool = True,
     datapoint_callback=None,
 ):
     """
@@ -248,9 +248,9 @@ def generate(
         num_datapoints (int): Number of datapoints in the dataset. A datapoint is an instant in time composed of all
                               the output images (rgb, iseg, cseg, etc) along with the annotations.
         datapoint_callback (fn): Callback function to be called with every datapoint in the generated Dataset.
-        materialize (bool): Optionally download the dataset. Defaults to True.
+        download (bool): Optionally download the dataset. Defaults to True.
     Returns:
-        None: No return value.
+        Dataset: The created Dataset.
     """
     dataset_config_hash = dataset_config.hash
     sim_name = dataset_config.sim["name"]
@@ -291,8 +291,8 @@ def generate(
         )
         dataset = datasets_res["results"][0]
 
-    if materialize:
-        print(f"Materializing Dataset<{internal_dataset_name}>...")
+    if download:
+        print(f"Downloading Dataset<{internal_dataset_name}>...")
         dataset = get(
             f"{_base_url}/api/v1/datasets/{dataset['id']}/",
             headers=auth_header(_auth_token),

@@ -1,66 +1,16 @@
-import json
 import os
 import random
 import shutil
 import unittest
 from collections import defaultdict
 from pathlib import Path
+from pprint import pprint
 
 import zpy.client as zpy
 from zpy.client_util import remove_n_extensions, format_dataset, write_json
 
 
-def test_1(**init_kwargs):
-    """In local env, simruns exist for config { "run.padding_style": "square" }"""
-    zpy.init(**init_kwargs)
-    dataset_config = zpy.DatasetConfig(sim_name="can_v7")
-    dataset_config.set("run\\.padding_style", "square")
-    print(dataset_config.config)
-    previews = zpy.preview(dataset_config)
-    urls = [preview["url"] for preview in previews]
-    print(json.dumps(urls, indent=4, sort_keys=True))
-
-
-def test_2(**init_kwargs):
-    """In local env, simruns do NOT exist for config { "run.padding_style": "messy" }"""
-    zpy.init(**init_kwargs)
-    dataset_config = zpy.DatasetConfig("can_v7")
-    dataset_config.set("run\\.padding_style", "messy")
-    print(dataset_config.config)
-    previews = zpy.preview(dataset_config)
-    urls = [preview["url"] for preview in previews]
-    print(json.dumps(previews, indent=4, sort_keys=True))
-    print(json.dumps(urls, indent=4, sort_keys=True))
-
-
-def pretty_print(object):
-    try:
-        json.dumps(object)
-    except TypeError:
-        print("Unable to serialize the object")
-    else:
-        print(json.dumps(object, indent=4))
-
-
-def test_generate(**init_kwargs):
-    zpy.init(**init_kwargs)
-    dataset_config = zpy.DatasetConfig("dumpster_v5.1")
-
-    def datapoint_callback(images, annotations, categories):
-        pretty_print(images)
-        pretty_print(annotations)
-        pretty_print(categories)
-
-    dataset = zpy.generate(
-        dataset_config,
-        num_datapoints=40,
-        materialize=True,
-        # datapoint_callback=datapoint_callback
-    )
-
-
-# https://docs.python.org/3/library/unittest.html#module-unittest
-class TestClientUtilMethods(unittest.TestCase):
+class TestClient(unittest.TestCase):
     def test_remove_n_extensions(self):
         self.assertTrue("/foo" == remove_n_extensions("/foo.rgb.png", 2))
         self.assertTrue("/images" == remove_n_extensions("/images.foo.rgb.png", 3))
@@ -78,6 +28,13 @@ class TestClientUtilMethods(unittest.TestCase):
         self.assertNotEqual(hash(1), hash(2))
         self.assertNotEqual(hash([1]), hash([1, 1]))
 
+    def test_preview(self):
+        zpy.init(project_uuid='', auth_token='')
+        dataset_config = zpy.DatasetConfig(sim_name="can_v7")
+        dataset_config.set("run\\.padding_style", "square")
+        previews = zpy.preview(dataset_config)
+        pprint(previews)
+
     def test_generate(self):
         zpy.init(
             project_uuid="feb6e594-55e0-4f87-9e75-5a128221499f",
@@ -86,14 +43,7 @@ class TestClientUtilMethods(unittest.TestCase):
         dataset_config = zpy.DatasetConfig("dumpster_v5.1")
         dataset_config.set("run\.padding_style", "messy")
 
-        def datapoint_callback(images, annotations, categories):
-            pretty_print(images)
-            pretty_print(annotations)
-            pretty_print(categories)
-
-        zpy.generate(
-            dataset_config, num_datapoints=3, datapoint_callback=datapoint_callback
-        )
+        zpy.generate(dataset_config, num_datapoints=3)
 
     def test_format_dataset(self):
         output_dir = Path("/home/korystiger/Downloads/ktest")
