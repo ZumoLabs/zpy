@@ -48,6 +48,9 @@ nav:
   - Python client:
     - About: client_api/about.md
     - API Reference: client_api/reference.md
+    - Examples:
+      - Getting started: client_api/getting_started.md
+      - Custom formatting: client_api/custom_formatting.md
   - Web app:
     - About: app/about.md
     - Create an Account: app/create_an_account.md
