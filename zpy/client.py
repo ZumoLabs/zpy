@@ -64,7 +64,6 @@ def init(
         )
 
 
-IMAGES_PER_SAMPLE = 2  # for the iseg and rbg
 DATASET_OUTPUT_PATH = Path("/tmp")  # for generate and default_saver_func
 
 
@@ -267,16 +266,22 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
 
 
 def default_dataset_callback(
-    datapoints: list, categories: list, output_dir: Optional[Path]
+    datapoints: list, categories: list, output_dir: Path
 ):
     """
     The default Dataset formatting function. It will flatten the Dataset into a single directory of images with a
-    single annotation file.
+    single annotation json file.
 
     A Datapoint object is of the following shape:
 
             {
+                # Globally unique identifier for the datapoint
+                "id": uuid.uuid4(),
+
+                # The images in the datapoint
                 "images": list of Image,
+
+                # The annotations in the datapoint
                 "annotations": list of Annotation,
             }
 
@@ -285,9 +290,6 @@ def default_dataset_callback(
             {
                 # Globally unique identifier for the image
                 "id": uuid.uuid4(),
-
-                # Globally unique identifier for the datapoint (collection of images and annotations)
-                "datapoint_id": uuid.uuid4(),
 
                 # Absolute path to the image
                 "output_path": "absolute/path/to/image-name.file-suffix",
@@ -310,9 +312,6 @@ def default_dataset_callback(
 
                 # Id of the image which this annotation is describing.
                 "image_id": uuid.uuid4(),
-
-                # Id of the datapoint which this annotation belongs to.
-                "datapoint_id": uuid.uuid4(),
 
                 # There may be other arbitrary keys as per the Sim creator's discretion
                 ...
@@ -340,7 +339,7 @@ def default_dataset_callback(
     Args:
         datapoints (list of dict): List of Datapoint objects.
         categories (list of dict): List of Category objects.
-        output_dir (Optional[Path]): Default output location.
+        output_dir (Path): Default output location.
     Returns:
         None: No return value.
     """

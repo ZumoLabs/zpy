@@ -292,7 +292,6 @@ def group_metadata_by_datapoint(
                     **i,
                     "id": image_new_id_map[i["id"]],
                     "output_path": join(batch_uri, Path(i["relative_path"])),
-                    "datapoint_id": datapoint_uuid,
                 }
                 for i in images
             ]
@@ -302,7 +301,6 @@ def group_metadata_by_datapoint(
                     **a,
                     "id": str(uuid.uuid4()),
                     "image_id": image_new_id_map[a["image_id"]],
-                    "datapoint_id": datapoint_uuid,
                 }
                 for a in annotations
             ]
@@ -310,6 +308,7 @@ def group_metadata_by_datapoint(
             # accumulate
             accum_datapoints.append(
                 {
+                    "id": datapoint_uuid,
                     "images": images_mutated,
                     "annotations": annotations_mutated,
                 }
