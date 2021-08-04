@@ -318,7 +318,7 @@ The kwargs of the run function in a sim are effectively additional hyperparamete
 
 To put into practice what this paper has explained, we present a simple example of how synthetic data can be used to train a computer vision model. In this example, we train a detection model which predicts the bounding boxes for cardboard packages and parcels in images. In section \ref{sec:domainrandomization} we explore how domain randomization in different aspects of the simulation can affect final model performance.
 
-We used a variant of Faster R-CNN implemented in PyTorch as part of the Detectron2 model zoo \cite{wu2019detectron2}. Training was done on a single Nvidia GeForce RTX 3090, with each training run lasting at most an hour: this experiment consisted only of fine-tuning a model pre-trained on ImageNet as opposed to training a model from scratch. We sweeped over various learning rates and used the largest batch size we could given our GPU memory, model size, and image size. We picked the best performing permutation of hyperparameters when comparing results, keeping the model and test dataset consistent.
+We used a variant of Faster R-CNN implemented in PyTorch as part of the Detectron2 model zoo \cite{wu2019detectron2}. Training was done on a single Nvidia GeForce RTX 3090, with each training run lasting at most an hour: this experiment consisted only of fine-tuning a model pre-trained on ImageNet as opposed to training a model from scratch. We sweeped over various learning rates and used the largest batch size we could given our GPU memory, model size, and image size. We picked the best performing permutation of hyperparameters when comparing results, using APm on a holdout test dataset of real images.
 
 \subsection{Domain Randomization}
 \label{sec:domainrandomization}
@@ -329,12 +329,12 @@ In our package experiment, we expose boolean toggles as run function kwargs that
 
 \begin{itemize}
 	\item \lstinline{package_sim_dr_light} - Synthetic dataset of 512 images. Domain randomization is applied to lighting only.
-	\item \lstinline{package_sim_dr_mat} - Synthetic dataset of 512 images. Domain randomization is applied to materials only.
+	\item \lstinline{package_sim_dr_mats} - Synthetic dataset of 512 images. Domain randomization is applied to materials only.
 	\item \lstinline{package_sim_dr_bg} - Synthetic dataset of 512 images. Domain randomization is applied to background only.
 	\item \lstinline{package_sim_dr_all} - Synthetic dataset of 512 images. Domain randomization is applied to lighting, background, and materials.
 \end{itemize}
 
-The best performing single run is fine tuned for XX iterations at a learning rate of XX on the \lstinline{package_sim_dr_all} dataset. By comparing the top performing runs for each type of domain randomization, we can thus rank the relative importance of each as such: lighting, materials, and background. One possible explanation may be that this XXX. Finally, as a caveat: it is important to underline that this is a small experiment, and we do not claim that these insights can be applied to other usecases or even further explorations of this particular problem. 
+The best performing single run is fine tuned for 500 iterations at a learning rate of 0.001 on the \lstinline{package_sim_dr_mats} dataset. Comparing the top performing runs for each type of domain randomization, we rank the relative importance of each type: materials (44.9 APm), all (44.5 APm), lighting (42.1 APm), and background (40.4 APm). One possible explanation for material domain randomization being most important is that the shape of the cardboard box is the more important feature for the model to focus on (as opposed to the material and texture). As a caveat: it is important to underline that this is a small experiment: small models trained for a short amount of time on small datasets. We do not claim that these insights can be applied to other usecases or even further explorations of this particular problem. 
 
 \section{Conclusion}
 \label{sec:conclusion}
