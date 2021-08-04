@@ -1,7 +1,6 @@
 import functools
 import hashlib
 import json
-import logging
 import math
 import os
 import shutil
@@ -352,8 +351,9 @@ def format_dataset(
             )
 
     else:
-        print("Doing default formatting for dataset...")
         output_dir = Path(remove_n_extensions(zipped_dataset_path, n=1))
+        print(f"Doing default formatting and outputting to {output_dir}")
+
         if Path(output_dir).exists():
             shutil.rmtree(output_dir)
         os.makedirs(output_dir)
