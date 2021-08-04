@@ -2,8 +2,6 @@ import functools
 import hashlib
 import json
 import math
-import os
-import shutil
 import sys
 import uuid
 import zipfile
@@ -192,12 +190,13 @@ def dict_hash(data) -> str:
     return config_hash
 
 
-def extract_zip(path_to_zip: Path, output_path: Path):
+def extract_zip(path_to_zip: Union[str, Path], output_path: Union[str, Path]):
     """
-    Extracts a .zip to a new adjacent folder by the same name.
+    Extracts a .zip at `path_to_zip` to a directory at `output_path`.
+
     Args:
-        path_to_zip (Path): Path to .zip to extract.
-        output_path (Path): Path of where to extract to.
+        path_to_zip (Union[str, Path]): Location of .zip to extract.
+        output_path (Union[str, Path]): Location of where to extract to.
     Returns:
         None: No return value
     """
@@ -291,9 +290,9 @@ def group_metadata_by_datapoint(
             images_mutated = [
                 {
                     **i,
-                    "output_path": join(batch_uri, Path(i["relative_path"])),
                     "id": image_new_id_map[i["id"]],
-                    "frame": datapoint_uuid,
+                    "output_path": join(batch_uri, Path(i["relative_path"])),
+                    "datapoint_id": datapoint_uuid,
                 }
                 for i in images
             ]
@@ -301,8 +300,9 @@ def group_metadata_by_datapoint(
             annotations_mutated = [
                 {
                     **a,
+                    "id": str(uuid.uuid4()),
                     "image_id": image_new_id_map[a["image_id"]],
-                    "frame": datapoint_uuid,
+                    "datapoint_id": datapoint_uuid,
                 }
                 for a in annotations
             ]
@@ -319,75 +319,3 @@ def group_metadata_by_datapoint(
         accum_categories[category_id]["count"] = category_count
 
     return accum_metadata, values(accum_categories), accum_datapoints
-
-
-def format_dataset(
-    zipped_dataset_path: Union[str, Path], dataset_callback=None
-) -> None:
-    """
-    Updates metadata with new ids and accurate image paths.
-    If a datapoint_callback is provided, it is called once per datapoint with the updated metadata.
-    Otherwise the default is to write out an updated _annotations.zumo.json, along with all images, to a new adjacent folder.
-    Args:
-        zipped_dataset_path (str): Path to unzipped dataset.
-        datapoint_callback (Callable) -> None: User defined function.
-    Returns:
-        None: No return value.
-    """
-    raw_dataset_path = Path(zipped_dataset_path).parent / (
-        Path(zipped_dataset_path).with_suffix("").name + "_raw"
-    )
-
-    if not raw_dataset_path.exists():
-        print(f"Unzipping {zipped_dataset_path}...")
-        extract_zip(zipped_dataset_path, raw_dataset_path)
-
-    metadata, categories, datapoints = group_metadata_by_datapoint(raw_dataset_path)
-
-    if dataset_callback is not None:
-        print("Skipping default formatting, using dataset_callback instead.")
-        dataset_callback(datapoints, categories)
-    else:
-        output_dir = Path(remove_n_extensions(zipped_dataset_path, n=1))
-        print(f"Doing default formatting and outputting to {output_dir}")
-
-        if Path(output_dir).exists():
-            shutil.rmtree(output_dir)
-        os.makedirs(output_dir)
-
-        accum_metadata = {
-            "metadata": {
-                **metadata,
-                "save_path": str(output_dir),
-            },
-            "categories": {category["id"]: category for category in categories},
-            "images": {},
-            "annotations": [],
-        }
-
-        for datapoint in datapoints:
-            accum_metadata["annotations"].extend(datapoint["annotations"])
-
-            for image in datapoint["images"]:
-                # reference original path to save from
-                original_image_uri = image["output_path"]
-
-                # build new path
-                output_image_uri = output_dir / image["id"]
-
-                # add to accumulator
-                accum_metadata["images"][image["id"]] = {
-                    **image,
-                    "name": image["id"],
-                    "relative_path": image["id"],
-                    "output_path": str(output_dir / image["id"]),
-                }
-
-                # copy image to new folder
-                shutil.copy(original_image_uri, output_image_uri)
-
-        # write json
-        metadata_output_path = output_dir / "_annotations.zumo.json"
-
-        os.makedirs(os.path.dirname(metadata_output_path), exist_ok=True)
-        write_json(metadata_output_path, accum_metadata)

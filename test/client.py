@@ -7,7 +7,7 @@ from pathlib import Path
 from pprint import pprint
 
 import zpy.client as zpy
-from zpy.client_util import remove_n_extensions, format_dataset, write_json
+from zpy.client_util import remove_n_extensions, write_json
 
 
 class TestClient(unittest.TestCase):
@@ -126,54 +126,66 @@ class TestClient(unittest.TestCase):
         )
 
     def test_generate_and_format_dataset(self):
-        output_dir = Path("/home/korystiger/Downloads/ktest")
-        if output_dir.exists():
-            shutil.rmtree(output_dir)
+        def dataset_callback(datapoints, categories, output_dir):
+            if output_dir.exists():
+                shutil.rmtree(output_dir)
 
-        os.makedirs(output_dir / "train", exist_ok=True)
-        os.makedirs(output_dir / "val", exist_ok=True)
-        os.makedirs(output_dir / "test", exist_ok=True)
+            os.makedirs(output_dir / "train", exist_ok=True)
+            os.makedirs(output_dir / "val", exist_ok=True)
+            os.makedirs(output_dir / "test", exist_ok=True)
 
-        metadata = {
-            tvt_type: {"categories": {}, "images": {}, "annotations": []}
-            for tvt_type in ["train", "val", "test"]
-        }
-        category_counts = {
-            tvt_type: defaultdict(int) for tvt_type in ["train", "val", "test"]
-        }
+            metadata = {
+                tvt_type: {"categories": {}, "images": {}, "annotations": []}
+                for tvt_type in ["train", "val", "test"]
+            }
+            category_counts = {
+                tvt_type: defaultdict(int) for tvt_type in ["train", "val", "test"]
+            }
 
-        def datapoint_callback(images, annotations, categories):
-            r = random.random()
+            for datapoint in datapoints:
+                images = datapoint['images']
+                annotations = datapoint['annotations']
 
-            if r < 0.4:
-                tvt_type = "train"
-            elif r < 0.8:
-                tvt_type = "test"
-            else:
-                tvt_type = "val"
+                r = random.random()
 
-            for image in images:
-                new_path = output_dir / tvt_type / image["id"]
+                if r < 0.4:
+                    tvt_type = "train"
+                elif r < 0.8:
+                    tvt_type = "test"
+                else:
+                    tvt_type = "val"
 
-                shutil.copy(image["output_path"], new_path)
+                for image in images:
+                    new_path = output_dir / tvt_type / image["id"]
 
-                metadata[tvt_type]["images"][image["id"]] = {
-                    **image,
-                    "output_path": str(new_path),
-                    "relative_path": image["id"],
-                    "name": image["id"],
-                }
+                    shutil.copy(image["output_path"], new_path)
 
-                filtered_annotations_by_image_id = [
-                    a for a in annotations if a["image_id"] == image["id"]
-                ]
-                for annotation in filtered_annotations_by_image_id:
-                    category_counts[tvt_type][annotation["category_id"]] += 1
+                    metadata[tvt_type]["images"][image["id"]] = {
+                        **image,
+                        "output_path": str(new_path),
+                        "relative_path": image["id"],
+                        "name": image["id"],
+                    }
 
-            metadata[tvt_type]["annotations"].extend(annotations)
+                    filtered_annotations_by_image_id = [
+                        a for a in annotations if a["image_id"] == image["id"]
+                    ]
+                    for annotation in filtered_annotations_by_image_id:
+                        category_counts[tvt_type][annotation["category_id"]] += 1
 
-            for category in categories:
-                metadata[tvt_type]["categories"][category["id"]] = category
+                metadata[tvt_type]["annotations"].extend(annotations)
+
+                for category in categories:
+                    metadata[tvt_type]["categories"][category["id"]] = { **category, "count": 0}
+
+            for tvt_type in ["train", "val", "test"]:
+                for category_id, count in category_counts[tvt_type].items():
+                    metadata[tvt_type]["categories"][category_id]["count"] = count
+
+                print(f"Writing {tvt_type} json...")
+                path = output_dir / tvt_type / "annotations.json"
+                blob = metadata[tvt_type]
+                write_json(path, blob)
 
         zpy.init(
             project_uuid="feb6e594-55e0-4f87-9e75-5a128221499f",
@@ -183,14 +195,6 @@ class TestClient(unittest.TestCase):
         dataset_config.set("run\.padding_style", "random")
         zpy.generate(
             dataset_config,
-            num_datapoints=12,  # datapoint_callback=datapoint_callback
+            num_datapoints=15,
+            dataset_callback=dataset_callback
         )
-
-        for tvt_type in ["train", "val", "test"]:
-            for category_id, count in category_counts[tvt_type].items():
-                metadata[tvt_type]["categories"][category_id]["count"] = count
-
-            print(f"Writing {tvt_type} json...")
-            path = output_dir / tvt_type / "annotations.json"
-            blob = metadata[tvt_type]
-            write_json(path, blob)

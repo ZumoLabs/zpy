@@ -1,11 +1,12 @@
 import functools
 import json
+import os
+import shutil
 import sys
 import time
 from datetime import datetime, timedelta
-from os import listdir
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 from typing import Union
 
 import requests
@@ -21,8 +22,7 @@ from zpy.client_util import (
     auth_header,
     clear_last_print,
     is_done,
-    format_dataset,
-    dict_hash,
+    dict_hash, group_metadata_by_datapoint, extract_zip, write_json,
 )
 
 _auth_token: str = ""
@@ -178,6 +178,35 @@ class DatasetConfig:
         unset(self._config, path)
 
 
+class Dataset:
+    def __init__(self, name: str = None, dataset_config: DatasetConfig = None):
+        """
+        Construct a Dataset which is a local representation of a Dataset generated on the API.
+
+        Args:
+            name (str): The name of the Dataset.
+            dataset_config (DatasetConfig): The [zpy.client.DatasetConfig][] used to generate this Dataset.
+        """
+        self._name = name
+        self._config = dataset_config
+
+    @property
+    def name(self):
+        """
+        Returns:
+            str: The Dataset's name.
+        """
+        return self._name
+
+    @property
+    def config(self):
+        """
+        Returns:
+            DatasetConfig: The [zpy.client.DatasetConfig][] used to generate this Dataset.
+        """
+        return self._config
+
+
 @add_newline
 def preview(dataset_config: DatasetConfig, num_samples=10):
     """
@@ -234,23 +263,140 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     return files
 
 
+def default_dataset_callback(datapoints: list, categories: list, output_dir: Optional[Path]):
+    """
+    The default Dataset formatting function. It will flatten the Dataset into a single directory of images with a
+    single annotation file.
+
+    A Datapoint object is of the following shape:
+
+            {
+                "images": list of Image,
+                "annotations": list of Annotation,
+            }
+
+    An Image object is of the following shape:
+
+            {
+                # Globally unique identifier for the image
+                "id": uuid.uuid4(),
+
+                # Globally unique identifier for the datapoint (collection of images and annotations)
+                "datapoint_id": uuid.uuid4(),
+
+                # Absolute path to the image
+                "output_path": "absolute/path/to/image-name.file-suffix",
+
+                # Relative path to the image within its parent folder
+                "relative_path": "image-name.file-suffix",
+
+                # Name of the image without the file suffix
+                "name": "image-name",
+
+                # There may be other arbitrary keys as per the Sim creator's discretion
+                ...
+            }
+
+    An Annotation object is of the following shape:
+
+            {
+                # Globally unique identifier for the annotation
+                "id": uuid.uuid4(),
+
+                # Id of the image which this annotation is describing.
+                "image_id": uuid.uuid4(),
+
+                # Id of the datapoint which this annotation belongs to.
+                "datapoint_id": uuid.uuid4(),
+
+                # There may be other arbitrary keys as per the Sim creator's discretion
+                ...
+            }
+
+    A Category object is of the following shape:
+
+            {
+                # Unique identifier of this category across the Dataset
+                "id": int,
+
+                # Human readable name of the category
+                "name": str,
+
+                # Global count of this category across the Dataset
+                "count": int,
+
+                # There may be other arbitrary keys as per the Sim creator's discretion. Some common examples:
+                "supercategories": list of dict,
+                "subcategories": list of dict,
+                "subcategory_count": list of dict,
+                "color": 3-tuple,  # RGB decimal values
+            }
+
+    Args:
+        datapoints (list of dict): List of Datapoint objects.
+        categories (list of dict): List of Category objects.
+        output_dir (Optional[Path]): Default output location.
+    Returns:
+        None: No return value.
+    """
+    print(f"Doing default formatting and outputting to {output_dir}")
+
+    if Path(output_dir).exists():
+        shutil.rmtree(output_dir)
+    os.makedirs(output_dir)
+
+    accum_metadata = {
+        "categories": {category["id"]: category for category in categories},
+        "images": {},
+        "annotations": [],
+    }
+
+    for datapoint in datapoints:
+        accum_metadata["annotations"].extend(datapoint["annotations"])
+
+        for image in datapoint["images"]:
+            # reference original path to save from
+            original_image_uri = image["output_path"]
+
+            # build new path
+            output_image_uri = output_dir / image["id"]
+
+            # add to accumulator
+            accum_metadata["images"][image["id"]] = {
+                **image,
+                "name": image["id"],
+                "relative_path": image["id"],
+                "output_path": str(output_dir / image["id"]),
+            }
+
+            # copy image to new folder
+            shutil.copy(original_image_uri, output_image_uri)
+
+    # write json
+    metadata_output_path = output_dir / "_annotations.zumo.json"
+
+    os.makedirs(os.path.dirname(metadata_output_path), exist_ok=True)
+    write_json(metadata_output_path, accum_metadata)
+
+
 @add_newline
 def generate(
-    dataset_config: DatasetConfig,
-    num_datapoints: int = 10,
-    download: bool = True,
-    datapoint_callback=None,
+        dataset_config: DatasetConfig,
+        num_datapoints: int = 10,
+        download: bool = True,
+        dataset_callback=default_dataset_callback,
 ):
     """
     Generate a dataset.
     Args:
         dataset_config (DatasetConfig): Specification for a Sim and its configurable parameters.
-        num_datapoints (int): Number of datapoints in the dataset. A datapoint is an instant in time composed of all
+        num_datapoints (int): Number of datapoints in the Dataset. A datapoint is an instant in time composed of all
                               the output images (rgb, iseg, cseg, etc) along with the annotations.
-        datapoint_callback (fn): Callback function to be called with every datapoint in the generated Dataset.
-        download (bool): Optionally download the dataset. Defaults to True.
+        dataset_callback (fn): See [zpy.client.default_dataset_callback][]. Called with formatted objects representing
+             the Dataset.
+        download (bool): Optionally download the Dataset. Defaults to True.
     Returns:
-        Dataset: The created Dataset.
+        Dataset: The created [zpy.client.Dataset][].
     """
     dataset_config_hash = dataset_config.hash
     sim_name = dataset_config.sim["name"]
@@ -330,53 +476,36 @@ def generate(
                 f"{_base_url}/api/v1/datasets/{dataset['id']}/download/",
                 headers=auth_header(_auth_token),
             ).json()
-            name_slug = f"{dataset['name']}.zip"
-            # Throw it in /tmp for now I guess
-            output_path = Path(DATASET_OUTPUT_PATH) / name_slug
-            existing_files = listdir(DATASET_OUTPUT_PATH)
-            if name_slug not in existing_files:
+
+            # Make local path variables
+            dataset_zip_path = Path(DATASET_OUTPUT_PATH) / f"{dataset['name']}.zip"
+            dataset_unzipped_path = Path(DATASET_OUTPUT_PATH) / f"{dataset['name']}_raw"
+            if not dataset_zip_path.exists():
+                # Download if the zip is not found locally
                 print(
                     f"Dataset<{dataset['name']}> not found locally, downloading "
                     f"{convert_size(dataset_download_res['size_bytes'])}..."
                 )
-                download_url(dataset_download_res["redirect_link"], output_path)
+                download_url(dataset_download_res["redirect_link"], dataset_zip_path)
+
+                # Remove the unzipped folder if it exists from a previous run
+                if dataset_unzipped_path.exists():
+                    shutil.rmtree(dataset_unzipped_path)
+
+                # Unzip the local dataset
+                extract_zip(dataset_zip_path, dataset_unzipped_path)
             else:
                 print(f"Dataset<{dataset['name']}> already exists locally.")
+
             print(f"Formatting Dataset<{dataset['name']}>...")
-            format_dataset(output_path, datapoint_callback)
+            metadata, categories, datapoints = group_metadata_by_datapoint(dataset_unzipped_path)
+
+            dataset_callback(datapoints, categories, output_dir=dataset_zip_path.with_suffix(""))
         else:
             print(
-                f"Dataset<{dataset['name']}> is no longer running but cannot be downloaded with state = {dataset['state']}"
+                f"Dataset<{dataset['name']}> is no longer running but cannot be downloaded with "
+                f"state = {dataset['state']}"
             )
 
     print(f"Dataset<{dataset['name']}> finished processing.")
     return Dataset(internal_dataset_name, dataset_config)
-
-
-class Dataset:
-    def __init__(self, name: str = None, dataset_config: DatasetConfig = None):
-        """
-        Construct a Dataset which is a local representation of a Dataset generated on the API.
-
-        Args:
-            name (str): The name of the Dataset.
-            dataset_config (DatasetConfig): The DatasetConfig used to generate this Dataset.
-        """
-        self._name = name
-        self._config = dataset_config
-
-    @property
-    def name(self):
-        """
-        Returns:
-            str: The datasets name.
-        """
-        return self._name
-
-    @property
-    def config(self):
-        """
-        Returns:
-            DatasetConfig: The configuration used to generate this dataset.
-        """
-        return self._config
