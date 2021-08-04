@@ -29,7 +29,7 @@ class TestClient(unittest.TestCase):
         self.assertNotEqual(hash([1]), hash([1, 1]))
 
     def test_preview(self):
-        zpy.init(project_uuid='', auth_token='')
+        zpy.init(project_uuid="", auth_token="")
         dataset_config = zpy.DatasetConfig(sim_name="can_v7")
         dataset_config.set("run\\.padding_style", "square")
         previews = zpy.preview(dataset_config)
