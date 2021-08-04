@@ -1,38 +1,16 @@
 ### How to format your dataset with the dataset_callback parameter.
 
 ```python
-# Make sure you're using the latest version of the zpy library:
-#   pip install zpy-zumo --upgrade
 import zpy.client as zpy
-import shutil
 import os
-from collections import defaultdict
-import random
-import json
+import shutil
+from pathlib import Path
+import csv
 
-# We'll provide your project id during on-boarding
 project_uuid = "..."
-
-# This is your temporary auth token. It can be found by visiting:
-#     https://app.zumolabs.ai/settings/auth-token
-#
-# The auth token will expire when you log out of the web app
 auth_token = "..."
-
 zpy.init(project_uuid=project_uuid, auth_token=auth_token)
-
-# The simulation (sim) is the packaged version of the blender assets and
-# generations script.
-# 
-# We'll give you the sim for your specific project and share new sim names when we
-# create new versions.
 sim_name = "demo_sim_v1"
-
-# A DatasetConfig defines what synthetic data you want generated.
-# 
-# For now, there are no parameters to configure. But in the future, this will include
-# sim specific parameters like: changing the cropping style or selecting which classes
-# should be included in a dataset.
 dataset_config = zpy.DatasetConfig(sim_name)
 
 def dataset_callback(datapoints, categories, output_dir):
@@ -46,87 +24,50 @@ def dataset_callback(datapoints, categories, output_dir):
         categories (list): List of categories. See [zpy.client.default_dataset_callback][].
         output_dir (Path): Path of where dataset is output normally. You can use it or use something else.
     """
-    # Remove the directory if it already exists
+    # The default location is passed in, but you can change it to whatever you want
+    output_dir = Path('/tmp/output_dir')
     if output_dir.exists():
         shutil.rmtree(output_dir)
+    os.makedirs(output_dir, exist_ok=True)
 
-    # Setup output directories
-    os.makedirs(output_dir / "train", exist_ok=True)
-    os.makedirs(output_dir / "val", exist_ok=True)
-    os.makedirs(output_dir / "test", exist_ok=True)
-
-    # Setup accumulator for categories, images, and annotations per split
-    metadata = {
-        tvt_type: {"categories": {}, "images": {}, "annotations": []}
-        for tvt_type in ["train", "val", "test"]
-    }
-    
-    # Setup accumulator for counting categories per split
-    category_counts = {
-        tvt_type: defaultdict(int) for tvt_type in ["train", "val", "test"]
-    }
-
-    # Loop over each datapoint in the dataset
+    # Define row accumulator
+    rows = []
+    # Loop over datapoints to build rows
     for datapoint in datapoints:
-        images = datapoint["images"]
-        annotations = datapoint["annotations"]
-
-        # Assign the datapoint to a random split
-        r = random.random()
-        if r < 0.4:
-            tvt_type = "train"
-        elif r < 0.8:
-            tvt_type = "test"
-        else:
-            tvt_type = "val"
-
-        # Loop over each image in the datapoint to move it where you want it and
-        # to assign it appropriate metadata based its new location.
+        # Loop over images in datapoint to find the ones we need
+        images = datapoint['images']
+        rgb_image, iseg_image = {}, {}
         for image in images:
-            # Assign new path
-            new_path = output_dir / tvt_type / image["id"]
-
-            # Copy to new location
-            shutil.copy(image["output_path"], new_path)
-
-            # Update image metadata in the accumulator
-            metadata[tvt_type]["images"][image["id"]] = {
-                **image,
-                "output_path": str(new_path),
-                "relative_path": image["id"],
-                "name": image["id"],
-            }
-
-            # Find the annotations for this image
-            filtered_annotations_by_image_id = [
-                a for a in annotations if a["image_id"] == image["id"]
-            ]
-            
-            # Accumulate the categories found in the annotations for this image
-            for annotation in filtered_annotations_by_image_id:
-                category_counts[tvt_type][annotation["category_id"]] += 1
-
-        # Add annotations of this datapoint to the appropriate split
-        metadata[tvt_type]["annotations"].extend(annotations)
-
-        # Update metadata of categories. As they are passed in, the count is for the entire dataset
-        for category in categories:
-            metadata[tvt_type]["categories"][category["id"]] = {
-                **category,
-                "count": 0,
-            }
-
-    # Loop over each split
-    for tvt_type in ["train", "val", "test"]:
-        # Update the correct count that was accumulated
-        for category_id, count in category_counts[tvt_type].items():
-            metadata[tvt_type]["categories"][category_id]["count"] = count
-
-        # Write the new annotation file
-        path = output_dir / tvt_type / "annotations.json"
-        blob = metadata[tvt_type]
-        with open(path, "w") as outfile:
-            json.dump(blob, outfile, indent=4)
+            if image['name'].endswith('.rgb.png'):
+                rgb_image = image
+            elif image['name'].endswith('.iseg.png'):
+                iseg_image = image
+            else:
+                # There could be other images here but we've decided we only care about
+                # rgb and iseg for this example.
+                pass
+        
+        # Update the image paths to where we want them, we could leave them unchanged too    
+        new_rgb_path = output_dir / rgb_image['name']
+        new_iseg_path = output_dir / iseg_image['name'] 
+        shutil.copy(rgb_image["output_path"], new_rgb_path)
+        shutil.copy(iseg_image["output_path"], new_iseg_path)
+        
+        # We know each datapoint will only have 1 category as per the Sim design
+        annotations = datapoint['annotations']
+        category_id = annotations[0]['category_id']
+        
+        # Accumulate new row
+        row = (datapoint['id'], new_rgb_path, new_iseg_path, category_id)
+        rows.append(row)
+    
+    # Write the rows to csv
+    annotations_file_uri = str(output_dir / 'annotations.csv')
+    with open(annotations_file_uri, 'w') as f:
+        writer = csv.writer(f)
+        columns = ['id', 'rgb_path', 'iseg_path', 'category_id']
+        writer.writerow(columns)
+        writer.writerows(rows)
     
 # The generate call will cause our backend to actually generate a dataset. The dataset_callback will be used 
 # after it has been generated and downloaded locally.
