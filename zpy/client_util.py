@@ -268,7 +268,9 @@ def group_metadata_by_datapoint(
         for category_id, category in metadata["categories"].items():
             accum_categories[category_id] = category
 
-        images_grouped_by_datapoint = group_by(values(metadata["images"]), lambda image: image["frame"])
+        images_grouped_by_datapoint = group_by(
+            values(metadata["images"]), lambda image: image["frame"]
+        )
 
         # datapoint level
         for images in images_grouped_by_datapoint:
@@ -320,7 +322,7 @@ def group_metadata_by_datapoint(
 
 
 def format_dataset(
-        zipped_dataset_path: Union[str, Path], dataset_callback=None
+    zipped_dataset_path: Union[str, Path], dataset_callback=None
 ) -> None:
     """
     Updates metadata with new ids and accurate image paths.
@@ -333,7 +335,7 @@ def format_dataset(
         None: No return value.
     """
     raw_dataset_path = Path(zipped_dataset_path).parent / (
-            Path(zipped_dataset_path).with_suffix("").name + "_raw"
+        Path(zipped_dataset_path).with_suffix("").name + "_raw"
     )
 
     if not raw_dataset_path.exists():

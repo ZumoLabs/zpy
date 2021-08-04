@@ -74,8 +74,8 @@ class TestClient(unittest.TestCase):
             }
 
             for datapoint in datapoints:
-                images = datapoint['images']
-                annotations = datapoint['annotations']
+                images = datapoint["images"]
+                annotations = datapoint["annotations"]
 
                 r = random.random()
 
