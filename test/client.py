@@ -63,9 +63,6 @@ class TestClient(unittest.TestCase):
             }
 
             for datapoint in datapoints:
-                images = datapoint["images"]
-                annotations = datapoint["annotations"]
-
                 r = random.random()
 
                 if r < 0.4:
@@ -75,28 +72,30 @@ class TestClient(unittest.TestCase):
                 else:
                     tvt_type = "val"
 
-                for image in images:
-                    new_path = output_dir / tvt_type / image["id"]
+                # Annotations are stored by image_id so the dict update should not have any collisions
+                annotations = datapoint["annotations"]
+                metadata[tvt_type]["annotations"].update(annotations)
+
+                images = datapoint["images"]
+                for image_type, image in images.items():
+                    old_image_name = Path(image["output_path"]).name
+                    # Prefix old image name with the datapoint id to prevent naming collisions when moving directories
+                    # and combining images from other datapoints
+                    new_image_name = f'{datapoint["id"][:8]}.{old_image_name}'
+                    new_path = output_dir / tvt_type / new_image_name
+
+                    # Add the image and update the path to reflect its new location
+                    metadata[tvt_type]["images"][image["id"]] = image
+                    metadata[tvt_type]["images"][image["id"]]["output_path"] = str(new_path)
 
                     shutil.copy(image["output_path"], new_path)
 
-                    metadata[tvt_type]["images"][image["id"]] = {
-                        **image,
-                        "output_path": str(new_path),
-                        "relative_path": image["id"],
-                        "name": image["id"],
-                    }
-
-                    filtered_annotations_by_image_id = [
-                        a for a in annotations if a["image_id"] == image["id"]
-                    ]
-                    for annotation in filtered_annotations_by_image_id:
+                    # Add to the category counts for each annotation that this image has
+                    for annotation in annotations[image["id"]]:
                         category_counts[tvt_type][annotation["category_id"]] += 1
 
-                metadata[tvt_type]["annotations"].extend(annotations)
-
-                for category in categories:
-                    metadata[tvt_type]["categories"][category["id"]] = {
+                for category_id, category in categories.items():
+                    metadata[tvt_type]["categories"][category_id] = {
                         **category,
                         "count": 0,
                     }
@@ -117,5 +116,5 @@ class TestClient(unittest.TestCase):
         dataset_config = zpy.DatasetConfig("dumpster_v5.1")
         dataset_config.set("run\.padding_style", "random")
         zpy.generate(
-            dataset_config, num_datapoints=15, dataset_callback=dataset_callback
+            dataset_config, num_datapoints=15, #  dataset_callback=dataset_callback
         )
