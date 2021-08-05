@@ -87,7 +87,9 @@ class TestClient(unittest.TestCase):
 
                     # Add the image and update the path to reflect its new location
                     metadata[tvt_type]["images"][image["id"]] = image
-                    metadata[tvt_type]["images"][image["id"]]["output_path"] = str(new_path)
+                    metadata[tvt_type]["images"][image["id"]]["output_path"] = str(
+                        new_path
+                    )
 
                     shutil.copy(image["output_path"], new_path)
 
@@ -117,7 +119,8 @@ class TestClient(unittest.TestCase):
         dataset_config = zpy.DatasetConfig("dumpster_v5.1")
         dataset_config.set("run\.padding_style", "random")
         zpy.generate(
-            dataset_config, num_datapoints=15, #  dataset_callback=dataset_callback
+            dataset_config,
+            num_datapoints=15,  #  dataset_callback=dataset_callback
         )
 
     def test_generate_and_csv_format_dataset(self):
@@ -133,7 +136,7 @@ class TestClient(unittest.TestCase):
                 output_dir (Path): Path of where dataset is output normally. You can use it or use something else.
             """
             # The default location is passed in, but you can change it to whatever you want
-            output_dir = Path('/tmp/output_dir')
+            output_dir = Path("/tmp/output_dir")
             if output_dir.exists():
                 shutil.rmtree(output_dir)
             os.makedirs(output_dir, exist_ok=True)
@@ -143,28 +146,28 @@ class TestClient(unittest.TestCase):
             # Loop over datapoints to build rows
             for datapoint in datapoints:
                 # Dict of image_type to image
-                images = datapoint['images']
+                images = datapoint["images"]
 
                 # Get annotations via the image id
-                rgb_annotations = datapoint['annotations'][images['rgb']['id']]
+                rgb_annotations = datapoint["annotations"][images["rgb"]["id"]]
                 # iseg_annotations = datapoint['annotations'][images['iseg']['id']]
 
                 # The Sim design determines the annotation intrinsics. In this example we know there is only
                 # one annotation per datapoint, but there could be all sorts of interesting metadata here!
-                category_id = rgb_annotations[0]['category_id']
+                category_id = rgb_annotations[0]["category_id"]
 
                 # Lookup category information if you need it
                 # category = categories[category_id]
 
                 # Accumulate new row
-                row = (datapoint['id'], images['rgb']['output_path'], category_id)
+                row = (datapoint["id"], images["rgb"]["output_path"], category_id)
                 rows.append(row)
 
             # Write the rows to csv
-            annotations_file_uri = str(output_dir / 'annotations.csv')
-            with open(annotations_file_uri, 'w') as f:
+            annotations_file_uri = str(output_dir / "annotations.csv")
+            with open(annotations_file_uri, "w") as f:
                 writer = csv.writer(f)
-                columns = ['id', 'rgb_path', 'category_id']
+                columns = ["id", "rgb_path", "category_id"]
                 writer.writerow(columns)
                 writer.writerows(rows)
 
@@ -175,5 +178,6 @@ class TestClient(unittest.TestCase):
         dataset_config = zpy.DatasetConfig("dumpster_v5.1")
         dataset_config.set("run\.padding_style", "random")
         zpy.generate(
-            dataset_config, num_datapoints=15, #  dataset_callback=dataset_callback
+            dataset_config,
+            num_datapoints=15,  #  dataset_callback=dataset_callback
         )

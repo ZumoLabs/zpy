@@ -508,7 +508,9 @@ def generate(
                 dataset_callback(datapoints, categories, dataset_callback_output_dir)
                 print("User defined dataset_callback has finished.")
             else:
-                print(f"Flattening Dataset<{dataset['name']}> to {dataset_callback_output_dir}...")
+                print(
+                    f"Flattening Dataset<{dataset['name']}> to {dataset_callback_output_dir}..."
+                )
                 flatten_dataset(datapoints, categories, dataset_callback_output_dir)
         else:
             print(

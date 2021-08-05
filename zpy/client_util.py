@@ -242,24 +242,24 @@ def get_image_type_from_name(image_name):
     Returns:
         str: The type of the image. Ex: `"image.000000.rgb.png"` -> `"rgb"`, `"image.000123.iseg.jpg"` -> `"iseg"`
     """
-    return image_name.split('.')[-2]
+    return image_name.split(".")[-2]
 
 
 def get_global_id(datapoint_uuid: str, local_id: int):
     """
     Creates a globally unique id by combining a locally unique id with its globally unique datapoint uuid.
-    
+
     Args:
         datapoint_uuid (str): Id of the datapoint.
         local_id (int): Id of the local object (ex. image or annotation)
     Returns:
         str: The globally unique id of the local object.
     """
-    return f'{datapoint_uuid[:8]}.{local_id}'
+    return f"{datapoint_uuid[:8]}.{local_id}"
 
 
 def group_metadata_by_datapoint(
-        dataset_path: Path,
+    dataset_path: Path,
 ) -> Tuple[Dict, Dict, List[Dict]]:
     """
     Aggregates and reformats the zumo metadata across all batches of a dataset.
@@ -325,7 +325,9 @@ def group_metadata_by_datapoint(
                 if "frame" in updated_image:
                     del updated_image["frame"]
 
-                image_type_to_image[get_image_type_from_name(image["name"])] = updated_image
+                image_type_to_image[
+                    get_image_type_from_name(image["name"])
+                ] = updated_image
 
             # Get datapoint specific annotations
             image_ids = [i["id"] for i in images]
@@ -361,6 +363,6 @@ def group_metadata_by_datapoint(
         accum_categories[int(category_id)]["count"] = category_count
 
     # save_path doesn't have meaning any more. Batches are combined in memory but haven't been relocated to one spot.
-    del accum_metadata['save_path']
+    del accum_metadata["save_path"]
 
     return accum_metadata, accum_categories, accum_datapoints
