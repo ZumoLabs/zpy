@@ -36,23 +36,11 @@ def dataset_callback(datapoints, categories, output_dir):
     for datapoint in datapoints:
         # Dict of image_type to image 
         images = datapoint['images']
-        rgb_image = images['rgb']
-        iseg_image = images['iseg']
-        
-        # Move the images somewhere else (or not, the csv could point at the old locations). 
-        old_rgb_name = Path(rgb_image["output_path"]).name
-        old_iseg_name = Path(iseg_image["output_path"]).name
-        # Prefix the old name with the datapoint id to make sure there are no naming collisions
-        # when we move files around.
-        new_rgb_name = f'{datapoint["id"]}.{old_rgb_name}'
-        new_iseg_name = f'{datapoint["id"]}.{old_iseg_name}'
-        new_rgb_path = output_dir / new_rgb_name
-        new_iseg_path = output_dir / new_iseg_name
-        shutil.copy(rgb_image["output_path"], new_rgb_path)
-        shutil.copy(iseg_image["output_path"], new_iseg_path)
         
         # Get annotations via the image id
-        rgb_annotations = datapoint['annotations'][rgb_image['id']]
+        rgb_annotations = datapoint['annotations'][images['rgb']['id']]
+        # iseg_annotations = datapoint['annotations'][images['iseg']['id']]
+        
         # The Sim design determines the annotation intrinsics. In this example we know there is only
         # one annotation per datapoint, but there could be all sorts of interesting metadata here!
         category_id = rgb_annotations[0]['category_id']
@@ -61,7 +49,7 @@ def dataset_callback(datapoints, categories, output_dir):
         # category = categories[category_id]
         
         # Accumulate new row
-        row = (datapoint['id'], new_rgb_path, new_iseg_path, category_id)
+        row = (datapoint['id'], images['rgb']['output_path'], images['iseg']['output_path'], category_id)
         rows.append(row)
     
     # Write the rows to csv
