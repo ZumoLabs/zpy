@@ -38,9 +38,9 @@ def dataset_callback(datapoints, categories, output_dir):
         images = datapoint['images']
         rgb_image, iseg_image = {}, {}
         for image in images:
-            if image['name'].endswith('.rgb.png'):
+            if image['id'].endswith('.rgb.png'):
                 rgb_image = image
-            elif image['name'].endswith('.iseg.png'):
+            elif image['id'].endswith('.iseg.png'):
                 iseg_image = image
             else:
                 # There could be other images here but we've decided we only care about
@@ -48,8 +48,8 @@ def dataset_callback(datapoints, categories, output_dir):
                 pass
         
         # Update the image paths to where we want them, we could leave them unchanged too    
-        new_rgb_path = output_dir / rgb_image['name']
-        new_iseg_path = output_dir / iseg_image['name'] 
+        new_rgb_path = output_dir / rgb_image['id']
+        new_iseg_path = output_dir / iseg_image['id'] 
         shutil.copy(rgb_image["output_path"], new_rgb_path)
         shutil.copy(iseg_image["output_path"], new_iseg_path)
         
