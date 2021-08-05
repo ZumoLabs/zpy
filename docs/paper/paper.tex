@@ -177,7 +177,8 @@ Algorithmic bias is when an algorithm exhibits a prejudice or inclination for on
 
 Algorithms don’t make fairness; they automate the status quo. The real world is biased and unfair. In human datasets, inevitably, publicly available image datasets exhibit Amero-centric and Euro-centric representation bias and do not adequately address true cultural, demographic, or gender diversity\cite{shankar2017classification}. Widely used public datasets for object recognition also fail to capture all geographic differences\cite{DBLP:journals/corr/abs-1906-02659}. 
 
-Biased datasets result in biased algorithms. The nature of statistical learning methods means that training on these biased datasets will result in a biased model since a model is only as good as the data on which it is trained. The pervasive use of data-driven algorithms has complex social implications: from racial facial recognition (citation: https://nvlpubs.nist.gov/nistpubs/ir/2019/NIST.IR.8280.pdf), to predictive policing systems that act to confirm and deepen existing biases (citation: https://www.technologyreview.com/2020/07/17/1005396/predictive-policing-algorithms-racist-dismantled-machine-learning-bias-criminal-justice/). 
+Biased datasets result in biased algorithms. The nature of statistical learning methods means that training on these biased datasets will result in a biased model since a model is only as good as the data on which it is trained. The pervasive use of data-driven algorithms has complex social implications: from racial facial recognition \cite{fvrt}, to predictive policing systems that act to confirm and deepen existing biases \cite{predictivepolicing}.
+
 \subsection{Privacy}
 
 Using real data to train models presents very serious privacy risks with the rise of comprehensive privacy regimes like the GDPR in Europe and the CCPA in California. Openly available datasets offer no privacy guarantees as to whether all humans and biometrics represented in the dataset have been acquired with consent. 
@@ -251,12 +252,12 @@ The zpy python package is organized as a collection of separate modules. These m
 
 We provide three different interfaces to interact with our product: a Python API \ref{lst:api}, a CLI \ref{lst:cli}, and a graphical WebApp \ref{fig:webapp}. The Python API (application programming interface) allows users to generate custom datasets directly inside a python script, which means that model training code and data generation code can be tied together. This is especially important for using automatic hyperparameter tuning frameworks. The CLI (command line interface) allows for users to generate and manipulate their datasets with unix terminal commands. The terminal is extremely popular as an interface for computation tasks and thus a CLI is a must-have for a large swath of the developer community. Finally, we also provide a graphical interface in the form of a WebApp. Graphical interfaces can provide powerful visualization tools, and are generally more approachable for those less comfortable with code-like interfaces such as an API or CLI. 
 
-\begin{lstlisting}[language=Python,caption={Generating a dataset using the zpy python API.},label={lst:api}]
+\begin{lstlisting}[language=Python,caption={Generating a dataset of 1000 images using the zpy python API.},label={lst:api}]
 import zpy
-zpy.generate()
+zpy.generate("hello world dataset", 1000)
 \end{lstlisting}
 
-\begin{lstlisting}[language=bash,caption={Generating a dataset using the zpy CLI},label={lst:cli}]
+\begin{lstlisting}[language=bash,caption={Generating a dataset of 1000 images using the zpy CLI},label={lst:cli}]
 zpy create dataset "hello world dataset" my_sim num_images 1000
 \end{lstlisting}
 
@@ -309,16 +310,19 @@ The kwargs of the run function in a sim are effectively additional hyperparamete
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{results.png}
-	\caption{Each type of domain randomization is used to create a fully synthetic dataset, which is used to fine-tune a pre-trained model on the task of package detection. Results of the model on a manually labeled test dataset of real images are compared.}
+	\caption{(Left) Sample images from synthetic training datasets with different kinds of domain randomization: lighting, background, material, and all of the above. (Right) Bounding box predictions of a model fine-tuned on the corresponding synthetic dataset along with confidence for each detection, false positives shown for context.}
 	\label{fig:results}
 \end{figure}
 
 \section{Example}
 \label{sec:example}
 
-To put into practice what this paper has explained, we present a simple example of how synthetic data can be used to train a computer vision model. In this example, we train a detection model which predicts the bounding boxes for cardboard packages and parcels in images. In section \ref{sec:domainrandomization} we explore how domain randomization in different aspects of the simulation can affect final model performance.
+To put into practice what this paper has explained, we present a simple example of how synthetic data can be used to train a computer vision model. In this example, we train a detection model which predicts the bounding boxes for cardboard packages and parcels in images. In section \ref{sec:trainingmodel} we provide some details on the model and training setup. In section \ref{sec:domainrandomization} we explore how domain randomization in different aspects of the simulation can affect final model performance.
 
-We used a variant of Faster R-CNN implemented in PyTorch as part of the Detectron2 model zoo \cite{wu2019detectron2}. Training was done on a single Nvidia GeForce RTX 3090, with each training run lasting at most an hour: this experiment consisted only of fine-tuning a model pre-trained on ImageNet as opposed to training a model from scratch. We sweeped over various learning rates and used the largest batch size we could given our GPU memory, model size, and image size. We picked the best performing permutation of hyperparameters when comparing results, using APm on a holdout test dataset of real images.
+\subsection{Training and Model Specs}
+\label{sec:trainingmodel}
+
+We used several variants of Faster R-CNN implemented in PyTorch as part of the Detectron2 model zoo \cite{wu2019detectron2}. Training was done on a single Nvidia GeForce RTX 3090, with each training run lasting at most several thousand iterations, which corresponds to at most 10 epochs given the training dataset size of 512 images. For this experiment we fine-tune a model pre-trained on the COCO detection task as opposed to training the model from scratch. This type of transfer learning is common when using machine learning in the real world due to the quick training speed and relatively good performance. We sweeped over various learning rates and used the largest batch size we could given our GPU memory, model size, and image size. We picked the best performing permutation of hyperparameters when comparing results, using APm on a holdout test dataset of real images.
 
 \subsection{Domain Randomization}
 \label{sec:domainrandomization}
@@ -328,9 +332,9 @@ Domain randomization is a technique commonly used in synthetic data to increase 
 In our package experiment, we expose boolean toggles as run function kwargs that unlock certain forms of domain randomization. One toggle enables domain randomization in the lighting space: changing the position and intensity of several lights in the sim. The second toggle enables random HDRIs, which change the appearance of the background in the package images. The third toggle enables domain randomization for materials, which changes the appearance of the packages themselves, both the texture as well as the material properties. We perform an ablation study to pick appart the contributions of each type of domain randomization to the performance of a detection model trained on synthetic data with each respective form of domain randomization \ref{fig:results}. These toggles are used to create the following four synthetic training datasets:
 
 \begin{itemize}
-	\item \lstinline{package_sim_dr_light} - Synthetic dataset of 512 images. Domain randomization is applied to lighting only.
-	\item \lstinline{package_sim_dr_mats} - Synthetic dataset of 512 images. Domain randomization is applied to materials only.
-	\item \lstinline{package_sim_dr_bg} - Synthetic dataset of 512 images. Domain randomization is applied to background only.
+	\item \lstinline{package_sim_dr_light} - Synthetic dataset of 512 images. Domain randomization is applied to lighting only. The position of a sun light object in the scene, as well as the intensity of the light, is randomized within a range for every image
+	\item \lstinline{package_sim_dr_mats} - Synthetic dataset of 512 images. Domain randomization is applied to materials only. The material of each individial package is created in each image, starting with a randomly chosen texture from a library of thousands of textures scraped from the internet. Several properties of the material, such as specular, metallic, and roughness are then jittered within a broad range.
+	\item \lstinline{package_sim_dr_bg} - Synthetic dataset of 512 images. Domain randomization is applied to background only. Each image is rendered with a different HDRI, which is chosen from a library of hundreds of HDRIs scraped from the internet.
 	\item \lstinline{package_sim_dr_all} - Synthetic dataset of 512 images. Domain randomization is applied to lighting, background, and materials.
 \end{itemize}
 
