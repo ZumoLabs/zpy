@@ -16,9 +16,9 @@ dataset_config = zpy.DatasetConfig(sim_name)
 def dataset_callback(datapoints, categories, output_dir):
     """
     Example of using dataset_callback to format a dataset into CSV format.
-    
+
     See [zpy.client.default_dataset_callback][] for how the dataset is flattened by default.
-    
+
     Args:
         datapoints (list): List of datapoints. See [zpy.client.default_dataset_callback][].
         categories (dict): Dict of category_id to Category. See [zpy.client.default_dataset_callback][].
@@ -34,29 +34,29 @@ def dataset_callback(datapoints, categories, output_dir):
     rows = []
     # Loop over datapoints to build rows
     for datapoint in datapoints:
-        # Dict of image_type to image 
+        # Dict of image_type to image
         images = datapoint['images']
-        
+
         # Get annotations via the image id
         rgb_annotations = datapoint['annotations'][images['rgb']['id']]
         # iseg_annotations = datapoint['annotations'][images['iseg']['id']]
-        
+
         # The Sim design determines the annotation intrinsics. In this example we know there is only
         # one annotation per datapoint, but there could be all sorts of interesting metadata here!
         category_id = rgb_annotations[0]['category_id']
-        
+
         # Lookup category information if you need it
         # category = categories[category_id]
-        
+
         # Accumulate new row
-        row = (datapoint['id'], images['rgb']['output_path'], images['iseg']['output_path'], category_id)
+        row = (datapoint['id'], images['rgb']['output_path'], category_id)
         rows.append(row)
-    
+
     # Write the rows to csv
     annotations_file_uri = str(output_dir / 'annotations.csv')
     with open(annotations_file_uri, 'w') as f:
         writer = csv.writer(f)
-        columns = ['id', 'rgb_path', 'iseg_path', 'category_id']
+        columns = ['id', 'rgb_path', 'category_id']
         writer.writerow(columns)
         writer.writerows(rows)
     

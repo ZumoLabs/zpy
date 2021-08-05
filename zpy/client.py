@@ -342,8 +342,6 @@ def flatten_dataset(datapoints: list, categories: dict, output_dir: Path):
     Returns:
         None: No return value.
     """
-    print(f"Doing default formatting and outputting to {output_dir}")
-
     if Path(output_dir).exists():
         shutil.rmtree(output_dir)
     os.makedirs(output_dir)
@@ -504,13 +502,14 @@ def generate(
                 dataset_unzipped_path
             )
 
+            dataset_callback_output_dir = dataset_zip_path.with_suffix("")
             if dataset_callback:
                 print("Calling user defined dataset_callback...")
-                dataset_callback(datapoints, categories, dataset_zip_path.with_suffix(""))
+                dataset_callback(datapoints, categories, dataset_callback_output_dir)
                 print("User defined dataset_callback has finished.")
             else:
-                print(f"Flattening Dataset<{dataset['name']}>...")
-                flatten_dataset(datapoints, categories, dataset_zip_path.with_suffix(""))
+                print(f"Flattening Dataset<{dataset['name']}> to {dataset_callback_output_dir}...")
+                flatten_dataset(datapoints, categories, dataset_callback_output_dir)
         else:
             print(
                 f"Dataset<{dataset['name']}> is no longer running but cannot be downloaded with "

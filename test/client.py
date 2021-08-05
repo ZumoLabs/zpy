@@ -1,3 +1,4 @@
+import csv
 import os
 import random
 import shutil
@@ -45,7 +46,7 @@ class TestClient(unittest.TestCase):
 
         zpy.generate(dataset_config, num_datapoints=3)
 
-    def test_generate_and_format_dataset(self):
+    def test_generate_and_tvt_format_dataset(self):
         def dataset_callback(datapoints, categories, output_dir):
             if output_dir.exists():
                 shutil.rmtree(output_dir)
@@ -108,6 +109,64 @@ class TestClient(unittest.TestCase):
                 path = output_dir / tvt_type / "annotations.json"
                 blob = metadata[tvt_type]
                 write_json(path, blob)
+
+        zpy.init(
+            project_uuid="feb6e594-55e0-4f87-9e75-5a128221499f",
+            auth_token="12ea8d406b508be8fd0a1fef78f825440347fb10989536fcd1dedb9241327491",
+        )
+        dataset_config = zpy.DatasetConfig("dumpster_v5.1")
+        dataset_config.set("run\.padding_style", "random")
+        zpy.generate(
+            dataset_config, num_datapoints=15, #  dataset_callback=dataset_callback
+        )
+
+    def test_generate_and_csv_format_dataset(self):
+        def dataset_callback(datapoints, categories, output_dir):
+            """
+            Example of using dataset_callback to format a dataset into CSV format.
+
+            See [zpy.client.default_dataset_callback][] for how the dataset is flattened by default.
+
+            Args:
+                datapoints (list): List of datapoints. See [zpy.client.default_dataset_callback][].
+                categories (dict): Dict of category_id to Category. See [zpy.client.default_dataset_callback][].
+                output_dir (Path): Path of where dataset is output normally. You can use it or use something else.
+            """
+            # The default location is passed in, but you can change it to whatever you want
+            output_dir = Path('/tmp/output_dir')
+            if output_dir.exists():
+                shutil.rmtree(output_dir)
+            os.makedirs(output_dir, exist_ok=True)
+
+            # Define row accumulator
+            rows = []
+            # Loop over datapoints to build rows
+            for datapoint in datapoints:
+                # Dict of image_type to image
+                images = datapoint['images']
+
+                # Get annotations via the image id
+                rgb_annotations = datapoint['annotations'][images['rgb']['id']]
+                # iseg_annotations = datapoint['annotations'][images['iseg']['id']]
+
+                # The Sim design determines the annotation intrinsics. In this example we know there is only
+                # one annotation per datapoint, but there could be all sorts of interesting metadata here!
+                category_id = rgb_annotations[0]['category_id']
+
+                # Lookup category information if you need it
+                # category = categories[category_id]
+
+                # Accumulate new row
+                row = (datapoint['id'], images['rgb']['output_path'], category_id)
+                rows.append(row)
+
+            # Write the rows to csv
+            annotations_file_uri = str(output_dir / 'annotations.csv')
+            with open(annotations_file_uri, 'w') as f:
+                writer = csv.writer(f)
+                columns = ['id', 'rgb_path', 'category_id']
+                writer.writerow(columns)
+                writer.writerows(rows)
 
         zpy.init(
             project_uuid="feb6e594-55e0-4f87-9e75-5a128221499f",
