@@ -48,7 +48,7 @@
 \title{ZPY: Open Source Synthetic Data for Computer Vision}
 
 \author{
-	{\hspace{1mm}Hugo Ponte}\footnote{Correspondence author} \\ 
+	{\hspace{1mm}Hugo Ponte} \footnote{Correspondence author} \\ 
 	Zumo Labs \\
 	\texttt{hugo@zumolabs.ai} \\
 	\And
@@ -78,7 +78,7 @@
 }
 
 % Uncomment to remove the date
-\date{}
+\date{\emph{Updated on August 6, 2021}}
 
 \renewcommand{\headeright}{Technical Report}
 \renewcommand{\undertitle}{Technical Report}
@@ -95,7 +95,7 @@ pdfkeywords={Computer Vision, Synthetic Data, Machine Learning, Open Source, Pyt
 \maketitle
 
 \begin{abstract}
-Synthetic data presents a unique solution to the huge data requirements of computer vision with deep learning. In this work, we present zpy \footnote{All code is available on GitHub at \url{http://github.com/ZumoLabs/zpy}}, an open source framework for creating synthetic data. Built on top of the popular open source 3D toolset Blender, zpy is designed with accessibility and readability in mind. Open source synthetic data toolkits like zpy are the bridge between the more mature tools of the 3D workflow and the machine learning frameworks. We make the case for why open source synthetic data is important to solve issues such as fairness and bias by democratizing access to data.
+Synthetic data presents a unique solution to the huge data requirements of computer vision with deep learning. In this work, we present zpy, an open source framework for creating synthetic data in Python. Built on top of the popular open source 3D toolset Blender, zpy is designed with accessibility and readability in mind. Open source synthetic data toolkits like zpy are the bridge between the more mature tools of the 3D workflow and the machine learning frameworks. We make the case for why open source synthetic data is important to solve issues such as fairness and bias by democratizing access to data. Finally, we explore the effect of different types of domain randomization on synthetic training data by fine tuning a CNN on small synthetic training datasets and testing the model on a holdout test dataset of real images. All code is available on GitHub at \url{http://github.com/ZumoLabs/zpy}
 \end{abstract}
 
 \keywords{Computer Vision \and Synthetic Data \and Machine Learning \and Open Source \and Python \and Blender}
@@ -111,9 +111,9 @@ Synthetic data presents a unique solution to the huge data requirements of compu
 \section{Introduction}
 \label{sec:introduction}
 
-Synthetic data is data that is \emph{created} as opposed to \emph{collected}.
+Synthetic data is data that is \emph{created} as opposed to \emph{collected}. Datasets are designed by engineers and researchers such that a statistical learning system trained on this data will behave more predictably and sometimes even perform better. Synthetic data goes beyond curation and allows engineers and researchers to carefully craft the distribution of training data, making sure it has variety in the dimmensions that need it and consistency in other dimmensions.
 
-Simulation heavy fields were amongst the first to start using synthetic images to start training deep learning systems. Research with the biggest datasets and highest quality can be found in this field, with works on autonomous vehicles \cite{prakash2020structured} \cite{srivastava2019multi} \cite{Hahner_2019} \cite{7780721}, robotic grasping \cite{james2019simtoreal} \cite{tobin2017domain}, and even drone racing \cite{Loquercio_2020}. The availability of high quality 3D humans from the video game and movie industries has also made possible applications such as human pose estimation  \cite{shrivastava2017learning} \cite{Varol_2017}, and person re-id \cite{aaronASRC}. We dive into what synthetic data could mean for human issues such as fairness and bias in \ref{sec:motivation}. Synthetic data has also been used to advance climate and space science, finding applications in detection in overhead satellite imagery \cite{shermeyer2020rareplanes}, pose estimation of satellites in space \cite{kisantal2020satellite}, and segmentation of clouds \cite{lyu2020learning}. Other work has dived deeper into the fundamental theory of synthetic data \cite{le2017using}. For a thorough review of synthetic data literature, we recommend readers go through Nikolenkos 2019 summary paper \cite{nikolenko2019synthetic}.
+Simulation heavy fields were amongst the first to start using synthetic images to start training deep learning systems. Research with the biggest datasets and highest quality can be found in these fields, with works on autonomous vehicles \cite{prakash2020structured} \cite{srivastava2019multi} \cite{Hahner_2019} \cite{7780721}, robotic grasping \cite{james2019simtoreal} \cite{tobin2017domain}, and even drone racing \cite{Loquercio_2020}. The availability of high quality 3D humans from the video game and movie industries has also made possible applications such as human pose estimation  \cite{shrivastava2017learning} \cite{Varol_2017}, and person re-id \cite{aaronASRC}. We dive into what synthetic data could mean for human issues such as fairness and bias in \ref{sec:motivation}. Synthetic data has also been used to advance climate and space science, finding applications in detection in overhead satellite imagery \cite{shermeyer2020rareplanes}, pose estimation of satellites in space \cite{kisantal2020satellite}, and segmentation of clouds \cite{lyu2020learning}. Other work has dived deeper into the fundamental theory of synthetic data \cite{le2017using}. For a thorough review of synthetic data literature, we recommend readers go through Nikolenkos 2019 summary paper \cite{nikolenko2019synthetic}.
 
 Analogous to the early days of deep learning, synthetic data still has a black box nature. How to properly create and use synthetic data is not fully understood, and overcoming challenges such as the sim2real gap are still alchemy. We perform an ablation study to examine the effects of domain randomization on synthetic data in \ref{sec:domainrandomization}, and explore the importance of training curriculum in \ref{sec:curicculum}.
 
@@ -187,7 +187,7 @@ Generally, today, the practice when using real datasets is to subject them to a 
 
 \subsection{Synthetic Data as a Solution}
 
-Synthetic data can democratize access to large-scale datasets by reducing the time required to collect these datasets and eliminating the cost of labeling these datasets. 
+Synthetic data can democratize access to large-scale datasets by reducing the time required to collect these datasets and eliminating the cost of labeling these datasets.
 
 Furthermore, synthetic data presents a solution to algorithmic bias: synthetic datasets offer complete control of the distribution and can thus be representatively designed. A synthetic human dataset can be constructed to represent cultural, demographic, and gender diversity equally.  A variety of computer vision domains have explored using synthetic datasets to reduce bias effectively \cite{DBLP:journals/corr/abs-2004-13866}.
 
@@ -203,11 +203,9 @@ Finally, synthetic datasets, by virtue of being created and not collected, guara
 \subsection{Software 3.0}
 \label{sec:software3.0}
 
-Data creation as a new paradigm for “programming”.
+In the software world today, developers write explicit sets of rules also known as algorithms. These algorithms are deployed into production systems, where they consume inputs (i.e. images, text, speech) and produce outputs (i.e. actions, predictions, labels) \ref{fig:fig2}. The relationship between outputs and inputs is carefully managed and designed by developers, and edge cases are identified and bubbled up as exceptions before they can cause unwanted behavior. We nickname this type of explicit heuristic design as \emph{Software 2.0}.
 
-In the software world today, developers write explicit sets of rules (known as algorithms). These algorithms are then deployed into production systems, which consume input data and output actions.
-
-In the software of tomorrow, developers will curate a dataset which will be used to train a deep learning model. This model will then be deployed into a production system, which will consume input data and output actions. This changes the workflow of developers from explicitly writing rules to instead creating the datasets which are then parsed to create algorithms.
+Machine learning based systems, which we nickname \emph{Software 3.0} works differently from these explicitly designed algorithms. Machine learning systems are trained on a dataset, and their behavior in production is often not predictable. Instead of spending their time designing the set of rules that define behavior, or \emph{programming}, we predict the developers of tomorrow will instead spend their time designing a dataset, on which a machine learning system is trained. By designing the dataset, developers will be able to better understand and even make guarantees on the behavior of the machine learning algorithms in production systems. This fundamentally changes the workflow of system development from explicitly writing rules to instead designing datasets, and as such the tools and methods used for programming today will be replaced by dataset design and curation tools.
 
 \section{Project Features}
 \label{sec:projectfeatures}
@@ -310,7 +308,7 @@ The kwargs of the run function in a sim are effectively additional hyperparamete
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{results.png}
-	\caption{(Left) Sample images from synthetic training datasets with different kinds of domain randomization: lighting, background, material, and all of the above. (Right) Bounding box predictions of a model fine-tuned on the corresponding synthetic dataset along with confidence for each detection, false positives shown for context.}
+	\caption{(Left) Sample images from synthetic training datasets with different kinds of domain randomization: lighting, background, material, and all of the above. (Right) Bounding box predictions of a model fine-tuned on the corresponding synthetic dataset along with confidence for each detection.}
 	\label{fig:results}
 \end{figure}
 
@@ -338,17 +336,17 @@ In our package experiment, we expose boolean toggles as run function kwargs that
 	\item \lstinline{package_sim_dr_all} - Synthetic dataset of 512 images. Domain randomization is applied to lighting, background, and materials.
 \end{itemize}
 
-The best performing single run is fine tuned for 500 iterations at a learning rate of 0.001 on the \lstinline{package_sim_dr_mats} dataset. Comparing the top performing runs for each type of domain randomization, we rank the relative importance of each type: materials (44.9 APm), all (44.5 APm), lighting (42.1 APm), and background (40.4 APm). One possible explanation for material domain randomization being most important is that the shape of the cardboard box is the more important feature for the model to focus on (as opposed to the material and texture). As a caveat: it is important to underline that this is a small experiment: small models trained for a short amount of time on small datasets. We do not claim that these insights can be applied to other usecases or even further explorations of this particular problem. 
+The best performing single run is fine tuned for 500 iterations at a learning rate of 0.001 on the \lstinline{package_sim_dr_mats} dataset. Comparing the top performing runs for each type of domain randomization, we rank the relative importance of each type: all (46.3 APm), materials (44.9 APm),  lighting (42.1 APm), and background (40.4 APm). One possible explanation for material domain randomization being most important is that the shape of the cardboard box is the more important feature for the model to focus on (as opposed to the material and texture). As a caveat: it is important to underline that this is a small experiment: small models trained for a short amount of time on small datasets. We do not claim that these insights can be applied to other usecases or even further explorations of this particular problem. 
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-
+Synthetic data, data that is \emph{created} as opposed to \emph{collected}, presents a unique solution to the huge data requirements of computer vision with deep learning. The software for the design and creation of synthetic datasets are still primitive, and in this paper we present our attempt at this new type of developer tool: zpy, an open source framework for creating synthetic data in Python. Built on top of the popular open source 3D toolset Blender, zpy is designed with accessibility and readability in mind. Open source synthetic data toolkits like zpy are the bridge between the more mature tools of the 3D workflow and the machine learning frameworks. We make the case for why open source synthetic data is important to solve issues such as fairness and bias by democratizing access to data. Finally, we explore the effect of different types of domain randomization on synthetic training data by fine tuning a CNN on small synthetic training datasets and testing the model on a holdout test dataset of real images. All code is available on GitHub at \url{http://github.com/ZumoLabs/zpy}
 
 \section{Thanks}
 \label{sec:thanks}
 
-Thanks to Aaron Dant and his team at ASRC Federal for discussions about synthetic data and comments on this paper. Thanks to the developer community of zpy for their feedback and contributions. Thanks to the investors and supporters of Zumo Labs for believing in the future of synthetic data.
+ Thanks to the developer community of zpy for their feedback and contributions. Thanks to the investors and supporters of Zumo Labs for believing in the future of synthetic data. Thanks to Aaron Dant and his team at ASRC Federal for discussions about synthetic data and comments on this paper.
 
 \bibliographystyle{abbrvnat}
 \bibliography{references}
