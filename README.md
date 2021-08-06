@@ -24,9 +24,9 @@ Check out our full [**documentation** :bookmark_tabs:](https://zumolabs.github.i
 
 ## What's New? :rocket:
 
+- (06/23/21) Read the [zpy_paper](https://zumolabs.github.io/zpy/zpy/tutorials/script_writing_guide/)
 - (06/23/21) Check out our new [script writing guide](https://zumolabs.github.io/zpy/zpy/tutorials/script_writing_guide/)
 - (06/17/21) Read our [latest article](https://www.zumolabs.ai/post/synthetic-data-shelf-simulation) on our blog!
-- (06/08/21) Blender 2.93 Support is out! Latest features can be found [on blender.org](https://www.blender.org/download/releases/2-93/).
 
 ## Install [:thinking:](https://zumolabs.github.io/zpy/zpy/install/pip/)
 
