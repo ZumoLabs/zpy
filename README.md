@@ -24,7 +24,7 @@ Check out our full [**documentation** :bookmark_tabs:](https://zumolabs.github.i
 
 ## What's New? :rocket:
 
-- (06/23/21) Read the [zpy_paper](https://zumolabs.github.io/zpy/zpy/tutorials/script_writing_guide/)
+- (06/23/21) Read the [zpy_paper](https://paperswithcode.com/paper/zpy-open-source-synthetic-data-for-computer)
 - (06/23/21) Check out our new [script writing guide](https://zumolabs.github.io/zpy/zpy/tutorials/script_writing_guide/)
 - (06/17/21) Read our [latest article](https://www.zumolabs.ai/post/synthetic-data-shelf-simulation) on our blog!
 
