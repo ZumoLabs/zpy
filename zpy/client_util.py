@@ -8,14 +8,12 @@ import zipfile
 from collections import defaultdict
 from datetime import datetime
 from itertools import groupby
-from os import listdir
-from os.path import join
 from pathlib import Path
 from typing import Iterable, List, Dict, Tuple, Callable
 from typing import Union
 
 import requests
-from pydash import values, filter_
+from pydash import values
 from requests import HTTPError
 
 
@@ -258,34 +256,26 @@ def get_global_id(datapoint_uuid: str, local_id: int):
     return f"{datapoint_uuid[:8]}.{local_id}"
 
 
-def group_metadata_by_datapoint(
-    dataset_path: Path,
-) -> Tuple[Dict, Dict, List[Dict]]:
+def group_metadata_by_datapoint(dataset_path: Path) -> Tuple[List[Dict], Dict]:
     """
     Aggregates and reformats the zumo metadata across all batches of a dataset.
 
     Args:
         dataset_path (Path): Path to unzipped dataset.
     Returns:
-        tuple (metadata: dict, categories: dict, datapoints: list[dict]): Returns a tuple of (metadata,
-            categories, datapoints), datapoints being a list of dicts, each containing a dict of images and a list of
-            annotations.
+        tuple (datapoints: list[dict], categories: dict): Returns a tuple of (datapoints, categories).
     """
-    accum_metadata = {}
-    accum_categories = {}
-    accum_datapoints = []
+    categories = {}
+    datapoints = []
     category_count_sums = defaultdict(int)
 
     # batch level - group images by datapoint
-    for batch in listdir(dataset_path):
+    for batch in dataset_path.iterdir():
         # Read batch specific zumo json file
-        batch_uri = join(dataset_path, batch)
-        annotation_file_uri = join(batch_uri, "_annotations.zumo.json")
+        batch_uri = dataset_path / batch
+        annotation_file_uri = batch_uri / "_annotations.zumo.json"
         with open(annotation_file_uri) as annotation_file:
             metadata = json.load(annotation_file)
-
-        # Add the batch metadata to the accumulator
-        accum_metadata = {**accum_metadata, **metadata["metadata"]}
 
         # Add the category counts to the category count accumulator
         for category_id, category in metadata["categories"].items():
@@ -294,7 +284,7 @@ def group_metadata_by_datapoint(
         # Add the categories to the category accumulator
         # NOTE: This assumes categories are unique across batches which might not always be true.
         for category_id, category in metadata["categories"].items():
-            accum_categories[int(category_id)] = category
+            categories[int(category_id)] = category
 
         # Group images by frame (ie. datapoint). Results in a list of lists.
         images_grouped_by_datapoint = group_by(
@@ -312,18 +302,15 @@ def group_metadata_by_datapoint(
                 updated_image = {
                     # Take all previous image keys
                     **image,
-                    # Update to global id
+                    # Update id to be globally unique across batches
                     "id": get_global_id(datapoint_uuid, image["id"]),
                     # Update the output_path (absolute path) to match where it exists on the local filesystem.
-                    "output_path": join(batch_uri, Path(image["relative_path"])),
+                    "output_path": batch_uri / image["relative_path"],
                 }
                 # Remove extra stuff to prevent propagating around with no clear use
-                if "name" in updated_image:
-                    del updated_image["name"]
-                if "relative_path" in updated_image:
-                    del updated_image["relative_path"]
-                if "frame" in updated_image:
-                    del updated_image["frame"]
+                for key in ["name", "relative_path", "frame"]:
+                    if key in updated_image:
+                        del updated_image[key]
 
                 image_type_to_image[
                     get_image_type_from_name(image["name"])
@@ -331,38 +318,34 @@ def group_metadata_by_datapoint(
 
             # Get datapoint specific annotations
             image_ids = [i["id"] for i in images]
-            annotations = filter_(
-                metadata["annotations"], lambda a: a["image_id"] in image_ids
-            )
-            # Store as a map to make lookup a breeze.
-            image_id_to_annotations = defaultdict(list)
-            for annotation in annotations:
-                image_id = get_global_id(datapoint_uuid, annotation["image_id"])
-                updated_annotation = {
-                    **annotation,
-                    # Update to global image_id
-                    "image_id": image_id,
-                }
-                # Remove id and frame - just extra stuff to propagate around with no clear use
-                if "id" in updated_annotation:
-                    del updated_annotation["id"]
-                if "frame" in updated_annotation:
-                    del updated_annotation["frame"]
 
-                image_id_to_annotations[image_id].append(updated_annotation)
+            # Accumulate annotations. They're originally referenced via image id, but we're removing that lookup and
+            # just saying that all the annotations in the list belong to one datapoint.
+            annotations = []
+            for annotation in metadata["annotations"]:
+                if annotation["image_id"] in image_ids:
+                    updated_annotation = {
+                        # Take all annotation keys
+                        **annotation,
+                        # Update image id reference to the one which is globally unique across batches
+                        "image_id": get_global_id(datapoint_uuid, annotation["id"])
+                    }
+                    # Remove extra stuff to prevent propagating around with no clear use
+                    for key in ["id", "frame"]:
+                        if key in updated_annotation:
+                            del updated_annotation[key]
+
+                    annotations.append(updated_annotation)
 
             datapoint = {
                 "id": datapoint_uuid,
                 "images": image_type_to_image,
-                "annotations": image_id_to_annotations,
+                "annotations": annotations,
             }
-            accum_datapoints.append(datapoint)
+            datapoints.append(datapoint)
 
     # Override the category counts now that they've been accumulated across all batches
     for category_id, category_count in category_count_sums.items():
-        accum_categories[int(category_id)]["count"] = category_count
+        categories[int(category_id)]["count"] = category_count
 
-    # save_path doesn't have meaning any more. Batches are combined in memory but haven't been relocated to one spot.
-    del accum_metadata["save_path"]
-
-    return accum_metadata, accum_categories, accum_datapoints
+    return datapoints, categories

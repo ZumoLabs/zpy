@@ -34,20 +34,16 @@ def dataset_callback(datapoints, categories, output_dir):
     rows = []
     # Loop over datapoints to build rows
     for datapoint in datapoints:
-        # Dict of image_type to image
-        images = datapoint['images']
-
-        # Get annotations via the image id
-        rgb_annotations = datapoint['annotations'][images['rgb']['id']]
-        # iseg_annotations = datapoint['annotations'][images['iseg']['id']]
-
         # The Sim design determines the annotation intrinsics. In this example we know there is only
         # one annotation per datapoint, but there could be all sorts of interesting metadata here!
-        category_id = rgb_annotations[0]['category_id']
+        category_id = datapoint['annotations'][0]['category_id']
 
         # Lookup category information if you need it
         # category = categories[category_id]
-
+        
+        # Dict of image_type to image
+        images = datapoint['images']
+        
         # Accumulate new row
         row = (datapoint['id'], images['rgb']['output_path'], category_id)
         rows.append(row)

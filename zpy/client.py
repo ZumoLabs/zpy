@@ -4,14 +4,13 @@ import os
 import shutil
 import sys
 import time
-from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict
 from typing import Union
 
 import requests
-from pydash import set_, unset, is_empty
+from pydash import set_, unset, is_empty, clone_deep
 
 from cli.utils import download_url
 from zpy.client_util import (
@@ -209,6 +208,14 @@ class Dataset:
         """
         return self._config
 
+    @property
+    def path(self):
+        """
+        Returns:
+            Path: The path to the containing directory on the local filesystem.
+        """
+        return Path(DATASET_OUTPUT_PATH) / self._name
+
 
 @add_newline
 def preview(dataset_config: DatasetConfig, num_samples=10):
@@ -266,7 +273,7 @@ def preview(dataset_config: DatasetConfig, num_samples=10):
     return files
 
 
-def flatten_dataset(datapoints: list, categories: dict, output_dir: Path):
+def flatten_metadata(datapoints: list, categories: dict, output_dir: Path):
     """
     Used as the default Dataset formatting function. It will flatten the Dataset into a single directory of images
     with a single annotation json file.
@@ -281,23 +288,17 @@ def flatten_dataset(datapoints: list, categories: dict, output_dir: Path):
                 "images": dict of image_type to Image,
 
                 # The annotations in the datapoint
-                "annotations": dict of image_id to Annotation,
+                "annotations": list of Annotation,
             }
 
     An Image object is of the following shape:
 
             {
-                # Locally unique identifier within the datapoint
-                "id": int,
+                # Unique identifier across the whole dataset
+                "id": str,
 
                 # Absolute path to the image
                 "output_path": "absolute/path/to/image.image-id.image-type.file-type-suffix",
-
-                # Relative path to the image within its parent folder
-                "relative_path": "image.image-id.image-type.file-type-suffix",
-
-                # Name of the image (Redundant with relative_path)
-                "name": "image.image-id.image-type.file-type-suffix",
 
                 # There may be other arbitrary keys as per the Sim creator's discretion
                 ...
@@ -306,10 +307,10 @@ def flatten_dataset(datapoints: list, categories: dict, output_dir: Path):
     An Annotation object is of the following shape:
 
             {
-                # Locally unique identifier within the datapoint
-                "id": int,
+                # Unique identifier across the whole dataset
+                "id": str,
 
-                # Locally unique identifier for the image within the datapoint
+                # Unique identifier for the image across the whole dataset
                 "image_id": int,
 
                 # There may be other arbitrary keys as per the Sim creator's discretion
@@ -340,23 +341,22 @@ def flatten_dataset(datapoints: list, categories: dict, output_dir: Path):
         categories (dict): Dict of category_id to Category objects.
         output_dir (Path): Default output location.
     Returns:
-        None: No return value.
+        tuple(list of dict, dict): Tuple of (datapoints, categories) which have been modified by the flatten operation.
     """
-    if Path(output_dir).exists():
-        shutil.rmtree(output_dir)
-    os.makedirs(output_dir)
-
-    accum_metadata = {
+    flattened_metadata = {
         "categories": categories,
         "images": {},
-        "annotations": {},
+        "annotations": [],
     }
 
     # Combine all datapoints into a single structure
+    moved_datapoints = []
     for datapoint in datapoints:
-        # Add image annotations to accumulator. Annotations are already stored by image_id which is globally unique
-        # so there should not be any collisions in the dict update.
-        accum_metadata["annotations"].update(datapoint["annotations"])
+        # Make a copy so we aren't updating an object we're iterating over
+        moved_datapoint = clone_deep(datapoint)
+
+        # Add image annotations to accumulator.
+        flattened_metadata["annotations"].extend(datapoint["annotations"])
 
         for image_type, image in datapoint["images"].items():
             # Move image to flat directory
@@ -365,17 +365,32 @@ def flatten_dataset(datapoints: list, categories: dict, output_dir: Path):
             # Prefix old image name with the datapoint id to prevent naming collisions when moving to the flat directory
             new_image_name = f'{datapoint["id"][:8]}.{old_image_name}'
             output_image_uri = output_dir / new_image_name
-            shutil.copy(original_image_uri, output_image_uri)
+            shutil.move(original_image_uri, output_image_uri)
 
-            # Add image to accumulator and update path to match its new location
-            accum_metadata["images"][image["id"]] = image
-            accum_metadata["images"][image["id"]]["output_path"] = str(output_image_uri)
+            # Update path to match its new location
+            updated_image = {
+                **image,
+                "output_path": str(output_image_uri),
+            }
+            # Add to accumulator
+            flattened_metadata["images"][image["id"]] = updated_image
+            # Update the location of the image in the datapoint
+            moved_datapoint["images"][image_type] = updated_image
+
+        moved_datapoints.append(moved_datapoint)
 
     # write json
     metadata_output_path = output_dir / "_annotations.zumo.json"
 
     os.makedirs(os.path.dirname(metadata_output_path), exist_ok=True)
-    write_json(metadata_output_path, accum_metadata)
+    write_json(metadata_output_path, flattened_metadata)
+
+    # Remove all the subdirectories now that we've moved all the images and metadata into the root folder
+    for thing in output_dir.iterdir():
+        if thing.is_dir():
+            shutil.rmtree(thing)
+
+    return moved_datapoints, categories
 
 
 @add_newline
@@ -391,8 +406,7 @@ def generate(
         dataset_config (DatasetConfig): Specification for a Sim and its configurable parameters.
         num_datapoints (int): Number of datapoints in the Dataset. A datapoint is an instant in time composed of all
                               the output images (rgb, iseg, cseg, etc) along with the annotations.
-        dataset_callback (fn): See [zpy.client.flatten_dataset][]. Called with formatted objects representing
-             the Dataset.
+        dataset_callback (fn): See [zpy.client.flatten_dataset][]. Called once when the dataset is finished generating.
         download (bool): Optionally download the Dataset. Defaults to True.
     Returns:
         Dataset: The created [zpy.client.Dataset][].
@@ -410,7 +424,7 @@ def generate(
     ).json()
 
     if len(datasets_res["results"]) == 0:
-        dataset = post(
+        api_dataset = post(
             f"{_base_url}/api/v1/datasets/",
             data={
                 "project": _project["id"],
@@ -419,7 +433,7 @@ def generate(
             headers=auth_header(_auth_token),
         ).json()
         post(
-            f"{_base_url}/api/v1/datasets/{dataset['id']}/generate/",
+            f"{_base_url}/api/v1/datasets/{api_dataset['id']}/generate/",
             data={
                 "project": _project["id"],
                 "sim": dataset_config.sim["name"],
@@ -429,21 +443,22 @@ def generate(
             headers=auth_header(_auth_token),
         )
         print(f"Sending generate request for Dataset<{internal_dataset_name}>...")
-        print(json.dumps(dataset, indent=4, sort_keys=True))
+        print(json.dumps(api_dataset, indent=4, sort_keys=True))
     else:
         print(
             f"Generate for Dataset<{internal_dataset_name}> has already been requested."
         )
-        dataset = datasets_res["results"][0]
+        api_dataset = datasets_res["results"][0]
 
+    dataset_obj = Dataset(internal_dataset_name, dataset_config)
     if download:
         print(f"Downloading Dataset<{internal_dataset_name}>...")
-        dataset = get(
-            f"{_base_url}/api/v1/datasets/{dataset['id']}/",
+        api_dataset = get(
+            f"{_base_url}/api/v1/datasets/{api_dataset['id']}/",
             headers=auth_header(_auth_token),
         ).json()
-        while not is_done(dataset["state"]):
-            all_simruns_query_params = {"datasets": dataset["id"]}
+        while not is_done(api_dataset["state"]):
+            all_simruns_query_params = {"datasets": api_dataset["id"]}
             num_simruns = get(
                 f"{_base_url}/api/v1/simruns/",
                 params=all_simruns_query_params,
@@ -457,66 +472,60 @@ def generate(
             next_check_datetime = datetime.now() + timedelta(seconds=60)
             while datetime.now() < next_check_datetime:
                 print(
-                    f"Dataset<{dataset['name']}> not ready for download in state {dataset['state']}. "
+                    f"Dataset<{api_dataset['name']}> not ready for download in state {api_dataset['state']}. "
                     f"SimRuns READY: {num_ready_simruns}/{num_simruns}. "
                     f"Checking again in {(next_check_datetime - datetime.now()).seconds}s.",
                     end="\r",
                 )
                 time.sleep(1)
             clear_last_print()
-            print(f"Checking state of Dataset<{dataset['name']}>...", end="\r")
-            dataset = get(
-                f"{_base_url}/api/v1/datasets/{dataset['id']}/",
+            print(f"Checking state of Dataset<{api_dataset['name']}>...", end="\r")
+            api_dataset = get(
+                f"{_base_url}/api/v1/datasets/{api_dataset['id']}/",
                 headers=auth_header(_auth_token),
             ).json()
 
-        if dataset["state"] == "READY":
+        if api_dataset["state"] == "READY":
             dataset_download_res = get(
-                f"{_base_url}/api/v1/datasets/{dataset['id']}/download/",
+                f"{_base_url}/api/v1/datasets/{api_dataset['id']}/download/",
                 headers=auth_header(_auth_token),
             ).json()
 
             # Make local path variables
-            dataset_zip_path = Path(DATASET_OUTPUT_PATH) / f"{dataset['name']}.zip"
-            dataset_unzipped_path = Path(DATASET_OUTPUT_PATH) / f"{dataset['name']}_raw"
+            dataset_zip_path = dataset_obj.path.with_suffix(".zip")
             if not dataset_zip_path.exists():
                 # Download if the zip is not found locally
                 print(
-                    f"Dataset<{dataset['name']}> not found locally, downloading "
+                    f"Dataset<{api_dataset['name']}> not found locally, downloading "
                     f"{convert_size(dataset_download_res['size_bytes'])}..."
                 )
                 download_url(dataset_download_res["redirect_link"], dataset_zip_path)
             else:
-                print(f"Dataset<{dataset['name']}> already exists locally.")
+                print(f"Dataset<{api_dataset['name']}> already exists locally.")
 
             # Remove the unzipped folder if it exists from a previous run
-            if dataset_unzipped_path.exists():
-                shutil.rmtree(dataset_unzipped_path)
+            if dataset_obj.path.exists():
+                shutil.rmtree(dataset_obj.path)
 
             # Unzip the local dataset
-            print(f"Extracting Dataset<{dataset['name']}>...")
-            extract_zip(dataset_zip_path, dataset_unzipped_path)
+            print(f"Extracting Dataset<{api_dataset['name']}>...")
+            extract_zip(dataset_zip_path, dataset_obj.path)
 
-            print(f"Parsing Dataset<{dataset['name']}>...")
-            metadata, categories, datapoints = group_metadata_by_datapoint(
-                dataset_unzipped_path
-            )
+            print(f"Parsing Dataset<{api_dataset['name']}>...")
+            datapoints, categories = group_metadata_by_datapoint(dataset_obj.path)
 
-            dataset_callback_output_dir = dataset_zip_path.with_suffix("")
+            print(f"Flattening Dataset<{api_dataset['name']}> to {dataset_obj.path}...")
+            datapoints, categories = flatten_metadata(datapoints, categories, dataset_obj.path)
+
             if dataset_callback:
                 print("Calling user defined dataset_callback...")
-                dataset_callback(datapoints, categories, dataset_callback_output_dir)
+                dataset_callback(datapoints, categories)
                 print("User defined dataset_callback has finished.")
-            else:
-                print(
-                    f"Flattening Dataset<{dataset['name']}> to {dataset_callback_output_dir}..."
-                )
-                flatten_dataset(datapoints, categories, dataset_callback_output_dir)
         else:
             print(
-                f"Dataset<{dataset['name']}> is no longer running but cannot be downloaded with "
-                f"state = {dataset['state']}"
+                f"Dataset<{api_dataset['name']}> is no longer running but cannot be downloaded with "
+                f"state = {api_dataset['state']}"
             )
 
-    print(f"Dataset<{dataset['name']}> finished processing.")
-    return Dataset(internal_dataset_name, dataset_config)
+    print(f"Dataset<{api_dataset['name']}> finished processing.")
+    return dataset_obj
