@@ -328,7 +328,7 @@ def group_metadata_by_datapoint(dataset_path: Path) -> Tuple[List[Dict], Dict]:
                         # Take all annotation keys
                         **annotation,
                         # Update image id reference to the one which is globally unique across batches
-                        "image_id": get_global_id(datapoint_uuid, annotation["id"])
+                        "image_id": get_global_id(datapoint_uuid, annotation["id"]),
                     }
                     # Remove extra stuff to prevent propagating around with no clear use
                     for key in ["id", "frame"]:

@@ -134,7 +134,7 @@ class TestClient(unittest.TestCase):
                 datapoints (list): List of datapoints. See [zpy.client.default_dataset_callback][].
                 categories (dict): Dict of category_id to Category. See [zpy.client.default_dataset_callback][].
             """
-            annotation_dir = Path('/tmp')
+            annotation_dir = Path("/tmp")
 
             # Define row accumulator
             rows = []
@@ -144,17 +144,17 @@ class TestClient(unittest.TestCase):
                 images = datapoint["images"]
 
                 # Dumpster sim only makes 1 annotation per datapoint
-                category_id = datapoint['annotations'][0]['category_id']
+                category_id = datapoint["annotations"][0]["category_id"]
 
                 # Accumulate new row
                 row = (datapoint["id"], images["rgb"]["output_path"], category_id)
                 rows.append(row)
 
             # Write the rows to csv
-            annotations_file_uri = str(annotation_dir / 'annotations.csv')
-            with open(annotations_file_uri, 'w') as f:
+            annotations_file_uri = str(annotation_dir / "annotations.csv")
+            with open(annotations_file_uri, "w") as f:
                 writer = csv.writer(f)
-                columns = ['datapoint_id', 'image_path', 'category_id']
+                columns = ["datapoint_id", "image_path", "category_id"]
                 writer.writerow(columns)
                 writer.writerows(rows)
 

@@ -515,7 +515,9 @@ def generate(
             datapoints, categories = group_metadata_by_datapoint(dataset_obj.path)
 
             print(f"Flattening Dataset<{api_dataset['name']}> to {dataset_obj.path}...")
-            datapoints, categories = flatten_metadata(datapoints, categories, dataset_obj.path)
+            datapoints, categories = flatten_metadata(
+                datapoints, categories, dataset_obj.path
+            )
 
             if dataset_callback:
                 print("Calling user defined dataset_callback...")
