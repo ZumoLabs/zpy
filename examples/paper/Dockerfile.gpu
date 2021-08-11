@@ -1,0 +1,78 @@
+# FROM nvidia/cuda:10.1-cudnn7-devel
+FROM nvidia/cuda:11.1.1-cudnn8-devel
+
+LABEL Author="Zumo Labs <info@zumolabs.ai>"
+LABEL Title="Docker for Package Sim case study."
+
+# Environment variables
+ENV ZPY_VERSION "1.4.1rc5"
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG C.UTF-8
+
+# Data directory
+ENV DATA "/data"
+
+# Install basic python dev tools
+RUN apt-get clean
+RUN apt-get -y update && apt-get install -y \
+	python3-opencv ca-certificates python3-dev git wget sudo  \
+	cmake ninja-build protobuf-compiler libprotobuf-dev && \
+  rm -rf /var/lib/apt/lists/*
+RUN ln -sv /usr/bin/python3 /usr/bin/python
+
+# gcc and git are needed to install stuff below
+RUN apt-get update && apt-get -y install gcc git
+
+# Set up Pip
+RUN wget https://bootstrap.pypa.io/get-pip.py && \
+	python3 get-pip.py && rm get-pip.py
+
+# Tensorflow
+RUN pip install tensorboard
+
+# Pytorch
+RUN pip install --user torch==1.9 torchvision==0.10 -f https://download.pytorch.org/whl/cu111/torch_stable.html
+RUN pip install --user 'git+https://github.com/facebookresearch/fvcore'
+
+# Install Detectron2
+RUN git clone https://github.com/facebookresearch/detectron2 detectron2_repo
+# set FORCE_CUDA because during `docker build` cuda is not accessible
+ENV FORCE_CUDA="1"
+# This will by default build detectron2 for all common cuda architectures and take a lot more time,
+# because inside `docker build`, there is no way to tell which architecture will be used.
+ARG TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
+ENV TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST}"
+RUN pip install --user -e detectron2_repo
+
+# Install pycocotools directly from github
+RUN pip install -U 'git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI'
+
+# Set a fixed model cache directory.
+ENV FVCORE_CACHE="/tmp"
+WORKDIR /home
+
+# Install zpy (Zumo Labs Python)
+RUN pip install scikit-image==0.18.1
+RUN pip install zpy-zumo==${ZPY_VERSION}
+
+# Extra pip dependencies
+RUN pip install wandb
+RUN pip install cython
+RUN pip install lxml
+RUN pip install gin-config
+RUN pip install shapely
+RUN pip install scikit-learn
+RUN pip install opencv-python
+RUN pip install tqdm
+RUN pip install pyzmq
+RUN pip3 install jupyter
+
+# Copy over code
+COPY . package
+WORKDIR /home/package
+
+# Connect and run jupyter Notebook
+CMD ["jupyter", "notebook", "--port=8888", "--no-browser", "--ip=0.0.0.0", "--allow-root"]
+
+
+
