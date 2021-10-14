@@ -273,7 +273,7 @@ def default_render_settings(
     # Make sure engine is set to Cycles
     if not (scene.render.engine == "CYCLES"):
         log.warning(" Setting render engine to CYCLES")
-        scene.render.engine == "CYCLES"
+        scene.render.engine = "CYCLES"
 
     scene.cycles.samples = samples
     scene.cycles.use_adaptive_sampling = True
@@ -335,7 +335,7 @@ def segmentation_render_settings():
     # Make sure engine is set to Cycles
     if not (scene.render.engine == "CYCLES"):
         log.warning(" Setting render engine to CYCLES")
-        scene.render.engine == "CYCLES"
+        scene.render.engine = "CYCLES"
 
     scene.render.film_transparent = True
     scene.render.dither_intensity = 0.0
