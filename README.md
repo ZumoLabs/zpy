@@ -22,11 +22,9 @@ Collecting, labeling, and cleaning data for computer vision is a pain. Jump into
 
 Check out our full [**documentation** :bookmark_tabs:](https://zumolabs.github.io/zpy/)
 
-## What's New? :rocket:
+Read the [zpy_paper](https://paperswithcode.com/paper/zpy-open-source-synthetic-data-for-computer)
 
-- (06/23/21) Read the [zpy_paper](https://paperswithcode.com/paper/zpy-open-source-synthetic-data-for-computer)
-- (06/23/21) Check out our new [script writing guide](https://zumolabs.github.io/zpy/zpy/tutorials/script_writing_guide/)
-- (06/17/21) Read our [latest article](https://www.zumolabs.ai/post/synthetic-data-shelf-simulation) on our blog!
+Check out our new [script writing guide](https://zumolabs.github.io/zpy/zpy/tutorials/script_writing_guide/)
 
 ## Install [:thinking:](https://zumolabs.github.io/zpy/zpy/install/pip/)
 
